@@ -1,0 +1,12 @@
+# AppEngineModule
+
+objects = o.header o.resource o.string o.window o.icon o.date o.socket o.codec o.url o.memory o.heap
+
+linkflags = -bin -first header -o $@
+objasmflags = -throwback
+
+.s.o:;	objasm $< $(objasmflags) -o $@
+
+AppEngine:   $(objects)
+        link $(linkflags) $(objects)
+        settype $@ ffa

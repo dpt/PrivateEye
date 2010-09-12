@@ -1,0 +1,24 @@
+; heap.hdr
+; ---------------------------------------------------------------------------
+;    Name: Heap manager module definitions
+; Purpose: Definitions for the Heap manager's use
+;  Author: © David Thomas, 1997
+; Version: 0.00 (12 Jul 1997)
+; ---------------------------------------------------------------------------
+
+; Symbols
+
+				^	0
+hp_guardword			#	4
+hp_dynamic			#	4
+hp_usedanchors			#	4
+hp_freeanchors			#	4
+hp_size				#	4
+hp_free				#	4
+hp_slotsize			#	4	; 24
+hp_headersize			*	@
+
+hp_baseanchors			*	8
+hp_basesize			*	hp_headersize+hp_baseanchors*8
+
+	END

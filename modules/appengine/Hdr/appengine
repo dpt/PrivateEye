@@ -1,0 +1,18 @@
+; appengine.Hdr
+; ---------------------------------------------------------------------------
+;    Name: AppEngine module definitions
+; Purpose: Definitions for the AppEngine library system's shared module
+;  Author: © David Thomas, 1997-8
+; Version: 0.02 (14 Jul 1998)
+; ---------------------------------------------------------------------------
+
+; Symbols
+
+swi_base				*	&4D940
+error_base				*	&4D940	; ### Not allocated!
+sizeof_workspace			*	320
+
+error_invalid_url			*	0
+error_invalid_heap			*	1
+
+	END
