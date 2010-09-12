@@ -43,7 +43,7 @@ includes		= -IC: -ICLibs: -IOSLib: -IZLib: -ITCPIPLibs:
 
 lib_normal		= CLibs:appengine.o.AOFLib CLibs:exiftags.o.exiftags CLibs:jpeg.o.libjpeg CLibs:jpeg.o.libtrans CLibs:md5.o.libmd5
 lib_debug		= CLibs:appengine.odf.AOFLib CLibs:exiftags.odf.exiftags CLibs:jpeg.odf.libjpeg CLibs:jpeg.odf.libtrans CLibs:md5.odf.libmd5
-lib_fortify       	= CLibs:fortify.o.fortify
+lib_fortify       	= CLibs:fortify.o.libfortify
 lib_memcheck       	= MemCheck:o.MC
 lib_all			= CLibs:png.libpng CLibs:zlib.zlib OSLib:o.OSLib32 C:o.flexlib C:o.stubs
 
