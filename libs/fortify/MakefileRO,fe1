@@ -2,8 +2,8 @@
 
 
 # Toolflags:
-CCflags = -c -depend !Depend -IC: -throwback  -DFORTIFY  
-C++flags = -c -depend !Depend -IC: -throwback
+CCflags = -c -depend !Depend -IC: -ICLibs: -throwback  -DFORTIFY  
+C++flags = -c -depend !Depend -IC: -ICLibs: -throwback
 Linkflags = -aif -c++ -o $@
 ObjAsmflags = -throwback -NoCache -depend !Depend
 CMHGflags = 
@@ -12,8 +12,8 @@ Squeezeflags = -o $@
 
 
 # Final targets:
-#@.fortify:   @.o.fortify 
-#        libfile $(libfileflags) @.o.fortify 
+@.o.libfortify:   @.o.fortify 
+        libfile $(libfileflags) @.o.fortify 
 
 
 # User-editable dependencies:
