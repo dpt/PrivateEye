@@ -1,0 +1,18 @@
+/* $Id: remove.c,v 1.2 2008-08-05 22:05:05 dpt Exp $ */
+
+#include <assert.h>
+
+#include "appengine/datastruct/list.h"
+
+void list__remove(list_t *anchor,
+                  list_t *doomed)
+{
+  list_t *e;
+
+  for (e = anchor; e->next != doomed; e = e->next)
+    assert(e != NULL); /* if we hit NULL then throw a wobbly */
+
+  /* 'e' is the element preceding the one to remove */
+
+  e->next = doomed->next; /* == e->next->next; */
+}

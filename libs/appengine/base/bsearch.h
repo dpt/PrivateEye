@@ -1,0 +1,28 @@
+/* --------------------------------------------------------------------------
+ *    Name: bsearch.h
+ * Purpose: Searching arrays
+ * Version: $Id: bsearch.h,v 1.2 2010-01-13 18:41:09 dpt Exp $
+ * ----------------------------------------------------------------------- */
+
+#ifndef APPENGINE_BSEARCH_H
+#define APPENGINE_BSEARCH_H
+
+#include <stddef.h>
+
+/* Binary search an array 'nelems' long for 'want'.
+ * Each array element is 'stride' bytes wide.
+ */
+
+int bsearch_short(const short *array, size_t nelems, size_t stride,
+                  short want);
+
+int bsearch_ushort(const unsigned short *array, size_t nelems, size_t stride,
+                   unsigned short want);
+
+int bsearch_int(const int *array, size_t nelems, size_t stride,
+                int want);
+
+int bsearch_uint(const unsigned int *array, size_t nelems, size_t stride,
+                 unsigned int want);
+
+#endif /* APPENGINE_BSEARCH_H */

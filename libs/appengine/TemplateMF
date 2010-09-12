@@ -1,0 +1,148 @@
+# Project:		AppEngine:
+
+# Tools
+
+asm_			= objasm
+cc_			= cc
+cdir			= cdir
+every_			= every.every2
+libfile_		= libfile
+link_			= link
+wipe			= $(suppress) wipe
+suppress		= x
+
+# Tool flags:
+
+asmflags		= $(depend) $(throwback)
+ccflags			= -strict -c99 -fah -Wh -Otime -c $(cpu) $(depend) $(throwback) $(includes) $(ccextra)
+ccflags_memcheck	= -strict -c99 -fah -Wh -Otime -c $(cpu) $(depend) $(throwback) $(includes) $(ccextra) -zpc1 -DMemCheck_MEMCHECK -JMemCheck:ANSI.,:mem -fw
+everyflags		= -c
+libfileflags		= -c
+linkflags		= -c++
+wipeflags		= ~CFR~V
+
+# Combined tools and flags
+
+asm			= $(asm_) $(asmflags)
+cc			= $(cc_) $(ccflags)
+cc_memcheck		= $(cc_) $(ccflags_memcheck)
+every			= $(every_) $(everyflags)
+libfile			= $(libfile_) $(libfileflags)
+link			= $(link_) $(linkflags)
+
+# Compiler options
+
+cpu			= -apcs 3/32bit -arch 3 -cpu XScale
+depend			= -depend !Depend
+throwback		= -throwback
+
+# Library references
+
+includes		= -IC: -ICLibs: -IOSLib: -IZLib: -ITCPIPLibs:
+libraries_test		= OSLib:o.OSLib32 CLibs:fortify.o.fortify C:o.stubs
+
+# Generated files
+
+# The number of objects involved causes path buffers to overflow, so here we
+# use a via file.
+
+# We only build the source files in the 'test' directories in a 'test' build.
+
+# 'target' directories contain code tuned for a specific processor and are
+# ignored presently
+
+objs_normal  = \
+#Makatic{ -V objs-normal
+-F
+-ff "..c.* -x ..test...* -x ..target...*" "\t\t\t*2.o.#0 \\\n"
+-ff "..s.* -x ..test...* -x ..target...*" "\t\t\t*2.o.#0 \\\n"
+#Makatic}
+
+objs_module = \
+#Makatic{ -V objs-module
+-F
+-ff "..c.* -x ..test...* -x ..target...*" "\t\t\t*2.om.#0 \\\n"
+-ff "..s.* -x ..test...* -x ..target...*" "\t\t\t*2.om.#0 \\\n"
+#Makatic}
+
+objs_debug = \
+#Makatic{ -V objs-debug
+-F
+-ff "..c.* -x ..test...* -x ..target...*" "\t\t\t*2.odf.#0 \\\n"
+-ff "..s.* -x ..test...* -x ..target...*" "\t\t\t*2.odf.#0 \\\n"
+#Makatic}
+
+objs_memcheck = \
+#Makatic{ -V objs-memcheck
+-F
+-ff "..c.* -x ..test...* -x ..target...*" "\t\t\t*2.omc.#0 \\\n"
+-ff "..s.* -x ..test...* -x ..target...*" "\t\t\t*2.omc.#0 \\\n"
+#Makatic}
+
+objs_test = \
+#Makatic{
+-F
+-ff "..test.c.*"   "\t\t\t*2.odf.#0 \\\n"
+-ff "..test.*.c.*" "\t\t\t*2.odf.#0 \\\n"
+#Makatic}
+
+# Targets:
+
+o.AOFLib:		$(objs_normal)
+			$(libfile) -o o.AOFLib -via objs-normal
+
+om.AOFLib:		$(objs_module)
+			$(libfile) -o om.AOFLib -via objs-module
+
+odf.AOFLib:		$(objs_debug)
+			$(libfile) -o odf.AOFLib -via objs-debug
+
+omc.AOFLib:		$(objs_memcheck)
+			$(libfile) -o omc.AOFLib -via objs-memcheck
+
+AETest:			$(objs_test) odf.AOFLib $(libraries_test)
+			$(link)	-d -o AETest $(objs_test) odf.AOFLib $(libraries_test)
+
+normal:			o.AOFLib
+			@echo 'normal' built
+
+module:			om.AOFLib
+			@echo 'module' built
+
+debug:			odf.AOFLib
+			@echo 'debug' built
+
+memcheck:		omc.AOFLib
+			@echo 'memcheck' built
+
+test:			AETest
+			@echo 'test' built
+
+all:			test debug module normal
+			@echo 'all' built
+
+clean:;			$(every) "@...o @...om @...odf @...omc" -d "$(wipe) %0 $(wipeflags)"
+			$(every) "@.AETest @.Makefile @.objs-*" -f "$(wipe) %0 $(wipeflags)"
+			@echo Cleaned
+
+# Rule Patterns
+
+.SUFFIXES:		.o .om .odf .omc
+
+.s.o:;			$(asm) -from $< -to $@
+.c.o:;			$(cc) -ff -DNDEBUG -o $@ $<
+
+.s.om:;			$(asm) -from $< -to $@
+.c.om:;			$(cc) -ff -DNDEBUG -zM -o $@ $<
+
+.s.odf:;		$(asm) -from $< -to $@ -g
+.c.odf:;		$(cc) -fn -g -DFORTIFY -o $@ $<
+
+.s.omc:;		$(asm) -from $< -to $@ -g
+.c.omc:;		$(cc_memcheck) -fn -g $(defines) -o $@ $<
+
+# User-editable dependencies:
+
+# Static dependencies:
+
+# Dynamic dependencies:

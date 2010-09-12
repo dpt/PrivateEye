@@ -1,0 +1,6 @@
+WimpSlot -min 4000K
+Dir <Obey$Dir>
+CDir o
+CDir om
+CDir odf
+Makatic.Makatic3 -e -t TemplateMF -o Makefile

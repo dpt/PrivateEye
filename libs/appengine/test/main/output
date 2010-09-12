@@ -1,0 +1,3063 @@
+Starting tests.
+>> bitvec tests
+test: create
+test: set
+test: get
+97 bits set
+test: count
+97 bits set
+test: clear
+test: get
+0 bits set
+test: count
+0 bits set
+test: length
+length=128 bits
+test: next
+set every 11th bit
+walk through set bits
+after -1 comes 0
+after 0 comes 11
+after 11 comes 22
+after 22 comes 33
+after 33 comes 44
+after 44 comes 55
+after 55 comes 66
+after 66 comes 77
+after 77 comes 88
+after 88 comes -1
+test: destroy
+test: eq
+created. equal? 1
+set bit 1 for v+w. equal? 1
+set bit 1000 for v+w. equal? 1
+clear bit 1000 for v. equal? 0
+clear bit 1000 for w. equal? 1
+clear bit 1 for v. recreate w. equal? 1
+test: and
+0000000000000000000000000000000100000000000000000000000000000000
+test: or
+0000000000000000000000000000000100000000000000000000000000000001
+
+>> dict tests
+test: add
+adding 'deckard'...as 0
+adding 'batty'...as 1
+adding 'rachael'...as 2
+adding 'gaff'...as 3
+adding 'bryant'...as 4
+adding 'pris'...as 5
+adding 'sebastian'...as 6
+adding 'batty'...as 1
+adding 'bryant'...as 4
+adding 'deckard'...as 0
+adding 'gaff'...as 3
+adding 'pris'...as 5
+adding 'rachael'...as 2
+adding 'sebastian'...as 6
+test: to string
+0 is 'deckard'
+1 is 'batty'
+2 is 'rachael'
+3 is 'gaff'
+4 is 'bryant'
+5 is 'pris'
+6 is 'sebastian'
+test: to string and length
+0 is 'deckard' (length 7)
+1 is 'batty' (length 5)
+2 is 'rachael' (length 7)
+3 is 'gaff' (length 4)
+4 is 'bryant' (length 6)
+5 is 'pris' (length 4)
+6 is 'sebastian' (length 9)
+test: delete
+test: add
+adding 'deckard'...as 7
+adding 'batty'...as 8
+adding 'rachael'...as 9
+adding 'gaff'...as 10
+adding 'bryant'...as 11
+adding 'pris'...as 12
+adding 'sebastian'...as 13
+adding 'batty'...as 8
+adding 'bryant'...as 11
+adding 'deckard'...as 7
+adding 'gaff'...as 10
+adding 'pris'...as 12
+adding 'rachael'...as 9
+adding 'sebastian'...as 13
+test: to string
+7 is 'deckard'
+8 is 'batty'
+9 is 'rachael'
+10 is 'gaff'
+11 is 'bryant'
+12 is 'pris'
+13 is 'sebastian'
+test: rename
+adding 'deckard'...as 7
+renaming index 7 to 'fred'...
+adding 'batty'...as 8
+renaming index 8 to 'barney'...
+adding 'rachael'...as 9
+renaming index 9 to 'wilma'...
+adding 'gaff'...as 10
+renaming index 10 to 'betty'...
+adding 'bryant'...as 11
+renaming index 11 to 'pebbles'...
+adding 'pris'...as 12
+renaming index 12 to 'bamm bamm'...
+adding 'sebastian'...as 13
+renaming index 13 to 'dino'...
+test: to string
+7 is 'fred'
+8 is 'barney'
+9 is 'wilma'
+10 is 'betty'
+11 is 'pebbles'
+12 is 'bamm bamm'
+13 is 'dino'
+test: to string and length
+7 is 'fred' (length 4)
+8 is 'barney' (length 6)
+9 is 'wilma' (length 5)
+10 is 'betty' (length 5)
+11 is 'pebbles' (length 7)
+12 is 'bamm bamm' (length 9)
+13 is 'dino' (length 4)
+
+>> hash tests
+test: create
+test: insert
+adding 'deckard':'rick'...
+adding 'batty':'roy'...
+adding 'tyrell':'rachael'...
+adding 'gaff':'n/a'...
+adding 'bryant':'n/a'...
+adding 'pris':'n/a'...
+adding 'sebastian':'jf'...
+test: iterate
+walk 'bryant':'n/a'...
+walk 'tyrell':'rachael'...
+walk 'deckard':'rick'...
+walk 'batty':'roy'...
+walk 'gaff':'n/a'...
+walk 'sebastian':'jf'...
+walk 'pris':'n/a'...
+test: remove
+test: destroy
+
+>> list tests
+test: add to head
+adding 'deckard'...
+adding 'batty'...
+adding 'rachael'...
+adding 'gaff'...
+adding 'bryant'...
+adding 'pris'...
+adding 'sebastian'...
+test: iterate
+000190ac: sebastian
+00019088: pris
+00019064: bryant
+00019040: gaff
+0001901c: rachael
+00018ff8: batty
+00018fd4: deckard
+
+>> ntree tests
+test: build tree
+test: walk in order
+'i' at depth 4
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+walking depth 0 returned: idbeafcjgh
+'a' at depth 1
+walking depth 1 returned: a
+'b' at depth 2
+'a' at depth 1
+'c' at depth 2
+walking depth 2 returned: bac
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'g' at depth 3
+'h' at depth 3
+walking depth 3 returned: dbeafcgh
+'i' at depth 4
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+walking depth 4 returned: idbeafcjgh
+'i' at depth 4
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+walking depth 5 returned: idbeafcjgh
+test: walk pre order
+'a' at depth 1
+'b' at depth 2
+'d' at depth 3
+'i' at depth 4
+'e' at depth 3
+'c' at depth 2
+'f' at depth 3
+'g' at depth 3
+'j' at depth 4
+'h' at depth 3
+walking depth 0 returned: abdiecfgjh
+'a' at depth 1
+walking depth 1 returned: a
+'a' at depth 1
+'b' at depth 2
+'c' at depth 2
+walking depth 2 returned: abc
+'a' at depth 1
+'b' at depth 2
+'d' at depth 3
+'e' at depth 3
+'c' at depth 2
+'f' at depth 3
+'g' at depth 3
+'h' at depth 3
+walking depth 3 returned: abdecfgh
+'a' at depth 1
+'b' at depth 2
+'d' at depth 3
+'i' at depth 4
+'e' at depth 3
+'c' at depth 2
+'f' at depth 3
+'g' at depth 3
+'j' at depth 4
+'h' at depth 3
+walking depth 4 returned: abdiecfgjh
+'a' at depth 1
+'b' at depth 2
+'d' at depth 3
+'i' at depth 4
+'e' at depth 3
+'c' at depth 2
+'f' at depth 3
+'g' at depth 3
+'j' at depth 4
+'h' at depth 3
+walking depth 5 returned: abdiecfgjh
+test: walk post order
+'i' at depth 4
+'d' at depth 3
+'e' at depth 3
+'b' at depth 2
+'f' at depth 3
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+'c' at depth 2
+'a' at depth 1
+walking depth 0 returned: idebfjghca
+'a' at depth 1
+walking depth 1 returned: a
+'b' at depth 2
+'c' at depth 2
+'a' at depth 1
+walking depth 2 returned: bca
+'d' at depth 3
+'e' at depth 3
+'b' at depth 2
+'f' at depth 3
+'g' at depth 3
+'h' at depth 3
+'c' at depth 2
+'a' at depth 1
+walking depth 3 returned: debfghca
+'i' at depth 4
+'d' at depth 3
+'e' at depth 3
+'b' at depth 2
+'f' at depth 3
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+'c' at depth 2
+'a' at depth 1
+walking depth 4 returned: idebfjghca
+'i' at depth 4
+'d' at depth 3
+'e' at depth 3
+'b' at depth 2
+'f' at depth 3
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+'c' at depth 2
+'a' at depth 1
+walking depth 5 returned: idebfjghca
+test: max height
+height = 4
+test: number of nodes
+nodes = 10
+test: copy tree
+sub-test: copy
+sub-test: walk in order
+'i' at depth 4
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+walking depth 0 returned: idbeafcjgh
+'a' at depth 1
+walking depth 1 returned: a
+'b' at depth 2
+'a' at depth 1
+'c' at depth 2
+walking depth 2 returned: bac
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'g' at depth 3
+'h' at depth 3
+walking depth 3 returned: dbeafcgh
+'i' at depth 4
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+walking depth 4 returned: idbeafcjgh
+'i' at depth 4
+'d' at depth 3
+'b' at depth 2
+'e' at depth 3
+'a' at depth 1
+'f' at depth 3
+'c' at depth 2
+'j' at depth 4
+'g' at depth 3
+'h' at depth 3
+walking depth 5 returned: idbeafcjgh
+sub-test: discard copied data
+sub-test: delete tree
+test: delete tree
+
+>> tagdb tests
+test: init
+test: create
+test: open
+test: add tags
+adding 'marty'...is tag 0
+adding 'jennifer'...is tag 1
+adding 'emmett'...is tag 2
+adding 'einstein'...is tag 3
+adding 'lorraine'...is tag 4
+adding 'george'...is tag 5
+adding 'biff'...is tag 6
+adding 'fred'...is tag 7
+test: rename tags
+renaming 'marty'...to 'marty.mcfly'
+renaming 'jennifer'...to 'jennifer.parker'
+renaming 'emmett'...to 'dr.emmett.brown'
+renaming 'einstein'...to 'einstein'
+renaming 'lorraine'...to 'lorraine.baines'
+renaming 'george'...to 'george.mcfly'
+renaming 'biff'...to 'biff.tannen'
+test: tag id
+tagging 'martyjen' with 0
+tagging 'martyjen' with 1
+tagging 'doc' with 2
+tagging 'einy' with 3
+tagging 'folks' with 4
+tagging 'folks' with 5
+tagging 'all' with 0
+tagging 'all' with 1
+tagging 'all' with 2
+tagging 'all' with 3
+tagging 'all' with 4
+tagging 'all' with 5
+tagging 'all' with 6
+test: enumerate tags & tag to name
+continuation 0...tag 0, count 2 ('marty.mcfly')
+continuation 1...tag 1, count 2 ('jennifer.parker')
+continuation 2...tag 2, count 2 ('dr.emmett.brown')
+continuation 3...tag 3, count 2 ('einstein')
+continuation 4...tag 4, count 2 ('lorraine.baines')
+continuation 5...tag 5, count 2 ('george.mcfly')
+continuation 6...tag 6, count 1 ('biff.tannen')
+continuation 7...tag 7, count 0 ('fred')
+continuation 8...
+test: get tags for id
+getting tags for 'martyjen'... 0 ('marty.mcfly') 1 ('jennifer.parker') (2 tags) 
+getting tags for 'doc'... 2 ('dr.emmett.brown') (1 tags) 
+getting tags for 'einy'... 3 ('einstein') (1 tags) 
+getting tags for 'folks'... 4 ('lorraine.baines') 5 ('george.mcfly') (2 tags) 
+getting tags for 'all'... 0 ('marty.mcfly') 1 ('jennifer.parker') 2 ('dr.emmett.brown') 3 ('einstein') 4 ('lorraine.baines') 5 ('george.mcfly') 6 ('biff.tannen') (7 tags) 
+test: enumerate all ids
+- doc
+- folks
+- einy
+- all
+- martyjen
+test: enumerate ids by tag
+ids tagged with tag id 0 ('marty.mcfly')...
+- all
+- martyjen
+ids tagged with tag id 1 ('jennifer.parker')...
+- all
+- martyjen
+ids tagged with tag id 2 ('dr.emmett.brown')...
+- doc
+- all
+ids tagged with tag id 3 ('einstein')...
+- einy
+- all
+ids tagged with tag id 4 ('lorraine.baines')...
+- folks
+- all
+ids tagged with tag id 5 ('george.mcfly')...
+- folks
+- all
+ids tagged with tag id 6 ('biff.tannen')...
+- all
+ids tagged with tag id 7 ('fred')...
+test: enumerate ids by tags
+ids tagged with 'marty' and 'jennifer'...
+- all
+- martyjen
+test: commit
+test: remove all tags
+test: get tags for id
+getting tags for 'martyjen'... (0 tags) 
+getting tags for 'doc'... (0 tags) 
+getting tags for 'einy'... (0 tags) 
+getting tags for 'folks'... (0 tags) 
+getting tags for 'all'... (0 tags) 
+test: forget
+test: get tags for id
+getting tags for 'martyjen'... id not found (0 tags) 
+getting tags for 'doc'... id not found (0 tags) 
+getting tags for 'einy'... id not found (0 tags) 
+getting tags for 'folks'... id not found (0 tags) 
+getting tags for 'all'... id not found (0 tags) 
+test: close
+test: delete
+
+>> txtfmt tests
+test: create
+test: wrap, print
+test string 0, wrapping to 2:
+height=28
+  0: Lorem (0,5)
+  1: ipsum (6,5)
+  2: dolor (12,5)
+  3: sit (18,3)
+  4: amet, (22,5)
+  5: consectetuer (28,12)
+  6: adipiscing (41,10)
+  7: elit. (52,5)
+  8: Donec (58,5)
+  9: mattis (64,6)
+ 10: luctus (71,6)
+ 11: libero. (78,7)
+ 12: Donec (86,5)
+ 13: imperdiet, (92,10)
+ 14: velit (103,5)
+ 15: quis (109,4)
+ 16: venenatis (114,9)
+ 17: iaculis, (124,8)
+ 18: metus (133,5)
+ 19: libero (139,6)
+ 20: cursus (146,6)
+ 21: ligula, (153,7)
+ 22: egestas (161,7)
+ 23: sagittis (169,8)
+ 24: dui (178,3)
+ 25: diam (182,4)
+ 26: in (187,2)
+ 27: mi. (190,3)
+test string 0, wrapping to 3:
+height=28
+  0: Lorem (0,5)
+  1: ipsum (6,5)
+  2: dolor (12,5)
+  3: sit (18,3)
+  4: amet, (22,5)
+  5: consectetuer (28,12)
+  6: adipiscing (41,10)
+  7: elit. (52,5)
+  8: Donec (58,5)
+  9: mattis (64,6)
+ 10: luctus (71,6)
+ 11: libero. (78,7)
+ 12: Donec (86,5)
+ 13: imperdiet, (92,10)
+ 14: velit (103,5)
+ 15: quis (109,4)
+ 16: venenatis (114,9)
+ 17: iaculis, (124,8)
+ 18: metus (133,5)
+ 19: libero (139,6)
+ 20: cursus (146,6)
+ 21: ligula, (153,7)
+ 22: egestas (161,7)
+ 23: sagittis (169,8)
+ 24: dui (178,3)
+ 25: diam (182,4)
+ 26: in (187,2)
+ 27: mi. (190,3)
+test string 0, wrapping to 5:
+height=28
+  0: Lorem (0,5)
+  1: ipsum (6,5)
+  2: dolor (12,5)
+  3: sit (18,3)
+  4: amet, (22,5)
+  5: consectetuer (28,12)
+  6: adipiscing (41,10)
+  7: elit. (52,5)
+  8: Donec (58,5)
+  9: mattis (64,6)
+ 10: luctus (71,6)
+ 11: libero. (78,7)
+ 12: Donec (86,5)
+ 13: imperdiet, (92,10)
+ 14: velit (103,5)
+ 15: quis (109,4)
+ 16: venenatis (114,9)
+ 17: iaculis, (124,8)
+ 18: metus (133,5)
+ 19: libero (139,6)
+ 20: cursus (146,6)
+ 21: ligula, (153,7)
+ 22: egestas (161,7)
+ 23: sagittis (169,8)
+ 24: dui (178,3)
+ 25: diam (182,4)
+ 26: in (187,2)
+ 27: mi. (190,3)
+test string 0, wrapping to 7:
+height=27
+  0: Lorem (0,5)
+  1: ipsum (6,5)
+  2: dolor (12,5)
+  3: sit (18,3)
+  4: amet, (22,5)
+  5: consectetuer (28,12)
+  6: adipiscing (41,10)
+  7: elit. (52,5)
+  8: Donec (58,5)
+  9: mattis (64,6)
+ 10: luctus (71,6)
+ 11: libero. (78,7)
+ 12: Donec (86,5)
+ 13: imperdiet, (92,10)
+ 14: velit (103,5)
+ 15: quis (109,4)
+ 16: venenatis (114,9)
+ 17: iaculis, (124,8)
+ 18: metus (133,5)
+ 19: libero (139,6)
+ 20: cursus (146,6)
+ 21: ligula, (153,7)
+ 22: egestas (161,7)
+ 23: sagittis (169,8)
+ 24: dui (178,3)
+ 25: diam in (182,7)
+ 26: mi. (190,3)
+test string 0, wrapping to 11:
+height=22
+  0: Lorem ipsum (0,11)
+  1: dolor sit (12,9)
+  2: amet, (22,5)
+  3: consectetuer (28,12)
+  4: adipiscing (41,10)
+  5: elit. Donec (52,11)
+  6: mattis (64,6)
+  7: luctus (71,6)
+  8: libero. (78,7)
+  9: Donec (86,5)
+ 10: imperdiet, (92,10)
+ 11: velit quis (103,10)
+ 12: venenatis (114,9)
+ 13: iaculis, (124,8)
+ 14: metus (133,5)
+ 15: libero (139,6)
+ 16: cursus (146,6)
+ 17: ligula, (153,7)
+ 18: egestas (161,7)
+ 19: sagittis (169,8)
+ 20: dui diam in (178,11)
+ 21: mi. (190,3)
+test string 0, wrapping to 13:
+height=18
+  0: Lorem ipsum (0,11)
+  1: dolor sit (12,9)
+  2: amet, (22,5)
+  3: consectetuer (28,12)
+  4: adipiscing (41,10)
+  5: elit. Donec (52,11)
+  6: mattis luctus (64,13)
+  7: libero. Donec (78,13)
+  8: imperdiet, (92,10)
+  9: velit quis (103,10)
+ 10: venenatis (114,9)
+ 11: iaculis, (124,8)
+ 12: metus libero (133,12)
+ 13: cursus (146,6)
+ 14: ligula, (153,7)
+ 15: egestas (161,7)
+ 16: sagittis dui (169,12)
+ 17: diam in mi. (182,11)
+test string 0, wrapping to 17:
+height=14
+  0: Lorem ipsum dolor (0,17)
+  1: sit amet, (18,9)
+  2: consectetuer (28,12)
+  3: adipiscing elit. (41,16)
+  4: Donec mattis (58,12)
+  5: luctus libero. (71,14)
+  6: Donec imperdiet, (86,16)
+  7: velit quis (103,10)
+  8: venenatis (114,9)
+  9: iaculis, metus (124,14)
+ 10: libero cursus (139,13)
+ 11: ligula, egestas (153,15)
+ 12: sagittis dui diam (169,17)
+ 13: in mi. (187,6)
+test string 0, wrapping to 19:
+height=13
+  0: Lorem ipsum dolor (0,17)
+  1: sit amet, (18,9)
+  2: consectetuer (28,12)
+  3: adipiscing elit. (41,16)
+  4: Donec mattis luctus (58,19)
+  5: libero. Donec (78,13)
+  6: imperdiet, velit (92,16)
+  7: quis venenatis (109,14)
+  8: iaculis, metus (124,14)
+  9: libero cursus (139,13)
+ 10: ligula, egestas (153,15)
+ 11: sagittis dui diam (169,17)
+ 12: in mi. (187,6)
+test string 0, wrapping to 23:
+height=10
+  0: Lorem ipsum dolor sit (0,21)
+  1: amet, consectetuer (22,18)
+  2: adipiscing elit. Donec (41,22)
+  3: mattis luctus libero. (64,21)
+  4: Donec imperdiet, velit (86,22)
+  5: quis venenatis iaculis, (109,23)
+  6: metus libero cursus (133,19)
+  7: ligula, egestas (153,15)
+  8: sagittis dui diam in (169,20)
+  9: mi. (190,3)
+test string 0, wrapping to 29:
+height=7
+  0: Lorem ipsum dolor sit amet, (0,27)
+  1: consectetuer adipiscing elit. (28,29)
+  2: Donec mattis luctus libero. (58,27)
+  3: Donec imperdiet, velit quis (86,27)
+  4: venenatis iaculis, metus (114,24)
+  5: libero cursus ligula, egestas (139,29)
+  6: sagittis dui diam in mi. (169,24)
+test string 1, wrapping to 2:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 3:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 5:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 7:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 11:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 13:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 17:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 19:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 23:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test string 1, wrapping to 29:
+height=4
+  0: The (0,3)
+  1: Quick (4,5)
+  2: Brown (10,5)
+  3: Fox (16,3)
+test: destroy
+
+>> filing tests
+test: filing: dirscan
+@./cvsignore
+@.AETest
+@.appengine
+@.array_grow_idea
+@.artworks
+@.awrender
+@.basic
+@.box
+@.choices
+@.colour
+@.colourpick
+@.CVS
+@.datastruct
+@.dialogue
+@.dialogues
+@.diffs
+@.drawable
+@.error
+@.errors
+@.event
+@.filename-db
+@.filer
+@.filerwin
+@.filing
+@.font
+@.gadgets
+@.h
+@.heap
+@.help
+@.icon
+@.iconbar
+@.image
+@.internet
+@.jpegtran
+@.keymap
+@.lang
+@.layout
+@.Makefile
+@.MakefileG
+@.MakeMake
+@.MakeMakeG
+@.md5
+@.memory
+@.menu
+@.messages
+@.numstr
+@.o
+@.objs-debug
+@.objs-memcheck
+@.objs-module
+@.objs-normal
+@.odf
+@.om
+@.omc
+@.os
+@.packer
+@.pointer
+@.primes
+@.screen
+@.sprite
+@.sprite-effects
+@.strings
+@.syslog
+@.tag-cloud
+@.tag-db
+@.TemplateMF
+@.TemplateMFG
+@.Templates
+@.test
+@.testoutput
+@.tonemap
+@.trfm
+@.txtfmt
+@.txtscr
+@.utils
+@.vdu
+@.window
+@.~docs
+
+>> font tests
+test: select
+Matching for 'Homerton' with attrs 403
+font__select says: Use 'Homerton.Light'.
+Matching for 'Goudy' with attrs 406
+font__select says: No good match.
+Matching for 'eric' with attrs 206
+font__select says: Use 'ERIC.COND.BOLD'.
+Matching for 'eric.cond.bold' with attrs 402
+font__select says: Use 'ERIC.LIGHT'.
+Matching for 'goudy.oldstyle.italic' with attrs 403
+font__select says: No good match.
+
+>> lang tests
+test: 0
+emit: number: 4
+emit: ident: x
+emit: op: *
+emit: number: 2
+emit: op: *
+emit: number: 9
+emit: ident: y
+emit: op: -
+emit: op: /
+emit: ident: frob42
+emit: op: =
+eol
+test: 1
+emit: ident: b
+emit: ident: c
+emit: op: +
+emit: ident: a
+emit: op: =
+eol
+test: 2
+emit: ident: P
+emit: ident: R
+emit: ident: S
+emit: op: *
+emit: op: +
+emit: ident: Q
+emit: op: =
+eol
+test: 3
+emit: ident: P
+emit: ident: R
+emit: ident: S
+emit: op: *
+emit: op: +
+emit: ident: Q
+emit: op: =
+eol
+test: 4
+emit: ident: P
+emit: ident: R
+emit: op: +
+emit: ident: S
+emit: op: *
+emit: ident: Q
+emit: op: =
+eol
+test: 5
+emit: ident: P
+emit: ident: R
+emit: op: +
+emit: ident: S
+emit: op: *
+emit: ident: Q
+emit: op: =
+eol
+test: 6
+emit: ident: P
+emit: ident: R
+emit: op: *
+emit: ident: S
+emit: op: /
+emit: ident: T
+emit: op: %
+emit: ident: Q
+emit: op: =
+eol
+
+>> packer tests
+test1
+remove_area: 0 0 10 20
+add_area: 10 0 50 25
+add_area: 0 20 50 25
+remove_area: 40 0 50 20
+add_area: 10 0 40 25
+add_area: 10 20 50 25
+add_area: contained by: 2 <0 20 50 25>
+remove_area: 10 20 40 25
+add_area: 0 20 10 25
+add_area: 40 20 50 25
+add_area: 10 0 40 20
+
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 20 10 25
+40 20 50 25
+10 0 40 20
+0 0 0 0
+trimming to 3 long
+start: list is 3 long
+next: 0 20 10 25
+drawbox: 0 20 10 25
+next: 40 20 50 25
+drawbox: 40 20 50 25
+next: 10 0 40 20
+drawbox: 10 0 40 20
+next: none left
+1111111111..............................1111111111
+1111111111..............................1111111111
+1111111111..............................1111111111
+1111111111..............................1111111111
+1111111111..............................1111111111
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+start: list is 3 long
+next: 0 20 10 25
+packer__place_by: fits
+remove_area: 0 22 3 25
+add_area: 3 20 10 25
+add_area: 0 20 10 22
+0 placed at: {0 22 3 25}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+3 20 10 25
+40 20 50 25
+0 20 10 22
+10 0 40 20
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 3 20 10 25
+drawbox: 3 20 10 25
+next: 40 20 50 25
+drawbox: 40 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 10 0 40 20
+drawbox: 10 0 40 20
+next: none left
+...1111111..............................1111111111
+...1111111..............................1111111111
+...1111111..............................1111111111
+1112222222..............................1111111111
+1112222222..............................1111111111
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+start: list is 4 long
+next: 3 20 10 25
+packer__place_by: fits
+remove_area: 3 22 6 25
+add_area: 6 20 10 25
+add_area: 3 20 10 22
+add_area: contained by: 2 <0 20 10 22>
+1 placed at: {3 22 6 25}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+6 20 10 25
+40 20 50 25
+0 20 10 22
+10 0 40 20
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 6 20 10 25
+drawbox: 6 20 10 25
+next: 40 20 50 25
+drawbox: 40 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 10 0 40 20
+drawbox: 10 0 40 20
+next: none left
+......1111..............................1111111111
+......1111..............................1111111111
+......1111..............................1111111111
+1111112222..............................1111111111
+1111112222..............................1111111111
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+start: list is 4 long
+next: 6 20 10 25
+packer__place_by: fits
+remove_area: 6 22 9 25
+add_area: 9 20 10 25
+add_area: 6 20 10 22
+add_area: contained by: 2 <0 20 10 22>
+2 placed at: {6 22 9 25}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+40 20 50 25
+0 20 10 22
+10 0 40 20
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 40 20 50 25
+drawbox: 40 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 10 0 40 20
+drawbox: 10 0 40 20
+next: none left
+.........1..............................1111111111
+.........1..............................1111111111
+.........1..............................1111111111
+1111111112..............................1111111111
+1111111112..............................1111111111
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+start: list is 4 long
+next: 9 20 10 25
+next: 40 20 50 25
+packer__place_by: fits
+remove_area: 40 22 43 25
+add_area: 43 20 50 25
+add_area: 40 20 50 22
+3 placed at: {40 22 43 25}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+43 20 50 25
+0 20 10 22
+40 20 50 22
+10 0 40 20
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 43 20 50 25
+drawbox: 43 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 10 0 40 20
+drawbox: 10 0 40 20
+next: none left
+.........1.................................1111111
+.........1.................................1111111
+.........1.................................1111111
+1111111112..............................1112222222
+1111111112..............................1112222222
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+start: list is 5 long
+next: 9 20 10 25
+next: 43 20 50 25
+packer__place_by: fits
+remove_area: 43 22 46 25
+add_area: 46 20 50 25
+add_area: 43 20 50 22
+add_area: contained by: 3 <40 20 50 22>
+4 placed at: {43 22 46 25}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+46 20 50 25
+0 20 10 22
+40 20 50 22
+10 0 40 20
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 46 20 50 25
+drawbox: 46 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 10 0 40 20
+drawbox: 10 0 40 20
+next: none left
+.........1....................................1111
+.........1....................................1111
+.........1....................................1111
+1111111112..............................1111112222
+1111111112..............................1111112222
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+start: list is 5 long
+next: 9 20 10 25
+next: 46 20 50 25
+packer__place_by: fits
+remove_area: 46 22 49 25
+add_area: 49 20 50 25
+add_area: 46 20 50 22
+add_area: contained by: 3 <40 20 50 22>
+5 placed at: {46 22 49 25}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+49 20 50 25
+0 20 10 22
+40 20 50 22
+10 0 40 20
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 49 20 50 25
+drawbox: 49 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 10 0 40 20
+drawbox: 10 0 40 20
+next: none left
+.........1.......................................1
+.........1.......................................1
+.........1.......................................1
+1111111112..............................1111111112
+1111111112..............................1111111112
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+start: list is 5 long
+next: 9 20 10 25
+next: 49 20 50 25
+next: 0 20 10 22
+next: 40 20 50 22
+next: 10 0 40 20
+packer__place_by: fits
+remove_area: 10 17 13 20
+add_area: 13 0 40 20
+add_area: 10 0 40 17
+6 placed at: {10 17 13 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+49 20 50 25
+0 20 10 22
+40 20 50 22
+13 0 40 20
+10 0 40 17
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 49 20 50 25
+drawbox: 49 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 13 0 40 20
+drawbox: 13 0 40 20
+next: 10 0 40 17
+drawbox: 10 0 40 17
+next: none left
+.........1.......................................1
+.........1.......................................1
+.........1.......................................1
+1111111112..............................1111111112
+1111111112..............................1111111112
+.............111111111111111111111111111..........
+.............111111111111111111111111111..........
+.............111111111111111111111111111..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+start: list is 6 long
+next: 9 20 10 25
+next: 49 20 50 25
+next: 0 20 10 22
+next: 40 20 50 22
+next: 13 0 40 20
+packer__place_by: fits
+remove_area: 13 17 16 20
+add_area: 16 0 40 20
+add_area: 13 0 40 17
+add_area: contained by: 5 <10 0 40 17>
+7 placed at: {13 17 16 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+49 20 50 25
+0 20 10 22
+40 20 50 22
+16 0 40 20
+10 0 40 17
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 49 20 50 25
+drawbox: 49 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 16 0 40 20
+drawbox: 16 0 40 20
+next: 10 0 40 17
+drawbox: 10 0 40 17
+next: none left
+.........1.......................................1
+.........1.......................................1
+.........1.......................................1
+1111111112..............................1111111112
+1111111112..............................1111111112
+................111111111111111111111111..........
+................111111111111111111111111..........
+................111111111111111111111111..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+start: list is 6 long
+next: 9 20 10 25
+next: 49 20 50 25
+next: 0 20 10 22
+next: 40 20 50 22
+next: 16 0 40 20
+packer__place_by: fits
+remove_area: 16 17 19 20
+add_area: 19 0 40 20
+add_area: 16 0 40 17
+add_area: contained by: 5 <10 0 40 17>
+8 placed at: {16 17 19 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+49 20 50 25
+0 20 10 22
+40 20 50 22
+19 0 40 20
+10 0 40 17
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 49 20 50 25
+drawbox: 49 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 19 0 40 20
+drawbox: 19 0 40 20
+next: 10 0 40 17
+drawbox: 10 0 40 17
+next: none left
+.........1.......................................1
+.........1.......................................1
+.........1.......................................1
+1111111112..............................1111111112
+1111111112..............................1111111112
+...................111111111111111111111..........
+...................111111111111111111111..........
+...................111111111111111111111..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+start: list is 6 long
+next: 9 20 10 25
+next: 49 20 50 25
+next: 0 20 10 22
+next: 40 20 50 22
+next: 19 0 40 20
+packer__place_by: fits
+remove_area: 19 17 22 20
+add_area: 22 0 40 20
+add_area: 19 0 40 17
+add_area: contained by: 5 <10 0 40 17>
+9 placed at: {19 17 22 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+9 20 10 25
+49 20 50 25
+0 20 10 22
+40 20 50 22
+22 0 40 20
+10 0 40 17
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 9 20 10 25
+drawbox: 9 20 10 25
+next: 49 20 50 25
+drawbox: 49 20 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 22 0 40 20
+drawbox: 22 0 40 20
+next: 10 0 40 17
+drawbox: 10 0 40 17
+next: none left
+.........1.......................................1
+.........1.......................................1
+.........1.......................................1
+1111111112..............................1111111112
+1111111112..............................1111111112
+......................111111111111111111..........
+......................111111111111111111..........
+......................111111111111111111..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+packer__clear
+start: list is 6 long
+next: 9 20 10 25
+next: 49 20 50 25
+next: 0 20 10 22
+packer__clear: invalidate area
+remove_area: 0 22 50 25
+add_area: 9 20 10 22
+add_area: contained by: 2 <0 20 10 22>
+add_area: 49 20 50 22
+add_area: contained by: 3 <40 20 50 22>
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 20 10 22
+40 20 50 22
+22 0 40 20
+10 0 40 17
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 22 0 40 20
+drawbox: 22 0 40 20
+next: 10 0 40 17
+drawbox: 10 0 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+1111111111..............................1111111111
+1111111111..............................1111111111
+......................111111111111111111..........
+......................111111111111111111..........
+......................111111111111111111..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+
+
+with margins
+
+
+with margins: 5 3 45 22
+remove_area: 5 3 10 20
+add_area: 0 0 5 25
+add_area: 10 0 50 25
+add_area: 0 0 50 3
+add_area: 0 20 50 25
+remove_area: 40 3 45 20
+add_area: 10 0 40 25
+add_area: 45 0 50 25
+add_area: 10 0 50 3
+add_area: contained by: 3 <0 0 50 3>
+add_area: 10 20 50 25
+add_area: contained by: 4 <0 20 50 25>
+remove_area: 10 20 40 22
+add_area: 0 20 10 25
+add_area: 40 20 50 25
+add_area: growing list to 16
+add_area: 0 22 50 25
+add_area: 10 0 40 20
+add_area: 10 22 40 25
+add_area: contained by: 9 <0 22 50 25>
+
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+10 0 40 20
+0 0 50 3
+0 0 0 0
+trimming to 7 long
+start: list is 7 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 10 3 40 20
+drawbox: 10 3 40 20
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..................................................
+..................................................
+..................................................
+start: list is 7 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 10 3 40 20
+packer__place_by: fits
+remove_area: 10 17 13 20
+add_area: 13 0 40 20
+add_area: 10 0 40 17
+0 placed at: {10 17 13 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+13 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 13 3 40 20
+drawbox: 13 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+.............111111111111111111111111111..........
+.............111111111111111111111111111..........
+.............111111111111111111111111111..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..........111222222222222222222222222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 13 3 40 20
+packer__place_by: fits
+remove_area: 13 17 16 20
+add_area: 16 0 40 20
+add_area: 13 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+1 placed at: {13 17 16 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+16 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 16 3 40 20
+drawbox: 16 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+................111111111111111111111111..........
+................111111111111111111111111..........
+................111111111111111111111111..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..........111111222222222222222222222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 16 3 40 20
+packer__place_by: fits
+remove_area: 16 17 19 20
+add_area: 19 0 40 20
+add_area: 16 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+2 placed at: {16 17 19 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+19 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 19 3 40 20
+drawbox: 19 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+...................111111111111111111111..........
+...................111111111111111111111..........
+...................111111111111111111111..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..........111111111222222222222222222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 19 3 40 20
+packer__place_by: fits
+remove_area: 19 17 22 20
+add_area: 22 0 40 20
+add_area: 19 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+3 placed at: {19 17 22 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+22 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 22 3 40 20
+drawbox: 22 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+......................111111111111111111..........
+......................111111111111111111..........
+......................111111111111111111..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..........111111111111222222222222222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 22 3 40 20
+packer__place_by: fits
+remove_area: 22 17 25 20
+add_area: 25 0 40 20
+add_area: 22 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+4 placed at: {22 17 25 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+25 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 25 3 40 20
+drawbox: 25 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+.........................111111111111111..........
+.........................111111111111111..........
+.........................111111111111111..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..........111111111111111222222222222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 25 3 40 20
+packer__place_by: fits
+remove_area: 25 17 28 20
+add_area: 28 0 40 20
+add_area: 25 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+5 placed at: {25 17 28 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+28 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 28 3 40 20
+drawbox: 28 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+............................111111111111..........
+............................111111111111..........
+............................111111111111..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..........111111111111111111222222222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 28 3 40 20
+packer__place_by: fits
+remove_area: 28 17 31 20
+add_area: 31 0 40 20
+add_area: 28 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+6 placed at: {28 17 31 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+31 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 31 3 40 20
+drawbox: 31 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+...............................111111111..........
+...............................111111111..........
+...............................111111111..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..........111111111111111111111222222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 31 3 40 20
+packer__place_by: fits
+remove_area: 31 17 34 20
+add_area: 34 0 40 20
+add_area: 31 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+7 placed at: {31 17 34 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+34 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 34 3 40 20
+drawbox: 34 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+..................................111111..........
+..................................111111..........
+..................................111111..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..........111111111111111111111111222222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 34 3 40 20
+packer__place_by: fits
+remove_area: 34 17 37 20
+add_area: 37 0 40 20
+add_area: 34 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+8 placed at: {34 17 37 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+37 0 40 20
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 8 long
+start: list is 8 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 37 3 40 20
+drawbox: 37 3 40 20
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+.....................................111..........
+.....................................111..........
+.....................................111..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..........111111111111111111111111111222..........
+..................................................
+..................................................
+..................................................
+start: list is 8 long
+next: 5 20 10 22
+next: 40 20 45 22
+next: 37 3 40 20
+packer__place_by: fits
+remove_area: 37 17 40 20
+add_area: 37 0 40 17
+add_area: contained by: 6 <10 0 40 17>
+9 placed at: {37 17 40 20}
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 20 10 25
+0 0 5 25
+40 20 50 25
+45 0 50 25
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 7 long
+start: list is 7 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+..................................................
+..................................................
+..................................................
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..................................................
+..................................................
+..................................................
+packer__clear
+start: list is 7 long
+next: 5 20 10 22
+packer__clear: invalidate area
+remove_area: 5 22 45 22
+add_area: 0 20 5 25
+add_area: contained by: 2 <0 0 5 25>
+add_area: 0 20 10 22
+add_area: 0 22 10 25
+add_area: contained by: 0 <0 22 50 25>
+add_area: 45 20 50 25
+add_area: contained by: 4 <45 0 50 25>
+add_area: 40 20 50 22
+add_area: 40 22 50 25
+add_area: contained by: 0 <0 22 50 25>
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 22 50 25
+0 0 5 25
+45 0 50 25
+0 20 10 22
+40 20 50 22
+10 0 40 17
+0 0 50 3
+0 0 0 0
+trimming to 7 long
+start: list is 7 long
+next: 5 20 10 22
+drawbox: 5 20 10 22
+next: 40 20 45 22
+drawbox: 40 20 45 22
+next: 10 3 40 17
+drawbox: 10 3 40 17
+next: none left
+..................................................
+..................................................
+..................................................
+.....11111..............................11111.....
+.....11111..............................11111.....
+..................................................
+..................................................
+..................................................
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..........111111111111111111111111111111..........
+..................................................
+..................................................
+..................................................
+with margins: 0 0 50 25
+start: list is 7 long
+next: 0 22 50 25
+drawbox: 0 22 50 25
+next: 0 0 5 25
+drawbox: 0 0 5 25
+next: 45 0 50 25
+drawbox: 45 0 50 25
+next: 0 20 10 22
+drawbox: 0 20 10 22
+next: 40 20 50 22
+drawbox: 40 20 50 22
+next: 10 0 40 17
+drawbox: 10 0 40 17
+next: 0 0 50 3
+drawbox: 0 0 50 3
+next: none left
+22222111111111111111111111111111111111111111122222
+22222111111111111111111111111111111111111111122222
+22222111111111111111111111111111111111111111122222
+2222211111..............................1111122222
+2222211111..............................1111122222
+11111........................................11111
+11111........................................11111
+11111........................................11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+11111.....111111111111111111111111111111.....11111
+22222111112222222222222222222222222222221111122222
+22222111112222222222222222222222222222221111122222
+22222111112222222222222222222222222222221111122222
+test2: loc=0, clear=0
+with margins: 2 2 98 34
+start: list is 1 long
+next: 2 2 98 34
+drawbox: 2 2 98 34
+next: none left
+....................................................................................................
+....................................................................................................
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+....................................................................................................
+....................................................................................................
+loop: i=0
+start: list is 1 long
+next: 2 2 98 34
+remaining = 96
+element 0: chosenw = 26
+element 1: chosenw = 26
+element 2: chosenw = 26
+can place from 0 to 2 on this line
+place element
+start: list is 1 long
+next: 2 2 98 34
+packer__place_by: fits
+remove_area: 2 8 28 34
+add_area: 0 0 2 36
+add_area: 28 0 100 36
+add_area: 0 0 100 8
+add_area: 0 34 100 36
+place horizontal padding
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+28 0 100 36
+0 0 100 8
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 28 2 98 34
+packer__place_by: fits
+remove_area: 28 6 30 34
+add_area: 30 0 100 36
+add_area: 28 0 100 6
+add_area: contained by: 3 <0 0 100 8>
+add_area: 28 34 100 36
+add_area: contained by: 0 <0 34 100 36>
+add_area: 0 0 28 8
+add_area: 30 0 100 8
+add_area: contained by: 4 <30 0 100 36>
+add_area: 0 0 100 6
+place element
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+30 0 100 36
+0 0 28 8
+0 0 100 6
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 30 2 98 34
+packer__place_by: fits
+remove_area: 30 6 56 34
+add_area: 56 0 100 36
+add_area: 30 0 100 6
+add_area: contained by: 4 <0 0 100 6>
+add_area: 30 34 100 36
+add_area: contained by: 0 <0 34 100 36>
+place horizontal padding
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+56 0 100 36
+0 0 28 8
+0 0 100 6
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 56 2 98 34
+packer__place_by: fits
+remove_area: 56 8 58 34
+add_area: 58 0 100 36
+add_area: 56 0 100 8
+add_area: 56 34 100 36
+add_area: contained by: 0 <0 34 100 36>
+place element
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+58 0 100 36
+0 0 28 8
+56 0 100 8
+0 0 100 6
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 58 2 98 34
+packer__place_by: fits
+remove_area: 58 8 84 34
+add_area: 84 0 100 36
+add_area: 58 0 100 8
+add_area: contained by: 4 <56 0 100 8>
+add_area: 58 34 100 36
+add_area: contained by: 0 <0 34 100 36>
+*** won't fit on this line (only 18 left, but need 28)
+packer__clear
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+84 0 100 36
+0 0 28 8
+56 0 100 8
+0 0 100 6
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 84 2 98 34
+next: 2 2 28 8
+packer__clear: invalidate area
+remove_area: 2 8 98 34
+add_area: 98 0 100 36
+add_area: 84 0 100 8
+add_area: contained by: 4 <56 0 100 8>
+add_area: 84 34 100 36
+add_area: contained by: 0 <0 34 100 36>
+loop: i=3
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+98 0 100 36
+0 0 28 8
+56 0 100 8
+0 0 100 6
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 2 2 28 8
+remaining = 26
+element 3: chosenw = 26
+can place from 3 to 3 on this line
+place vertical padding
+start: list is 6 long
+next: 2 2 28 8
+next: 56 2 98 8
+next: 2 2 98 6
+packer__place_by: fits
+remove_area: 2 4 98 6
+add_area: 0 0 2 8
+add_area: contained by: 1 <0 0 2 36>
+add_area: 0 0 28 4
+add_area: contained by: 5 <0 0 100 6>
+add_area: 0 6 28 8
+add_area: 98 0 100 8
+add_area: contained by: 2 <98 0 100 36>
+add_area: 56 0 100 4
+add_area: contained by: 5 <0 0 100 6>
+add_area: 56 6 100 8
+add_area: 0 0 2 6
+add_area: contained by: 1 <0 0 2 36>
+add_area: 98 0 100 6
+add_area: contained by: 2 <98 0 100 36>
+add_area: 0 0 100 4
+add_area: growing list to 16
+place element
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+98 0 100 36
+0 6 28 8
+56 6 100 8
+0 0 100 4
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 2 6 28 8
+packer__place_by: fits
+remove_area: 2 6 28 8
+add_area: 0 6 2 8
+add_area: contained by: 1 <0 0 2 36>
+*** won't fit on this line (only 0 left, but need 26)
+packer__clear
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+98 0 100 36
+56 6 100 8
+0 0 100 4
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 56 6 98 8
+next: 2 2 98 4
+packer__clear: invalidate area
+remove_area: 2 4 98 34
+add_area: 98 6 100 8
+add_area: contained by: 2 <98 0 100 36>
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+98 0 100 36
+0 0 100 4
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 2 2 98 4
+drawbox: 2 2 98 4
+next: none left
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+....................................................................................................
+....................................................................................................
+drawbox: 2 8 28 34
+drawbox: 30 6 56 34
+drawbox: 58 8 84 34
+drawbox: 2 6 28 8
+....................................................................................................
+....................................................................................................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111..11111111111111111111111111................
+..11111111111111111111111111..11111111111111111111111111............................................
+..11111111111111111111111111..11111111111111111111111111............................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+test2: loc=1, clear=1
+with margins: 2 2 98 34
+start: list is 1 long
+next: 2 2 98 34
+drawbox: 2 2 98 34
+next: none left
+....................................................................................................
+....................................................................................................
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+....................................................................................................
+....................................................................................................
+loop: i=0
+packer__sort: trimming
+0 0 100 36
+start: list is 1 long
+next: 2 2 98 34
+remaining = 96
+element 0: chosenw = 26
+element 1: chosenw = 26
+element 2: chosenw = 26
+can place from 0 to 2 on this line
+place element
+start: list is 1 long
+next: 2 2 98 34
+packer__place_by: fits
+remove_area: 72 8 98 34
+add_area: 0 0 72 36
+add_area: 98 0 100 36
+add_area: 0 0 100 8
+add_area: 0 34 100 36
+place horizontal padding
+packer__sort: sorting areas to 1
+packer__sort: trimming
+0 34 100 36
+98 0 100 36
+0 0 72 36
+0 0 100 8
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 2 2 72 34
+packer__place_by: fits
+remove_area: 70 6 72 34
+add_area: 0 0 70 36
+add_area: 0 0 72 6
+add_area: contained by: 3 <0 0 100 8>
+add_area: 0 34 72 36
+add_area: contained by: 0 <0 34 100 36>
+add_area: 0 0 70 8
+add_area: contained by: 4 <0 0 70 36>
+add_area: 72 0 100 8
+add_area: 0 0 100 6
+place element
+packer__sort: sorting areas to 1
+packer__sort: trimming
+0 34 100 36
+98 0 100 36
+0 0 70 36
+72 0 100 8
+0 0 100 6
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 2 2 70 34
+packer__place_by: fits
+remove_area: 44 6 70 34
+add_area: 0 0 44 36
+add_area: 0 0 70 6
+add_area: contained by: 4 <0 0 100 6>
+add_area: 0 34 70 36
+add_area: contained by: 0 <0 34 100 36>
+place horizontal padding
+packer__sort: sorting areas to 1
+packer__sort: trimming
+0 34 100 36
+98 0 100 36
+0 0 44 36
+72 0 100 8
+0 0 100 6
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 2 2 44 34
+packer__place_by: fits
+remove_area: 42 8 44 34
+add_area: 0 0 42 36
+add_area: 0 0 44 8
+add_area: 0 34 44 36
+add_area: contained by: 0 <0 34 100 36>
+place element
+packer__sort: sorting areas to 1
+packer__sort: trimming
+0 34 100 36
+98 0 100 36
+0 0 42 36
+72 0 100 8
+0 0 44 8
+0 0 100 6
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 2 2 42 34
+packer__place_by: fits
+remove_area: 16 8 42 34
+add_area: 0 0 16 36
+add_area: 0 0 42 8
+add_area: contained by: 4 <0 0 44 8>
+add_area: 0 34 42 36
+add_area: contained by: 0 <0 34 100 36>
+*** won't fit on this line (only 18 left, but need 28)
+packer__clear
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 16 36
+98 0 100 36
+0 0 44 8
+72 0 100 8
+0 0 100 6
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 2 2 16 34
+next: 2 2 44 8
+next: 72 2 98 8
+packer__clear: invalidate area
+remove_area: 2 8 98 34
+add_area: 0 0 2 36
+add_area: 0 0 16 8
+add_area: contained by: 3 <0 0 44 8>
+add_area: 0 34 16 36
+add_area: contained by: 0 <0 34 100 36>
+loop: i=3
+packer__sort: sorting areas to 1
+packer__sort: trimming
+0 34 100 36
+98 0 100 36
+0 0 2 36
+72 0 100 8
+0 0 44 8
+0 0 100 6
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 72 2 98 8
+remaining = 26
+element 3: chosenw = 26
+can place from 3 to 3 on this line
+place vertical padding
+start: list is 6 long
+next: 72 2 98 8
+next: 2 2 44 8
+next: 2 2 98 6
+packer__place_by: fits
+remove_area: 2 4 98 6
+add_area: 98 0 100 8
+add_area: contained by: 1 <98 0 100 36>
+add_area: 72 0 100 4
+add_area: contained by: 5 <0 0 100 6>
+add_area: 72 6 100 8
+add_area: 0 0 2 8
+add_area: contained by: 2 <0 0 2 36>
+add_area: 0 0 44 4
+add_area: contained by: 5 <0 0 100 6>
+add_area: 0 6 44 8
+add_area: 0 0 2 6
+add_area: contained by: 2 <0 0 2 36>
+add_area: 98 0 100 6
+add_area: contained by: 1 <98 0 100 36>
+add_area: 0 0 100 4
+add_area: growing list to 16
+place element
+packer__sort: sorting areas to 1
+packer__sort: trimming
+0 34 100 36
+98 0 100 36
+0 0 2 36
+72 6 100 8
+0 6 44 8
+0 0 100 4
+0 0 0 0
+trimming to 6 long
+start: list is 6 long
+next: 72 6 98 8
+packer__place_by: fits
+remove_area: 72 6 98 8
+add_area: 98 6 100 8
+add_area: contained by: 1 <98 0 100 36>
+*** won't fit on this line (only 0 left, but need 26)
+packer__clear
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+98 0 100 36
+0 6 44 8
+0 0 100 4
+0 0 0 0
+trimming to 5 long
+start: list is 5 long
+next: 2 6 44 8
+next: 2 2 98 4
+packer__clear: invalidate area
+remove_area: 2 4 98 34
+add_area: 0 6 2 8
+add_area: contained by: 1 <0 0 2 36>
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 34 100 36
+0 0 2 36
+98 0 100 36
+0 0 100 4
+0 0 0 0
+trimming to 4 long
+start: list is 4 long
+next: 2 2 98 4
+drawbox: 2 2 98 4
+next: none left
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+..111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111..
+....................................................................................................
+....................................................................................................
+drawbox: 72 8 98 34
+drawbox: 44 6 70 34
+drawbox: 16 8 42 34
+drawbox: 72 6 98 8
+....................................................................................................
+....................................................................................................
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+................11111111111111111111111111..11111111111111111111111111..11111111111111111111111111..
+............................................11111111111111111111111111..11111111111111111111111111..
+............................................11111111111111111111111111..11111111111111111111111111..
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+....................................................................................................
+
+>> layout tests
+start: list is 1 long
+next: 0 0 8 8
+start: list is 1 long
+next: 0 0 8 8
+packer__place_by: fits
+remove_area: 0 6 2 8
+add_area: 2 0 8 8
+add_area: 0 0 8 6
+packer__sort: sorting areas to 0
+packer__sort: trimming
+2 0 8 8
+0 0 8 6
+0 0 0 0
+trimming to 2 long
+start: list is 2 long
+next: 2 0 8 8
+packer__place_by: fits
+remove_area: 2 6 4 8
+add_area: 4 0 8 8
+add_area: 2 0 8 6
+add_area: contained by: 1 <0 0 8 6>
+packer__sort: sorting areas to 0
+packer__sort: trimming
+4 0 8 8
+0 0 8 6
+0 0 0 0
+trimming to 2 long
+start: list is 2 long
+next: 4 0 8 8
+packer__place_by: fits
+remove_area: 4 6 6 8
+add_area: 6 0 8 8
+add_area: 4 0 8 6
+add_area: contained by: 1 <0 0 8 6>
+packer__sort: sorting areas to 0
+packer__sort: trimming
+6 0 8 8
+0 0 8 6
+0 0 0 0
+trimming to 2 long
+start: list is 2 long
+next: 6 0 8 8
+packer__place_by: fits
+remove_area: 6 6 8 8
+add_area: 6 0 8 6
+add_area: contained by: 1 <0 0 8 6>
+packer__sort: sorting areas to 0
+packer__sort: trimming
+0 0 8 6
+0 0 0 0
+trimming to 1 long
+start: list is 1 long
+next: 0 0 8 6
+packer__place_by: fits
+remove_area: 0 4 4 6
+add_area: 4 0 8 6
+add_area: 0 0 8 4
+packer__clear
+packer__sort: sorting areas to 0
+packer__sort: trimming
+4 0 8 6
+0 0 8 4
+0 0 0 0
+trimming to 2 long
+start: list is 2 long
+next: 4 0 8 6
+next: 0 0 8 4
+packer__clear: invalidate area
+remove_area: 0 4 8 8
+add_area: 4 0 8 4
+add_area: contained by: 1 <0 0 8 4>
+consumed: 0 4 8 8
+11..11..
+11..11..
+1111....
+1111....
+........
+........
+........
+........
+
+
+Tests completed: 12/12 tests passed.
+
+Fortify: Statistics at test.c.main.117
+         Memory currently allocated: 0 bytes in 0 blocks
+         Maximum memory allocated at one time: 4127 bytes in 32 blocks
+         There have been 189 allocations and 189 deallocations
+         There was a total of 35739 bytes allocated
+         The average allocation was 189 bytes

@@ -1,0 +1,17 @@
+/* $Id: union.c,v 1.1 2009-05-18 22:25:31 dpt Exp $ */
+
+#include "oslib/os.h"
+
+#include "appengine/types.h"
+
+#include "appengine/geom/box.h"
+
+/* return a box "c" that contains both boxes "a" and "b" */
+
+void box__union(const os_box *a, const os_box *b, os_box *c)
+{
+  c->x0 = MIN(a->x0, b->x0);
+  c->y0 = MIN(a->y0, b->y0);
+  c->x1 = MAX(a->x1, b->x1);
+  c->y1 = MAX(a->y1, b->y1);
+}
