@@ -7,7 +7,7 @@
 
 #include "appengine/base/appengine.h"
 #include "appengine/base/oserror.h"
-#include "appengine/internet.h"
+#include "appengine/net/internet.h"
 
 int mime_tofiletype(const char *mimetype)
 {

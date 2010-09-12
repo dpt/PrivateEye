@@ -9,7 +9,7 @@
 #include "appengine/base/appengine.h"
 #include "appengine/base/strings.h"
 
-#include "appengine/internet.h"
+#include "appengine/net/internet.h"
 
 /*int main (void)
 {
