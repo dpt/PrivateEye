@@ -1,0 +1,101 @@
+20050126 version: exiftags 1.00
+20050107 added Canon tags, minor tweaks (thanks: Henrik Levkowetz)
+20050104 fixed handling of short ASCII strings
+20041228 added Panasonic tags (thanks: Lee Kindness)
+20041227 enhanced Nikon maker note support for newer cameras
+20041223 internal code cleanup to allow separate maker TIFF info
+20041220 added new Canon shooting modes (thanks: Henrik Levkowetz)
+20041217 fixed exiftime crash on missing tags (thanks: Nathan Treadway)
+20041106 fixed looping from recursive Canon IFD ref (thanks: Mathieu Vanasse)
+20041011 sanitize ASCII tags to handle corrupt maker notes
+20041010 added Panasonic values, tags (thanks: Laurent Monin)
+20041009 image number support for Canon EOS-20D (thanks: Per Kristian Hove)
+20041009 added Canon EOS-20D custom function support
+20040915 added Sigma maker note support
+20040821 added Canon tag values, calculate EV's (thanks: Bradley Bailey)
+20040820 fixed flash tag processing to catch all possible values
+20040820 fixed spelling for Minolta values (thanks: Martin Pool)
+
+20040506 version: exiftags 0.99.1
+20040506 fixed exiftime install oversight
+20040504 added Canon camera actuations (thanks: Stan Jirman)
+
+20040430 version: exiftags 0.99
+20040420 added Panasonic maker note support (thanks: Tom Hughes)
+20040410 improved error messages in exifcom
+20040408 added exiftime utility to display and write date/time tags
+20040403 added Leica maker note support
+20040403 slight hack to use Canon's subject distance tag (units unclear)
+20040403 fixed Canon maker function parameter mismatch
+20040403 updated for Exif 2.21 draft spec (minor changes)
+20040403 fixed problem with images without IFD1
+20040403 additional bounds checks on some tags (thanks: Michael McCandless)
+20040403 fixed negative fraction display
+20040227 added Asahi/Pentax maker note support
+20031101 prevent looping when a tag refers to its own IFD
+
+20030815 version: exiftags 0.98
+20030807 fixed some Fuji, Minolta, Nikon byte order bugs/dependencies
+20030806 internal code cleanup to nicely support multiple tag sets
+20030806 internal code cleanup to allow different IFD byte orders
+20030806 added Sanyo maker note support
+20030805 added support for Nikon D1X
+20030805 fixed crash on Minolta DiMAGE EX
+20030802 fixed offset check bug for ascii strings
+20030801 added support for GPS info tags
+20030622 fixed crashes on badly formed comments, type mismatches
+20030622 added Canon 10D custom function support (thanks: Jason Montojo)
+20030211 tweaked Canon 1D/1Ds custom function support
+
+20030204 version: exiftags 0.97
+20030204 fixed byte order bug displaying Exif version
+20030128 assign bad or senseless tags separate dump level
+20030124 internal code cleanups
+20030123 assign overridden tags separate dump level
+20030121 support for Canon EOS-1D & 1DS (thanks: Stan Jirman)
+20030120 added -s option to customize delimiter
+20030120 support for multiple shorts in a tag (e.g., subject area)
+20030112 added Minolta maker note support (thanks: Javier Crespo)
+20030104 removed spurious Exif header warning (thanks: Kevin Layer)
+20030104 Canon ISO values (thanks: Alan Murphy)
+
+20021103 version: exiftags 0.96
+20021103 internal mechanism for one tag to override another
+20021102 reduce fractions (e.g., exposure time)
+20021102 updated for Exif 2.2 spec: new tags, some existing tags expanded
+20021102 made flash tag support safer (thanks: Christian Zuckschwerdt)
+20021102 save Exif version with file info
+20021101 added Casio maker note support
+20021101 fixed segfault on bad Exif data
+
+20021006 version: exiftags 0.95
+20021007 added exifcom utility to display and write UserComment
+20021006 fixed read of max len UserComment
+20021006 internal code cleanup to allow additional utilities
+20021006 made ISO setting image-specific
+20021005 internal change to value description lookups
+20021005 added support for Canon D30 (and D60?) custom functions
+20021005 added new Canon maker note tags
+20021005 added -l option for removable lens cameras
+20021004 made shutter speed verbose when exposure time available
+20021004 smarter rational type handling
+
+20020928 version: exiftags 0.94
+20020928 support ASCII UserComment (thanks: Alan Judge)
+
+20020831 version: exiftags 0.93
+20020831 print warnings instead of dying on some errors (thanks: Ian Morgan)
+
+20020801 version: exiftags 0.92
+20020731 prevent potential NaN values
+20020731 portability changes for Windows
+
+20020712 version: exiftags 0.91
+20020711 portability changes for Solaris
+20020711 modifications too numerous to mention since exifdump
+20020630 changed name to exiftags
+
+20020216 version: exifdump 0.90
+20020120 version: exifdump 0.80
+
+$Id: CHANGES,v 1.1.1.1 2007/07/17 18:30:32 dpt Exp $

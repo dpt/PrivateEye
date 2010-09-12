@@ -1,0 +1,148 @@
+# Project:		libjpeg:
+
+# Tools
+
+x			= x
+
+asm_			= objasm
+cc_			= cc
+cdir			= cdir
+every_			= every.every2
+libfile_		= libfile
+link_			= link
+wipe			= $(x) wipe
+
+# Tool flags:
+
+asmflags		= $(depend) $(throwback)
+ccflags			= -apcs 3/32bit -c99 -strict -fah -arch 3 -cpu XScale -Otime -c $(depend) $(throwback) $(includes) $(ccextra)
+everyflags     	 	= -c
+libfileflags		= -c
+linkflags		= -c++
+wipeflags		= ~CFR~V
+
+# Combined tools and flags
+
+asm			= $(asm_) $(asmflags)
+cc			= $(cc_) $(ccflags)
+every			= $(every_) $(everyflags)
+libfile			= $(libfile_) $(libfileflags)
+link			= $(link_) $(linkflags)
+
+# Tool flags (specific cases)
+
+defines			= -DNO_GETENV
+
+# Compiler options
+
+depend			= -depend !Depend
+throwback		= -throwback
+
+# Library references
+
+includes		= -IC: -ICLibs: -IOSLib:
+libraries		= CLibs:appengine.o.AOFLib OSLib:o.OSLib32 C:o.stubs
+libraries_normal	= $(libraries)
+libraries_debug		= $(libraries)
+
+# Targets
+
+# ----- release versions -----
+
+SYSDEPMEM=jmemro.o
+
+# library object files common to compression and decompression
+COMOBJECTS=jaricom.o jcomapi.o jutils.o jerror.o jmemmgr.o $(SYSDEPMEM)
+
+# compression library object files
+CLIBOBJECTS=jcapimin.o jcapistd.o jcarith.o jctrans.o jcparam.o jdatadst.o jcinit.o jcmaster.o jcmarker.o jcmainct.o jcprepct.o jccoefct.o jccolor.o jcsample.o jchuff.o jcdctmgr.o jfdctfst.o jfdctflt.o jfdctint.o
+
+# decompression library object files
+DLIBOBJECTS=jdapimin.o jdapistd.o jdarith.o jdtrans.o jdatasrc.o jdmaster.o jdinput.o jdmarker.o jdhuff.o jdmainct.o jdcoefct.o jdpostct.o jddctmgr.o jidctfst.o jidctflt.o jidctint.o jdsample.o jdcolor.o jquant1.o jquant2.o jdmerge.o
+
+# These objectfiles are included in libjpeg.a
+LIBOBJECTS=$(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
+
+# object files for sample applications (excluding library files)
+COBJECTS=cjpeg.o rdppm.o rdgif.o rdtarga.o rdrle.o rdbmp.o rdswitch.o cdjpeg.o
+DOBJECTS=djpeg.o wrppm.o wrgif.o wrtarga.o wrrle.o wrbmp.o rdcolmap.o cdjpeg.o
+TROBJECTS=jpegtran.o rdswitch.o cdjpeg.o transupp.o
+
+# ----- debug versions (suffixes must be reversed)
+
+SYSDEPMEMD=odf.jmemro
+
+# library object files common to compression and decompression
+COMOBJECTSD=odf.jaricom odf.jcomapi odf.jutils odf.jerror odf.jmemmgr $(SYSDEPMEMD)
+
+# compression library object files
+CLIBOBJECTSD=odf.jcapimin odf.jcapistd odf.jcarith odf.jctrans odf.jcparam odf.jdatadst odf.jcinit odf.jcmaster odf.jcmarker odf.jcmainct odf.jcprepct odf.jccoefct odf.jccolor odf.jcsample odf.jchuff odf.jcdctmgr odf.jfdctfst odf.jfdctflt odf.jfdctint
+
+# decompression library object files
+DLIBOBJECTSD=odf.jdapimin odf.jdapistd odf.jdarith odf.jdtrans odf.jdatasrc odf.jdmaster odf.jdinput odf.jdmarker odf.jdhuff odf.jdmainct odf.jdcoefct odf.jdpostct odf.jddctmgr odf.jidctfst odf.jidctflt odf.jidctint odf.jdsample odf.jdcolor odf.jquant1 odf.jquant2 odf.jdmerge
+
+# These objectfiles are included in libjpeg.a
+LIBOBJECTSD=$(CLIBOBJECTSD) $(DLIBOBJECTSD) $(COMOBJECTSD)
+
+# object files for sample applications (excluding library files)
+COBJECTSD=odf.cjpeg odf.rdppm odf.rdgif odf.rdtarga odf.rdrle odf.rdbmp odf.rdswitch odf.cdjpeg
+DOBJECTSD=odf.djpeg odf.wrppm odf.wrgif odf.wrtarga odf.wrrle odf.wrbmp odf.rdcolmap odf.cdjpeg
+TROBJECTSD=odf.jpegtran odf.rdswitch odf.cdjpeg odf.transupp
+
+# Targets:
+
+o.libjpeg: 		$(LIBOBJECTS)
+			$(libfile) -o o.libjpeg $(LIBOBJECTS)
+
+odf.libjpeg: 		$(LIBOBJECTSD)
+			$(libfile) -o odf.libjpeg $(LIBOBJECTSD)
+
+o.libtrans:		transupp.o
+			$(libfile) -o o.libtrans transupp.o
+
+odf.libtrans:		odf.transupp
+			$(libfile) -o odf.libtrans odf.transupp
+
+libs:			o.libjpeg odf.libjpeg o.libtrans odf.libtrans
+			@echo 'libs' built
+
+bin.djpeg: 		$(DOBJECTS) o.libjpeg
+			$(link) -o bin.djpeg $(DOBJECTS) o.libjpeg $(libraries_normal)
+
+bin.cjpeg: 		$(COBJECTS) o.libjpeg
+			$(link) -o bin.cjpeg $(COBJECTS) o.libjpeg $(libraries_normal)
+
+bin.jpegtran: 		$(TROBJECTS) o.libjpeg
+			$(link) -o bin.jpegtran $(TROBJECTS) o.libjpeg $(libraries_normal)
+
+bin.rdjpgcom: 		rdjpgcom.o
+			$(link) -o bin.rdjpgcom rdjpgcom.o $(libraries_normal)
+
+bin.wrjpgcom: 		wrjpgcom.o
+			$(link) -o bin.wrjpgcom wrjpgcom.o $(libraries_normal)
+
+apps:			bin.wrjpgcom bin.rdjpgcom bin.jpegtran bin.cjpeg bin.djpeg
+			@echo 'apps' built
+
+all: 	 		libs apps
+			@echo 'all' built
+
+clean:;			$(every) "@...o @...odf" -d "$(wipe) %0 $(wipeflags)"
+			@echo Cleaned
+
+# Rule Patterns
+
+.SUFFIXES:		.o .odf
+
+.s.o:;			$(asm) -from $< -to $@
+.c.o:;			$(cc) -ff -DNDEBUG $(defines) -o $@ $<
+
+.s.odf:;		$(asm) -from $< -to $@ -g
+.c.odf:;		$(cc) -fn -g -DFORTIFY $(defines) -o $@ $<
+
+# User-editable dependencies:
+
+# Static dependencies:
+
+# Dynamic dependencies:
+

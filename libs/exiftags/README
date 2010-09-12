@@ -1,0 +1,52 @@
+exiftags-1.00
+20050126
+Eric M. Johnston, emj@postal.net
+
+This package consists of three utilities for displaying and modifying
+Exif tags in digital camera JPEG files:
+
+    1.  exiftags: spits out Exif tags;
+    2.  exifcom: displays and writes the UserComment tag; and
+    3.  exiftime: displays, adjusts, and writes date/time tags or lists
+        files in date/time order.
+
+See the included man pages for usage and more information.  If you want
+to read the man pages before installing, just do:
+
+    nroff -man exiftags.1 | more
+    nroff -man exifcom.1 | more
+    nroff -man exiftime.1 | more
+
+To build the programs, type:
+
+    make
+
+To install them (defaults to a prefix of /usr/local):
+
+    make install
+
+Included are Visual Studio workspace and project files which should
+be sufficient for building under Windows.  To install, just copy
+exiftags.exe, exifcom.exe, and exiftime.exe to some directory in your
+path (c:\windows\system32 usually works).
+
+It should build fine on FreeBSD, Linux, Solaris and Mac OS X using gcc;
+on Windows using Visual C++ 6.0 (and probably others).  Portability
+patches are welcomed.  You might have problems with the use of
+u_int16_t and u_int32_t.  If so, see exif.h.
+
+Feel free to use the source within the confines of its BSD license.  Note
+that I do not wish it to be re-licensed under some other Open Source
+license (e.g., GPL).  I would be interested to know if you use parts of
+this program in your own and any thoughts you might have on its
+improvement.
+
+If you know how to decode unsupported maker note data or are able to
+procure definitive information from a manufacturer, I'd love to hear
+from you.
+
+Please report bugs, incompatibilities, successes, etc. to
+emj@postal.net.  The latest version of this software will be posted
+at http://johnst.org/sw/exiftags/.
+
+$Id: README,v 1.1.1.1 2007/07/17 18:30:32 dpt Exp $

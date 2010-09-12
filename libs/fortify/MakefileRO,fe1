@@ -1,0 +1,27 @@
+# Project:   fortify
+
+
+# Toolflags:
+CCflags = -c -depend !Depend -IC: -throwback  -DFORTIFY  
+C++flags = -c -depend !Depend -IC: -throwback
+Linkflags = -aif -c++ -o $@
+ObjAsmflags = -throwback -NoCache -depend !Depend
+CMHGflags = 
+LibFileflags = -c -o $@
+Squeezeflags = -o $@
+
+
+# Final targets:
+#@.fortify:   @.o.fortify 
+#        libfile $(libfileflags) @.o.fortify 
+
+
+# User-editable dependencies:
+
+
+# Static dependencies:
+@.o.fortify:   @.c.fortify
+        cc $(ccflags) -o @.o.fortify @.c.fortify 
+
+
+# Dynamic dependencies:

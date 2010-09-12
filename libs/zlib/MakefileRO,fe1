@@ -1,0 +1,17 @@
+# Project:   zlib
+
+objects = adler32.o compress.o crc32.o deflate.o infback.o inffast.o inflate.o inftrees.o trees.o uncompr.o zutil.o
+
+ccflags      = -c -apcs 3/32bit -depend !Depend -IC: -throwback -strict -fah -arch 3 -cpu XScale -Otime -ff -DNDEBUG -Wdl
+libfileflags = -c -o $@
+
+.c.o:; cc $(ccflags) -o $@ $<
+
+# Final targets:
+@.zlib:   $(objects)
+        libfile $(libfileflags) $(objects)
+
+clean:
+	rm $(objects)
+
+# Dynamic dependencies:
