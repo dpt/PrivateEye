@@ -1,0 +1,106 @@
+Building PrivateEye
+===================
+
+Prerequisities
+--------------
+
+ - Makatic3   -- automatic makefile builder
+ - Norcroft C -- GCC has been used in the past, but will need more setup
+ - OSLib      -- http://ro-oslib.sourceforge.net/
+
+Checking out
+------------
+
+Create a new directory for the project. Then make it the CSD:
+
+  *CDir <newdir>
+  *Dir <newdir>
+
+Set up SVN. I put the following in an Obey file called SetUpSVN and run it
+before issuing any SVN commands:
+
+  | Set up SVN to use file type extensions
+  | e.g. An Obey file 'foo' will become 'foo,feb' in the repository.
+  |
+  Set svn$filetypeext Yes
+  
+  | Set extension names which will be reversed for RISC OS layout
+  |
+  Set UnixEnv$svn$sfix a:c:cc:cpp:errnum:f:h:Hdr:hdr:i:ii:l:msg:o:p:py:s:y
+
+Check out the trunk:
+
+  *svn co svn://svn.riscos.info/privateeye/trunk/
+
+Building the beast
+------------------
+
+PrivateEye is itself built of two parts:
+
+ (1) 'appengine'  - generic library code
+ (2) '!PrivatEye' - application-specific logic
+
+It also has dependencies on a number of third party libraries, including
+libjpeg, libpng, zlib and exiftags. These are included in the source tree.
+
+Library files are located relative to CLibs$Path. You should set CLibs$Path
+to point to '<newdir>.trunk.libs.' You should also set CLibs$Path to point
+to'<newdir>.trunk.libs.zlib.' (as libpng refers to zlib headers as 'zlib.h'
+rather than zlib/zlib.h).
+
+
+First we build the libraries which use Makatic3 to automatically create
+their Makefiles as it's the same procedure for each.
+
+For appengine, exiftags and md5:
+
+  *Dir <newdir>.trunk.libs.<appengine/exiftags/...>
+  *MakeMake    -- build the Makefile
+  *amu normal  -- build the normal library (as opposed to the debug version)
+  
+When complete you'll be presented with a library in the 'o' directory.
+
+
+Second we build the libraries which have pre-made Makefiles:
+
+jpeg, png, zlib, fortify:
+
+  *Dir <newdir>.trunk.libs.<jpeg/png/...>
+  *CDir o             -- create the output directories
+  *amu -f MakefileRO  -- build using the RISC OS Makefile
+
+For libjpeg we also do:
+
+  *CDir odf
+  *amu -f MakefileRO libs  -- build libjpeg's libtrans
+
+[This does some needless debug builds - must fix].
+
+
+Once the above libraries are built we can build appengine's test harness.
+This gives us some guarantees that things are working properly.
+
+  *Dir <newdir>.trunk.libs.appengine
+  *amu test
+
+This builds a DebugAIF binary (which when run, runs in DDT) which holds
+appengine's unit tests. Set its type to Absolute if you don't want the
+debugger popping up.
+
+Run it with the output directed to a file:
+
+  *aetest > output
+
+You can compare the output with that in appengine.test.main.output (ie. diff
+the two and see if anything's changed). You should see "Tests completed:
+14/14 tests passed." at the end of the output if all is okay.
+
+
+Now we can build PrivateEye itself.
+
+  *Dir <newdir>.trunk.apps.!PrivatEye
+  *MakeMake
+  *amu normal
+
+
+Once built, you can run !PrivatEye.
