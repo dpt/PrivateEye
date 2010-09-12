@@ -1,0 +1,370 @@
+# Messages for PrivateEye
+# © David Thomas, 1999-2010
+#
+# $Id: Messages,v 1.29 2010-06-02 21:59:15 dpt Exp $
+
+version:2.96 TEST (29 Jan 2010)
+
+task:PrivateEye
+icon:!privateye
+
+workspace.image:PrivateEye images
+
+# Menus
+
+menu.iconbar:PrivateEye,>Info,Close all,Empty cache,Search tags...,Choices...,Quit
+menu.image:PrivateEye,File{File,>Info        ãF1,>Source info ^F1,Metadata    ã^F1,Histogram    ^I,Tags         ^G|New view     ^N},>Save        F3,Edit{Edit,Effects...        ^E,Rotate...         ^O|Convert to Sprite ^S|Copy to clipboard ^C,Clear clipboard},>Scale view F11
+menu.metadata:Metadata,Expand all,Collapse all
+menu.hist:Components,Luma,Red,Green,Blue,Alpha
+menu.tagcloud:Tag Cloud,Display{Display,List                 F2,Cloud                F3|Sort by name        ãF2,Sort by count       ãF3|Selected tags first ^F3},Tag ê%së{Tag,>Rename  ^R,Delete  ^K,>Info    ^I,},>New tag ^N|Commit|Toolbar
+menu.thumbview:PrivateEye,Display{Display,Large thumbnails,Small thumbnails,Full info horizontal,Full info vertical},Image ê%së{Image,>Tag,Rotate...},Select all,Clear selection,Options{Options,Auto-rotate}
+
+# Choices Menus
+
+menu.artworks:Quality,Outline,Simple,Normal,Anti-aliased
+menu.cleanjpeg:Cleaning,Only when required,Always
+menu.drawfile:Flatness,Coarse,Normal,Best|Automatic
+menu.jpeg:Dithering,None,Simple,Error diffusion
+menu.scale:Image scale,50%,100%,200%,Fit to screen|Preserve
+menu.size:Window size,Fit to image,Fit to screen
+menu.sprite:Dithering,None,Simple
+menu.steps:Scrolling,Instant,5 steps,10 steps,15 steps,20 steps
+menu.tagcloud.display:Display,List,Cloud
+menu.tagcloud.scale:Scale,0%,50%,100%,150%,200%
+menu.tagcloud.size:Size,Desktop font size|8pt,10pt,12pt,14pt,18pt,24pt,36pt
+menu.tagcloud.sort:Sort,Sort by name,Sort by count
+menu.thumbview.size:Thumbnails,80 x 40,120 x 80,160 x 120
+menu.thumbview.item.size:Items,256 x 256,384 x 256,512 x 384
+menu.thumbview.padding.size:Padding,8 x 8,16 x 16,32 x 32
+
+# Display window
+
+display.title:%s at %s
+
+# Image Info window
+
+size.pixels:%s ◊ %s (%s)
+size.dpi:%d ◊ %d dpi
+size.bytes:%s bytes
+size.inches:%s ◊ %s inches
+info.depth:%dbpp
+info.colour: colour
+info.mono: monochrome
+info.alpha: + alpha
+info.mask: with mask
+unspec:Unspecified
+
+# Histogram window
+
+hist.title:Histogram of %s
+
+# DCS window
+
+dcs.modified:This image has been modified.
+quit.modified:%d images modified.
+
+# Effects window
+
+effect.clear:Clear
+effect.tone:Curve
+effect.grey:Greyscale
+effect.blur:Blur
+effect.sharpen:Sharpen
+effect.dynamic:Expand dynamic range
+effect.equalise:Histogram equalisation
+effect.emboss:Emboss
+
+# Metadata window
+
+metadata.title:Metadata of %s
+metadata:Metadata
+jfif:JFIF (COM, &ff)
+exif:Exif (APP1, &e1)
+exif.cam:Camera-Specific Properties
+exif.img:Image-Specific Properties
+exif.oth:Other Properties
+exif.uns:Unsupported Properties
+adobe:Adobe (APP13, &ed)
+adobe.format:%s [&%x]
+adobe.format2:%s ("%s") [&%x]
+adobe.03e9:Macintosh Print Manager Info
+adobe.03ed:Resolution Info
+adobe.03f3:Print Flags
+adobe.03f5:Colour Halftoning Information
+adobe.0404:IPTC NAA Record
+adobe.0406:JPEG Quality
+adobe.0408:Grid and Guides Information
+adobe.040a:Copyright Flag
+adobe.040c:Thumbnail Resource
+adobe.040d:Global Angle
+adobe.0414:Document Specific IDs Seed Number
+adobe.0419:Global Altitude
+adobe.0425:Caption Digest
+adobe.0426:Print Scale
+adobe.2710:Print Flags Information
+adobe.unknown:Unknown 8BIM
+
+# Tag Cloud window
+
+tagcloud.stats:%d tags applied %d times
+
+# Warnings
+
+warn.drag.to.save:To save, drag the file icon to a directory display.
+
+# Errors (numbered)
+
+error.unknown:Error %d.
+error.no.mem:There is not enough memory to perform the requested operation. Quit any unwanted applications or see the RISC OS User Guide for ways to maximise memory.
+error.viewer.not.found:Viewer not found.
+
+# Errors (not numbered)
+
+error.fopen:fopen failed
+error.png.create:png_create_read_struct failed
+error.png.info:png_create_info_struct failed
+error.png.jump:Something failed (longjmp)
+error.png.colour:Unknown colour type
+error.png.error:PNG error: %s
+error.png.warning:PNG warning: %s
+
+error.no.workspace.image:PrivateEye could not initialise: unable to claim workspace for images.
+error.no.scrap:<Wimp$Scrap> is not defined, cannot engage in scrap transfer.
+
+error.no.artworks:PrivateEye could not load the modules required to render ArtWorks files. The AWViewer utility must be seen before PrivateEye can render ArtWorks files.
+
+error.gif.not:This is not a GIF type 87a or 89a image.
+error.gif.ioerror:GIF: I/O error.
+error.gif.badcodesize:GIF: Code size out of range.
+error.gif.outofmem:GIF: Out of memory.
+error.gif.codeoutofrange:GIF: Code out of range.
+
+error.jpeg.transcode:JPEG transcoding failed: %s.
+error.jpeg.rotate:JPEG rotate failed.
+
+error.buffer.start:Buffer failed to start. Probably out of memory.
+
+error.ffg.died:FFG translator died.
+
+error.name.missing:Missing name.
+
+# Interactive Help
+
+# \S:Click SELECT to
+# \R:Move the pointer right to
+# \A:Click ADJUST to
+# \T:This is the
+# \G:This option is greyed out because
+# \W:This window is
+# \D:Drag SELECT to
+# \d:Drag ADJUST to
+# \w:window
+# \s:SELECT
+# \a:ADJUST
+
+#  Window help
+
+hw.choices.b_cancel:\Scancel any changes you made since you last chose êSetë or êSaveë and dismiss the dialogue box.
+hw.choices.b_save:\Ssave these choices and dismiss the dialogue box.
+hw.choices.b_set:\Suse these choices and dismiss the dialogue box.
+hw.choices.r_art:\Sshow the ArtWorks choices.
+hw.choices.r_col:\Sshow the colour choices.
+hw.choices.r_drw:\Sshow the DrawFile choices.
+hw.choices.r_gif:\Sshow the GIF choices.
+hw.choices.r_jpg:\Sshow the JPEG choices.
+hw.choices.r_png:\Sshow the PNG choices.
+hw.choices.r_spr:\Sshow the Sprite choices.
+hw.choices.r_vwr:\Sshow the viewer choices.
+hw.choices:\TChoices \w.|MUse this \w to change the way PrivateEye behaves.
+hw.choices_art.d_quality:\Tcurrent WYSIWYG quality setting.
+hw.choices_art.o_load:If selected, PrivateEye will load ArtWorks when they are double-clicked in a directory display.
+hw.choices_art.p_background:\Schoose the \w background colour to use for ArtWorks.
+hw.choices_art.p_quality:\Schoose the WYSIWYG quality setting.
+hw.choices_art:\TArtWorks Choices \w.
+hw.choices_col.d_brightness/hw.choices_col.b_brightnessdown/hw.choices_col.b_brightnessup:Use the up and down arrows to change the brightness.
+hw.choices_col.d_contrast/hw.choices_col.b_contrastdown/hw.choices_col.b_contrastup:Use the up and down arrows to change the contrast.
+hw.choices_col.d_curve:\Tcolour correction curve.|MUse the controls below to change the shape of the curve.
+hw.choices_col.d_gamma/hw.choices_col.b_gammadown/hw.choices_col.b_gammaup:Use the up and down arrows to control the gamma.
+hw.choices_col.o_on:If selected, PrivateEye will apply these settings to the screen.
+hw.choices_col:\TColour Choices \w.|MUse this \w to alter the display to compensate for your monitorës intensity response.|MThis affects the whole screen.
+hw.choices_drw.d_flatness:\Tcurrent flatness setting.
+hw.choices_drw.o_load:If selected, PrivateEye will load DrawFiles when they are double-clicked in a directory display.
+hw.choices_drw.p_background:\Schoose the \w background colour to use for DrawFiles.
+hw.choices_drw.p_flatness:\Schoose the flatness setting.
+hw.choices_drw:\TDrawFile Choices \w.
+hw.choices_gif.o_load:If selected, PrivateEye will load GIFs when they are double-clicked in a directory display.
+hw.choices_gif.p_background:\Schoose the \w background colour to use for GIFs.
+hw.choices_gif:\TGIF Choices \w.|MGIFs are converted into Sprites when loaded, so the Sprite dithering option has an effect on the display of GIF images.
+hw.choices_jpg.d_cleaning:\Tcurrent cleaning setting.|MCleaning is performed automatically to turn progressive and non-standard JPEGs into the êbaselineë form compatible with RISC OSës SpriteExtend module.
+hw.choices_jpg.d_dithering:\Tcurrent dithering setting.
+hw.choices_jpg.o_load:If selected, PrivateEye will load JPEGs when they are double-clicked in a directory display.
+hw.choices_jpg.o_sprite:If selected, PrivateEye will convert JPEGs into Sprites when they are loaded.|MThe Sprite format choices will then control the display of the image.
+hw.choices_jpg.o_trim:If selected, rotate will discard non-transformable edge blocks.|MOtherwise they are retained but will remain untransformed.
+hw.choices_jpg.p_background:\Schoose the \w background colour to use for JPEGs.
+hw.choices_jpg.p_cleaning:\Schoose the cleaning setting.
+hw.choices_jpg.p_dithering:\Schoose the dithering setting.
+hw.choices_jpg:\TJPEG Choices \w.
+hw.choices_png.o_load:If selected, PrivateEye will load PNGs when they are double-clicked in a directory display.
+hw.choices_png:\TPNG Choices \w.|MPNGs are converted into Sprites when loaded, so the Sprite dithering option has an effect on the display of PNG images.
+hw.choices_spr.d_dithering:\Tcurrent dithering setting.
+hw.choices_spr.o_load:If selected, PrivateEye will load Sprites when they are double-clicked in a directory display.
+hw.choices_spr.o_tinct:If selected, PrivateEye will use NetSurfës îTinctï module, where available, to display Sprites.
+hw.choices_spr.p_background:\Schoose the \w background colour to use for Sprites.
+hw.choices_spr.p_dithering:\Schoose the dithering setting.
+hw.choices_spr:\TSprite Choices \w.
+hw.choices_vwr.b_cachedown/hw.choices_vwr.b_cacheup:Use the up and down arrows to change the maximum cache size.
+hw.choices_vwr.d_cache:\Tcurrent maximum cache size setting.
+hw.choices_vwr.d_scale:\Tcurrent image scale setting.
+hw.choices_vwr.d_size:\Tcurrent viewer size setting.
+hw.choices_vwr.d_steps:\Tcurrent scrolling and zooming setting.
+hw.choices_vwr.o_covericonbar:If selected, PrivateEye will allow its viewer windows to obscure the icon bar.
+hw.choices_vwr.p_size:\Schoose the viewer size setting,
+hw.choices_vwr.p_steps:\Schoose the scrolling and zooming setting.
+hw.choices_vwr:\Tviewer and cache choices \w.
+hw.dcs.b_cancel:\Sgo back.
+hw.dcs.b_discard:\Sthrow away any changes.
+hw.dcs.b_save:\Sopen up a window so you can save the modified file.
+hw.dcs:Answer the question.
+hw.display:\Timage display \w.|M\Dmove the image around.|M\dzoom into a specific region.
+hw.effects.b_add:\Sadd a new effect.
+hw.effects.b_apply:\Smake the effect permanent.
+hw.effects.b_cancel:\Scancel the dialogue box.
+hw.effects.b_delete:\Sdelete the selected effect.
+hw.effects.b_edit:\Sedit the selected effect.
+hw.effects:\Teffects \w.|MOpen the effects palette \w by clicking êAddë.|MDrag effects from the palette to the effects list.|MAdjust the level of the combined effects by dragging the slider.|MMake the effect permanent with êApplyë.
+hw.effects_add.b_cancel:\Scancel the dialogue box.
+hw.effects_add:\Teffects palette.|MDrag an effect to the effects list to add it.
+hw.effects_crv.11/hw.effects_crv.12/hw.effects_crv.13:\Dalter gamma.|MThis bends the curve in a nonlinear fashion.
+hw.effects_crv.15/hw.effects_crv.16/hw.effects_crv.17:\Dalter brightness.|MThis lowers and raises the curve.
+hw.effects_crv.19/hw.effects_crv.20/hw.effects_crv.21:\Dalter contrast.|MThis pivots the curve around its middle.
+hw.effects_crv.23/hw.effects_crv.24/hw.effects_crv.25:\Dalter bias.|MThis bends the curve in a nonlinear fashion.
+hw.effects_crv.27/hw.effects_crv.28/hw.effects_crv.29:\Dalter gain.|MThis bends the curve around its middle.
+hw.effects_crv.b_apply:\Smake your changes permanent.
+hw.effects_crv.b_cancel:\Scancel the dialogue box.
+hw.effects_crv.b_reset:\Sreset the settings to their defaults.
+hw.effects_crv.d_curve:\Tcurve display.|MA upwards diagonal curve is one which makes no change.
+hw.effects_crv.o_invert:\Stoggle inversion of the curve.
+hw.effects_crv.o_reflect:\Stoggle reflection of the curve about its middle.
+hw.effects_crv.r_all:\Sedit red, green and blue channels simultaneously.
+hw.effects_crv.r_alpha:\Sedit the alpha channel.
+hw.effects_crv.r_blue:\Sedit the blue channel.
+hw.effects_crv.r_green:\Sedit the green channel.
+hw.effects_crv.r_red:\Sedit the red channel.
+hw.effects_crv:\Tcurve effect editor \w.|MIt allows you to simultaneously adjust gamma, brightness, contrast, bias and gain.|MDrag the sliders to alter the curve.
+hw.effects_list:\Teffects list.|M\Sselect effects. \Adeselect.|MSelected effects can be edited, if available, or deleted.|MDrag effects to reorder them.
+hw.hist.o_cumulative:Enable this option to show an accumulated view of the histogram.
+hw.hist.p_comps:\Schoose which colour component is shown in the histogram.
+hw.hist:\Thistogram \w.|MBy default it shows a histogram of the imageës luma.|MGridlines are shown every 3.125% (32 intervals).
+hw.iconbar:\TPrivateEye application, an image viewer.|MDrag a Sprite, DrawFile, JPEG, ArtWork, GIF or PNG file here to view it.
+hw.image_info.d_colours:\Têdepthë of the display image in bits per pixel.|MAlso shown is whether the image is colour or monochrome and if it has transparency.
+hw.image_info.d_dimensions:\Tphysical dimensions of the display image.
+hw.image_info.d_icon:\Ticon associated with the display image file type.
+hw.image_info.d_pixels:\Twidth ◊ height pixel resolution of the display image.
+hw.image_info.d_resolution:\Tresolution of the display image in dots per inch.
+hw.image_info.d_size:This is how big the display image is in memory.
+hw.image_info.d_type:\Tfile format of the display image and its hexadecimal file type.
+hw.image_info:\Tdisplay image information \w.|MPrivateEye converts images for display when it loads them.
+hw.metadata:\Tmetadata \w.|MExpand and collapse branches by clicking on the boxes.
+hw.prog_info.d_author:\Tauthor of the application.
+hw.prog_info.d_icon:\Ticon associated with the application.
+hw.prog_info.d_name:\Tname of the application.
+hw.prog_info.d_purpose:\Tpurpose of the application.
+hw.prog_info.d_version:\Tversion of the application.
+hw.prog_info:\T\w displays information about PrivateEye.
+hw.quit.b_cancel:\Snot quit and go back to editing.
+hw.quit.b_discard:\Sthrow away any changes and quit.
+hw.quit:Answer the question.
+hw.rotate.b_cancel:\Scancel the dialogue box.
+hw.rotate.b_rotate:\Srotate the image as shown.
+hw.rotate:\Trotate \w.|M\Drotate the image.|M\dflip the image horizontally, then rotate the image.|MThe indicator at the top-left of the window shows which transform will be used.
+hw.save.b_cancel:\Sclose this box.
+hw.save.b_save:\Ssave the file with the current filename.|MIf it is not a full pathname, you must drag the icon to a directory display.
+hw.save.i_icon:Drag the file icon to a directory display to save it there.|MDrag the file icon to an application to transfer the file there.
+hw.save.w_filename:\Tfilename that your file will be saved with.
+hw.save:\Tsave \w.|MEdit the filename and drag the file icon to a directory display, or enter a full pathname and choose êSaveë (or press RETURN).
+hw.scale.b_cancel:\Scancel the dialogue box.
+hw.scale.b_down:\Sdecrease the scale.|MHold SHIFT to go faster.
+hw.scale.b_fitscr:\Sfit the image to the size of the screen.
+hw.scale.b_fitwin:\Sfit the image to the current size of the viewer window.
+hw.scale.b_scale:\Sapply the given scale.
+hw.scale.b_up:\Sincrease the scale.|MHold SHIFT to go faster.
+hw.scale.w_scale:\Tscale to use.
+hw.scale:\Tview scaling \w.|MUse this \w to alter the scale of the displayed image.
+hw.source_info.d_colours:\Têdepthë of the source image in bits per pixel.|MAlso shown is whether the image is colour or monochrome and if it has a transparency mask.
+hw.source_info.d_date:\Tdate the source image was created or last modified.
+hw.source_info.d_dimensions:\Tphysical dimensions of the source image.
+hw.source_info.d_icon:\Ticon associated with the source image file type.
+hw.source_info.d_pixels:\Twidth ◊ height pixel resolution of the source image.
+hw.source_info.d_resolution:\Tresolution of the source image in dots per inch.
+hw.source_info.d_size:This is how big the source image is in memory.
+hw.source_info.d_type:\Tfile format of the source image and its hexadecimal file type.
+hw.source_info:\Tsource image information \w.
+
+#  Menu help
+
+hm.artworks.0:\Schoose the outline WYSIWYG setting, which is fastest but lowest quality.
+hm.artworks.1:\Schoose the simple WYSIWYG setting, which is fast but low quality.
+hm.artworks.2:\Schoose the normal WYSIWYG setting, which balances speed and accuracy.
+hm.artworks.3:\Schoose the anti-aliased WYSIWYG setting, which is highest quality at the expense of speed.
+hm.cleanjpeg.0:\Sclean JPEGs only when PrivateEye thinks itës necessary.|M\Trecommended setting.
+hm.cleanjpeg.1:\Salways clean JPEGs.|MUse this only when you need to force cleaning to take place, otherwise images will load more slowly than they need to.
+hm.drawfile.0:\Schoose the coarse, fast curve approximation.
+hm.drawfile.1:\Schoose the normal curve approximation
+hm.drawfile.2:\Schoose the best, slow curve approximation.
+hm.drawfile.3:\Schoose the automatic curve approximation method.|MThis is recommended, but may not work well at high view scaling values.
+hm.hist.0:\Sview a histogram of the luma component.
+hm.hist.1:\Sview a histogram of the red component.
+hm.hist.2:\Sview a histogram of the green component.
+hm.hist.3:\Sview a histogram of the blue component.
+hm.hist.4:\Sview a histogram of the alpha component.
+hm.hist.4g:\Gno alpha channel is present.
+hm.iconbar.0:\Rsee information about PrivateEye.
+hm.iconbar.1:\Sto close all images.
+hm.iconbar.1g:\Gno images are open.
+hm.iconbar.2:\Sempty the cache of stored images.
+hm.iconbar.2g:\Gno images are cached.
+hm.iconbar.3:\Ssearch tagged images.
+hm.iconbar.3g:\Gno images have been tagged.
+hm.iconbar.4:\Sto open the Choices dialogue box.
+hm.iconbar.5:\Sto make PrivateEye go away.
+hm.image.0.0:\Rsee information about the display image.
+hm.image.0.1:\Rsee information about the source image.
+hm.image.0.2:\Ssee the metadata associated with this image.
+hm.image.0.2g:\Gthis image does not contain metadata.|MOnly JPEGs are suitable.
+hm.image.0.3:\Sopen a histogram view of this image.
+hm.image.0.3g:\Gthis type of image is not suitable for the histogram.|MOnly 16 or 32bpp Sprites are suitable.
+hm.image.0.4:\Sshow the tags window.|MThis is used to label images for later searches.
+hm.image.0.4g:\Gtags are not available in this build.
+hm.image.0.5:\Sopen another view onto the same image.
+hm.image.0:\Raccess miscellaneous operations.
+hm.image.1:\Rsave the image.
+hm.image.2.0:\Sshow the effects window.|MThis is used to adjust brightness, contrast, saturation and colour balance.
+hm.image.2.0g:\Gthis type of image is not suitable for effects.|MOnly 32bpp Sprites are suitable.
+hm.image.2.1:\Sshow the rotate window.|MThis is used to rotate and flip images.
+hm.image.2.1g:\Gthis type of image cannot be rotated.|MOnly Sprites and JPEGs are suitable.
+hm.image.2.2:\Sconvert the image to a Sprite.
+hm.image.2.2g:\Gthe image cannot be converted to a Sprite.
+hm.image.2.3:\Sto copy this image to the clipboard.
+hm.image.2.4:\Sclear the clipboard.
+hm.image.2.4g:\Gthe clipboard is empty or owned by another application.
+hm.image.2:\Raccess various editing operations.
+hm.image.3:\Rscale the image view.
+hm.jpeg.0:\Schoose undithered JPEG rendering.|MThis displays the image using the closest available colours.
+hm.jpeg.1:\Schoose simple dithered JPEG rendering.|MThis displays the image using a fast, inaccurate dither technique.
+hm.jpeg.2:\Schoose error diffused JPEG rendering.|MThis displays the image using a slow, accurate dither technique.
+hm.metadata.0:\Sexpand all nodes.
+hm.metadata.1:\Scollapse all nodes.
+hm.scale.0:\Schoose a default scale of 50%.
+hm.scale.1:\Schoose a default scale of 100%.
+hm.scale.2:\Schoose a default scale of 200%.
+hm.scale.3:\Schoose a default scale which fits the image to the screen.
+hm.scale.4:\Schoose to preserve the previous scale.|MA scale of 100% will be used for new viewer windows.
+hm.size.0:\Schoose to have viewer \ws fit the image exactly.
+hm.size.1:\Schoose to have viewer \ws be at least the size of the screen.
+hm.sprite.0:\Schoose undithered Sprite plotting.|MThis displays the image using the closest available colours.
+hm.sprite.1:\Schoose simple dithered Sprite ploting.|MThis displays the image using a simple patterning technique.
+hm.steps.0:\Schoose instant scaling.
+hm.steps.1:\Schoose to scale in 5 steps.
+hm.steps.2:\Schoose to scale in 10 steps.
+hm.steps.3:\Schoose to scale in 15 steps.
+hm.steps.4:\Schoose to scale in 20 steps.

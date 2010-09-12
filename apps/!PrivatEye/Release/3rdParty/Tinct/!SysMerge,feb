@@ -1,0 +1,8 @@
+If "<System$Dir>"="" Then Error 0 !System has not been seen
+RMEnsure Installer 0.07 RMLoad System:Modules.Installer
+RMEnsure Installer 0.07 Error 0 Installer module version 0.07 or later is required. A suitable version can be downloaded from http://www.iyonix.com/32bit/System.shtml
+
+Install_LogDir <System$Dir>
+Install_Update <Obey$Dir>.!System.310.Modules.Tinct <System$Dir>.310.Modules.Tinct
+Install_CheckSystem
+Install_NoLogDir

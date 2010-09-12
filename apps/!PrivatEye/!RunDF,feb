@@ -1,0 +1,49 @@
+| >!Run for PrivateEye
+| by David Thomas, © 1999-2010
+
+Obey <Obey$Dir>.!Boot
+
+Set Alias$PrivateEyeRMLoad IfThere %%*0 Then RMLoad %%*0
+
+RMEnsure UtilityModule  3.50 Error PrivateEye requires RISC OS 3.5 or later
+
+RMEnsure WindowManager  3.98 Error PrivateEye requires WindowManager 3.98 or later ('nested WIMP')
+
+RMEnsure UtilityModule  3.70 RMEnsure CallASWI 0.02 PrivateEyeRMLoad System:Modules.CallASWI
+RMEnsure UtilityModule  3.70 RMEnsure CallASWI 0.02 Error PrivateEye requires CallASWI 0.02 or later
+
+RMEnsure FPEmulator     4.03 PrivateEyeRMLoad System:Modules.FPEmulator
+RMEnsure FPEmulator     4.03 Error PrivateEye requires FPEmulator 4.03 or later
+
+RMEnsure SharedCLibrary 5.17 PrivateEyeRMLoad System:Modules.CLib
+RMEnsure SharedCLibrary 5.34 Error PrivateEye requires SharedCLibrary 5.34 or later
+
+RMEnsure ColourPicker   0.31 PrivateEyeRMLoad System:Modules.Picker
+RMEnsure ColourPicker   0.31 Error PrivateEye requires ColourPicker 0.31 or later
+
+RMEnsure SpriteExtend   0.99 PrivateEyeRMLoad System:Modules.SpriteExt
+RMEnsure SpriteExtend   0.99 Error PrivateEye requires SpriteExtend 0.99 or later
+
+RMEnsure DrawFile       1.30 PrivateEyeRMLoad System:Modules.DrawFile
+RMEnsure DrawFile       1.30 Error PrivateEye requires DrawFile 1.30 or later
+
+RMEnsure DragAnObject   0.02 PrivateEyeRMLoad System:Modules.DragAnObj
+RMEnsure DragAnObject   0.02 Error PrivateEye requires DragAnObject 0.02 or later
+
+RMEnsure Tinct          0.14 PrivateEyeRMLoad System:Modules.Tinct
+RMEnsure Tinct          0.14 Error PrivateEye requires Tinct 0.14 or later
+
+RMEnsure AppEngine      0.16 PrivateEyeRMLoad <PrivateEye$Dir>.AppEngine
+RMEnsure AppEngine      0.16 Error PrivateEye requires AppEngine 0.16 or later
+
+Unset Alias$PrivateEyeRMLoad
+
+WimpSlot -min 8000K -max 8000K
+
+Run <PrivateEye$Dir>.Resources.PhotoCheck
+
+Run <PrivateEye$Dir>.Resources.ResFind PrivateEye
+
+|InitStore &CCCCCCCC { > null: }
+
+Run <PrivateEye$Dir>.!RunImageDF %*0 ><PrivateEye$Dir>.stdout 2><PrivateEye$Dir>.stderr

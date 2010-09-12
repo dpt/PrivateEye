@@ -1,0 +1,38 @@
+Set V 285
+Set C <Obey$Dir>.privateye-release<V>
+Set D <C>.!PrivatEye
+CDir <C>
+CDir <D>
+|
+| Build app
+|
+Copy <Obey$Dir>.!Boot                  <D>.* ~CFR~V
+Copy <Obey$Dir>.!Help                  <D>.* ~CFR~V
+Copy <Obey$Dir>.!Run                   <D>.* ~CFR~V
+Copy <Obey$Dir>.!RunImage              <D>.* ~CFR~V
+|squeeze508 -f -v <D>.!RunImage
+Copy <Obey$Dir>.*Sprites*              <D>.* ~CFR~V
+Copy <Obey$Dir>.AppEngine              <D>.* ~CFR~V
+|
+CDir <D>.Resources
+Copy <Obey$Dir>.Resources.Keys         <D>.Resources.* ~CFR~V
+Copy <Obey$Dir>.Resources.PhotoCheck   <D>.Resources.* ~CFR~V
+Copy <Obey$Dir>.Resources.ResFind      <D>.Resources.* ~CFR~V
+Copy <Obey$Dir>.Resources.Sprites      <D>.Resources.* ~CFR~V
+|
+CDir <D>.Resources.UK
+Copy <Obey$Dir>.Resources.UK.Messages  <D>.Resources.UK.* ~CFR~V
+Copy <Obey$Dir>.Resources.UK.Templates <D>.Resources.UK.* ~CFR~V
+|
+| Merge in !System, ReadMe, etc.
+|
+Copy <Obey$Dir>.Release                <C> ~CFR~V
+|
+| Zip up
+| Note: zip doesn't seem to expand system vars. Must be literal here.
+|
+Dir <C>
+losecvs @
+zip -9mru ^.privateeye295/zip *
+|
+|Wipe <C> ~CFR~V

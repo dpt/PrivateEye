@@ -1,0 +1,20 @@
+PrivateEye
+==========
+
+PrivateEye is a freeware image viewer for RISC OS.
+
+
+Installation
+------------
+
+Run 3rdParty.Tinct.!SysMerge to install the Tinct module which is required
+for plotting sprites with alpha transparency.
+
+If you have previously installed NetSurf, which also requires the Tinct
+module, then this step is not required.
+
+
+Manual
+------
+
+See http://www.davespace.co.uk/ for the full manual in PDF format.

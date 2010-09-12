@@ -1,0 +1,24 @@
+| >!Boot for PrivateEye
+| by David Thomas, © 1999-2010
+
+IconSprites <Obey$Dir>.!Sprites
+
+Set PrivateEye$Dir <Obey$Dir>
+
+|Set File$Type_FF9 Sprite
+|SetMacro Alias$@RunType_FF9 Run <PrivateEye$Dir> %%*0
+
+Set File$Type_D94 ArtWorks
+|SetMacro Alias$@RunType_D94 Run <PrivateEye$Dir> %%*0
+
+Set File$Type_C85 JPEG
+SetMacro Alias$@RunType_C85 Run <PrivateEye$Dir> %%*0
+
+Set File$Type_B60 PNG
+SetMacro Alias$@RunType_B60 Run <PrivateEye$Dir> %%*0
+
+|Set File$Type_AFF DrawFile
+|SetMacro Alias$@RunType_AFF Run <PrivateEye$Dir> %%*0
+
+Set File$Type_695 GIF
+SetMacro Alias$@RunType_695 Run <PrivateEye$Dir> %%*0

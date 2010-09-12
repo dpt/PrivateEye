@@ -1,0 +1,83 @@
+# PrivateEye key mappings
+#
+# The format of each line is "[modifier]keyname:action".
+#
+# Key names recognised:
+#
+#   Escape, F1..F12, Print, Backspace, Tab, Return, Space, Logo, Menu,
+#   Insert, Home, Delete, Copy, PageUp, PageDown, Up, Down, Left, Right
+#
+#   Key names are case sensitive.
+#
+# Modifiers recognised:
+#
+#   S_  Shift
+#   C_  Ctrl
+#   SC_ Shift Ctrl
+#
+# $Id: Keys,v 1.9 2010-01-29 15:09:00 dpt Exp $
+
+[Common]
+
+Escape:Close
+F1:Help
+C_F2:Close
+
+[Viewer]
+
+S_F1:Info
+C_F1:SourceInfo
+SC_F1:MetaData
+F3:Save
+F11:Scale
+
+Up:PanUp
+Down:PanDown
+Left:PanLeft
+Right:PanRight
+
+Space:StepForwards
+PageUp:StepBackwards
+PageDown:StepForwards
+
+C_C:Copy
+C_D:ZoomReset
+C_E:Effects
+C_H:HorzFlip
+C_I:Hist
+C_G:Tags
+C_K:Kill
+C_L:RotateLeft
+C_N:NewView
+C_O:Rotate
+C_Q:ZoomOut
+C_R:RotateRight
+C_S:ConvToSpr
+C_T:ZoomToggle
+C_V:VertFlip
+C_W:ZoomIn
+C_Z:PanRandom
+
+[Tag Cloud]
+
+C_I:Info
+C_K:Kill
+C_N:New
+C_R:Rename
+C_S:Commit
+F2:List
+F3:Cloud
+S_F2:SortByName
+S_F3:SortByCount
+C_F3:SortSelFirst
+
+[Thumbview]
+
+F2:LargeThumbs
+F3:SmallThumbs
+F4:FullInfoHorz
+F5:FullInfoVert
+S_F1:SortByName
+S_F2:SortByCount
+C_A:SelectAll
+C_Z:ClearSelection
