@@ -1,0 +1,26 @@
+PrivateEye
+==========
+
+PrivateEye is a freeware image viewer for RISC OS.
+
+This is version 2.95 TEST.
+
+
+New Features
+------------
+
+- Rebuilt with CC 5.68
+  - Should be BeagleBoard compatible.
+  
+- Adjustable blur effect
+  - A choice of box or gaussian blurs with kernels from 2 to 24 pixels.
+
+
+- You'll notice bits of UI for Thumbview and Tags
+  - These are not yet enabled.
+  
+
+Manual
+------
+
+See http://www.davespace.co.uk/ for the full manual in PDF format.

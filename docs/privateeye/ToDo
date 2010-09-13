@@ -1,0 +1,162 @@
+seem to have had some data loss when tagging
+- extended the tagdb test for thiso
+
+
+
+seem to have had two tags confused ('london' tag became 'nuts')
+
+
+re-check currently-loaded image when tags modified by a drop on the window
+
+check file types before tagging
+
+set default sort in tagcloud
+
+(1bpp pngs going mad - geminus bug)
+
+
+in progress
+~~~~~~~~~~~
+sort tags by highlight (put highlighted tags first)
+- sort lazily? ie. on demand?
+
+todo
+~~~~
+list display mode
+- drop the divider char
+- needs dedicated layout?
+  - would be more efficient
+  
+finish mode change handlers
+
+use colour optional in addition/instead of font weight, for highlights
+- use a colour proportional to count (darker -> higher count)
+
+set window extent when tags added
+set window extent when tag choices updated
+
+SetCaretPosition not working
+
+display a message in the window when no tags are present
+- "Tags let you foo foo foo. Create tags by opening the blah blah."
+- greyed out
+
+detect when layout has actually changed
+- ie. refresh more economically
+- we centre the lines so whenever the window changes we must redraw
+
+prune dbs
+- prune stuff not in both dbs
+- things may exist in tagdb but not in filenamedb
+  - ie. id+tag may be orphaned
+- throw away orphaned filenames automatically
+  BUT only throw away orphaned tags with no filenames when user prompts
+  (or some threshold reached)
+  
+choose key assignments for tag window/menu
+- what does OS6's keys use? should we be compatible, or side with QFiler?
+
+select tags by typing
+
+drag+drop into tag window could do with better feedback (but how?)
+- pointer tracking?
+
+re-open failing (fixed ish)
+
+unused tags will vanish when db saved/reloaded -- needs to be documented
+
+tag sort isn't stable
+
+file type checking
+
+heap usage higher than expected
+- could be fragmentation
+- also excess wastage due to single malloc block per string
+
+not updating as soon as expected (delayed refresh?)
+
+allow a minimum tag cloud window size (for search window)
+
+layout scale changes need a call to tag_cloud__set_display for the effect to
+set
+
+done
+~~~~
+if we drop the 'small tag cloud' mode we can replace it with font size
+increment/decrement
+- then it would be generic to all modes
+- if we had size + scale configurable then we could dispense with 'unscaled'
+  mode too.
+  
+tag font size can be set to 'desktop'
+
+fortify getting linked in all the time
+
+fillout tag name in rename dialogue
+
+avoid doing anything if the tag cloud is closed
+- e.g. click on viewer with a large image -> md5 is computed taking time
+- don't observe images unless tag window open
+- this seems to stop filenamedb being updated automatically
+  - hmmm
+- fixed various destructor cases not coping with NULL args
+
+filenamedb sometimes writing out truncated lines
+- tagdb was at risk too
+
+tag window flickers when opened
+- get redraws to cancel pending refresh op?
+
+stop pointer changing and highlighting when no image is available
+- grey out window contents
+- check click cases
+
+pointer shape doesn't change after a tag click
+- now does, but it's a bit cheap
+
+event registration re-ordering has broken the case where we drop on the
+tag cloud window
+- we now sort wimp message event lists by specificity
+
+rewrote tagdb token reading code
+
+tags - backup before saving, not at startup
+backs up once per session
+
+'sort selected first' button
+
+toolbar buttons and menu ticks are in sync
+
+'commit' menu entry and Ctrl-S in tags window forces tags/filenames to be saved
+
+fixed various leaks at shutdown (menus, images)
+- forces imagecache_empty at shutdown so could well affect quitting speed
+
+made thumbview use the imagecache
+
+more specific choices registration - only choice groups which change cause
+update callbacks to be called (e.g. all windows won't refresh if you alter
+something which doesn't impact them).
+
+later
+~~~~~
+show tags in main viewer window
+
+faster redraw using system font
+
+merge two tag sets [feature]
+
+"scale down to screen" scaling option
+- only scale images larger than the screen to the screen size
+
+rejected
+~~~~~~~~
+MD5->binary to save space [maybe not]
+- change DBs to use ID+length - should speed up rejections 
+  - unless i do this already
+  - will need hash lib updating to pass sizes about
+  - but doesn't seem worth it
+
+is something taking time proportional to image size when tagging?
+- load large image. tag. notice time taken.
+[could be mistaken]

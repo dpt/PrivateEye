@@ -1,0 +1,45 @@
+AppEngine - My libraries.
+
+Depends on:
+
+  Acorn TCPIPLibs,
+  exiftags,
+  Fortify,
+  libjpeg
+  libpng,
+  OSLib,
+  zlib,
+
+Uses Makatic3 to build the Makefile.
+
+Type: *Obey MakeMake
+Then: amu normal
+
+Other targets:
+
+  debug  - debug + fortify memory checking
+  module - built for module code (-zm)
+  test   - builds 'AETest' unit test program
+
+The top-level modules:
+
+  app        - choices window handler, keymap handler
+  base       - bit ops, errors, messages, heap
+  databases  - stuff for tagging
+  datastruct - array, bit vector, dict, hash, lists, tree
+  dialogues  - dcs/quit, prog info, save, scale, etc.
+  gadgets    - filer style windows, scrolling list, slider
+  geom       - boxes, transforms, box layout
+  graphics   - image handlers, sprite effects
+  io         - streams
+  vdu        - font, screen, sprite
+  wimp       - window, icon, pointer, help, dialogue, event
+
+In the headers:
+
+  There's an occasional convention of using #define T to
+  factor out the name of the type being defined.
+
+In the code:
+
+  // C++ comments tend to indicate crappyness.
