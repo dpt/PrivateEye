@@ -519,7 +519,7 @@ static ntree_t *jpeg_meta_adobe_parse(unsigned char *buf, size_t length)
 #define PAD2(x) (((x) + 1) & ~1)
 
     namefieldlen = PAD2(1 + namelen);
-    unpack(p + 4 + 2 + namefieldlen, "l", &segsize);
+    unpack(p + 4 + 2 + namefieldlen, "i", &segsize);
 
     segsize = rev_l(segsize);
 
