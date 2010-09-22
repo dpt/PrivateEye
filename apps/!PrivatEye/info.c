@@ -140,7 +140,7 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
     if (image->flags & image_FLAG_HAS_MASK)
       strcat(buf, message0("info.mask"));
 
-    buf += strlen(buf) + 1; // ick
+    buf += strlen(buf) + 1;
   }
 
   if (info->icon_date > -1)
@@ -192,7 +192,7 @@ static void source_info_fillout(dialogue_t *d, void *arg)
 {
   static const InfoDialogueSpecifier info =
   {
-    0, /* present */
+    0, /* date icon present */
     offsetof(image, source),
     offsetof(image, source.file_type),
     offsetof(image, source.file_size)

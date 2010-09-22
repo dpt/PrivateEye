@@ -24,9 +24,9 @@
 
 enum { log2zone = 6 }; /* 64x64 zones */
 
-/* converts pixels to zones */
+/* Converts pixels to zones. */
 #define TOZONE_DOWN(x) (x) >> log2zone
-/* converts pixels to zones, with rounding up */
+/* Converts pixels to zones, with rounding up. */
 #define TOZONE_UP(x) ((x) + ((1 << log2zone) - 1)) >> log2zone
 
 zones *zones_create(image *image)
@@ -36,23 +36,23 @@ zones *zones_create(image *image)
   size_t size;
   zones *zones;
 
-  /* FIXME: fix the vector handling case */
+  /* FIXME: Fix the vector handling case. */
   if (image->flags & image_FLAG_VECTOR)
     return NULL;
 
-  /* the number of zones we need for this image */
+  /* The number of zones we need for this image. */
   w = TOZONE_UP(image->display.dims.bm.width);
   h = TOZONE_UP(image->display.dims.bm.height);
 
-  /* FIXME: width & height isn't the same as the window extent
-   * width and height might only be valid for bitmap formats anyway */
+  /* FIXME: Width and height isn't the same as the window extent. Width and
+   * height might only be valid for bitmap formats anyway. */
 
-  rowwords = (w + 31) >> 5; /* words in a row (add padding) */
-  size = rowwords * 4 * h; /* size bytes */
+  rowwords = (w + 31) >> 5; /* Words in a row (add padding). */
+  size = rowwords * 4 * h;  /* Size bytes. */
 
 /* fprintf(stderr,"zones_create: w,h=%d,%d size=%d\n",w,h,size); */
 
-  zones = malloc(size); /* FIXME: use the sliding heap instead */
+  zones = malloc(size); /* FIXME: Use the sliding heap instead. */
   if (zones == NULL)
     return NULL;
 
@@ -83,14 +83,14 @@ void zones_update(zones *zones, wimp_draw *redraw, image *image, int scale)
   w = TOZONE_UP(image->display.dims.bm.width);
   h = TOZONE_UP(image->display.dims.bm.height);
 
-  rowwords = (w + 31) >> 5; /* words in a row (add padding) */
+  rowwords = (w + 31) >> 5; /* Words in a row (add padding). */
 
   x0 = redraw->xscroll;
   y0 = redraw->yscroll - (redraw->box.y1 - redraw->box.y0);
   x1 = redraw->xscroll + (redraw->box.x1 - redraw->box.x0);
   y1 = redraw->yscroll;
 
-  /* scale OS units to zoom level */
+  /* Scale OS units to zoom level. */
 
   if (scale != SCALE_100PC)
   {
@@ -100,14 +100,14 @@ void zones_update(zones *zones, wimp_draw *redraw, image *image, int scale)
     y1 = y1 * SCALE_100PC / scale;
   }
 
-  /* shifting right by the eig values scales OS units to pixels */
+  /* Shifting right by the eig values scales OS units to pixels. */
 
   x0 = x0 >> image->display.dims.bm.xeig;
   y0 = y0 >> image->display.dims.bm.yeig;
   x1 = x1 >> image->display.dims.bm.xeig;
   y1 = y1 >> image->display.dims.bm.yeig;
 
-  /* scale into zone grid elements */
+  /* Scale into zone grid elements. */
 
   x0 = TOZONE_DOWN(x0);
   y0 = TOZONE_DOWN(y0);
@@ -115,14 +115,15 @@ void zones_update(zones *zones, wimp_draw *redraw, image *image, int scale)
   y1 = TOZONE_UP(y1);
 
 /* fprintf(stderr,"x0=%d,y0=%d,x1=%d,y1=%d,row=%d,w,h=%d,%d\n",x0,y0,x1,y1,rowwords,w,h); */
-    /* clamp */
+
+  /* Clamp. */
 
   if (x0 < 0) { x0 = 0; /*fprintf(stderr, "clamped x0\n");*/ }
   if (y0 < 0) { y0 = 0; /*fprintf(stderr, "clamped y0\n");*/ }
   if (x1 > w) { x1 = w; /*fprintf(stderr, "clamped x1\n");*/ }
   if (y1 > h) { y1 = h; /*fprintf(stderr, "clamped y1\n");*/ }
 
-  /* invert Y */
+  /* Invert Y. */
 
   zonerow = zones + ((h - 1) - y0) * rowwords;
   for (y = y0; y < y1; y++)
@@ -211,7 +212,7 @@ void zones_wherenext(const zones *zones)
 {
   NOT_USED(zones);
 
-  /* NYI: look for the topmost,rightmost unviewed area? */
+  /* NYI: Look for the topmost,rightmost unviewed area? */
 }
 
 #else

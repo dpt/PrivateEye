@@ -4,8 +4,6 @@
  * Version: $Id: quit.c,v 1.5 2008-08-09 14:31:16 dpt Exp $
  * ----------------------------------------------------------------------- */
 
-/* This is needed by both eye.c and iconbar.c so lives in its own module. */
-
 #include "appengine/dialogues/dcs-quit.h"
 
 #include "viewer.h"

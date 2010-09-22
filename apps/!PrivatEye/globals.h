@@ -18,13 +18,13 @@
 
 enum
 {
-  Flag_Quit            = 1 << 0
+  Flag_Quit = 1 << 0
 };
 
 typedef unsigned int Flags;
 
-/* Globals are grouped together to allow the compiler to use "base pointer
- * optimisation". */
+/* PrivateEye's global variables are all grouped together to allow the
+ * compiler to use "base pointer optimisation". */
 
 extern struct PrivateEyeGlobals
 {
@@ -48,7 +48,7 @@ extern struct PrivateEyeGlobals
 
   eye_choices      choices, proposed_choices;
 
-  /* Non-NULL indicates we own the clipboard */
+  /* If non-NULL we own the clipboard. */
   viewer          *clipboard_viewer;
 
   wimp_t           task_handle;

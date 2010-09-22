@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: tags-common.h
- * Purpose: Tags
+ * Purpose: Common tags behaviour
  * Version: $Id: tags-common.h,v 1.7 2010-01-29 15:09:00 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -21,17 +21,19 @@ filenamedb_t *tags_common__get_filename_db(void);
 void tags_common__choices_updated(const choices *cs);
 
 
-// these assume arg = tagdb ptr
+/* The following assume that 'arg' is the tagdb pointer. */
 
 error tags_common__add_tag(tag_cloud  *tc,
                            const char *name,
                            int         length,
                            void       *arg);
 
+/* Delete 'index'. */
 error tags_common__delete_tag(tag_cloud *tc,
                               int        index,
                               void      *arg);
 
+/* Rename 'index' to 'name'. */
 error tags_common__rename_tag(tag_cloud  *tc,
                               int         index,
                               const char *name,

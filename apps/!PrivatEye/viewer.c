@@ -44,6 +44,7 @@
 #include "zones.h"
 #include "imagecache.h"
 
+/* Viewers are stored in a linked list. */
 static list_t list_anchor = { NULL };
 
 /* ----------------------------------------------------------------------- */
@@ -120,8 +121,8 @@ error viewer_create(viewer **new_viewer)
   v->scrolling.count = 0;
 
   if (GLOBALS.choices.viewer.scale == viewerscale_PRESERVE)
-    /* 'Preserve' means take the last scale. We have no previous, so use
-     * 100%. */
+    /* 'Preserve' means take the last scale.
+     * We have no previous scale set so use 100%. */
     v->scale.cur = v->scale.prev = 100;
   else
     v->scale.cur = v->scale.prev = GLOBALS.choices.viewer.scale;
@@ -278,6 +279,7 @@ int viewer_count_clones(viewer *v)
 
 /* ----------------------------------------------------------------------- */
 
+/* Call the specified function for every viewer window. */
 void viewer_map(viewer_map_callback *fn, void *arg)
 {
   /* Note that the callback signatures are identical, so we can cast. */
@@ -293,8 +295,8 @@ void viewer_map_for_image(image *image, viewer_map_callback *fn, void *arg)
   list_t *e;
   list_t *next;
 
-  /* be careful about linked list walking in case the caller is destroying
-   * the objects we're iterating through */
+  /* Be careful about linked list walking in case the callback is destroying
+   * the objects we're iterating over. */
   for (e = list_anchor.next; e != NULL; e = next)
   {
     viewer *v;
@@ -312,7 +314,9 @@ void viewer_map_for_image(image *image, viewer_map_callback *fn, void *arg)
 
 int viewer_get_count(void)
 {
-  return (list_anchor.next == NULL) ? 0 : 1; /* FIXME: Not actual count! */
+  /* FIXME: This is not the actual count! It doesn't matter at the moment as
+   * this value is only used to determine whether to shade menu entries. */
+  return (list_anchor.next == NULL) ? 0 : 1;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -352,6 +356,7 @@ static void fill_redraw_rect(wimp_draw *draw, viewer *viewer, int x, int y)
   os_writec(os_VDU_CLG);
 }
 
+/* Fill in a single edge. */
 static void draw_edge(wimp_draw *draw,
                       viewer    *viewer,
                       int        x,
@@ -368,8 +373,8 @@ static void draw_edge(wimp_draw *draw,
   fill_redraw_rect(draw, viewer, x, y);
 }
 
-/* Draws a background *around* opaque bitmaps. Draws only the edge boxes to
- * avoid flicker. */
+/* Draw the window background by filling in the regions around the outside of
+ * opaque bitmaps. This avoids flicker. */
 static void draw_edges_only(wimp_draw *draw, viewer *viewer, int x, int y)
 {
   os_box *extent;
@@ -379,7 +384,7 @@ static void draw_edges_only(wimp_draw *draw, viewer *viewer, int x, int y)
   extent = &viewer->extent;
   imgbox = &viewer->imgbox;
 
-  /* Draw top, bottom, left, right */
+  /* Draw top, bottom, left, right. */
 
   box.x0 = extent->x0 + x;
   box.y0 = imgbox->y1 + y;
@@ -387,18 +392,18 @@ static void draw_edges_only(wimp_draw *draw, viewer *viewer, int x, int y)
   box.y1 = extent->y1 + y;
   draw_edge(draw, viewer, x,y, &box);
 
-  /* top and bottom share x coordinates */
+  /* Top and bottom share x coordinates. */
   box.y0 = extent->y0 + y;
   box.y1 = imgbox->y0 + y;
   draw_edge(draw, viewer, x,y, &box);
 
-  /* left and bottom share x0 only */
+  /* Left and bottom share x0 only. */
   box.y0 = imgbox->y0 + y;
   box.x1 = imgbox->x0 + x;
   box.y1 = imgbox->y1 + y;
   draw_edge(draw, viewer, x,y, &box);
 
-  /* right and left share y coordinates */
+  /* Right and left share y coordinates. */
   box.x0 = imgbox->x1 + x;
   box.x1 = extent->x1 + x;
   draw_edge(draw, viewer, x,y, &box);
@@ -422,11 +427,11 @@ static os_colour bgcolour_from_type(bits file_type)
 
 void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
 {
-  int iw,ih;
+  int    iw,ih;
   os_box extent;
-  int sw,sh;
-  int minimum_size;
-  int xpix, ypix;
+  int    sw,sh;
+  int    minimum_size;
+  int    xpix, ypix;
 
   iw = box->x1 - box->x0;
   ih = box->y1 - box->y0;
@@ -438,7 +443,8 @@ void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
     if (!GLOBALS.choices.viewer.cover_icon_bar)
       sh -= IconBarVisible;
 
-    /* enforce a minimum size */
+    /* Enforce a minimum size. */
+
     if (sw < iw)
       sw = iw;
     if (sh < ih)
@@ -457,14 +463,14 @@ void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
     extent = *box;
   }
 
-  /* note: can't do this on a mode change */
+  /* Note: We can't do this on a mode change. */
   minimum_size = window_set_extent2(viewer->main_w,
                                     extent.x0,
                                     extent.y0,
                                     extent.x1,
                                     extent.y1);
 
-  /* re-read the actual extent if it hit minimum */
+  /* Re-read the actual extent if it hit minimum. */
   if (minimum_size)
   {
     wimp_window_info info;
@@ -475,26 +481,27 @@ void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
     extent = info.extent;
   }
 
-  /* remember the extent */
+  /* Remember the extent. */
   viewer->extent = extent;
 
-  /* set where to draw the image */
+  /* Set where to draw the image. */
   viewer->x = (sw - iw) / 2;
   viewer->y = (sh - ih) / 2;
 
-  /* Read the size of a pixel in OS units */
+  /* Read the size of a pixel in OS units. */
   read_current_pixel_size(&xpix, &ypix);
 
-  /* round to a whole pixel to avoid redraw glitches */
+  /* Round to the size of a whole pixel to avoid redraw glitches. */
   viewer->x &= ~(xpix - 1);
   viewer->y &= ~(ypix - 1);
 
-  /* remember the image extent */
+  /* Remember the image extent. */
   viewer->imgbox.x0 = viewer->x;
   viewer->imgbox.y0 = viewer->y;
   viewer->imgbox.x1 = viewer->x + iw;
   viewer->imgbox.y1 = viewer->y + ih;
 
+  /* Select a background filling mode. */
   if (viewer->drawable->flags & drawable_FLAG_DRAW_BG)
   {
     viewer->background.prepare = fill_redraw_rect_prepare;
@@ -513,7 +520,7 @@ void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
 
   if (viewer->background.draw)
   {
-    /* if the image specifies its own background colour then use it */
+    /* If the image specifies its own background colour then use it. */
     if (viewer->image->background_colour == os_COLOUR_TRANSPARENT)
       viewer->background.colour = bgcolour_from_type(viewer->image->source.file_type);
     else
@@ -521,7 +528,7 @@ void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
   }
 }
 
-/* FIXME: Largely the same as fit_to_screen in scale.c */
+/* FIXME: This is largely the same as fit_to_screen in scale.c. */
 static void scale_for_screen(viewer *viewer)
 {
   int w,h;
@@ -534,14 +541,15 @@ static void scale_for_screen(viewer *viewer)
   viewer->scale.cur = viewer->scale.prev = s;
 }
 
+/* Called when a change has occurred. */
 void viewer_update(viewer *viewer, viewer_update_flags flags)
 {
   drawable *d;
 
   d = viewer->drawable;
 
-  /* if the image format has changed, we need to throw away the previous
-   * drawable */
+  /* If the image format has changed we need to throw away the previous
+   * drawable. */
 
   if (flags & viewer_UPDATE_FORMAT)
     drawable_reset(d);
@@ -557,7 +565,7 @@ void viewer_update(viewer *viewer, viewer_update_flags flags)
     if (viewer->scale.cur == viewerscale_FIT_TO_SCREEN)
       scale_for_screen(viewer);
 
-    /* convert the percentage current scale into an os_factors */
+    /* Convert the percentage current scale into an os_factors. */
 
     os_factors_from_ratio(&factors, viewer->scale.cur, SCALE_100PC);
 
@@ -645,7 +653,7 @@ static int reset_callback(viewer *viewer, void *arg)
   return 0;
 }
 
-/* Call by the imageobserver when a registered image changes. */
+/* Called by imageobserver when a registered image changes. */
 static void image_changed_callback(image                *image,
                                    imageobserver_change  change,
                                    imageobserver_data   *data)
@@ -667,8 +675,8 @@ static void image_changed_callback(image                *image,
     break;
 
   case imageobserver_CHANGE_MODIFIED:
-    /* The image has been modified, which might mean anything, so reset the
-     * image object's transient stuff (like zones and reset the scale). */
+    /* The image has been modified (which might mean anything) so reset the
+     * image object's transient stuff (like zones) and reset the scale. */
     viewer_map_for_image(image, reset_callback, NULL);
 
     /* Convert the image change into a viewer update. */
@@ -758,7 +766,7 @@ error viewer_clone_from_window(wimp_w w, viewer **pviewer)
 
   /* Note that zones can validly be NULL (e.g. for vectors). */
 
-  /* watch for changes */
+  /* Watch for changes. */
   imageobserver_register(newv->drawable->image, image_changed_callback);
 
   *pviewer = newv;
@@ -778,10 +786,10 @@ Failure:
 
 /* ----------------------------------------------------------------------- */
 
-/* Loads the specified file into an existing eye block.
+/* Loads the specified file into an existing viewer block.
  *
  * Remember that the existing block may already have structures in it
- * associated with the previous image.
+ * associated with a previous image.
  */
 
 osbool viewer_load(viewer     *viewer,
@@ -797,14 +805,14 @@ osbool viewer_load(viewer     *viewer,
 
   hourglass_on();
 
-  /* remember current window position for when we position window later */
+  /* Remember current window position for when we position window later. */
   window_capture(viewer->main_w, &viewer->capture,
                  GLOBALS.choices.viewer.cover_icon_bar);
 
-  /* get rid of any previous stuff */
+  /* Get rid of any previous stuff. */
   viewer_reset(viewer);
 
-  /* is it in the cache? */
+  /* Is it in the cache? */
 
   err = imagecache_get(file_name, load, exec, &image);
   if (err)
@@ -812,7 +820,7 @@ osbool viewer_load(viewer     *viewer,
 
   if (image == NULL)
   {
-    /* it's not in the cache */
+    /* It's not in the cache. */
 
     image = image_create_from_file(&GLOBALS.choices.image,
                                     file_name,
@@ -836,15 +844,15 @@ osbool viewer_load(viewer     *viewer,
   set_view_title(viewer);
 
 #ifdef EYE_ZONES
-  /* now the viewer block is ready we can create the zones */
+  /* Now the viewer block is ready we can create the zones. */
   viewer->zones = zones_create(image);
-  /* viewer->zones may be NULL on return */
+  /* viewer->zones may be NULL on return. */
 #endif
 
-  /* watch for changes */
+  /* Watch for changes. */
   imageobserver_register(image, image_changed_callback);
 
-  /* if we have the focus - inform the image */
+  /* If we have the focus - inform the image. */
 
   wimp_get_caret_position(&caret);
   if (caret.w == viewer->main_w)
@@ -886,7 +894,7 @@ osbool viewer_save(viewer *viewer, const char *file_name)
 
 void viewer_unload(viewer *viewer)
 {
-  // only if we have focus...
+  /* FIXME: Only if we have the focus... */
   image_defocus(viewer->image);
 
   imageobserver_deregister(viewer->image, image_changed_callback);

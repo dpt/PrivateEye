@@ -48,8 +48,8 @@ error imagecache_get(const char *file_name,
                      image     **image)
 {
   int           i;
-  struct image *ci = NULL; /* needs 'struct' because of type/name clash with
-                              'image' arg */
+  struct image *ci = NULL; /* needs 'struct' to avoid name clash with 'image'
+                              arg */
 
   /* is the file already in our cache? */
   for (i = 0; i < cache.nentries; i++)

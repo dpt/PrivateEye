@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: tags.c
- * Purpose: Tags
+ * Purpose: Tags window
  * Version: $Id: tags.c,v 1.13 2010-06-02 21:59:15 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -122,8 +122,6 @@ static tag_cloud__event keyhandler(wimp_key_no  key_no,
 
   op = viewer_keymap_op(viewer_keymap_SECTION_TAG_CLOUD, key_no);
 
-  // yet another mapping
-
   switch (op)
   {
     case TagCloud_List:         return tag_cloud__EVENT_DISPLAY_LIST;
@@ -180,8 +178,8 @@ static void tags__image_changed_callback(image                *image,
     break;
 
   case imageobserver_CHANGE_LOST_FOCUS:
-    /* we don't set LOCALS.image to NULL here because when _we_ receive the
-     * the focus, this event is delivered. so we store the previously-focused
+    /* We don't set LOCALS.image to NULL here because when _we_ receive the
+     * the focus, this event is delivered. So we store the previously-focused
      * image. */
     break;
 
@@ -271,6 +269,8 @@ void tags__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
+/* The 'proper' init/fin functions provide lazy initialisation. */
+
 static int tags__properrefcount = 0;
 
 static error tags__properinit(void)
@@ -301,7 +301,7 @@ static error tags__properinit(void)
 
     imageobserver_register_greedy(tags__image_changed_callback);
 
-    db = tags_common__get_db(); // feels a bit grotty
+    db = tags_common__get_db(); /* FIXME: Feels a bit grotty. */
 
     tag_cloud__set_handlers(tc,
                             tags_common__add_tag,
@@ -326,6 +326,7 @@ Failure:
   return err;
 }
 
+/* This is only ever called with force set true at the moment. */
 static void tags__properfin(int force)
 {
   if (tags__properrefcount == 0)
@@ -375,7 +376,7 @@ error tags__open(image *image)
     if (err)
       goto failure;
 
-    // this duplicates code in tags__image_changed_callback
+    /* FIXME: This duplicates code in tags__image_changed_callback. */
     err = tags_common__set_highlights(LOCALS.tc, image);
     if (err)
       goto failure;
@@ -385,8 +386,8 @@ error tags__open(image *image)
     tag_cloud__open(LOCALS.tc);
   }
 
-  // doesn't work
-  //wimp_set_caret_position(state.w, wimp_ICON_WINDOW, -1, -1, -1, -1);
+  /* FIXME: This doesn't work - needs investigation. */
+  /* wimp_set_caret_position(state.w, wimp_ICON_WINDOW, -1, -1, -1, -1); */
 
   return error_OK;
 

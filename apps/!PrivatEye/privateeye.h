@@ -59,7 +59,7 @@ typedef struct
 
   struct
   {
-    int               size; /* K */
+    int               size; /* in kilobytes */
   }
   cache;
 

@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: hist.c
- * Purpose: Histogram
+ * Purpose: Histogram windows
  * Version: $Id: hist.c,v 1.36 2009-06-11 21:25:02 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -50,17 +50,17 @@ typedef unsigned int hist_flags;
 
 typedef struct hist_window
 {
-  list_t        list;
-  image        *image;
-  wimp_w        w;
-  unsigned int *display_hist;
-  hist_flags    flags;
-  os_colour     colour;
+  list_t        list;        /* a hist_window is a linked list node */
+  image        *image;       /* image we're the histogram of */
+  wimp_w        w;           /* our window handle */
+  unsigned int *display_hist; /* histogram data */
+  hist_flags    flags;       /* flags (see above) */
+  os_colour     colour;      /* colour to draw the bars */
 
   struct
   {
-    int         nbars;
-    int         gap;
+    int         nbars;       /* number of horizontal bars to draw */
+    int         gap;         /* gap inbetween bars */
   }
   scale;
 }
@@ -68,8 +68,8 @@ hist_window;
 
 static struct
 {
-  list_t        list_anchor;
-  hist_window  *last_hw;
+  list_t        list_anchor; /* linked list of histogram windows */
+  hist_window  *last_hw;     /* last hist_window a menu was opened on */
 }
 LOCALS;
 
@@ -203,10 +203,10 @@ static error hist__compute(image *image)
     }
     map[] =
     {
-      { 0, os_COLOUR_BLACK      },
-      { 1, os_COLOUR_RED        },
-      { 2, os_COLOUR_GREEN      },
-      { 3, os_COLOUR_BLUE       },
+      { 0, os_COLOUR_BLACK     },
+      { 1, os_COLOUR_RED       },
+      { 2, os_COLOUR_GREEN     },
+      { 3, os_COLOUR_BLUE      },
       { 4, os_COLOUR_DARK_GREY },
     };
 
@@ -359,7 +359,8 @@ static void hist__menu_update(hist_window *hw)
                      (hw->image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
 
-  /* FIXME: Strictly this needs a mapping. */
+  /* FIXME: Strictly this needs to be a mapping from flags to menu indices.
+   */
   menu_tick_exclusive(GLOBALS.hist_m, hw->flags & flag_COMPS);
 }
 
@@ -369,7 +370,7 @@ static void hist__refresh(hist_window *hw)
 
   err = hist__compute(hw->image);
   if (err)
-    return; // error lost
+    return; /* FIXME: The error is lost. */
 
   wimp_set_icon_state(hw->w, HIST_ICON, 0, 0);
 }

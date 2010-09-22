@@ -58,14 +58,14 @@ filenamedb_t *tags_common__get_filename_db(void)
 
 /* ----------------------------------------------------------------------- */
 
-// probably in wrong place
+/* FIXME: This is probably in the wrong place. */
 void tags_common__choices_updated(const choices *cs)
 {
   NOT_USED(cs);
 
-  // for (each tag cloud)
-  //if (LOCALS.tc)
-//    set_config(LOCALS.tc);
+  /* for (each tag cloud)
+       if (LOCALS.tc)
+         set_config(LOCALS.tc); */
 }
 
 /* ----------------------------------------------------------------------- */
@@ -129,7 +129,6 @@ error tags_common__add_tag(tag_cloud  *tc,
   return error_OK;
 }
 
-/* Delete 'index'. */
 error tags_common__delete_tag(tag_cloud *tc,
                               int        index,
                               void      *arg)
@@ -146,7 +145,6 @@ error tags_common__delete_tag(tag_cloud *tc,
   return error_OK;
 }
 
-/* Rename 'index' to 'name'. */
 error tags_common__rename_tag(tag_cloud  *tc,
                               int         index,
                               const char *name,
@@ -207,8 +205,8 @@ error tags_common__detag(tag_cloud  *tc,
   if (err)
     return err;
 
-  /* we _don't_ remove from the filenamedb here, as there may be other tags
-   * applied to the same file */
+  /* We _don't_ remove from the filenamedb here, as there may be other tags
+   * applied to the same file. */
 
   err = tags_common__set_tags(tc);
   if (err)
@@ -280,7 +278,7 @@ error tags_common__event(tag_cloud        *tc,
   {
   case tag_cloud__EVENT_COMMIT:
 
-    /* backup before we write out the databases */
+    /* Backup before we write out the databases. */
     backup();
 
     filenamedb__commit(LOCALS.fdb);
@@ -309,8 +307,6 @@ error tags_common__set_tags(tag_cloud *tc)
   tagdb__tag      tag;
   int             count;
   tag_cloud__tag *t;
-
-  /* set tags */
 
   tagsallocated = 0; /* allocated */
   tags          = NULL;
@@ -384,15 +380,16 @@ error tags_common__set_tags(tag_cloud *tc)
       tagsallocated = n;
     }
 
-    tags[ntags].name  = (void *) (bufp - buf); /* store delta now, fix up later */
+    tags[ntags].name  = (void *) (bufp - buf); /* store as a delta now, fix
+                                                  up later */
     tags[ntags].count = count;
     ntags++;
 
     bufp += strlen(bufp) + 1;
   }
 
-  /* we've stored the tag name pointers as deltas so we can cope when the
-   * block moves, now fix them all up. */
+  /* We've stored the tag name pointers as deltas so we can cope when the
+   * block moves. We now fix them all up. */
 
   for (t = tags; t < tags + ntags; t++)
     t->name = buf + (int) t->name;
@@ -550,6 +547,8 @@ void tags_common__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
+/* The 'proper' init/fin functions provide lazy initialisation. */
+
 static int tags_common__properrefcount = 0;
 
 error tags_common__properinit(void)
@@ -602,7 +601,7 @@ failure:
 
   hourglass_off();
 
-  // clean up
+  /* FIXME: Cleanup code is missing. */
 
   return err;
 }

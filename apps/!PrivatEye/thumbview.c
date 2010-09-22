@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: thumbview.c
- * Purpose: Thumbnail viewer
+ * Purpose: Filer-like thumbnail viewing
  * Version: $Id: thumbview.c,v 1.22 2010-01-29 15:09:00 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -67,7 +67,7 @@ typedef unsigned int layout_flags;
 
 enum
 {
-  InfoTextIndex_FileName, //
+  InfoTextIndex_FileName,
   InfoTextIndex_FileType,
   InfoTextIndex_Resolution,
   InfoTextIndex_Depth,
@@ -99,25 +99,25 @@ enum
 static error thumbview__set_display_mode(thumbview              *tv,
                                          thumbview_display_mode  mode);
 
-/* ---------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------- */
 
 typedef struct thumbview_entry
 {
-  image           *image;
-  drawable        *drawable;
-  dict_index       text[InfoTextIndex__Limit];
+  image      *image;
+  drawable   *drawable;
+  dict_index  text[InfoTextIndex__Limit];
 }
 thumbview_entry;
 
 struct thumbview
 {
-  list_t                  list;
+  list_t                  list; /* a thumbview is a linked list node */
 
   thumbview_display_mode  mode;
 
   dict_t                 *text; /* holds all strings */
 
-  filerwin               *fw;
+  filerwin               *fw;   /* our 'filer' window */
 
   thumbview_entry        *entries;
   int                     nentries;
@@ -126,7 +126,7 @@ struct thumbview
   int                     thumb_w, thumb_h; /* dimensions of the thumbnail */
   int                     item_w, item_h;   /* dimensions of the cards */
 
-  unsigned int            elements_present;
+  unsigned int            elements_present; /* layout elements presence */
   struct
   {
     os_box elements[ElementIndex__Limit];
@@ -134,16 +134,16 @@ struct thumbview
   layout;
 };
 
-/* ---------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------- */
 
 static struct
 {
   list_t     list_anchor;
-  thumbview *last_tv;
+  thumbview *last_tv;     /* last thumbview a menu was opened on */
 }
 LOCALS;
 
-/* ---------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------- */
 
 static event_wimp_handler thumbview__event_key_pressed,
                           thumbview__event_menu_selection,
@@ -154,16 +154,17 @@ static event_message_handler thumbview__message_palette_change,
 
 static void thumbview__menu_update(void);
 
-/* ---------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------- */
 
 typedef int (thumbview__map_callback)(thumbview *tv, void *arg);
 
+/* Call the specified function for every thumbview window. */
 static void thumbview__map(thumbview__map_callback *fn, void *arg)
 {
   list__walk(&LOCALS.list_anchor, (list__walk_callback *) fn, arg);
 }
 
-/* ---------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------- */
 
 static int close_all_callback(thumbview *tv, void *arg)
 {
@@ -206,11 +207,14 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
 
     b = &tv->layout.elements[i];
 
-    if (box__is_empty(b))
+    if (box__is_empty(b)) /* should ideally cull empty boxes before they
+                             reach this stage */
+        continue;
+
+    if (i == ElementIndex_Info)
       continue;
 
-    if (i == 1)
-      continue;
+    /* fill in the areas we're to draw over with a red colour */
 
     colourtrans_set_gcol(0x8000 + 0x2000 * i,
                          colourtrans_SET_FG_GCOL,
@@ -221,7 +225,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
     os_plot(os_PLOT_RECTANGLE | os_PLOT_TO, x + b->x1 - 1, y + b->y1 - 1);
   }
 
-  // want actual thumb widths
+  /* FIXME: Need actual thumbnail widths here. */
 
   if (tv->elements_present & (1u << ElementIndex_Thumbnail))
   {
@@ -236,8 +240,8 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
 
 #define HEIGHT 36
 
-  /* this draws text using an innacurate background colour unless the icon is
-   * filled */
+  /* The icon must be filled otherwise an inaccurate background colour is
+   * used. */
 
   icon.flags = wimp_ICON_FILLED | wimp_ICON_TEXT |
                wimp_ICON_VCENTRED | wimp_ICON_INDIRECTED |
@@ -247,15 +251,14 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
   icon.data.indirected_text.validation = "";
   icon.data.indirected_text.size       = 255;
 
+  /* The coordinates as they arrive have been worked out in screen space. We
+   * want them in work area coordinates so remove the redraw shift. */
+
   workarea_x = x - (redraw->box.x0 - redraw->xscroll);
   workarea_y = y - (redraw->box.y1 - redraw->yscroll);
 
   if (tv->elements_present & (1u << ElementIndex_Info))
   {
-    /* the coordinates as they arrive have been worked out in screen space.
-     * we want them in work area coordinates so remove the redraw shift.
-     */
-
     icon.extent = tv->layout.elements[ElementIndex_Info];
 
     icon.extent.x0 += workarea_x;
@@ -285,7 +288,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
     icon.extent.x1 += workarea_x;
     icon.extent.y1 += workarea_y;
 
-    s = "tags tags tags tags tags";
+    s = "tags tags tags tags tags"; /* FIXME: Need actual tags. */
 
     icon.data.indirected_text.text       = (char *) s;
     icon.data.indirected_text.validation = "";
@@ -385,7 +388,9 @@ static void thumbview__release_handlers(thumbview *tv)
 
 static void thumbview__set_single_handlers(int reg)
 {
-  /* menu_selection is 'vague' so should only be registered once */
+  /* menu_selection is 'vague' (we never know which menu it relates to) so
+   * should only be registered once. */
+
   static const event_wimp_handler_spec wimp_handlers[] =
   {
     { wimp_MENU_SELECTION,    thumbview__event_menu_selection },
@@ -449,7 +454,6 @@ error thumbview__init(void)
 
 void thumbview__fin(void)
 {
-  // discard any open thumbviews
   thumbview__close_all();
 
   help__remove_menu(GLOBALS.thumbview_m);
@@ -465,56 +469,11 @@ void thumbview__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-#if 0
-static void disable(wimp_menu *m, int entry, int available)
-{
-  menu_set_icon_flags(m,
-                      entry,
-                      available ? 0 : wimp_ICON_SHADED,
-                      wimp_ICON_SHADED);
-}
-#endif
-
 static void thumbview__menu_update(void)
 {
-#if 0
-  viewer          *viewer;
-  image           *image;
-  wimp_menu_entry *entries;
-  wimp_menu       *m;
-
-  viewer = viewer_find(GLOBALS.current_display_w);
-  if (viewer == NULL)
-    return;
-
-  image = viewer->drawable->image;
-
-
-  /* Misc menu */
-
-  entries = GLOBALS.thumbview_m->entries;
-  m = entries[IMAGE_MISC].sub_menu;
-
-  /* Shade the "Histogram" entry if we don't have that method */
-  disable(m, INFO_HIST, hist__available(image));
-
-  /* Edit menu */
-
-  entries = GLOBALS.thumbview_m->entries;
-  m = entries[IMAGE_EDIT].sub_menu;
-
-  /* Shade the "Effects" entry if effects module says "no" */
-  disable(m, EDIT_EFFECTS, effects__available(image));
-
-  /* Shade the "Rotate" entry if rotate module says "no" */
-  disable(m, EDIT_ROTATE,  rotate__available(image));
-
-  /* Shade the "Release clipboard" entry if we don't own the clipboard */
-  disable(m, EDIT_RELEASE, clipboard_own());
-#endif
 }
 
-/* ---------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------- */
 
 static void thumbview__action(thumbview *tv, int op)
 {
@@ -901,7 +860,7 @@ static error layout(thumbview *tv)
   os_box          used;
   int             y;
 
-  /* choice values are multiplied by two to convert "pixels" to OS units */
+  /* Choice values are multiplied by two to convert "pixels" to OS units. */
 
   pagedims.x0 = 0;
   pagedims.y0 = 0;
@@ -950,7 +909,7 @@ static error layout(thumbview *tv)
     flags |= SMALL;
     thumbw /= 2;
     thumbh /= 2;
-    // could adjust infow/h but we won't use that mode yet
+    /* could adjust infow/h but we won't use that mode yet */
     break;
   case thumbview_display_mode_FULL_INFO_HORIZONTAL:
   case thumbview_display_mode_FULL_INFO_VERTICAL:
@@ -1019,7 +978,7 @@ static error layout(thumbview *tv)
   if (err)
     goto failure;
 
-  /* invalidate all layout elements */
+  /* Invalidate all layout elements. */
 
   tv->elements_present = 0;
 
@@ -1044,14 +1003,14 @@ static error layout(thumbview *tv)
 
   used = *packer__get_consumed_area(packer);
 
-  /* re-add the margins, which get_consumed_area does not account for */
+  /* Re-add the margins, which get_consumed_area does not account for. */
 
   used.x0 -= margins.x0;
   used.y0 -= margins.y0;
   used.x1 += margins.x1;
   used.y1 += margins.y1;
 
-  /* move all elements down by y0 */
+  /* Move all elements down by y0. */
 
   y = used.y0;
 
@@ -1129,7 +1088,7 @@ static error load_directory_cb(const char          *obj_name,
 
   /* image */
 
-  /* is it in the cache? */
+  /* Is it in the cache? */
 
   err = imagecache_get(obj_name, info->load_addr, info->exec_addr, &image);
   if (err)
@@ -1137,7 +1096,7 @@ static error load_directory_cb(const char          *obj_name,
 
   if (image == NULL)
   {
-    /* it's not in the cache */
+    /* It's not in the cache */
 
     image = image_create_from_file(&GLOBALS.choices.image,
                                     obj_name,
@@ -1149,7 +1108,7 @@ static error load_directory_cb(const char          *obj_name,
     }
   }
 
-  // will need to cope better with failure to load/access images
+  /* FIXME: Will need to cope better with failure to load/access images. */
 
   /* drawable */
 
@@ -1235,8 +1194,8 @@ void thumbview_load_dir(thumbview *tv, const char *dir_name)
 
   filerwin__set_window_title(tv->fw, dir_name);
 
-  // once we have all the directory details we can go about calculating what
-  // the layout should be
+  /* Once we have all the directory details we can go about calculating what
+   * the layout should be. */
 
   err = layout(tv);
   if (err)

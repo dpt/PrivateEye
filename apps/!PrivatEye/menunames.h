@@ -7,10 +7,8 @@
 #ifndef MENUNAMES_H
 #define MENUNAMES_H
 
-/*
- * Prefer enum rather than #defines to allow const-like behaviour and real
- * compile-time syntax checking.
- */
+/* We prefer enum rather than #defines to allow const-like behaviour and real
+ * compile-time syntax checking. */
 enum
 {
   ICONBAR_INFO          = 0,

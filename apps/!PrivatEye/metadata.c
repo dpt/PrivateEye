@@ -166,13 +166,15 @@ static error metadata__compute(image *image)
   if ((image->flags & image_FLAG_HAS_META) == 0)
     return error_PRIVATEEYE_META_UNSUPP_FUNC;
 
-  md = metadata__image_to_win(image); // wasteful: already done in outer
+  md = metadata__image_to_win(image); /* FIXME: Wasteful repetition of
+                                         operation already done in the outer
+                                         scope. */
 
   hourglass_on();
 
   if (image->methods.get_meta(&GLOBALS.choices.image, image, &tree))
   {
-    // cleanup
+    /* FIXME: Cleanup. */
     return error_PRIVATEEYE_META_UNSUPP_FUNC;
   }
 
@@ -199,7 +201,7 @@ static error metadata__compute(image *image)
     goto Failure;
 
   box.x0 = 0;
-  box.y0 = h; // already -ve
+  box.y0 = h; /* this is negative */
   box.x1 = w;
   box.y1 = 0;
   wimp_set_extent(md->w, &box);

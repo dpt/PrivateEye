@@ -80,6 +80,8 @@ allow a minimum tag cloud window size (for search window)
 layout scale changes need a call to tag_cloud__set_display for the effect to
 set
 
+in-RAM data transfers
+
 done
 ~~~~
 if we drop the 'small tag cloud' mode we can replace it with font size

@@ -17,11 +17,10 @@
 
 void clipboard_claim(wimp_w w)
 {
-  /* Copy to clipboard */
   wimp_message message;
 
-  /* Always broadcast this, even if we already own the clipboard (see ROL
-   * Clipboard TechNote). */
+  /* We always broadcast this, even if we already own the clipboard (see
+   * RISCOS Ltd. Clipboard TechNote). */
 
   /* Claim the clipboard, even if we already own it */
   message.size     = sizeof(wimp_full_message_claim_entity);

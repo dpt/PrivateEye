@@ -180,6 +180,12 @@ static void finalise_subsystems(void)
 
 /* ----------------------------------------------------------------------- */
 
+/* PrivateEye used to be distibuted under the "Sliced Software" label and
+ * consequently stored its choices in the file
+ * <Choices$Write>.Sliced.PrivateEye. To support a more extensive choices
+ * structure since version ?.?? it creates the directory
+ * <Choices$Write>.PrivateEye from an old-style choices files if it finds
+ * one. */
 static void upgrade_choices(void)
 {
   os_error              *err;
@@ -187,17 +193,18 @@ static void upgrade_choices(void)
   FILE                  *rd;
   FILE                  *wr;
 
-  /* We don't use "Choices:XXX" here because the path variable can and does
-   * have multiple entries on it. */
+  /* We can't use "Choices:XXX" here because it's a path variable which can
+   * and does have multiple entries on it. Instead we use '<Choices$Write>.'
+   */
 
   err = xosfile_read_no_path("<Choices$Write>." APPNAME, &type,
                              NULL, NULL, NULL, NULL);
   if (err == NULL && type == fileswitch_IS_DIR)
-    return; /* new format already exists */
+    return; /* new format choices already exists */
 
   xosfile_create_dir("<Choices$Write>." APPNAME, 0);
 
-  /* Move Choices:Sliced.PrivateEye to Choices:PrivateEye.Choices. */
+  /* Convert Choices:Sliced.PrivateEye to Choices:PrivateEye.Choices. */
 
   err = xosfile_read_no_path("<Choices$Write>.Sliced." APPNAME, &type,
                              NULL, NULL, NULL, NULL);
@@ -212,7 +219,7 @@ static void upgrade_choices(void)
   if (wr == NULL)
     return;
 
-  /* feof doesn't seem to work if nothing's been read from the file yet, so
+  /* feof() doesn't seem to work if nothing's been read from the file yet, so
    * we need to check the result of fgets inside the loop. */
 
   while (!feof(rd))
@@ -237,10 +244,12 @@ static void upgrade_choices(void)
   fclose(wr);
   fclose(rd);
 
-  /* We'll leave the old version in place so old versions of the app will
-   * continue to work. */
+  /* We'll leave the old version of the choices in place so old versions of
+   * the app will continue to work. */
 }
 
+/* Copy the keymap into the choices directory, but only if it's newer than
+ * the existing one. */
 static void install_keymap(void)
 {
   osfscontrol_copy(APPNAME "Res:Keys",
@@ -261,7 +270,9 @@ int main(int argc, char *argv[])
 {
   static const wimp_MESSAGE_LIST(2) messages =
   {{
-    message_MENUS_DELETED, /* Without this, ColourPicker blows things up. */
+    message_MENUS_DELETED, /* We register all other messages as they are
+                              required using Wimp_AddMessages, but without
+                              this here, ColourPicker blows things up. */
     message_QUIT
   }};
 
@@ -291,11 +302,9 @@ int main(int argc, char *argv[])
     int max_app;
     int dynamic_size;
 
-    /* Read the maximum size of application space.
-     * If it's > 28,640K then use the application slot.
-     * This allows us to cope with Aemulor restricting the maximum size of
-     * application space.
-     */
+    /* Read the maximum size of application space. If it's more than 28,640K
+     * then use the application slot. This allows us to cope with Aemulor
+     * restricting the maximum size of application space. */
 
     dynamic_size = -1; /* use a dynamic area by default */
 
@@ -326,9 +335,8 @@ int main(int argc, char *argv[])
   /* Window creation and event registration */
   templates_open(APPNAME "Res:Templates");
 
-  choices_create_windows(&privateeye_choices);
-
   /* Choices */
+  choices_create_windows(&privateeye_choices);
   choices_load(&privateeye_choices);
 
   err = initialise_subsystems();
@@ -341,11 +349,11 @@ int main(int argc, char *argv[])
 
   /* Register the main event handlers last. This has the effect of putting
    * them at the end of the event handler lists, so they get called after
-   * other event handlers. */
+   * any other event handlers. */
 
   register_event_handlers(1);
 
-  /* Command line arguments */
+  /* Process command line arguments */
   while (--argc)
   {
     os_error               *e;
@@ -371,7 +379,8 @@ int main(int argc, char *argv[])
     else
       continue;
 
-    /* Ignore not founds, unsupported file types, or directories given. */
+    /* Ignore files not found, unsupported file types, or directories given.
+     */
     if (obj_type == fileswitch_IS_FILE && image_is_loadable(file_type))
     {
       viewer *viewer;
@@ -512,8 +521,8 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
   NOT_USED(handle);
 
-  /* CheckMe: It may be incorrect to assume that the current_display_w
-   *          will be valid at this point. */
+  /* FIXME: It may be incorrect to assume that the current_display_w will be
+   * valid at this point. */
   viewer = viewer_find(GLOBALS.current_display_w);
   if (viewer == NULL)
     return event_NOT_HANDLED;
@@ -662,6 +671,7 @@ static const struct
 }
 ShouldLoad_map[] =
 {
+  /* Sorted by file type so we can binary search. */
   { 0x695 /* gif_FILE_TYPE  */,     &GLOBALS.choices.gif.load      },
   { 0xaff /* osfile_TYPE_DRAW */,   &GLOBALS.choices.drawfile.load },
   { 0xb60 /* png_FILE_TYPE */,      &GLOBALS.choices.png.load      },
@@ -670,9 +680,11 @@ ShouldLoad_map[] =
   { 0xff9 /* osfile_TYPE_SPRITE */, &GLOBALS.choices.sprite.load   }
 };
 
+// why are these not just expressed directly in the call below?
 static const size_t ShouldLoad_stride = sizeof(ShouldLoad_map[0]);
 static const size_t ShouldLoad_nelems = sizeof(ShouldLoad_map) / sizeof(ShouldLoad_map[0]);
 
+/* Should we respond to DataOpen messages for the specified file type? */
 static osbool should_load(bits file_type)
 {
   int i;
@@ -761,7 +773,7 @@ static int message_save_desktop(wimp_message *message, void *handle)
 
   os_bputw('\n', file);
 
-  /* WriteMe: if (error) ack the message */
+  /* FIXME: if (error) ack the message */
 
   return event_HANDLED;
 }
@@ -839,9 +851,9 @@ static int message_mode_change(wimp_message *message, void *handle)
   if (GLOBALS.choices.viewer.size == 1)
   {
     /* Since we can't change the extent of windows on a mode change, we need
-     * to register a callback for later on.
-     * If there was a way to test if the screen resolution had actually
-     * changed then I could avoid this. */
+     * to register a callback to perform the work later on. If there was a
+     * way to test if the screen resolution had actually changed then I could
+     * avoid this. */
 
     event_register_wimp_handler(wimp_NULL_REASON_CODE,
                                 event_ANY_WINDOW, event_ANY_ICON,
@@ -874,21 +886,21 @@ static int message_data_request(wimp_message *message, void *handle)
   if (GLOBALS.clipboard_viewer != NULL &&
       message->data.data_request.flags == wimp_DATA_REQUEST_CLIPBOARD)
   {
-    /* Clipboard requested and we own the clipboard  */
+    /* The clipboard was requested and we own the clipboard. */
+
     types_list = message->data.data_request.file_types;
 
     file_type = GLOBALS.clipboard_viewer->drawable->image->display.file_type;
 
-   /*
-    * If the file type is in the list, or if the list is empty, then send
-    */
+    /* If the file type is in the list, or if the list is empty, then send. */
 
     for (i = 0; types_list[i] != file_type && types_list[i] != 0xffffffffu; i++)
       ;
 
     if (types_list[0] == 0xffffffffu || types_list[i] != 0xffffffffu)
     {
-      /* Requested a format we can provide, respond with a DataSave */
+      /* They requested a format we can provide. Respond with a DataSave. */
+
       datasave.data.data_xfer.w         = message->data.data_xfer.w;
       datasave.data.data_xfer.i         = message->data.data_xfer.i;
       datasave.data.data_xfer.pos.x     = message->data.data_xfer.pos.x;

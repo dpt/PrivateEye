@@ -16,7 +16,8 @@ error action_help(void)
   help_full_message_enable m;
   wimp_t                   t;
 
-  /* I'm a bit worried about 'X' not being available everywhere. */
+  /* FIXME: I'm a bit worried that 'X' won't be available on all systems,
+   * though it should be in any 'modern' boot sequence. */
   xwimp_start_task("X <Help$Start>", &t);
 
   m.size     = sizeof(m);

@@ -23,48 +23,51 @@ typedef struct viewer viewer;
 
 struct viewer
 {
-  list_t              list;
+  list_t              list;     /* A viewer is a linked list node. */
 
-  wimp_w              main_w; /* The "primary key" */
+  wimp_w              main_w;   /* The "primary key". */
 
-  WindowCapture       capture;
+  WindowCapture       capture;  /* Captured window position. */
 
-  int                 xfer_ref;           /* data transfer protocol ref. */
+  int                 xfer_ref; /* Data transfer protocol ref. */
 
   struct
   {
-    int               cur, prev;
+    int               cur, prev; /* Current, previous scale factor. */
   }
   scale;
 
 #ifdef EYE_ZONES
-  zones              *zones;
+  zones              *zones;    /* Records which parts of the image have been
+                                 * 'seen'. */
 #endif
 
   struct
   {
     int               count;
     int               dest_x, dest_y, dest_scale;
-    int               pos_x, pos_y, pos_scale; /* 16.16 fxp */
+    int               pos_x, pos_y, pos_scale; /* 16.16 fixed point */
   }
   scrolling;
 
   struct
   {
     os_colour          colour;
-    osspriteop_header *header; /* used when plotting sprites */
+    osspriteop_header *header;  /* Used when plotting sprites. */
     void             (*prepare)(viewer *);
     void             (*draw)(wimp_draw *, viewer *, int x, int y);
   }
   background;
 
-  image              *image;
-  drawable           *drawable;
+  image              *image;    /* The image we're viewing. */
+  drawable           *drawable; /* How to draw the image. */
 
-  os_box              extent;
-  os_box              imgbox;
+  os_box              extent;   /* Bounding box of the viewer window. */
+  os_box              imgbox;   /* Bounding box of the image we're viewing.
+                                 */
 
-  int                 x,y;
+  int                 x,y;      /* Where to draw the image (OS units rounded
+                                   to nearest whole pixels). */
 };
 
 /* ----------------------------------------------------------------------- */

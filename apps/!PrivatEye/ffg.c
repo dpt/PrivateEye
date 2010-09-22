@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: ffg.c
- * Purpose: CC Foreign Format Graphics converters interface
+ * Purpose: Computer Concepts Foreign Format Graphics converters interface
  * Version: $Id: ffg.c,v 1.8 2009-05-20 21:38:18 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -56,7 +56,7 @@ static Translator *first_ffg = NULL;
 static void read_translators(const char *wildcard,
                              osbool (*loadable_fn)(bits))
 {
-  enum { MaxTypes = 8 }; /* FIXME hard limit */
+  enum { MaxTypes = 8 }; /* FIXME: Hard limit. */
 
   int context;
 
@@ -64,17 +64,17 @@ static void read_translators(const char *wildcard,
 
   for (;;)
   {
-    char        value[256];
-    int         used;
-    os_var_type var_type;
+    char         value[256];
+    int          used;
+    os_var_type  var_type;
     Translator  *ffg;
-    const char *cmd;
-    size_t      cmdlen;
-    size_t      l;
-    const char *dollar;
-    int         i;
-    const char *p;
-    os_error   *e;
+    const char  *cmd;
+    size_t       cmdlen;
+    size_t       l;
+    const char  *dollar;
+    int          i;
+    const char  *p;
+    os_error    *e;
 
     e = xos_read_var_val(wildcard,
                          value,
@@ -87,7 +87,7 @@ static void read_translators(const char *wildcard,
 
     /* XOS_ReadVarVal returns context == 0 *and* VS, but OSLib's veneer jumps
      * immediately on seeing the returned VS, never updating the returned
-     * variables. So must check error, not 'context'. */
+     * variables. So we must check the error, not 'context'. */
 
     if (e != NULL && e->errnum == error_VAR_CANT_FIND)
       break; /* no more system variables */

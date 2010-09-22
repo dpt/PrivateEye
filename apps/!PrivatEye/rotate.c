@@ -177,7 +177,6 @@ static void rotate__set_drag_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-
 static void shift_buttons(const os_box *box)
 {
   static const struct
@@ -282,6 +281,8 @@ static void rotate__update_dialogue(void)
                              &w,&h,
                              &mask,
                              &mode);
+
+  /* convert dimensions to OS units */
 
   read_mode_vars(mode, &xeig, &yeig, NULL);
 
@@ -546,10 +547,10 @@ static void refresh(void)
 
   /* redraw indicator */
 
-  wimp_force_redraw(LOCALS.rotate_w,  + 8,
-                                       - 8 - 32,
-                                       + 8 + 32,
-                                       - 8);
+  wimp_force_redraw(LOCALS.rotate_w, + 8,
+                                     - 8 - 32,
+                                     + 8 + 32,
+                                     - 8);
 }
 
 static int rotate__event_pollword_non_zero(wimp_event_no event_no, wimp_block *block, void *handle)

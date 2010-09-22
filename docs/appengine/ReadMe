@@ -37,9 +37,13 @@ The top-level modules:
 
 In the headers:
 
-  There's an occasional convention of using #define T to
-  factor out the name of the type being defined.
+  There's an occasional convention (taken from the C Interfaces and
+  Implementations book) of using #define T to factor out the name of the type
+  being defined.
 
 In the code:
 
-  // C++ comments tend to indicate crappyness.
+  "//" C++ comments are used to indicate crappyness. These should probably be
+  replaced with FIXME which tends to be better noted by tools (e.g. Vim
+  highlights it).
+

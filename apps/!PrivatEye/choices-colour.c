@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: choices-colour.c
- * Purpose: Colour control module
+ * Purpose: Colour correction choices
  * Version: $Id: choices-colour.c,v 1.18 2009-11-29 23:18:36 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -26,7 +26,6 @@
 
 enum
 {
-  Fudge  = 4,
   Border = 8  /* size of an icon border */
 };
 

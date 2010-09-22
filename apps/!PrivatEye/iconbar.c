@@ -134,8 +134,8 @@ static int icon_bar__event_mouse_click(wimp_event_no event_no, wimp_block *block
   {
     icon_bar__menu_update();
 
-    /* AppEngine could do with a menu_open_iconbar which calculates the
-     * appropriate height to open at */
+    /* FIXME: AppEngine could do with a menu_open_iconbar which calculates
+     * the appropriate height to open the menu at. */
     menu_open(GLOBALS.iconbar_m,
               pointer->pos.x - 64,
               96 + wimp_MENU_ITEM_HEIGHT * ICONBAR__LIMIT);

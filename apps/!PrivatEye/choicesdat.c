@@ -55,7 +55,7 @@ static const choices_pane_handlers colours_handlers =
   colour_choicepane_redraw,
 };
 
-/* if you alter these then the various pane indices below will also need
+/* If you alter these then the various pane indices below will also need
  * updating. */
 static const choices_pane panes[] =
 {
@@ -73,7 +73,8 @@ static const choices_pane panes[] =
 
 /* ----------------------------------------------------------------------- */
 
-/* "viewerchoices" rather than "viewer" to avoid name conflicts. */
+/* These are prefixed "viewerchoices" rather than just "viewer" to avoid name
+ * conflicts. */
 
 static const choices_stringset_vals viewerchoices_size_vals[] =
 {
@@ -902,7 +903,7 @@ static const choices_choice artworks[] =
   { "background",
      offsetof(eye_choices, artworks.background),
       choices_TYPE_COLOUR,
-       (int) os_COLOUR_WHITE, /* poo */
+       (int) os_COLOUR_WHITE,
         { .colour = &artworks_background } },
 
   { "border",

@@ -90,9 +90,9 @@ static error tag(tag_cloud *tc,
     int i;
     int shift;
 
-    /* a linear search is probably more appropriate here than calling
-     * bsearch_int (which doesn't actually return us the insertion point
-     * anyway) */
+    /* A linear search is probably more appropriate here than calling
+     * bsearch_int (which in any case doesn't return us the insertion point).
+     */
 
     for (i = 0; i < ind->nindices && ind->indices[i] < index; i++)
       ;
@@ -222,6 +222,8 @@ void tags_search__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
+/* The 'proper' init/fin functions provide lazy initialisation. */
+
 static int tags_search__properrefcount = 0;
 
 static error tags_search__properinit(void)
@@ -255,12 +257,12 @@ static error tags_search__properinit(void)
                             tags_common__rename_tag,
                             tag,
                             detag,
-                            tags_common__tagfile, // allow these?
-                            tags_common__detagfile, // allow these?
+                            tags_common__tagfile,
+                            tags_common__detagfile,
                             tags_common__event,
                             tags_common__get_db());
 
-    /*ttag_cloud__set_key_handler(tc, keyhandler, db);*/
+    /* tag_cloud__set_key_handler(tc, keyhandler, db); */
 
     err = tags_common__set_tags(tc);
     if (err)
@@ -295,21 +297,22 @@ static void tags_search__properfin(int force)
 
 /* ----------------------------------------------------------------------- */
 
+/* This is very rough at the moment. */
 static error tags_search__search(void)
 {
-  error err;
-  int   cont;
-  char  buf[256];
+  error         err;
+  int           cont;
+  char          buf[256];
   filenamedb_t *fdb;
 
   fdb = tags_common__get_filename_db();
 
-  // no mode switch yet (any/all)
+  /* no mode switch yet (any/all) */
 
   cont = 0;
   do
   {
-    // this function matches all tags
+    /* this function matches all tags */
     err = tagdb__enumerate_ids_by_tags(tags_common__get_db(),
                         (tagdb__tag *) LOCALS.indices.indices,
                                        LOCALS.indices.nindices,
@@ -340,7 +343,7 @@ static error tags_search__search(void)
       else
       {
         printf("- <%s> not in db\n", buf);
-        // not in filenamedb
+        /* not in filenamedb */
       }
     }
   }
@@ -407,25 +410,27 @@ static error search_attach_child(wimp_w parent, wimp_w child, wimp_i icon)
   coutline.w = child;
   wimp_get_window_outline(&coutline);
 
-  // record furniture sizes
+  /* record window furniture sizes */
   coutline.outline.x0 -= cstate.visible.x0;
   coutline.outline.y0 -= cstate.visible.y0;
   coutline.outline.x1 -= cstate.visible.x1;
   coutline.outline.y1 -= cstate.visible.y1;
 
-  // scr to wrk: wrk_x = scr_x + xscroll - visible_x0
-  // wrk to scr: scr_x = wrk_x - xscroll + visible_x0
+  /* scr to wrk: wrk_x = scr_x + xscroll - visible_x0 */
+  /* wrk to scr: scr_x = wrk_x - xscroll + visible_x0 */
 
   cstate.visible.x0 = istate.icon.extent.x0 - pstate.xscroll + pstate.visible.x0;
   cstate.visible.y0 = istate.icon.extent.y0 - pstate.yscroll + pstate.visible.y1;
   cstate.visible.x1 = istate.icon.extent.x1 - pstate.xscroll + pstate.visible.x0;
   cstate.visible.y1 = istate.icon.extent.y1 - pstate.yscroll + pstate.visible.y1;
 
-  // adjust for furniture
+  /* adjust for furniture */
   cstate.visible.x0 -= coutline.outline.x0;
   cstate.visible.y0 -= coutline.outline.y0;
   cstate.visible.x1 -= coutline.outline.x1;
-  cstate.visible.y1 -= -coutline.outline.y0; //title bar is removed when we open the window, so use the bottom edge as a guide
+  cstate.visible.y1 -= -coutline.outline.y0; /* the title bar is removed when
+                                                we open the window, so use
+                                                the bottom edge as a guide */
 
   cstate.next   = wimp_TOP;
   cstate.flags &= ~(wimp_WINDOW_AUTO_REDRAW |
@@ -475,7 +480,7 @@ error tags_search__open(void)
   {
     /* opening for the first(?) time */
 
-    //tags_search__update_dialogue();
+    /* tags_search__update_dialogue(); */
 
     window_open_at(w, AT_BOTTOMPOINTER);
 

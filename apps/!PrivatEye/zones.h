@@ -4,6 +4,11 @@
  * Version: $Id: zones.h,v 1.7 2009-04-28 23:32:37 dpt Exp $
  * ----------------------------------------------------------------------- */
 
+/* A zone is a small monochrome map of which parts of the image have been
+ * viewed. The intention is to allow PrivateEye to be able to smoothly move
+ * to the next section of unviewed image, e.g. when reading a comic
+ * on-screen. */
+
 #ifndef ZONES_H
 #define ZONES_H
 
