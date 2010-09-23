@@ -42,10 +42,10 @@
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (segment_interpreter)(image_choices       *choices,
-                                    const unsigned char *buf,
-                                    int                  len,
-                                    ntree_t             *root);
+typedef error (*segment_interpreter)(image_choices       *choices,
+                                     const unsigned char *buf,
+                                     int                  len,
+                                     ntree_t             *root);
 
 /* ----------------------------------------------------------------------- */
 
@@ -360,13 +360,13 @@ static const iptc_record application_record[] =
 
 // 183, 240 seen but not understood
 
-typedef error (adobe_handler)(unsigned char *buf, size_t length, ntree_t *root);
+typedef error (*adobe_handler)(const unsigned char *buf, size_t length, ntree_t *root);
 
-static error jpeg_meta_adobe_iptc_naa_record(unsigned char *buf, size_t length, ntree_t *root)
+static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf, size_t length, ntree_t *root)
 {
-  error          err;
-  unsigned char *p;
-  unsigned short size;
+  error                err;
+  const unsigned char *p;
+  unsigned short       size;
 
   for (p = buf; p < buf + length; p += 2 + 1 + 2 + size)
   {
@@ -428,7 +428,7 @@ Failure:
   return err;
 }
 
-static error jpeg_meta_adobe_default_handler(unsigned char *buf, size_t length, ntree_t *root)
+static error jpeg_meta_adobe_default_handler(const unsigned char *buf, size_t length, ntree_t *root)
 {
   NOT_USED(buf);
   NOT_USED(length);
@@ -439,13 +439,13 @@ static error jpeg_meta_adobe_default_handler(unsigned char *buf, size_t length, 
   return error_OK;
 }
 
-static ntree_t *jpeg_meta_adobe_parse(unsigned char *buf, size_t length)
+static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
 {
   static const struct
   {
     unsigned int   id;
-    char          *desc; /* message token */
-    adobe_handler *fn;
+    const char    *desc; /* message token */
+    adobe_handler  fn;
   }
   map[] =
   {
@@ -467,19 +467,19 @@ static ntree_t *jpeg_meta_adobe_parse(unsigned char *buf, size_t length)
     { 0xFFFFFFFF,                                 "adobe.unknown", jpeg_meta_adobe_default_handler },
   };
 
-  error          err;
-  int            idlen;
-  ntree_t       *root;
-  char          *s;
-  unsigned char *p;
-  int            blklen;
+  error                err;
+  int                  idlen;
+  ntree_t             *root;
+  char                *s;
+  const unsigned char *p;
+  int                  blklen;
 
   /* buf holds the APP13 chunk */
 
   /* allocate a new root node for our tree and label it with the Photoshop
    * ID string */
 
-  idlen = strlen((char *) buf) + 1; /* include terminator */
+  idlen = strlen((const char *) buf) + 1; /* include terminator */
 
   err = ntree__new(&root);
   if (err)
@@ -560,7 +560,7 @@ static ntree_t *jpeg_meta_adobe_parse(unsigned char *buf, size_t length)
       {
         strcpy(fmt, message0("adobe.format2"));
 
-        memcpy(desc2, (char *) p + 4 + 2 + 1, namelen);
+        memcpy(desc2, (const char *) p + 4 + 2 + 1, namelen);
         desc2[namelen] = '\0';
 
         used = sprintf(buf, fmt, desc, desc2, id);
@@ -615,7 +615,7 @@ static error jpeg_meta_adobe(image_choices       *choices,
 
   /* parse the APP13 segment */
 
-  subtree = jpeg_meta_adobe_parse((unsigned char *) buf, len);
+  subtree = jpeg_meta_adobe_parse(buf, len);
   if (subtree == NULL)
     return error_IMAGE_JPEG_NO_METADATA;
 
@@ -641,7 +641,7 @@ static const struct
 {
   JPEG_MARKER          marker;
   const char          *name;
-  segment_interpreter *fn;
+  segment_interpreter  fn;
 }
 jpeg_marker_map[] =
 {

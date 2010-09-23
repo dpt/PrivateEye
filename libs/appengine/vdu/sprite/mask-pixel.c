@@ -12,7 +12,7 @@
 
 #include "appengine/vdu/sprite.h"
 
-typedef void (mktabfn)(unsigned char lut[256], int value);
+typedef void (*mktabfn)(unsigned char lut[256], int value);
 
 // mask bits are clear if masked, set if unmasked
 #if 0
@@ -106,7 +106,7 @@ void sprite_mask_pixel(osspriteop_area   *area,
                        osspriteop_header *header,
                        unsigned int       value)
 {
-  static const mktabfn *makers[] =
+  static const mktabfn makers[] =
   {
     mktab_1bpp_old,
     mktab_2bpp_old,
@@ -125,7 +125,7 @@ void sprite_mask_pixel(osspriteop_area   *area,
   if ((mode & osspriteop_TYPE) == osspriteop_TYPE_OLD)
   {
     int            log2bpp;
-    const mktabfn *mktab;
+    mktabfn        mktab;
     unsigned char  lut[256];
     unsigned int  *sp;
     unsigned int  *mp;
