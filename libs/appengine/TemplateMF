@@ -39,7 +39,7 @@ throwback		= -throwback
 # Library references
 
 includes		= -IC: -ICLibs: -IOSLib: -IZLib: -ITCPIPLibs:
-libraries_test		= OSLib:o.OSLib32 CLibs:fortify.o.fortify C:o.stubs
+libraries_test		= OSLib:o.OSLib32 CLibs:fortify.o.libfortify C:o.stubs
 
 # Generated files
 
