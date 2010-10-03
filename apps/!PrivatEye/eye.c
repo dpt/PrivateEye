@@ -335,6 +335,12 @@ int main(int argc, char *argv[])
   /* Window creation and event registration */
   templates_open(APPNAME "Res:Templates");
 
+  /* I would otherwise call this in initialise_subsystems, but the choices
+   * must be made available before that is called. */
+  err = choices_init();
+  if (err)
+    goto Failure;
+
   /* Choices */
   choices_create_windows(&privateeye_choices);
   choices_load(&privateeye_choices);
@@ -426,6 +432,8 @@ int main(int argc, char *argv[])
   finalise_subsystems();
 
   choices_destroy_windows(&privateeye_choices);
+
+  choices_fin();
 
   event_finalise();
 

@@ -174,6 +174,8 @@ struct choices
 
 /* ----------------------------------------------------------------------- */
 
+error choices_init(void);
+void choices_fin(void);
 error choices_create_windows(const choices *);
 void choices_destroy_windows(const choices *);
 error choices_load(const choices *);

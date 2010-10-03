@@ -36,6 +36,7 @@
 #include "appengine/wimp/colourpick.h"
 #include "appengine/wimp/event.h"
 #include "appengine/base/errors.h"
+#include "appengine/wimp/help.h"
 #include "appengine/wimp/icon.h"
 #include "appengine/wimp/menu.h"
 #include "appengine/base/messages.h"
@@ -73,8 +74,41 @@ static event_wimp_handler choices_event_redraw_window_request,
                           choices_event_menu_selection;
 
 static event_message_handler choices_message_menus_deleted,
-                             choices_message_help_request,
                              choices_message_colour_picker_colour_choice;
+
+/* ----------------------------------------------------------------------- */
+
+static int choices_refcount = 0;
+
+error choices_init(void)
+{
+  error err;
+
+  if (choices_refcount++ == 0)
+  {
+    /* dependencies */
+
+    err = help__init();
+    if (err)
+      goto failure;
+  }
+
+  return error_OK;
+
+failure:
+
+  choices_fin();
+
+  return err;
+}
+
+void choices_fin(void)
+{
+  if (--choices_refcount == 0)
+  {
+    help__fin();
+  }
+}
 
 /* ----------------------------------------------------------------------- */
 
@@ -176,12 +210,18 @@ static error init_callback(const choices        *cs,
 
 static error init(const choices *cs)
 {
+  error err;
+
   cs->vars->temporary_colour = NULL;
   cs->vars->current_menu     = NULL;
 
   /* initialise the *proposed* choices */
 
-  return for_every_choice(cs, init_callback, NULL);
+  err = for_every_choice(cs, init_callback, NULL);
+  if (err)
+    return err;
+
+  return error_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -471,7 +511,8 @@ static error create_windows_callback(const choices      *cs,
                                      const choices_pane *p,
                                      void               *arg)
 {
-  char buf[13];
+  error err;
+  char  buf[13];
 
   NOT_USED(arg);
 
@@ -483,6 +524,10 @@ static error create_windows_callback(const choices      *cs,
   *p->window = window_create(buf);
   if (*p->window == 0)
       return error_OOM; /* potentially inaccurate */
+
+  err = help__add_window(*p->window, buf);
+  if (err)
+    return err;
 
   choices_set_pane_handlers(1, cs, p);
 
@@ -504,7 +549,6 @@ static void choices_set_handlers(int reg, const choices *cs)
   static const event_message_handler_spec message_handlers[] =
   {
     { message_MENUS_DELETED,               choices_message_menus_deleted               },
-    { message_HELP_REQUEST,                choices_message_help_request                },
     { message_COLOUR_PICKER_COLOUR_CHOICE, choices_message_colour_picker_colour_choice },
   };
 
@@ -532,6 +576,10 @@ error choices_create_windows(const choices *cs)
   if (*cs->window == 0)
     return error_OOM; /* potentially inaccurate */
 
+  err = help__add_window(*cs->window, "choices");
+  if (err)
+    return err;
+
   err = for_every_pane(cs, create_windows_callback, NULL);
   if (err)
     return err;
@@ -555,12 +603,14 @@ static error destroy_windows_callback(const choices      *cs,
   if (p->window == NULL)
     return error_OK; /* this group has no associated window */
 
+  help__remove_window(*p->window);
+
   choices_set_pane_handlers(0, cs, p);
 
   // Can't use this just now as it expects the window to have been
   // window_cloned first.
   //
-  // window_delete(*g->window);
+  // window_delete(*p->window);
 
   return error_OK;
 }
@@ -938,6 +988,7 @@ static error mouse_click_stringset(const choices        *cs,
 {
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_MENU))
   {
+    error                    err;
     const choices_stringset *string_set;
     char                     buf[32]; /* Careful Now */
     wimp_menu               *menu;
@@ -949,6 +1000,7 @@ static error mouse_click_stringset(const choices        *cs,
 
     if (cs->vars->current_menu)
     {
+      help__remove_menu(cs->vars->current_menu);
       menu_destroy(cs->vars->current_menu);
       cs->vars->current_menu = NULL;
     }
@@ -960,6 +1012,10 @@ static error mouse_click_stringset(const choices        *cs,
     menu = menu_create_from_desc(message(buf));
     if (menu == NULL)
       return error_OOM; /* potentially inaccurate */
+
+    err = help__add_menu(menu, c->data.string_set->name);
+    if (err)
+      return err;
 
     val = PVALINT(c->offset);
 
@@ -1151,136 +1207,6 @@ int choices_event_menu_selection(wimp_event_no  event_no,
 
 /* ----------------------------------------------------------------------- */
 
-/* interactive help handler */
-
-struct help_request_callback_args
-{
-  help_message_request *request;
-  char                 *tok;
-  wimp_selection       *selection;
-};
-
-static error help_request_callback(const choices        *cs,
-                                   const choices_group  *g,
-                                   const choices_choice *c,
-                                   void                 *arg)
-{
-  struct help_request_callback_args *args = arg;
-
-  if (g->pane_index < 0)
-    return error_OK; /* no UI */
-
-  if (args->request->w == *cs->panes[g->pane_index].window)
-  {
-    const char *name;
-
-    sprintf(args->tok, "hw.choices_%s", cs->panes[g->pane_index].name);
-
-    if (args->request->i == wimp_ICON_WINDOW)
-      return error_OK; /* icon number is work area */
-
-    name = icon_get_name(args->request->w, args->request->i);
-    if (*name == '\0')
-      return error_OK; /* icon had no name */
-
-    strcat(args->tok, ".");
-    strcat(args->tok, name);
-  }
-  else
-  {
-    int i;
-
-    /* it's not this group's window, is it this choices's menu? */
-
-    if (c->type != choices_TYPE_STRING_SET)
-      return error_OK; /* only StringSets have menus */
-
-    if (cs->vars->group_menu != g || cs->vars->choice_menu != c)
-      return error_OK; /* not our menu */
-
-    sprintf(args->tok, "hm.%s", c->data.string_set->name);
-
-    /* Menu - append the selection list to the token. */
-    for (i = 0; args->selection->items[i] != -1; i++)
-    {
-      char buf[3]; /* ".9" + NULL */
-
-      sprintf(buf, ".%d", args->selection->items[i]);
-      strcat(args->tok, buf);
-    }
-  }
-
-  return error_STOP_WALK; /* signal to for_every_choice that we've found one
-                           * and it should stop now */
-}
-
-static int choices_message_help_request(wimp_message *message,
-                                        void         *handle)
-{
-  const choices        *cs = handle;
-  help_message_request *request;
-  char                  tok[64];
-
-  request = (help_message_request *) &message->data;
-
-  if (request->w == *cs->window)
-  {
-    const char *name;
-
-    strcpy(tok, "hw.choices");
-
-    if (request->i != wimp_ICON_WINDOW)
-    {
-      name = icon_get_name(request->w, request->i);
-      if (*name != '\0')
-      {
-        strcat(tok, ".");
-        strcat(tok, name);
-      }
-    }
-  }
-  else
-  {
-    struct help_request_callback_args args;
-    wimp_selection                    selection;
-
-    wimp_get_menu_state(wimp_GIVEN_WINDOW_AND_ICON,
-                       &selection,
-                        request->w,
-                        request->i);
-
-    args.request   = request;
-    args.selection = &selection;
-    args.tok       = tok;
-
-    *tok = '\0';
-
-    (void) for_every_choice(cs, help_request_callback, &args);
-
-    if (*tok == '\0')
-      return event_NOT_HANDLED; /* no token found */
-  }
-
-  {
-    help_message_reply *reply;
-    wimp_message        reply_message;
-
-    reply = (help_message_reply *) &reply_message.data;
-    strncpy(reply->reply, message0(tok), sizeof(reply->reply));
-
-    reply_message.your_ref = message->my_ref;
-    reply_message.action   = message_HELP_REPLY;
-
-    reply_message.size = wimp_SIZEOF_MESSAGE_HEADER((offsetof(help_message_reply, reply) + strlen(reply->reply) + 1 + 3) & ~3);
-
-    wimp_send_message(wimp_USER_MESSAGE, &reply_message, message->sender);
-  }
-
-  return event_HANDLED;
-}
-
-/* ----------------------------------------------------------------------- */
-
 /* menus deleted handler */
 
 static int choices_message_menus_deleted(wimp_message *message, void *handle)
@@ -1291,6 +1217,8 @@ static int choices_message_menus_deleted(wimp_message *message, void *handle)
 
   if (cs->vars->current_menu == NULL)
     return event_NOT_HANDLED;
+
+  help__remove_menu(cs->vars->current_menu);
 
   menu_destroy(cs->vars->current_menu);
 
