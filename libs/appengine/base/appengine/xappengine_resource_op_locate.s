@@ -11,6 +11,6 @@ xappengine_resource_op_locate
 	SWI	&6D940 		; XAppEngine_ResourceOp
 	STRVC	r1, [r2]
 	MOVVC	r0, #0
-	LDMFD	r13!, {r1, r2, pc}^
+	LDMFD	r13!, {r1, r2, pc}
 
 	END

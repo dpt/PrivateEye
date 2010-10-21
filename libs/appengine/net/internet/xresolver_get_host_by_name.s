@@ -18,6 +18,6 @@ xresolver_get_host_by_name
 	SWI	&66000 ; XResolver_GetHostByName
 	STRVC	r1, [r2]
 	MOVVC	r0, #0
-	LDMFD	r13!, {r2, pc}^
+	LDMFD	r13!, {r2, pc}^ ; FIXME: 26-bit!
 
 	END

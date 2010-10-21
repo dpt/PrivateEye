@@ -20,6 +20,6 @@ xresolver_get_host_by_addr
 	SWI	&66001 ; XResolver_GetHost
 	STRVC	r1, [r4]
 	MOVVC	r0, #0
-	LDMFD	r13!, {r4, pc}^
+	LDMFD	r13!, {r4, pc}
 
 	END

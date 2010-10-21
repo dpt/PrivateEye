@@ -12,6 +12,6 @@ xappengine_codec_op_base64_decode
 	LDMFD	r13!, {r14}
 	STRVC	r3, [r14]
 	MOVVC	r0, #0
-	LDMFD	r13!, {pc}^
+	LDMFD	r13!, {pc}
 
 	END
