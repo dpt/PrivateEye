@@ -215,7 +215,7 @@ static error make_trans_tab(const osspriteop_area *area,
 
   size = colourtrans_generate_table_for_sprite(area,
                                                source_id,
-                                               colourtrans_CURRENT_MODE,
+                                               os_CURRENT_MODE,
                                                colourtrans_CURRENT_PALETTE,
                                                NULL, /* trans_tab */
                                                0, /* flags */
@@ -230,7 +230,7 @@ static error make_trans_tab(const osspriteop_area *area,
 
   size = colourtrans_generate_table_for_sprite(area,
                                                source_id,
-                                               colourtrans_CURRENT_MODE,
+                                               os_CURRENT_MODE,
                                                colourtrans_CURRENT_PALETTE,
                                                trans_tab,
                                                0, /* flags */

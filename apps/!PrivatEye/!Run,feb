@@ -50,7 +50,9 @@ Unset Alias$PrivateEyeRMLoad
 |
 | Set PrivateEye$Flex WimpSlot
 
-WimpSlot -min 436K -max 436K
+|WimpSlot -min 436K -max 436K
+| GCC:
+WimpSlot -min 600K -max 600K
 
 Run <PrivateEye$Dir>.Resources.PhotoCheck
 

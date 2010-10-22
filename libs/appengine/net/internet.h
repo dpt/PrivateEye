@@ -8,7 +8,9 @@
 #ifndef APPENGINE_INTERNET_H
 #define APPENGINE_INTERNET_H
 
+#ifndef APPENGINE_NO_TCPIP
 #include "netdb.h"
+#endif /* APPENGINE_NO_TCPIP */
 
 /* MIME.c ---------------------------------------------------------------- */
 
@@ -44,6 +46,8 @@ extern _kernel_oserror *xmimemap_translate(int input_format,
                                            char *output_buffer);
 */
 
+#ifndef APPENGINE_NO_TCPIP
+
 /* Resolver2.s ----------------------------------------------------------- */
 
 /*
@@ -66,4 +70,7 @@ extern _kernel_oserror *xresolver_get_host_by_addr(char *addr,
 extern _kernel_oserror *xresolver_get_host(char *name,
                                            struct hostent **host_ent);
 
+#endif /* APPENGINE_NO_TCPIP */
+
 #endif /* APPENGINE_INTERNET_H */
+

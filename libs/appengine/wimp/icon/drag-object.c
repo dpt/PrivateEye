@@ -60,13 +60,13 @@ void drag_object_box(wimp_w w, const os_box *box, int x, int y,
             draganobject_DROP_SHADOW   |
             draganobject_NO_DITHER     |
             draganobject_CALL_FUNCTION |
-            (1u << 18); /* actually use user mode (new) */
+            draganobject_FUNCTION_USE_USER;
 
     regs.registers[0] = (int) args;
 
     /* enabled */
     draganobject_start(flags,
-(draganobject_function) render,
+         (asm_routine) render,
                       &regs,
                       &drag.initial,
                        NULL);

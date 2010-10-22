@@ -52,8 +52,8 @@
 struct makerfun {
 	int val;
 	const char *name;
-	void (*propfun)();		/* Function to parse properties. */
-	struct ifd *(*ifdfun)();	/* Function to read IFD. */
+	void (*propfun)(struct exifprop *prop, struct exiftags *t);		/* Function to parse properties. */
+	struct ifd *(*ifdfun)(u_int32_t offset, struct tiffmeta *md);	/* Function to read IFD. */
 };
 extern struct makerfun makers[];
 
