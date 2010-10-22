@@ -21,7 +21,7 @@
 #include "impl.h"
 
 #ifndef NDEBUG
-#define debugf(_p) printf##_p
+#define debugf(_p) printf _p
 #else
 #define debugf(_p)
 #endif
