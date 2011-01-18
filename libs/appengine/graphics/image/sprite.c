@@ -67,7 +67,7 @@ static int sprite_load(image_choices *choices, image *image)
 
   header = sprite_select(area, 0);
 
-  osspriteop_read_sprite_size(osspriteop_PTR,
+  osspriteop_read_sprite_info(osspriteop_PTR,
                               area,
               (osspriteop_id) header,
                              &image->display.dims.bm.width,
