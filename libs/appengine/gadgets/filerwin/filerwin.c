@@ -371,7 +371,7 @@ static int filerwin__event_mouse_click(wimp_event_no event_no, wimp_block *block
     drag.bbox.y0    = 0x8000;
     drag.bbox.x1    = info.visible.x1 - info.xscroll;
     drag.bbox.y1    = 0x7fff;
-    drag.handle     =
+    drag.handle     = NULL;
     drag.draw       =
     drag.undraw     =
     drag.redraw     = NULL;
