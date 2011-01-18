@@ -82,11 +82,6 @@ choices_choice;
 
 /* ----------------------------------------------------------------------- */
 
-error choices_init(void);
-void choices_fin(void);
-
-/* ----------------------------------------------------------------------- */
-
 typedef struct choices_pane choices_pane;
 
 typedef error (choices_pane_initialise_handler)(const choices_pane *);
