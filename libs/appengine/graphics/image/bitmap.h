@@ -11,7 +11,7 @@
 
 int bitmap_save(image_choices *choices, image *image, const char *file_name);
 int bitmap_unload(image *image);
-int bitmap_histogram(image_choices *choices, image *image);
+int bitmap_histogram(image *image);
 int bitmap_rotate(image_choices *choices, image *image, int angle);
 
 #endif /* IMAGE_BITMAP_H */

@@ -31,7 +31,6 @@ extern struct PrivateEyeGlobals
   Flags            flags;
 
   wimp_w           display_w;
-  wimp_w           hist_w;
   wimp_w           thumbview_w;
 
   wimp_w           effects_w;
@@ -43,7 +42,6 @@ extern struct PrivateEyeGlobals
 
   wimp_menu       *iconbar_m;
   wimp_menu       *image_m;
-  wimp_menu       *hist_m;
   wimp_menu       *thumbview_m;
 
   eye_choices      choices, proposed_choices;

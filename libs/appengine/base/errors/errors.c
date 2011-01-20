@@ -19,6 +19,7 @@ void error__report(error err)
   {
     { error_OOM,                         "error.no.mem"           },
     { error_PRIVATEEYE_VIEWER_NOT_FOUND, "error.viewer.not.found" },
+    { error_KEYMAP_UNKNOWN_ACTION,       "error.keymap.unknown.action" },
   };
 
   const int   nelems = (int) (sizeof(map) / sizeof(map[0]));

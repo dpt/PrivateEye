@@ -46,6 +46,7 @@
 #include "appengine/vdu/screen.h"
 #include "appengine/base/strings.h"
 #include "appengine/base/bsearch.h"
+#include "appengine/gadgets/hist.h"
 
 #include "privateeye.h"
 #include "actions.h"
@@ -53,7 +54,6 @@
 #include "clipboard.h"
 #include "effects.h"
 #include "globals.h"
-#include "hist.h"
 #include "iconnames.h"          /* generated */
 #include "info.h"
 #include "keymap.h"
@@ -1388,7 +1388,7 @@ static void action(viewer *viewer, int op)
     break;
 
   case Hist:
-    hist__open(viewer->drawable->image);
+    hist__open(viewer->drawable->image, GLOBALS.choices.hist.bars);
     break;
 
   case Rotate:

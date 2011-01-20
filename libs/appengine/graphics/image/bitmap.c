@@ -57,13 +57,11 @@ int bitmap_unload(image *image)
   return FALSE; /* success */
 }
 
-int bitmap_histogram(image_choices *choices, image *image)
+int bitmap_histogram(image *image)
 {
   osspriteop_area   *area;
   osspriteop_header *header;
   sprite_histograms *hists;
-
-  NOT_USED(choices);
 
   area   = (osspriteop_area *) image->image;
   header = sprite_select(area, 0);

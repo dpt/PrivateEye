@@ -13,6 +13,6 @@
 error hist__init(void);
 void hist__fin(void);
 int hist__available(const image *image);
-void hist__open(image *image);
+void hist__open(image *image, int nbars);
 
 #endif /* HIST_H */

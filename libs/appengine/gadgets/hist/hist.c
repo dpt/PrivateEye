@@ -27,14 +27,32 @@
 #include "appengine/base/strings.h"
 #include "appengine/wimp/window.h"
 
-#include "globals.h"
-#include "iconnames.h"          /* generated */
-#include "menunames.h"
+#include "appengine/gadgets/hist.h"
 
-#include "hist.h"
+/* ----------------------------------------------------------------------- */
+
+/* Icons for window "histogram" */
+enum
+{
+  HISTOGRAM_D_DISPLAY    = 0,
+  HISTOGRAM_O_CUMULATIVE = 3,
+  HISTOGRAM_P_COMPS      = 5
+};
 
 /* Icon number is hardcoded due to it not being indirected. */
 #define HIST_ICON 1
+
+/* ----------------------------------------------------------------------- */
+
+/* Menus */
+enum
+{
+  HIST_LUM,
+  HIST_R,
+  HIST_G,
+  HIST_B,
+  HIST_ALPHA,
+};
 
 /* ----------------------------------------------------------------------- */
 
@@ -56,6 +74,7 @@ typedef struct hist_window
   unsigned int *display_hist; /* histogram data */
   hist_flags    flags;       /* flags (see above) */
   os_colour     colour;      /* colour to draw the bars */
+  int           nbars;       /* number of bars */
 
   struct
   {
@@ -68,6 +87,9 @@ hist_window;
 
 static struct
 {
+  wimp_w        hist_w;
+  wimp_menu    *hist_m;
+
   list_t        list_anchor; /* linked list of histogram windows */
   hist_window  *last_hw;     /* last hist_window a menu was opened on */
 }
@@ -112,11 +134,11 @@ error hist__init(void)
 
   /* init */
 
-  GLOBALS.hist_w = window_create("histogram");
+  LOCALS.hist_w = window_create("histogram");
 
-  GLOBALS.hist_m = menu_create_from_desc(message0("menu.hist"));
+  LOCALS.hist_m = menu_create_from_desc(message0("menu.hist"));
 
-  err = help__add_menu(GLOBALS.hist_m, "hist");
+  err = help__add_menu(LOCALS.hist_m, "hist");
   if (err)
     return err;
 
@@ -127,9 +149,9 @@ error hist__init(void)
 
 void hist__fin(void)
 {
-  help__remove_menu(GLOBALS.hist_m);
+  help__remove_menu(LOCALS.hist_m);
 
-  menu_destroy(GLOBALS.hist_m);
+  menu_destroy(LOCALS.hist_m);
 
   help__fin();
 }
@@ -174,7 +196,7 @@ static error hist__compute(image *image)
 
     hourglass_on();
 
-    if (image->methods.histogram(&GLOBALS.choices.image, image))
+    if (image->methods.histogram(image))
     {
       free(image->hists);
       image->hists = NULL;
@@ -258,7 +280,7 @@ static error hist__compute(image *image)
 
   /* work out number of bars and size of gap inbetween */
 
-  hw->scale.nbars = GLOBALS.choices.hist.bars * peak / t;
+  hw->scale.nbars = hw->nbars * peak / t;
   if (hw->scale.nbars)
   {
     /* Here we multiply by 256 for the height of the box.
@@ -354,14 +376,14 @@ static int hist__event_close_window_request(wimp_event_no event_no, wimp_block *
 
 static void hist__menu_update(hist_window *hw)
 {
-  menu_set_icon_flags(GLOBALS.hist_m,
+  menu_set_icon_flags(LOCALS.hist_m,
                       HIST_ALPHA,
                      (hw->image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
 
   /* FIXME: Strictly this needs to be a mapping from flags to menu indices.
    */
-  menu_tick_exclusive(GLOBALS.hist_m, hw->flags & flag_COMPS);
+  menu_tick_exclusive(LOCALS.hist_m, hw->flags & flag_COMPS);
 }
 
 static void hist__refresh(hist_window *hw)
@@ -404,7 +426,7 @@ static int hist__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
     {
     case HISTOGRAM_P_COMPS:
       hist__menu_update(hw);
-      menu_popup(pointer->w, pointer->i, GLOBALS.hist_m);
+      menu_popup(pointer->w, pointer->i, LOCALS.hist_m);
       LOCALS.last_hw = hw;
       break;
     }
@@ -427,7 +449,7 @@ static int hist__event_menu_selection(wimp_event_no event_no, wimp_block *block,
   selection = &block->selection;
 
   last = menu_last();
-  if (last != GLOBALS.hist_m)
+  if (last != LOCALS.hist_m)
     return event_NOT_HANDLED;
 
   hw = LOCALS.last_hw;
@@ -490,7 +512,7 @@ static void hist__image_changed_callback(image                *image,
   }
 }
 
-static error hist__new(image *image, hist_window **new_hw)
+static error hist__new(image *image, int nbars, hist_window **new_hw)
 {
   error        err;
   hist_window *hw;
@@ -505,7 +527,7 @@ static error hist__new(image *image, hist_window **new_hw)
 
   /* clone ourselves a window */
 
-  hw->w = window_clone(GLOBALS.hist_w);
+  hw->w = window_clone(LOCALS.hist_w);
   if (hw->w == NULL)
     goto NoMem;
 
@@ -521,6 +543,7 @@ static error hist__new(image *image, hist_window **new_hw)
   hw->display_hist = NULL;
   hw->flags        = flag_LUMA;
   hw->colour       = os_COLOUR_BLACK;
+  hw->nbars        = nbars;
 
   list__add_to_head(&LOCALS.list_anchor, &hw->list);
 
@@ -568,7 +591,7 @@ static void hist__delete(hist_window *hw)
 
 /* ----------------------------------------------------------------------- */
 
-void hist__open(image *image)
+void hist__open(image *image, int nbars)
 {
   error        err;
   hist_window *hw;
@@ -582,7 +605,7 @@ void hist__open(image *image)
   hw = hist__image_to_win(image);
   if (hw == NULL)
   {
-    err = hist__new(image, &hw);
+    err = hist__new(image, nbars, &hw);
     if (err)
       goto Failure;
 

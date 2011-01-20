@@ -56,6 +56,7 @@
 #include "appengine/vdu/sprite.h"
 #include "appengine/base/strings.h"
 #include "appengine/base/bsearch.h"
+#include "appengine/gadgets/hist.h"
 
 #include "choicesdat.h"
 #include "clipboard.h"
@@ -63,7 +64,6 @@
 #include "effects.h"
 #include "ffg.h"
 #include "globals.h"
-#include "hist.h"
 #include "iconbar.h"
 #include "iconnames.h"          /* generated */
 #include "imagecache.h"

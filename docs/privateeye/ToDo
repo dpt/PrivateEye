@@ -82,6 +82,8 @@ set
 
 in-RAM data transfers
 
+huge blurs
+
 done
 ~~~~
 if we drop the 'small tag cloud' mode we can replace it with font size
@@ -139,6 +141,8 @@ made thumbview use the imagecache
 more specific choices registration - only choice groups which change cause
 update callbacks to be called (e.g. all windows won't refresh if you alter
 something which doesn't impact them).
+
+move histogram out to appengine
 
 later
 ~~~~~

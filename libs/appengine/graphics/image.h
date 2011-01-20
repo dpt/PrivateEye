@@ -97,8 +97,7 @@ struct image_methods
 
   int (*unload)   (T             *image);
 
-  int (*histogram)(image_choices *choices,
-                   T             *image);
+  int (*histogram)(T             *image);
 
   int (*rotate)   (image_choices *choices,
                    T             *image,

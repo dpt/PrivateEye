@@ -117,6 +117,7 @@ warn.drag.to.save:To save, drag the file icon to a directory display.
 error.unknown:Error %d.
 error.no.mem:There is not enough memory to perform the requested operation. Quit any unwanted applications or see the RISC OS User Guide for ways to maximise memory.
 error.viewer.not.found:Viewer not found.
+error.keymap.unknown.action:Unknown keymap action
 
 # Errors (not numbered)
 
