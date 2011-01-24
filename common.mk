@@ -95,6 +95,6 @@ link		= $(link_) $(linkflags)
 .PHONY: clean
 
 clean:
-	-find \( -name "*.o" -o -name "*.odf" -o -name "*.om" -o -name "*.a" -or -name "*,ff8" -or -name "*.d" \) -delete
+	-find \( -regex '.*\.\(o\|odf\|om\|a\|d\)' -or -name '*,ff8' \) -delete
 	@echo Cleaned
 
