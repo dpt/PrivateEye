@@ -84,7 +84,7 @@ static event_wimp_handler display__event_redraw_window_request,
 
 /* ----------------------------------------------------------------------- */
 
-static void display__reg(int reg, viewer *viewer)
+static void display__reg(int reg, viewer_t *viewer)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -103,7 +103,7 @@ static void display__reg(int reg, viewer *viewer)
                             viewer);
 }
 
-error display__set_handlers(viewer *viewer)
+error display__set_handlers(viewer_t *viewer)
 {
   error err;
 
@@ -114,7 +114,7 @@ error display__set_handlers(viewer *viewer)
   return err;
 }
 
-void display__release_handlers(viewer *viewer)
+void display__release_handlers(viewer_t *viewer)
 {
   help__remove_window(viewer->main_w);
 
@@ -227,7 +227,7 @@ void display__fin(void)
 static int display__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_draw *redraw;
-  viewer    *viewer;
+  viewer_t  *viewer;
   osbool     more;
 
   NOT_USED(event_no);
@@ -308,7 +308,7 @@ enum { ScrollingScale = 256 };
 
 static event_wimp_handler scrolling__event_null_reason_code;
 
-static void scrolling__set_handlers(int reg, viewer *viewer)
+static void scrolling__set_handlers(int reg, viewer_t *viewer)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -327,7 +327,7 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
                                              wimp_block    *block,
                                              void          *handle)
 {
-  viewer             *viewer;
+  viewer_t           *viewer;
   union
   {
     wimp_window_state state;
@@ -376,7 +376,7 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
   return event_HANDLED;
 }
 
-static void scrolling_start(viewer *viewer, int dx, int dy, int ds,
+static void scrolling_start(viewer_t *viewer, int dx, int dy, int ds,
                             int delta, int steps)
 {
   wimp_window_info info;
@@ -439,7 +439,7 @@ static void scrolling_start(viewer *viewer, int dx, int dy, int ds,
 /*
  * step through disc files
  */
-static void step(viewer *viewer, int direction)
+static void step(viewer_t *viewer, int direction)
 {
   const char         *leaf_name;
   const char         *dir_name;
@@ -556,7 +556,7 @@ static void grab__end(void *arg)
 static int grab__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer    *pointer;
-  viewer          *viewer;
+  viewer_t        *viewer;
   wimp_window_info info;
   int              x,y;
   wimp_drag        drag;
@@ -672,7 +672,7 @@ static int grab__event_pollword_non_zero(wimp_event_no event_no, wimp_block *blo
 static int display__event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_close  *close;
-  viewer      *viewer;
+  viewer_t    *viewer;
   wimp_pointer pointer;
 
   NOT_USED(event_no);
@@ -704,7 +704,7 @@ static int display__event_close_window_request(wimp_event_no event_no, wimp_bloc
   return event_HANDLED;
 }
 
-static void pan_to_point(wimp_pointer *pointer, viewer *viewer)
+static void pan_to_point(wimp_pointer *pointer, viewer_t *viewer)
 {
   wimp_window_info info;
   int              wax, way; /* work area x,y */
@@ -718,7 +718,7 @@ static void pan_to_point(wimp_pointer *pointer, viewer *viewer)
   scrolling_start(viewer, wax, way, 0, 0, GLOBALS.choices.viewer.steps);
 }
 
-static void zoom_to_point(wimp_pointer *pointer, viewer *viewer)
+static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
 {
   wimp_window_info info;
   int              wax, way; /* work area x,y */
@@ -785,7 +785,7 @@ static void embed__end(void *arg)
 static int embed__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer    *pointer;
-  viewer          *viewer;
+  viewer_t        *viewer;
   wimp_window_info info;
   wimp_drag        drag;
 
@@ -851,7 +851,7 @@ static int embed__event_user_drag_box(wimp_event_no event_no, wimp_block *block,
 
 static event_wimp_handler zoombox__event_user_drag_box;
 
-static void zoombox__set_handlers(int reg, viewer *viewer)
+static void zoombox__set_handlers(int reg, viewer_t *viewer)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -878,7 +878,7 @@ static void zoombox__end(void *arg)
 static int zoombox__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer    *pointer;
-  viewer          *viewer;
+  viewer_t        *viewer;
   wimp_window_info info;
   wimp_drag        drag;
 #if 0
@@ -956,7 +956,7 @@ static int zoombox__event_mouse_click(wimp_event_no event_no, wimp_block *block,
 static int zoombox__event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_dragged    *dragged;
-  viewer          *viewer;
+  viewer_t        *viewer;
   wimp_window_info info;
   int              extent_w, extent_h;
   int              x0, x1, y0, y1;
@@ -1086,7 +1086,7 @@ for (i = 0; i < NELEMS(menus); i++)
 
 static void display__menu_update(void)
 {
-  viewer          *viewer;
+  viewer_t        *viewer;
   image           *image;
   wimp_menu_entry *entries;
   wimp_menu       *m;
@@ -1141,7 +1141,7 @@ static int display__event_mouse_click(wimp_event_no event_no, wimp_block *block,
 #define KeyShiftCtrlAlt 7
 
   wimp_pointer *pointer;
-  viewer       *viewer;
+  viewer_t     *viewer;
   osbool        shift;
   osbool        ctrl;
   osbool        alt;
@@ -1209,7 +1209,7 @@ static int display__event_mouse_click(wimp_event_no event_no, wimp_block *block,
 
 /* ----------------------------------------------------------------------- */
 
-static void action_zoom(viewer *viewer, int op)
+static void action_zoom(viewer_t *viewer, int op)
 {
   int old_scale = viewer->scale.cur;
   int new_scale;
@@ -1226,12 +1226,12 @@ static void action_zoom(viewer *viewer, int op)
   scale_set(viewer, new_scale, 1);
 }
 
-static void action_step(viewer *viewer, int op)
+static void action_step(viewer_t *viewer, int op)
 {
   step(viewer, (op == StepForwards) ? 1 : -1);
 }
 
-static void action_panrand(viewer *viewer, int op)
+static void action_panrand(viewer_t *viewer, int op)
 {
   wimp_window_info info;
   int              x, y;
@@ -1249,7 +1249,7 @@ static void action_panrand(viewer *viewer, int op)
   scrolling_start(viewer, x, y, 0, 0, GLOBALS.choices.viewer.steps);
 }
 
-static void action_pan(viewer *viewer, int op)
+static void action_pan(viewer_t *viewer, int op)
 {
   if (viewer->scrolling.count > 0)
   {
@@ -1277,7 +1277,7 @@ static void action_pan(viewer *viewer, int op)
   }
 }
 
-static void action_fliprot(viewer *viewer, int op)
+static void action_fliprot(viewer_t *viewer, int op)
 {
   int r;
   int f;
@@ -1294,7 +1294,7 @@ static void action_fliprot(viewer *viewer, int op)
   rotate(viewer->drawable->image, r * 90 * 65536, f);
 }
 
-static void action_kill(viewer *viewer)
+static void action_kill(viewer_t *viewer)
 {
   os_error         *e;
   wimp_t            act;
@@ -1337,7 +1337,7 @@ failure:
   oserror__report_block(e);
 }
 
-static void action(viewer *viewer, int op)
+static void action(viewer_t *viewer, int op)
 {
   switch (op)
   {
@@ -1444,7 +1444,7 @@ static void action(viewer *viewer, int op)
 static int display__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_key *key;
-  viewer   *viewer;
+  viewer_t *viewer;
   int       op;
   osbool    close_menus = FALSE; /* set when a view change will invalidate any displayed data: menus need closing, where open */
 
@@ -1515,7 +1515,7 @@ static int display__event_menu_selection(wimp_event_no event_no, wimp_block *blo
   wimp_selection *selection;
   wimp_menu      *last;
   wimp_pointer    p;
-  viewer         *viewer;
+  viewer_t       *viewer;
   unsigned int    item;
   int             i;
 
@@ -1555,7 +1555,7 @@ static int display__event_menu_selection(wimp_event_no event_no, wimp_block *blo
 static int display__event_scroll_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_scroll *scroll;
-  viewer      *viewer;
+  viewer_t    *viewer;
   int          d;
 
   NOT_USED(event_no);
@@ -1610,7 +1610,7 @@ static int display__event_scroll_request(wimp_event_no event_no, wimp_block *blo
 
 static int display__event_lose_caret(wimp_event_no event_no, wimp_block *block, void *handle)
 {
-  viewer *viewer;
+  viewer_t *viewer;
 
   NOT_USED(event_no);
   NOT_USED(block);
@@ -1625,7 +1625,7 @@ static int display__event_lose_caret(wimp_event_no event_no, wimp_block *block, 
 
 static int display__event_gain_caret(wimp_event_no event_no, wimp_block *block, void *handle)
 {
-  viewer *viewer;
+  viewer_t *viewer;
 
   NOT_USED(event_no);
   NOT_USED(block);

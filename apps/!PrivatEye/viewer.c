@@ -49,7 +49,7 @@ static list_t list_anchor = { NULL };
 
 /* ----------------------------------------------------------------------- */
 
-static void set_view_title(viewer *viewer)
+static void set_view_title(viewer_t *viewer)
 {
   char file_name[256];
   char percentage[12];
@@ -77,7 +77,7 @@ static void set_view_title(viewer *viewer)
 
 /* ----------------------------------------------------------------------- */
 
-static int refresh_all_titles_callback(viewer *viewer, void *arg)
+static int refresh_all_titles_callback(viewer_t *viewer, void *arg)
 {
   NOT_USED(arg);
 
@@ -93,11 +93,11 @@ static void refresh_all_titles(void)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_create(viewer **new_viewer)
+error viewer_create(viewer_t **new_viewer)
 {
-  error   err;
-  viewer *v;
-  wimp_w  w = wimp_ICON_BAR;
+  error     err;
+  viewer_t *v;
+  wimp_w    w = wimp_ICON_BAR;
 
   *new_viewer = NULL;
 
@@ -158,7 +158,7 @@ Failure:
 }
 
 /* Disposes of things associated with a viewer, e.g. after an edit. */
-static void viewer_dispose(viewer *v)
+static void viewer_dispose(viewer_t *v)
 {
   /* Abandon clipboard */
   if (GLOBALS.clipboard_viewer == v)
@@ -170,7 +170,7 @@ static void viewer_dispose(viewer *v)
 #endif
 }
 
-static void viewer_reset(viewer *v)
+static void viewer_reset(viewer_t *v)
 {
   viewer_dispose(v);
 
@@ -179,7 +179,7 @@ static void viewer_reset(viewer *v)
     v->scale.cur = v->scale.prev = GLOBALS.choices.viewer.scale;
 }
 
-void viewer_destroy(viewer *doomed)
+void viewer_destroy(viewer_t *doomed)
 {
   viewer_reset(doomed);
 
@@ -201,11 +201,11 @@ void viewer_destroy(viewer *doomed)
   refresh_all_titles();
 }
 
-viewer *viewer_find(wimp_w w)
+viewer_t *viewer_find(wimp_w w)
 {
-  return (viewer *) list__find(&list_anchor,
-                                offsetof(viewer, main_w),
-                          (int) w);
+  return (viewer_t *) list__find(&list_anchor,
+                                 offsetof(viewer_t, main_w),
+                           (int) w);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -215,19 +215,19 @@ typedef struct
   const char *file_name;
   bits        load;
   bits        exec;
-  viewer     *result;
+  viewer_t   *result;
 }
 find_by_attrs_args;
 
 static int find_by_attrs_callback(list_t *e, void *arg)
 {
   find_by_attrs_args *args;
-  viewer             *v;
+  viewer_t           *v;
   image              *i;
 
   args = arg;
 
-  v = (viewer *) e;
+  v = (viewer_t *) e;
 
   i = v->drawable->image;
 
@@ -242,7 +242,7 @@ static int find_by_attrs_callback(list_t *e, void *arg)
   return 0;
 }
 
-viewer *viewer_find_by_attrs(const char *file_name, bits load, bits exec)
+viewer_t *viewer_find_by_attrs(const char *file_name, bits load, bits exec)
 {
   find_by_attrs_args args;
 
@@ -258,7 +258,7 @@ viewer *viewer_find_by_attrs(const char *file_name, bits load, bits exec)
 
 /* ----------------------------------------------------------------------- */
 
-int viewer_count_clones(viewer *v)
+int viewer_count_clones(viewer_t *v)
 {
 #if 1 /* quicker method */
   return v->drawable->image->refcount;
@@ -299,11 +299,11 @@ void viewer_map_for_image(image *image, viewer_map_callback *fn, void *arg)
    * the objects we're iterating over. */
   for (e = list_anchor.next; e != NULL; e = next)
   {
-    viewer *v;
+    viewer_t *v;
 
     next = e->next;
 
-    v = (viewer *) e;
+    v = (viewer_t *) e;
 
     if (v->drawable->image == image)
       fn(v, arg);
@@ -321,7 +321,7 @@ int viewer_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
-static void fill_redraw_rect_prepare(viewer *viewer)
+static void fill_redraw_rect_prepare(viewer_t *viewer)
 {
   osspriteop_area *area;
 
@@ -334,7 +334,7 @@ static void fill_redraw_rect_prepare(viewer *viewer)
 #define Tinct_PlotScaled 0x57243
 
 /* Draws a background for transparent/masked bitmaps and vector images. */
-static void fill_redraw_rect(wimp_draw *draw, viewer *viewer, int x, int y)
+static void fill_redraw_rect(wimp_draw *draw, viewer_t *viewer, int x, int y)
 {
   NOT_USED(draw);
 
@@ -358,7 +358,7 @@ static void fill_redraw_rect(wimp_draw *draw, viewer *viewer, int x, int y)
 
 /* Fill in a single edge. */
 static void draw_edge(wimp_draw *draw,
-                      viewer    *viewer,
+                      viewer_t  *viewer,
                       int        x,
                       int        y,
                 const os_box    *box)
@@ -375,7 +375,7 @@ static void draw_edge(wimp_draw *draw,
 
 /* Draw the window background by filling in the regions around the outside of
  * opaque bitmaps. This avoids flicker. */
-static void draw_edges_only(wimp_draw *draw, viewer *viewer, int x, int y)
+static void draw_edges_only(wimp_draw *draw, viewer_t *viewer, int x, int y)
 {
   os_box *extent;
   os_box *imgbox;
@@ -425,7 +425,7 @@ static os_colour bgcolour_from_type(bits file_type)
   }
 }
 
-void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
+void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box)
 {
   int    iw,ih;
   os_box extent;
@@ -529,7 +529,7 @@ void viewer_set_extent_from_box(viewer *viewer, const os_box *box)
 }
 
 /* FIXME: This is largely the same as fit_to_screen in scale.c. */
-static void scale_for_screen(viewer *viewer)
+static void scale_for_screen(viewer_t *viewer)
 {
   int w,h;
   int s;
@@ -542,7 +542,7 @@ static void scale_for_screen(viewer *viewer)
 }
 
 /* Called when a change has occurred. */
-void viewer_update(viewer *viewer, viewer_update_flags flags)
+void viewer_update(viewer_t *viewer, viewer_update_flags flags)
 {
   drawable *d;
 
@@ -588,7 +588,7 @@ void viewer_update(viewer *viewer, viewer_update_flags flags)
 
 /* ----------------------------------------------------------------------- */
 
-static int update_all_callback(viewer *viewer, void *arg)
+static int update_all_callback(viewer_t *viewer, void *arg)
 {
   viewer_update(viewer, (unsigned int) arg);
 
@@ -602,7 +602,7 @@ void viewer_update_all(viewer_update_flags flags)
 
 /* ----------------------------------------------------------------------- */
 
-void viewer_open(viewer *viewer)
+void viewer_open(viewer_t *viewer)
 {
   window_restore(viewer->main_w, &viewer->capture,
                  GLOBALS.choices.viewer.cover_icon_bar);
@@ -615,7 +615,7 @@ struct update_image_args
   viewer_update_flags flags;
 };
 
-static int update_image_callback(viewer *viewer, void *arg)
+static int update_image_callback(viewer_t *viewer, void *arg)
 {
   struct update_image_args *args = arg;
 
@@ -624,7 +624,7 @@ static int update_image_callback(viewer *viewer, void *arg)
   return 0;
 }
 
-static int capture_position_callback(viewer *viewer, void *arg)
+static int capture_position_callback(viewer_t *viewer, void *arg)
 {
   NOT_USED(arg);
 
@@ -634,7 +634,7 @@ static int capture_position_callback(viewer *viewer, void *arg)
   return 0;
 }
 
-static int restore_position_callback(viewer *viewer, void *arg)
+static int restore_position_callback(viewer_t *viewer, void *arg)
 {
   NOT_USED(arg);
 
@@ -644,7 +644,7 @@ static int restore_position_callback(viewer *viewer, void *arg)
   return 0;
 }
 
-static int reset_callback(viewer *viewer, void *arg)
+static int reset_callback(viewer_t *viewer, void *arg)
 {
   NOT_USED(arg);
 
@@ -701,10 +701,10 @@ static void image_changed_callback(image                *image,
 
 /* ----------------------------------------------------------------------- */
 
-void viewer_clone(viewer *source)
+void viewer_clone(viewer_t *source)
 {
   error             err;
-  viewer           *v;
+  viewer_t         *v;
   wimp_window_state state;
 
   err = viewer_clone_from_window(source->main_w, &v);
@@ -734,11 +734,11 @@ Failure:
   return;
 }
 
-error viewer_clone_from_window(wimp_w w, viewer **pviewer)
+error viewer_clone_from_window(wimp_w w, viewer_t **pviewer)
 {
-  error   err;
-  viewer *v;
-  viewer *newv;
+  error     err;
+  viewer_t *v;
+  viewer_t *newv;
 
   v = viewer_find(w);
   if (v == NULL)
@@ -792,7 +792,7 @@ Failure:
  * associated with a previous image.
  */
 
-osbool viewer_load(viewer     *viewer,
+osbool viewer_load(viewer_t   *viewer,
                    const char *file_name,
                    bits        load,
                    bits        exec)
@@ -876,7 +876,7 @@ Failure:
   goto Exit;
 }
 
-osbool viewer_save(viewer *viewer, const char *file_name)
+osbool viewer_save(viewer_t *viewer, const char *file_name)
 {
   if (viewer->image->methods.save(&GLOBALS.choices.image,
                                    viewer->image,
@@ -892,7 +892,7 @@ osbool viewer_save(viewer *viewer, const char *file_name)
   return FALSE; /* success */
 }
 
-void viewer_unload(viewer *viewer)
+void viewer_unload(viewer_t *viewer)
 {
   /* FIXME: Only if we have the focus... */
   image_defocus(viewer->image);
@@ -913,7 +913,7 @@ void viewer_unload(viewer *viewer)
 
 /* ----------------------------------------------------------------------- */
 
-int viewer_query_unload(viewer *viewer)
+int viewer_query_unload(viewer_t *viewer)
 {
   if (viewer->image->flags & image_FLAG_MODIFIED &&
       viewer_count_clones(viewer) == 1)
@@ -937,7 +937,7 @@ int viewer_query_unload(viewer *viewer)
 
 /* ----------------------------------------------------------------------- */
 
-static int close_all_callback(viewer *viewer, void *arg)
+static int close_all_callback(viewer_t *viewer, void *arg)
 {
   NOT_USED(arg);
 

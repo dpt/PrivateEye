@@ -47,7 +47,7 @@ extern struct PrivateEyeGlobals
   eye_choices      choices, proposed_choices;
 
   /* If non-NULL we own the clipboard. */
-  viewer          *clipboard_viewer;
+  viewer_t        *clipboard_viewer;
 
   wimp_t           task_handle;
 
@@ -55,7 +55,7 @@ extern struct PrivateEyeGlobals
 
   wimp_version_no  wimp_version;
 
-  viewer          *dragging_viewer;
+  viewer_t        *dragging_viewer;
 }
 GLOBALS;
 

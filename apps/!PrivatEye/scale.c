@@ -42,7 +42,7 @@ dialogue_t *scale;
 
 /* ----------------------------------------------------------------------- */
 
-void scale_set(viewer *viewer, int scale, int redraw)
+void scale_set(viewer_t *viewer, int scale, int redraw)
 {
   viewer_update_flags flags;
 
@@ -68,8 +68,8 @@ void scale_set(viewer *viewer, int scale, int redraw)
 
 static void scale_fillout(dialogue_t *d, void *arg)
 {
-  viewer *viewer;
-  image  *image;
+  viewer_t *viewer;
+  image    *image;
 
   NOT_USED(arg);
 
@@ -84,7 +84,7 @@ static void scale_fillout(dialogue_t *d, void *arg)
   scale__set(d, viewer->scale.cur);
 }
 
-static void scale_set_fit_screen(dialogue_t *d, viewer *viewer)
+static void scale_set_fit_screen(dialogue_t *d, viewer_t *viewer)
 {
   int sw,sh;
   int s;
@@ -96,7 +96,7 @@ static void scale_set_fit_screen(dialogue_t *d, viewer *viewer)
   scale__set(d, s);
 }
 
-static void scale_set_fit_window(dialogue_t *d, viewer *viewer)
+static void scale_set_fit_window(dialogue_t *d, viewer_t *viewer)
 {
   wimp_window_state state;
   int ww,wh;
@@ -115,7 +115,7 @@ static void scale_set_fit_window(dialogue_t *d, viewer *viewer)
 
 static void scale_handler(dialogue_t *d, scale__type type, int scale)
 {
-  viewer *viewer;
+  viewer_t *viewer;
 
   NOT_USED(d);
 

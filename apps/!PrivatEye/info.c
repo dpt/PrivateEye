@@ -41,7 +41,7 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
 {
   static const char DASH[] = "˜";
 
-  viewer     *viewer;
+  viewer_t   *viewer;
   image      *image;
   int         spec;
   char        buffer[1024]; /* Careful Now */

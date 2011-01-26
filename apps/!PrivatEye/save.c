@@ -24,8 +24,8 @@ dialogue_t *save;
 
 static void save_fillout(dialogue_t *d, void *arg)
 {
-  viewer *viewer;
-  image  *image;
+  viewer_t *viewer;
+  image    *image;
 
   NOT_USED(arg);
 
@@ -42,7 +42,7 @@ static void save_fillout(dialogue_t *d, void *arg)
 /* Called on 'Save' button clicks, but not on drag saves. */
 static void save_handler(dialogue_t *d, const char *file_name)
 {
-  viewer *viewer;
+  viewer_t *viewer;
 
   NOT_USED(d);
 

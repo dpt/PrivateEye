@@ -19,9 +19,9 @@
 
 #include "zones.h"
 
-typedef struct viewer viewer;
+typedef struct viewer_t viewer_t;
 
-struct viewer
+struct viewer_t
 {
   list_t              list;     /* A viewer is a linked list node. */
 
@@ -54,8 +54,8 @@ struct viewer
   {
     os_colour          colour;
     osspriteop_header *header;  /* Used when plotting sprites. */
-    void             (*prepare)(viewer *);
-    void             (*draw)(wimp_draw *, viewer *, int x, int y);
+    void             (*prepare)(viewer_t *);
+    void             (*draw)(wimp_draw *, viewer_t *, int x, int y);
   }
   background;
 
@@ -72,19 +72,19 @@ struct viewer
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_create(viewer **viewer);
-void viewer_destroy(viewer *viewer);
-viewer *viewer_find(wimp_w window_handle);
-viewer *viewer_find_by_attrs(const char *file_name, bits load, bits exec);
-int viewer_count_clones(viewer *viewer);
+error viewer_create(viewer_t **viewer);
+void viewer_destroy(viewer_t *viewer);
+viewer_t *viewer_find(wimp_w window_handle);
+viewer_t *viewer_find_by_attrs(const char *file_name, bits load, bits exec);
+int viewer_count_clones(viewer_t *viewer);
 
-typedef int (viewer_map_callback)(viewer *, void *arg);
+typedef int (viewer_map_callback)(viewer_t *, void *arg);
 
 void viewer_map(viewer_map_callback *fn, void *arg);
 void viewer_map_for_image(image *image, viewer_map_callback *fn, void *arg);
 
 int viewer_get_count(void);
-void viewer_set_extent_from_box(viewer *viewer, const os_box *box);
+void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box);
 
 enum
 {
@@ -103,23 +103,23 @@ enum
 
 typedef unsigned int viewer_update_flags;
 
-void viewer_update(viewer *viewer, viewer_update_flags flags);
+void viewer_update(viewer_t *viewer, viewer_update_flags flags);
 void viewer_update_all(viewer_update_flags flags);
 
-void viewer_open(viewer *viewer);
+void viewer_open(viewer_t *viewer);
 
-osbool viewer_load(viewer     *viewer,
+osbool viewer_load(viewer_t   *viewer,
                    const char *file_name,
                    bits        load,
                    bits        exec);
-void viewer_unload(viewer *viewer);
+void viewer_unload(viewer_t *viewer);
 
-int viewer_query_unload(viewer *viewer);
+int viewer_query_unload(viewer_t *viewer);
 
-osbool viewer_save(viewer *viewer, const char *file_name);
+osbool viewer_save(viewer_t *viewer, const char *file_name);
 
-void viewer_clone(viewer *viewer);
-error viewer_clone_from_window(wimp_w w, viewer **new_viewer);
+void viewer_clone(viewer_t *viewer);
+error viewer_clone_from_window(wimp_w w, viewer_t **new_viewer);
 
 void viewer_close_all(void);
 

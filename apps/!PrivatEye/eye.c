@@ -389,7 +389,7 @@ int main(int argc, char *argv[])
      */
     if (obj_type == fileswitch_IS_FILE && image_is_loadable(file_type))
     {
-      viewer *viewer;
+      viewer_t *viewer;
 
       err = viewer_create(&viewer); /* reports any failures itself */
       if (err == error_OK)
@@ -525,7 +525,7 @@ static int message_data_save(wimp_message *message, void *handle)
 
 static int message_data_save_ack(wimp_message *message, void *handle)
 {
-  viewer *viewer;
+  viewer_t *viewer;
 
   NOT_USED(handle);
 
@@ -553,10 +553,10 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
 static int message_data_load(wimp_message *message, void *handle)
 {
-  osbool  ffg;
-  viewer *viewer;
-  bits    load_addr;
-  bits    exec_addr;
+  osbool    ffg;
+  viewer_t *viewer;
+  bits      load_addr;
+  bits      exec_addr;
 
   NOT_USED(handle);
 
@@ -707,9 +707,9 @@ static osbool should_load(bits file_type)
 
 static int message_data_open(wimp_message *message, void *handle)
 {
-  viewer *viewer;
-  bits    load_addr;
-  bits    exec_addr;
+  viewer_t *viewer;
+  bits      load_addr;
+  bits      exec_addr;
 
   NOT_USED(handle);
 

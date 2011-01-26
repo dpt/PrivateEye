@@ -20,6 +20,6 @@ extern dialogue_t *scale;
 error viewer_scale_init(void);
 void viewer_scale_fin(void);
 
-void scale_set(viewer *viewer, int scale, int redraw);
+void scale_set(viewer_t *viewer, int scale, int redraw);
 
 #endif /* VIEWER_SCALE_H */
