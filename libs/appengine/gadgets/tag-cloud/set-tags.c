@@ -111,7 +111,6 @@ error tag_cloud__set_tags(tag_cloud            *tc,
       if (index >= e_allocated) /* need more space? */
       {
         size_t n;
-        void  *newarr;
 
         n = (size_t) power2gt(index);
 
