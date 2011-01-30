@@ -9,6 +9,6 @@
 
 #include "appengine/graphics/image.h"
 
-extern void sprite_export_methods(image_choices *choices, image *image);
+extern void sprite_export_methods(image_choices *choices, image_t *image);
 
 #endif /* IMAGE_SPRITE_H */

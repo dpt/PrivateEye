@@ -10,11 +10,11 @@
 #include "appengine/graphics/image.h"
 
 /* jpeg-meta.c */
-extern int jpeg_get_meta(image_choices *choices, image *image, ntree_t **data);
-extern int jpeg_meta_available(image_choices *choices, image *image);
+extern int jpeg_get_meta(image_choices *choices, image_t *image, ntree_t **data);
+extern int jpeg_meta_available(image_choices *choices, image_t *image);
 
 /* jpeg.c */
-extern void jpeg_export_methods(image_choices *choices, image *image);
+extern void jpeg_export_methods(image_choices *choices, image_t *image);
 
 /* lifted from jdmarker.c */
 typedef enum {			/* JPEG marker codes */

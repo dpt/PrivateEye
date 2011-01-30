@@ -69,7 +69,7 @@ typedef unsigned int hist_flags;
 typedef struct hist_window
 {
   list_t        list;        /* a hist_window is a linked list node */
-  image        *image;       /* image we're the histogram of */
+  image_t      *image;       /* image we're the histogram of */
   wimp_w        w;           /* our window handle */
   unsigned int *display_hist; /* histogram data */
   hist_flags    flags;       /* flags (see above) */
@@ -158,7 +158,7 @@ void hist__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-static hist_window *hist__image_to_win(image *image)
+static hist_window *hist__image_to_win(image_t *image)
 {
   return (hist_window *) list__find(&LOCALS.list_anchor,
                                      offsetof(hist_window, image),
@@ -171,7 +171,7 @@ static void hist__delete(hist_window *hw);
 
 /* ----------------------------------------------------------------------- */
 
-static error hist__compute(image *image)
+static error hist__compute(image_t *image)
 {
   error              err;
   hist_window       *hw;
@@ -482,13 +482,13 @@ static int hist__event_menu_selection(wimp_event_no event_no, wimp_block *block,
 
 /* ----------------------------------------------------------------------- */
 
-int hist__available(const image *image)
+int hist__available(const image_t *image)
 {
   return image &&
          image->flags & image_FLAG_CAN_HIST;
 }
 
-static void hist__image_changed_callback(image                *image,
+static void hist__image_changed_callback(image_t              *image,
                                          imageobserver_change  change,
                                          imageobserver_data   *data)
 {
@@ -512,7 +512,7 @@ static void hist__image_changed_callback(image                *image,
   }
 }
 
-static error hist__new(image *image, int nbars, hist_window **new_hw)
+static error hist__new(image_t *image, int nbars, hist_window **new_hw)
 {
   error        err;
   hist_window *hw;
@@ -591,7 +591,7 @@ static void hist__delete(hist_window *hw)
 
 /* ----------------------------------------------------------------------- */
 
-void hist__open(image *image, int nbars)
+void hist__open(image_t *image, int nbars)
 {
   error        err;
   hist_window *hw;

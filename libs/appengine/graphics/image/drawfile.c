@@ -28,7 +28,7 @@
 
 #include "drawfile.h"
 
-static int drawfile_load(image_choices *choices, image *image)
+static int drawfile_load(image_choices *choices, image_t *image)
 {
   drawfile_diagram *data;
   int               file_size;
@@ -86,14 +86,14 @@ static int drawfile_load(image_choices *choices, image *image)
   return FALSE; /* success */
 }
 
-static int drawfile_unload(image *image)
+static int drawfile_unload(image_t *image)
 {
   flex_free((flex_ptr) &image->image);
 
   return FALSE; /* success */
 }
 
-void drawfile_export_methods(image_choices *choices, image *image)
+void drawfile_export_methods(image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

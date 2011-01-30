@@ -17,7 +17,7 @@
 #include "appengine/vdu/sprite.h"
 #include "appengine/datastruct/ntree.h"
 
-#define T image
+#define T image_t
 
 /* ----------------------------------------------------------------------- */
 

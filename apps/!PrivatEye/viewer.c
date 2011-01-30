@@ -223,7 +223,7 @@ static int find_by_attrs_callback(list_t *e, void *arg)
 {
   find_by_attrs_args *args;
   viewer_t           *v;
-  image              *i;
+  image_t            *i;
 
   args = arg;
 
@@ -290,7 +290,7 @@ void viewer_map(viewer_map_callback *fn, void *arg)
 /* ----------------------------------------------------------------------- */
 
 /* Like viewer_map, but for a specific image. */
-void viewer_map_for_image(image *image, viewer_map_callback *fn, void *arg)
+void viewer_map_for_image(image_t *image, viewer_map_callback *fn, void *arg)
 {
   list_t *e;
   list_t *next;
@@ -654,7 +654,7 @@ static int reset_callback(viewer_t *viewer, void *arg)
 }
 
 /* Called by imageobserver when a registered image changes. */
-static void image_changed_callback(image                *image,
+static void image_changed_callback(image_t              *image,
                                    imageobserver_change  change,
                                    imageobserver_data   *data)
 {
@@ -798,7 +798,7 @@ osbool viewer_load(viewer_t   *viewer,
                    bits        exec)
 {
   error       err;
-  image      *image = NULL;
+  image_t    *image = NULL;
   drawable   *drawable;
   osbool      r;
   wimp_caret  caret;
@@ -958,7 +958,7 @@ void viewer_close_all(void)
 
 /* ----------------------------------------------------------------------- */
 
-static void count_edited_callback(image *image, void *arg)
+static void count_edited_callback(image_t *image, void *arg)
 {
   int *nedited = arg;
 

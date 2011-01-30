@@ -18,9 +18,9 @@
 
 typedef unsigned int zones;
 
-zones *zones_create(image *image);
+zones *zones_create(image_t *image);
 void zones_destroy(zones *z);
-void zones_update(zones *z, wimp_draw *redraw, image *image, int scale);
+void zones_update(zones *z, wimp_draw *redraw, image_t *image, int scale);
 void zones_wherenext(const zones *z);
 
 #endif /* ZONES_H */

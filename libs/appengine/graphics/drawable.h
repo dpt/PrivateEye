@@ -116,7 +116,7 @@ struct T
 
   drawable_flags   flags;
 
-  image           *image;
+  image_t         *image;
 
   union
   {
@@ -163,8 +163,8 @@ struct T
 
 /* ----------------------------------------------------------------------- */
 
-error drawable_create(image  *image,
-                      T     **newdrawable);
+error drawable_create(image_t  *image,
+                      T       **newdrawable);
 
 error drawable_clone(T  *original,
                      T **newdrawable);

@@ -412,7 +412,7 @@ failure:
 
 /* ----------------------------------------------------------------------- */
 
-error tags_common__set_highlights(tag_cloud *tc, image *image)
+error tags_common__set_highlights(tag_cloud *tc, image_t *image)
 {
   error       err;
   char        digest[33];

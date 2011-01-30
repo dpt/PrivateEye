@@ -26,7 +26,7 @@ static list_t list_anchor = { NULL };
 
 /* ----------------------------------------------------------------------- */
 
-static void image_reset(image *i)
+static void image_reset(image_t *i)
 {
   /* dispose of histogram data */
   free(i->hists);
@@ -35,9 +35,9 @@ static void image_reset(image *i)
 
 /* ----------------------------------------------------------------------- */
 
-image *image_create(void)
+image_t *image_create(void)
 {
-  image *i;
+  image_t *i;
 
   i = calloc(1, sizeof(*i));
   if (i == NULL)
@@ -51,9 +51,9 @@ image *image_create(void)
   return i;
 }
 
-image *image_create_from_file(image_choices *choices, const char *file_name, bits file_type)
+image_t *image_create_from_file(image_choices *choices, const char *file_name, bits file_type)
 {
-  image *i;
+  image_t *i;
 
   i = image_create();
   if (i == NULL)
@@ -80,19 +80,19 @@ Failure:
 
 /* ----------------------------------------------------------------------- */
 
-void image_addref(image *i)
+void image_addref(image_t *i)
 {
   i->refcount++;
 }
 
-void image_deleteref(image *i)
+void image_deleteref(image_t *i)
 {
   i->refcount--;
 }
 
 /* ----------------------------------------------------------------------- */
 
-int image_start_editing(image *i)
+int image_start_editing(image_t *i)
 {
   if (i->flags & image_FLAG_EDITING)
     return 1;
@@ -102,55 +102,55 @@ int image_start_editing(image *i)
   return 0;
 }
 
-void image_stop_editing(image *i)
+void image_stop_editing(image_t *i)
 {
   i->flags &= ~image_FLAG_EDITING;
 }
 
-osbool image_is_editing(const image *i)
+osbool image_is_editing(const image_t *i)
 {
   return (i->flags & image_FLAG_EDITING) != 0;
 }
 
 /* ----------------------------------------------------------------------- */
 
-void image_preview(image *i)
+void image_preview(image_t *i)
 {
   imageobserver_event(i, imageobserver_CHANGE_PREVIEW, NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-void image_hide(image *i)
+void image_hide(image_t *i)
 {
   imageobserver_event(i, imageobserver_CHANGE_HIDDEN, NULL);
 }
 
-void image_reveal(image *i)
+void image_reveal(image_t *i)
 {
   imageobserver_event(i, imageobserver_CHANGE_REVEALED, NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-void image_focus(image *i)
+void image_focus(image_t *i)
 {
   imageobserver_event(i, imageobserver_CHANGE_GAINED_FOCUS, NULL);
 }
 
-void image_defocus(image *i)
+void image_defocus(image_t *i)
 {
   imageobserver_event(i, imageobserver_CHANGE_LOST_FOCUS, NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-void image_about_to_modify(image *i)
+void image_about_to_modify(image_t *i)
 {
   imageobserver_event(i, imageobserver_CHANGE_ABOUT_TO_MODIFY, NULL);
 }
 
-void image_modified(image *i, image_modified_flags flags)
+void image_modified(image_t *i, image_modified_flags flags)
 {
   imageobserver_data data;
 
@@ -165,7 +165,7 @@ void image_modified(image *i, image_modified_flags flags)
 
 /* ----------------------------------------------------------------------- */
 
-void image_destroy(image *i)
+void image_destroy(image_t *i)
 {
   if (i == NULL)
     return;
@@ -187,7 +187,7 @@ void image_destroy(image *i)
 
 /* ----------------------------------------------------------------------- */
 
-void image_select(image *i, int index)
+void image_select(image_t *i, int index)
 {
   /* Only sprites can have their index set. */
   if (i->display.file_type == osfile_TYPE_SPRITE)
@@ -206,7 +206,7 @@ void image_map(image_map_callback *fn, void *arg)
 
 /* ----------------------------------------------------------------------- */
 
-static void count_callback(image *image, void *arg)
+static void count_callback(image_t *image, void *arg)
 {
   int *i = arg;
 
@@ -250,7 +250,7 @@ void image_destroy_metadata(ntree_t *metadata)
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_md5(image *image, char *digest)
+error image_get_md5(image_t *image, char *digest)
 {
   if ((image->flags & image_FLAG_HAS_DIGEST) == 0)
   {

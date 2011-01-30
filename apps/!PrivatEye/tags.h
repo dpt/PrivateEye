@@ -13,7 +13,7 @@
 
 error tags__init(void);
 void tags__fin(void);
-error tags__open(image *image);
+error tags__open(image_t *image);
 
 error tags__choices_updated(const choices_group *g);
 

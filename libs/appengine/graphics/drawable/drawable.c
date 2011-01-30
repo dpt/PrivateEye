@@ -53,7 +53,7 @@ static void set_methods(drawable *d)
     assert(0);
 }
 
-error drawable_create(image *image, drawable **new_drawable)
+error drawable_create(image_t *image, drawable **new_drawable)
 {
   drawable *d;
 

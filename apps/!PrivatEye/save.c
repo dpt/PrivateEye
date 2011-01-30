@@ -25,7 +25,7 @@ dialogue_t *save;
 static void save_fillout(dialogue_t *d, void *arg)
 {
   viewer_t *viewer;
-  image    *image;
+  image_t  *image;
 
   NOT_USED(arg);
 

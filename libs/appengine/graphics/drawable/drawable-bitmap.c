@@ -179,7 +179,7 @@ static void bitmap_scaling(drawable *drawable, const os_factors *factors)
 
 void bitmap_get_dimensions(drawable *drawable, const os_factors *factors, os_box *box)
 {
-  image *image;
+  image_t *image;
 
   image = drawable->image;
 

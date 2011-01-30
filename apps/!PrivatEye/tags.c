@@ -37,7 +37,7 @@
 static struct
 {
   tag_cloud *tc;
-  image     *image;
+  image_t   *image;
 }
 LOCALS;
 
@@ -151,7 +151,7 @@ static tag_cloud__event keyhandler(wimp_key_no  key_no,
 
 /* ----------------------------------------------------------------------- */
 
-static void tags__image_changed_callback(image                *image,
+static void tags__image_changed_callback(image_t              *image,
                                          imageobserver_change  change,
                                          imageobserver_data   *data)
 {
@@ -347,7 +347,7 @@ static void tags__properfin(int force)
 
 /* ----------------------------------------------------------------------- */
 
-error tags__open(image *image)
+error tags__open(image_t *image)
 {
   error             err;
   wimp_window_state state;

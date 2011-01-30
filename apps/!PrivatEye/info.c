@@ -42,7 +42,7 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
   static const char DASH[] = "˜";
 
   viewer_t   *viewer;
-  image      *image;
+  image_t    *image;
   int         spec;
   char        buffer[1024]; /* Careful Now */
   char       *buf;
@@ -174,9 +174,9 @@ static void info_fillout(dialogue_t *d, void *arg)
   static const InfoDialogueSpecifier info =
   {
     -1, /* no icon for date */
-    offsetof(image, display),
-    offsetof(image, display.file_type),
-    offsetof(image, display.file_size)
+    offsetof(image_t, display),
+    offsetof(image_t, display.file_type),
+    offsetof(image_t, display.file_size)
   };
 
   NOT_USED(arg);
@@ -193,9 +193,9 @@ static void source_info_fillout(dialogue_t *d, void *arg)
   static const InfoDialogueSpecifier info =
   {
     0, /* date icon present */
-    offsetof(image, source),
-    offsetof(image, source.file_type),
-    offsetof(image, source.file_size)
+    offsetof(image_t, source),
+    offsetof(image_t, source.file_type),
+    offsetof(image_t, source.file_size)
   };
 
   NOT_USED(arg);

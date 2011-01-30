@@ -153,10 +153,10 @@ static scroll_list    *sl;
 
 static struct
 {
-  image  *image;
-  blender blender;
-  int     blendval;
-  int     open;
+  image_t *image;
+  blender  blender;
+  int      blendval;
+  int      open;
 }
 LOCALS;
 
@@ -374,7 +374,7 @@ static error apply_effects(void)
 {
   error            err;
   effect_array    *v;
-  image           *image;
+  image_t         *image;
   osspriteop_area *area;
 
   err = error_OK;
@@ -1814,7 +1814,7 @@ static int blur_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
 
 static error create_images(void)
 {
-  image             *image;
+  image_t           *image;
   osspriteop_area   *area;
   int                areasize;
   osspriteop_header *header1;
@@ -1892,7 +1892,7 @@ static int delete_images(void)
   return 0;
 }
 
-static void image_changed_callback(image                *image,
+static void image_changed_callback(image_t              *image,
                                    imageobserver_change  change,
                                    imageobserver_data   *data)
 {
@@ -1903,7 +1903,7 @@ static void image_changed_callback(image                *image,
     effects__close();
 }
 
-void effects__open(image *image)
+void effects__open(image_t *image)
 {
   error err;
 
@@ -1975,7 +1975,7 @@ static void effects__close(void)
 /* Make the effects permanent, overwriting source. */
 static void effects__apply(void)
 {
-  image           *image;
+  image_t         *image;
   osspriteop_area *area;
 
   image = LOCALS.image;
@@ -1997,7 +1997,7 @@ static void effects__cancel(void)
   remove_all_effects();
 }
 
-int effects__available(const image *image)
+int effects__available(const image_t *image)
 {
   const osspriteop_area *area;
   osspriteop_header     *header;

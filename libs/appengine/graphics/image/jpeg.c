@@ -33,11 +33,11 @@
 
 #include "jpeg.h"
 
-static int jpeg_to_spr_common(image *image);
+static int jpeg_to_spr_common(image_t *image);
 
 /* ----------------------------------------------------------------------- */
 
-static int jpeg_load(image_choices *choices, image *image)
+static int jpeg_load(image_choices *choices, image_t *image)
 {
   os_error        *e;
   unsigned char   *data;
@@ -163,7 +163,7 @@ NoMem:
   return TRUE; /* failure */
 }
 
-static int jpeg_unload(image *image)
+static int jpeg_unload(image_t *image)
 {
   if (image->image)
     flex_free((flex_ptr) &image->image);
@@ -171,7 +171,7 @@ static int jpeg_unload(image *image)
   return FALSE; /* success */
 }
 
-static int jpeg_rotate(image_choices *choices, image *image, int angle)
+static int jpeg_rotate(image_choices *choices, image_t *image, int angle)
 {
   jpegtran_transform_type    args;
   int              rc;
@@ -231,7 +231,7 @@ static int jpeg_rotate(image_choices *choices, image *image, int angle)
 }
 
 /* wrapper which signals modifications */
-static int jpeg_to_spr(image *image)
+static int jpeg_to_spr(image_t *image)
 {
   int rc;
 
@@ -246,7 +246,7 @@ static int jpeg_to_spr(image *image)
   return rc;
 }
 
-static int jpeg_to_spr_common(image *image)
+static int jpeg_to_spr_common(image_t *image)
 {
   static const image_methods methods =
   {
@@ -387,7 +387,7 @@ NoMem:
   return TRUE; /* failure */
 }
 
-void jpeg_export_methods(image_choices *choices, image *image)
+void jpeg_export_methods(image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

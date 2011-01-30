@@ -18,7 +18,7 @@
 typedef struct element
 {
   struct element         *next;
-  image                  *image; /* NULL => interested in all images */
+  image_t                *image; /* NULL => interested in all images */
   imageobserver_callback *callback;
   int                     nrefs;
 }
@@ -32,7 +32,7 @@ static element *first = NULL;
 
 /* ----------------------------------------------------------------------- */
 
-int imageobserver_register(image                  *image,
+int imageobserver_register(image_t                *image,
                            imageobserver_callback *callback)
 {
   element *e;
@@ -65,7 +65,7 @@ int imageobserver_register(image                  *image,
   return 0; /* ok */
 }
 
-int imageobserver_deregister(image                  *image,
+int imageobserver_deregister(image_t                *image,
                              imageobserver_callback *callback)
 {
   element *prev;
@@ -174,7 +174,7 @@ int imageobserver_deregister_greedy(imageobserver_callback *callback)
   return 0; /* ok */
 }
 
-int imageobserver_event(image                *image,
+int imageobserver_event(image_t              *image,
                         imageobserver_change  change,
                         imageobserver_data   *data)
 {

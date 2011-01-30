@@ -70,7 +70,7 @@ tag_cloud__event tags_common__keyhandler(wimp_key_no  key_no,
 
 
 error tags_common__set_tags(tag_cloud *tc);
-error tags_common__set_highlights(tag_cloud *tc, image *image);
+error tags_common__set_highlights(tag_cloud *tc, image_t *image);
 error tags_common__clear_highlights(tag_cloud *tc);
 
 

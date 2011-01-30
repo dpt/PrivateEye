@@ -37,14 +37,14 @@ typedef union imageobserver_data
 }
 imageobserver_data;
 
-typedef void (imageobserver_callback)(image                *image,
+typedef void (imageobserver_callback)(image_t              *image,
                                       imageobserver_change  change,
                                       imageobserver_data   *data);
 
-int imageobserver_register(image                  *image,
+int imageobserver_register(image_t                *image,
                            imageobserver_callback *callback);
 
-int imageobserver_deregister(image                  *image,
+int imageobserver_deregister(image_t                *image,
                              imageobserver_callback *callback);
 
 /* 'Greedy' functions are called for changes on all images. */
@@ -52,7 +52,7 @@ int imageobserver_register_greedy(imageobserver_callback *callback);
 
 int imageobserver_deregister_greedy(imageobserver_callback *callback);
 
-int imageobserver_event(image                *image,
+int imageobserver_event(image_t              *image,
                         imageobserver_change  change,
                         imageobserver_data   *data);
 

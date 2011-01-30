@@ -10,6 +10,6 @@
 
 #include "appengine/graphics/image.h"
 
-extern void png_export_methods(image_choices *choices, image *image);
+extern void png_export_methods(image_choices *choices, image_t *image);
 
 #endif /* IMAGE_PNG_H */

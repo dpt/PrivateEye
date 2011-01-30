@@ -9,6 +9,6 @@
 
 #include "appengine/graphics/image.h"
 
-int generic_save(image_choices *choices, image *image, const char *file_name);
+int generic_save(image_choices *choices, image_t *image, const char *file_name);
 
 #endif /* IMAGE_GENERIC_H */

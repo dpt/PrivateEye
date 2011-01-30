@@ -24,7 +24,7 @@
 
 #include "sprite.h"
 
-static int sprite_load(image_choices *choices, image *image)
+static int sprite_load(image_choices *choices, image_t *image)
 {
   int                file_size;
   int                log2bpp;
@@ -118,7 +118,7 @@ NoMem:
   return TRUE; /* failure */
 }
 
-void sprite_export_methods(image_choices *choices, image *image)
+void sprite_export_methods(image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

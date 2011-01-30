@@ -15,9 +15,9 @@
 error imagecache_get(const char *file_name,
                      bits        load,
                      bits        exec,
-                     image     **image);
+                     image_t   **image);
 void imagecache_empty(void);
 int imagecache_get_count(void);
-void imagecache_destroy(image *i);
+void imagecache_destroy(image_t *i);
 
 #endif /* IMAGECACHE_H */

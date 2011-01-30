@@ -9,7 +9,7 @@
 
 #include "to-spr.h"
 
-void to_spr(image *image)
+void to_spr(image_t *image)
 {
   if (!to_spr__available(image))
   {
@@ -20,7 +20,7 @@ void to_spr(image *image)
   image->methods.to_spr(image);
 }
 
-int to_spr__available(const image *image)
+int to_spr__available(const image_t *image)
 {
   return image &&
          !image_is_editing(image) &&

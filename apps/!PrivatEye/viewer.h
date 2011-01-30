@@ -59,7 +59,7 @@ struct viewer_t
   }
   background;
 
-  image              *image;    /* The image we're viewing. */
+  image_t            *image;    /* The image we're viewing. */
   drawable           *drawable; /* How to draw the image. */
 
   os_box              extent;   /* Bounding box of the viewer window. */
@@ -81,7 +81,7 @@ int viewer_count_clones(viewer_t *viewer);
 typedef int (viewer_map_callback)(viewer_t *, void *arg);
 
 void viewer_map(viewer_map_callback *fn, void *arg);
-void viewer_map_for_image(image *image, viewer_map_callback *fn, void *arg);
+void viewer_map_for_image(image_t *image, viewer_map_callback *fn, void *arg);
 
 int viewer_get_count(void);
 void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box);

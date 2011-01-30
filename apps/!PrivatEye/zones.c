@@ -29,7 +29,7 @@ enum { log2zone = 6 }; /* 64x64 zones */
 /* Converts pixels to zones, with rounding up. */
 #define TOZONE_UP(x) ((x) + ((1 << log2zone) - 1)) >> log2zone
 
-zones *zones_create(image *image)
+zones *zones_create(image_t *image)
 {
   int    w, h;
   int    rowwords;
@@ -69,7 +69,7 @@ void zones_destroy(zones *zones)
   free(zones);
 }
 
-void zones_update(zones *zones, wimp_draw *redraw, image *image, int scale)
+void zones_update(zones *zones, wimp_draw *redraw, image_t *image, int scale)
 {
   int           w, h;
   int           rowwords;

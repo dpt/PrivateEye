@@ -28,7 +28,7 @@
 
 #include "bitmap.h"
 
-int bitmap_save(image_choices *choices, image *image, const char *file_name)
+int bitmap_save(image_choices *choices, image_t *image, const char *file_name)
 {
   osspriteop_area *area;
   os_error        *e;
@@ -48,7 +48,7 @@ int bitmap_save(image_choices *choices, image *image, const char *file_name)
   return FALSE; /* success */
 }
 
-int bitmap_unload(image *image)
+int bitmap_unload(image_t *image)
 {
   if (image != NULL)
     if (image->image != NULL)
@@ -57,7 +57,7 @@ int bitmap_unload(image *image)
   return FALSE; /* success */
 }
 
-int bitmap_histogram(image *image)
+int bitmap_histogram(image_t *image)
 {
   osspriteop_area   *area;
   osspriteop_header *header;
@@ -78,7 +78,7 @@ int bitmap_histogram(image *image)
  */
 
 /* 1,3,5,7: hard rotation */
-static int rotate_hard(image *image, int angle)
+static int rotate_hard(image_t *image, int angle)
 {
   osspriteop_area      *area;
   osspriteop_header    *header;
@@ -245,7 +245,7 @@ NoMem:
 }
 
 /* 0,2,4,6: easy flips */
-static int rotate_easy(image *image, int angle)
+static int rotate_easy(image_t *image, int angle)
 {
   enum { FlipH = 1, FlipV = 2 };
 
@@ -280,7 +280,7 @@ static int rotate_easy(image *image, int angle)
   return FALSE; /* success */
 }
 
-int bitmap_rotate(image_choices *choices, image *image, int angle)
+int bitmap_rotate(image_choices *choices, image_t *image, int angle)
 {
   int r;
 

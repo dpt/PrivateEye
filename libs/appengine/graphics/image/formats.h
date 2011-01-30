@@ -12,7 +12,7 @@
 #include "appengine/graphics/image.h"
 
 osbool loader_export_methods(image_choices *choices,
-                             image         *image,
+                             image_t       *image,
                              bits           file_type);
 
 #endif /* IMAGE_FORMATS_H */

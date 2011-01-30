@@ -28,7 +28,7 @@
 
 typedef struct entry
 {
-  image *image;
+  image_t *image;
 }
 entry;
 
@@ -45,11 +45,10 @@ cache;
 error imagecache_get(const char *file_name,
                      bits        load,
                      bits        exec,
-                     image     **image)
+                     image_t   **image)
 {
-  int           i;
-  struct image *ci = NULL; /* needs 'struct' to avoid name clash with 'image'
-                              arg */
+  int      i;
+  image_t *ci = NULL;
 
   /* is the file already in our cache? */
   for (i = 0; i < cache.nentries; i++)
@@ -157,7 +156,7 @@ static int evict_nbytes(int need)
   return 0;
 }
 
-static int imagecache_put(image *image)
+static int imagecache_put(image_t *image)
 {
   int need;
   int max;
@@ -224,7 +223,7 @@ int imagecache_get_count(void)
 
 /* This is like image_destroy but uses the refcount to see whether to encache
  * the image. */
-void imagecache_destroy(image *image)
+void imagecache_destroy(image_t *image)
 {
   int inserted = 0;
 

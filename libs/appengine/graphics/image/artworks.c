@@ -27,7 +27,7 @@
 
 #include "artworks.h"
 
-static int artworks_load(image_choices *choices, image *image)
+static int artworks_load(image_choices *choices, image_t *image)
 {
   static osbool    have_renderer = FALSE;
 
@@ -121,7 +121,7 @@ static int artworks_load(image_choices *choices, image *image)
   return FALSE; /* success */
 }
 
-static int artworks_unload(image *image)
+static int artworks_unload(image_t *image)
 {
   flex_free((flex_ptr) &image->details.artworks.workspace);
   flex_free((flex_ptr) &image->image);
@@ -129,7 +129,7 @@ static int artworks_unload(image *image)
   return FALSE; /* success */
 }
 
-void artworks_export_methods(image_choices *choices, image *image)
+void artworks_export_methods(image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

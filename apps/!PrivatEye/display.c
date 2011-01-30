@@ -1087,7 +1087,7 @@ for (i = 0; i < NELEMS(menus); i++)
 static void display__menu_update(void)
 {
   viewer_t        *viewer;
-  image           *image;
+  image_t         *image;
   wimp_menu_entry *entries;
   wimp_menu       *m;
 

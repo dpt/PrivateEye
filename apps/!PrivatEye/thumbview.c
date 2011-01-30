@@ -103,7 +103,7 @@ static error thumbview__set_display_mode(thumbview              *tv,
 
 typedef struct thumbview_entry
 {
-  image      *image;
+  image_t    *image;
   drawable   *drawable;
   dict_index  text[InfoTextIndex__Limit];
 }
@@ -1060,7 +1060,7 @@ static error load_directory_cb(const char          *obj_name,
   error            err;
   thumbview       *tv = arg;
   thumbview_entry *entry;
-  image           *image;
+  image_t         *image;
   drawable        *drawable;
 
   if (!image_is_loadable(info->file_type))

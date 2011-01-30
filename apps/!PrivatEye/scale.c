@@ -69,7 +69,7 @@ void scale_set(viewer_t *viewer, int scale, int redraw)
 static void scale_fillout(dialogue_t *d, void *arg)
 {
   viewer_t *viewer;
-  image    *image;
+  image_t  *image;
 
   NOT_USED(arg);
 

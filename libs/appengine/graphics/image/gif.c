@@ -185,7 +185,7 @@ static unsigned int *gif_load_palette(int entries)
   return palette;
 }
 
-static int gif_load(image_choices *choices, image *image)
+static int gif_load(image_choices *choices, image_t *image)
 {
   State S;
   int log2bpp;
@@ -936,7 +936,7 @@ static int giflzw_decoder(State *S, int linewidth)
   return ret;
 }
 
-void gif_export_methods(image_choices *choices, image *image)
+void gif_export_methods(image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

@@ -12,7 +12,7 @@
 
 error hist__init(void);
 void hist__fin(void);
-int hist__available(const image *image);
-void hist__open(image *image, int nbars);
+int hist__available(const image_t *image);
+void hist__open(image_t *image, int nbars);
 
 #endif /* HIST_H */

@@ -12,7 +12,7 @@
 
 error metadata__init(void);
 void metadata__fin(void);
-int metadata__available(const image *image);
-void metadata__open(image *image);
+int metadata__available(const image_t *image);
+void metadata__open(image_t *image);
 
 #endif /* METADATA_H */

@@ -36,7 +36,7 @@
 static const struct
 {
   bits    file_type;
-  void  (*export_methods)(image_choices *, image *);
+  void  (*export_methods)(image_choices *, image_t *);
   osbool *load;
 }
 TypesData_map[] =
@@ -65,7 +65,7 @@ osbool image_is_loadable(bits file_type)
   return filetype_to_index(file_type) >= 0;
 }
 
-osbool loader_export_methods(image_choices *choices, image *image, bits file_type)
+osbool loader_export_methods(image_choices *choices, image_t *image, bits file_type)
 {
   int i;
 

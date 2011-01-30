@@ -12,7 +12,7 @@
 
 error effects__init(void);
 void effects__fin(void);
-void effects__open(image *image);
-int effects__available(const image *image);
+void effects__open(image_t *image);
+int effects__available(const image_t *image);
 
 #endif /* EFFECTS_H */

@@ -650,7 +650,7 @@ jpeg_marker_map[] =
   { M_APP13, "adobe", jpeg_meta_adobe },
 };
 
-int jpeg_get_meta(image_choices *choices, image *image, ntree_t **newtree)
+int jpeg_get_meta(image_choices *choices, image_t *image, ntree_t **newtree)
 {
   error    err;
   ntree_t *tree;
@@ -746,7 +746,7 @@ Failure:
   return 1;
 }
 
-int jpeg_meta_available(image_choices *choices, image *image)
+int jpeg_meta_available(image_choices *choices, image_t *image)
 {
   int i;
 

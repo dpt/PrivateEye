@@ -9,6 +9,6 @@
 
 #include "appengine/graphics/image.h"
 
-extern void drawfile_export_methods(image_choices *choices, image *image);
+extern void drawfile_export_methods(image_choices *choices, image_t *image);
 
 #endif /* IMAGE_DRAWFILE_H */

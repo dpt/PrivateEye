@@ -43,7 +43,7 @@
 typedef struct metadata_window
 {
   list_t      list;
-  image      *image;
+  image_t    *image;
   wimp_w      w;
   treeview_t *tr;
 }
@@ -142,7 +142,7 @@ void metadata__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-static metadata_window *metadata__image_to_win(image *image)
+static metadata_window *metadata__image_to_win(image_t *image)
 {
   return (metadata_window *) list__find(&list_anchor,
                                          offsetof(metadata_window, image),
@@ -155,7 +155,7 @@ static void metadata__delete(metadata_window *md);
 
 /* ----------------------------------------------------------------------- */
 
-static error metadata__compute(image *image)
+static error metadata__compute(image_t *image)
 {
   error              err;
   metadata_window   *md;
@@ -350,13 +350,13 @@ static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *bl
 
 /* ----------------------------------------------------------------------- */
 
-int metadata__available(const image *image)
+int metadata__available(const image_t *image)
 {
   return image &&
          image->flags & image_FLAG_HAS_META;
 }
 
-static void metadata__image_changed_callback(image                *image,
+static void metadata__image_changed_callback(image_t              *image,
                                              imageobserver_change  change,
                                              imageobserver_data   *data)
 {
@@ -380,7 +380,7 @@ static void metadata__image_changed_callback(image                *image,
   }
 }
 
-static error metadata__new(image *image, metadata_window **new_md)
+static error metadata__new(image_t *image, metadata_window **new_md)
 {
   error            err;
   metadata_window *md;
@@ -456,7 +456,7 @@ static void metadata__delete(metadata_window *md)
 
 /* ----------------------------------------------------------------------- */
 
-void metadata__open(image *image)
+void metadata__open(image_t *image)
 {
   error            err;
   metadata_window *md;

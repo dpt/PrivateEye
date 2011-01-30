@@ -10,7 +10,7 @@
 #include "appengine/base/errors.h"
 #include "appengine/graphics/image.h"
 
-void to_spr(image *image);
-int to_spr__available(const image *image);
+void to_spr(image_t *image);
+int to_spr__available(const image_t *image);
 
 #endif /* TO_SPR_H */

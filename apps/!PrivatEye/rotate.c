@@ -69,7 +69,7 @@ static struct
 {
   wimp_w        rotate_w;
 
-  image       *image;
+  image_t     *image;
 
   RotateFlags  flags;
   int          rotation;       /* basic / final rotation */
@@ -602,7 +602,7 @@ static int rotate__message_menus_deleted(wimp_message *message, void *handle)
 
 /* ----------------------------------------------------------------------- */
 
-static void rotate_internal(image *image, int angle, int hflip)
+static void rotate_internal(image_t *image, int angle, int hflip)
 {
   angle = angle / 65536;
   while (angle < 0) /* safety */
@@ -621,7 +621,7 @@ static void rotate_internal(image *image, int angle, int hflip)
   }
 }
 
-void rotate(image *image, int angle, int hflip)
+void rotate(image_t *image, int angle, int hflip)
 {
   if (!rotate__available(image))
   {
@@ -731,7 +731,7 @@ static int rotate__event_user_drag_box(wimp_event_no event_no, wimp_block *block
   return event_HANDLED;
 }
 
-void rotate__open(image *image)
+void rotate__open(image_t *image)
 {
   if (!rotate__available(image))
   {
@@ -747,7 +747,7 @@ void rotate__open(image *image)
   window_open_as_menu(LOCALS.rotate_w);
 }
 
-int rotate__available(const image *image)
+int rotate__available(const image_t *image)
 {
   return image &&
          !image_is_editing(image) &&
