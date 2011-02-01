@@ -9,8 +9,8 @@
 
 #include "appengine/base/errors.h"
 
-extern dialogue_t *info;
-extern dialogue_t *source_info;
+extern dialogue_t *viewer_info;
+extern dialogue_t *viewer_source_info;
 
 error viewer_info_init(void);
 void viewer_info_fin(void);

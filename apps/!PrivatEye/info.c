@@ -167,9 +167,9 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *info;
+dialogue_t *viewer_info;
 
-static void info_fillout(dialogue_t *d, void *arg)
+static void viewer_info_fillout(dialogue_t *d, void *arg)
 {
   static const InfoDialogueSpecifier info =
   {
@@ -186,9 +186,9 @@ static void info_fillout(dialogue_t *d, void *arg)
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *source_info;
+dialogue_t *viewer_source_info;
 
-static void source_info_fillout(dialogue_t *d, void *arg)
+static void viewer_source_info_fillout(dialogue_t *d, void *arg)
 {
   static const InfoDialogueSpecifier info =
   {
@@ -209,29 +209,29 @@ error viewer_info_init(void)
 {
   /* Info dialogue */
 
-  info = info__create("image_info");
-  if (info == NULL)
+  viewer_info = info__create("image_info");
+  if (viewer_info == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(info, info_fillout, NULL);
+  dialogue__set_fillout_handler(viewer_info, viewer_info_fillout, NULL);
 
-  info__set_padding(info, GLOBALS.choices.info.padding);
+  info__set_padding(viewer_info, GLOBALS.choices.info.padding);
 
   /* Source Info dialogue */
 
-  source_info = info__create("source_info");
-  if (source_info == NULL)
+  viewer_source_info = info__create("source_info");
+  if (viewer_source_info == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(source_info, source_info_fillout, NULL);
+  dialogue__set_fillout_handler(viewer_source_info, viewer_source_info_fillout, NULL);
 
-  info__set_padding(source_info, GLOBALS.choices.info.padding);
+  info__set_padding(viewer_source_info, GLOBALS.choices.info.padding);
 
   return error_OK;
 }
 
 void viewer_info_fin(void)
 {
-  info__destroy(source_info);
-  info__destroy(info);
+  info__destroy(viewer_source_info);
+  info__destroy(viewer_info);
 }

@@ -181,8 +181,8 @@ error display__init(void)
 
   GLOBALS.image_m = menu_create_from_desc(
                                       message0("menu.image"),
-                                      dialogue__get_window(info),
-                                      dialogue__get_window(source_info),
+                                      dialogue__get_window(viewer_info),
+                                      dialogue__get_window(viewer_source_info),
                                       dialogue__get_window(save),
                                       dialogue__get_window(viewer_scale));
 
@@ -1380,11 +1380,11 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Info:
-    dialogue__show(info);
+    dialogue__show(viewer_info);
     break;
 
   case SourceInfo:
-    dialogue__show(source_info);
+    dialogue__show(viewer_source_info);
     break;
 
   case Hist:
