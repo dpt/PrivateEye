@@ -110,14 +110,10 @@ static int compattrs(const void *a, const void *b)
  * closer). */
 static int score(font__attrs a, font__attrs b)
 {
-  int score;
-
-  score = abs((a & font__WEIGHT_MASK)  - (b & font__WEIGHT_MASK))  +
-          abs((a & font__STYLE_MASK)   - (b & font__STYLE_MASK))   +
-          abs((a & font__STRETCH_MASK) - (b & font__STRETCH_MASK)) +
-          abs((a & font__VARIANT_MASK) - (b & font__VARIANT_MASK));
-
-  return score;
+  return abs((a & font__WEIGHT_MASK)  - (b & font__WEIGHT_MASK))  +
+         abs((a & font__STYLE_MASK)   - (b & font__STYLE_MASK))   +
+         abs((a & font__STRETCH_MASK) - (b & font__STRETCH_MASK)) +
+         abs((a & font__VARIANT_MASK) - (b & font__VARIANT_MASK));
 }
 
 /* Split a font name into family name and attrs.
