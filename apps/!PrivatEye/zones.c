@@ -141,7 +141,7 @@ void zones_update(zones *zones, wimp_draw *redraw, image_t *image, int scale)
     osspriteop_header *sptr;
     static const unsigned int transtab[2] = { 0x00ffffff, 0x00000000 };
     unsigned char *sdat;
-    static const os_factors scale = { 16, 16, 2, 2 };
+    static const os_factors factors = { 16, 16, 2, 2 };
     enum { X = 48, Y = 48 };
     int plot;
 
@@ -178,7 +178,7 @@ void zones_update(zones *zones, wimp_draw *redraw, image_t *image, int scale)
                  (osspriteop_id) sptr,
                                  x0, y0,
                                  os_ACTION_OVERWRITE | osspriteop_GIVEN_WIDE_ENTRIES,
-                                &scale,
+                                &factors,
         (osspriteop_trans_tab *) transtab);
 
     /* draw a grid */
@@ -187,20 +187,20 @@ void zones_update(zones *zones, wimp_draw *redraw, image_t *image, int scale)
     plot = 0;
     for (y = 0; y < h; y++)
     {
-      int yy = y0 + y * 2 * scale.ymul / scale.ydiv;
+      int yy = y0 + y * 2 * factors.ymul / factors.ydiv;
 
       os_plot(4, x0, yy);
-      os_plot(6 + plot, x0 + w * 2 * scale.xmul / scale.xdiv, yy);
+      os_plot(6 + plot, x0 + w * 2 * factors.xmul / factors.xdiv, yy);
       plot = 32;
     }
 
     plot = 0;
     for (x = 0; x < w; x++)
     {
-      int xx = x0 + x * 2 * scale.xmul / scale.xdiv;
+      int xx = x0 + x * 2 * factors.xmul / factors.xdiv;
 
       os_plot(4, xx, y0);
-      os_plot(6 + plot, xx, y0 + h * 2 * scale.ymul / scale.ydiv);
+      os_plot(6 + plot, xx, y0 + h * 2 * factors.ymul / factors.ydiv);
       plot = 32;
     }
 

@@ -184,7 +184,7 @@ error display__init(void)
                                       dialogue__get_window(info),
                                       dialogue__get_window(source_info),
                                       dialogue__get_window(save),
-                                      dialogue__get_window(scale));
+                                      dialogue__get_window(viewer_scale));
 
   err = help__add_menu(GLOBALS.image_m, "image");
   if (err)
@@ -361,7 +361,7 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
 
   /* this scale then set order is probably important */
 
-  scale_set(viewer, s / ScrollingScale, 1);
+  viewer_scale_set(viewer, s / ScrollingScale, 1);
 
   /* 'viewer' is possibly stale here now */
 
@@ -740,7 +740,7 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
   else
     new_scale = old_scale / 2;
 #if 0
-  scale_set(GLOBALS.current_display_w, new_scale, 0);
+  viewer_scale_set(GLOBALS.current_display_w, new_scale, 0);
 
   info.xscroll = (wax * new_scale / old_scale) - visible_w / 2;
   info.yscroll = (way * new_scale / old_scale) + visible_h / 2;
@@ -1008,7 +1008,7 @@ static int zoombox__event_user_drag_box(wimp_event_no event_no, wimp_block *bloc
 
     if (old_scale != new_scale)
     {
-      scale_set(viewer, new_scale, 0);
+      viewer_scale_set(viewer, new_scale, 0);
 
       /* Set middle point of user's selection (ish) */
       info.xscroll = x0 * new_scale / old_scale;
@@ -1223,7 +1223,7 @@ static void action_zoom(viewer_t *viewer, int op)
   case ZoomToggle: new_scale = viewer->scale.prev; break;
   }
 
-  scale_set(viewer, new_scale, 1);
+  viewer_scale_set(viewer, new_scale, 1);
 }
 
 static void action_step(viewer_t *viewer, int op)
@@ -1396,7 +1396,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Scale:
-    dialogue__show(scale);
+    dialogue__show(viewer_scale);
     break;
 
 #ifdef EYE_TAGS

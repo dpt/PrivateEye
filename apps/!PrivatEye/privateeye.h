@@ -24,7 +24,7 @@ enum
   viewersize_FIT_TO_SCREEN = 1
 };
 
-typedef int viewer_scale;
+typedef int viewer_scalefac;
 enum
 {
   /* Positive values are reserved for actual scale values. */
@@ -38,7 +38,7 @@ typedef struct
   struct
   {
     viewer_size       size;
-    viewer_scale      scale;
+    viewer_scalefac   scale;
     int               steps;
     int               cover_icon_bar;
     int               scroll_x, scroll_y;

@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: scale.c
- * Purpose: Scale
+ * Purpose: Viewer scale dialogue
  * Version: $Id: scale.c,v 1.26 2009-05-21 22:45:38 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -17,7 +17,7 @@
 
 #include "scale.h"
 
-int scale_for_box(drawable *d, int sw, int sh)
+int viewer_scale_for_box(drawable *d, int sw, int sh)
 {
   static const os_factors one_to_one = { 1, 1, 1, 1 };
 
@@ -38,11 +38,11 @@ int scale_for_box(drawable *d, int sw, int sh)
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *scale;
+dialogue_t *viewer_scale;
 
 /* ----------------------------------------------------------------------- */
 
-void scale_set(viewer_t *viewer, int scale, int redraw)
+void viewer_scale_set(viewer_t *viewer, int scale, int redraw)
 {
   viewer_update_flags flags;
 
@@ -66,7 +66,7 @@ void scale_set(viewer_t *viewer, int scale, int redraw)
 
 /* ----------------------------------------------------------------------- */
 
-static void scale_fillout(dialogue_t *d, void *arg)
+static void viewer_scale_fillout(dialogue_t *d, void *arg)
 {
   viewer_t *viewer;
   image_t  *image;
@@ -84,19 +84,19 @@ static void scale_fillout(dialogue_t *d, void *arg)
   scale__set(d, viewer->scale.cur);
 }
 
-static void scale_set_fit_screen(dialogue_t *d, viewer_t *viewer)
+static void viewer_scale_set_fit_screen(dialogue_t *d, viewer_t *viewer)
 {
   int sw,sh;
   int s;
 
   read_max_visible_area(viewer->main_w, &sw, &sh);
 
-  s = scale_for_box(viewer->drawable, sw, sh);
+  s = viewer_scale_for_box(viewer->drawable, sw, sh);
 
   scale__set(d, s);
 }
 
-static void scale_set_fit_window(dialogue_t *d, viewer_t *viewer)
+static void viewer_scale_set_fit_window(dialogue_t *d, viewer_t *viewer)
 {
   wimp_window_state state;
   int ww,wh;
@@ -108,12 +108,12 @@ static void scale_set_fit_window(dialogue_t *d, viewer_t *viewer)
   ww = state.visible.x1 - state.visible.x0;
   wh = state.visible.y1 - state.visible.y0;
 
-  s = scale_for_box(viewer->drawable, ww, wh);
+  s = viewer_scale_for_box(viewer->drawable, ww, wh);
 
   scale__set(d, s);
 }
 
-static void scale_handler(dialogue_t *d, scale__type type, int scale)
+static void viewer_scale_handler(dialogue_t *d, scale__type type, int scale)
 {
   viewer_t *viewer;
 
@@ -129,15 +129,15 @@ static void scale_handler(dialogue_t *d, scale__type type, int scale)
   switch (type)
   {
   case scale__TYPE_VALUE:
-    scale_set(viewer, scale, 1 /* redraw */);
+    viewer_scale_set(viewer, scale, 1 /* redraw */);
     break;
 
   case scale__TYPE_FIT_TO_SCREEN:
-    scale_set_fit_screen(d, viewer);
+    viewer_scale_set_fit_screen(d, viewer);
     break;
 
   case scale__TYPE_FIT_TO_WINDOW:
-    scale_set_fit_window(d, viewer);
+    viewer_scale_set_fit_window(d, viewer);
     break;
   }
 }
@@ -146,19 +146,23 @@ static void scale_handler(dialogue_t *d, scale__type type, int scale)
 
 error viewer_scale_init(void)
 {
+  dialogue_t *scale;
+
   scale = scale__create();
   if (scale == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(scale, scale_fillout, NULL);
+  dialogue__set_fillout_handler(scale, viewer_scale_fillout, NULL);
   scale__set_steppings(scale, GLOBALS.choices.scale.step,
                               GLOBALS.choices.scale.mult);
-  scale__set_scale_handler(scale, scale_handler);
+  scale__set_scale_handler(scale, viewer_scale_handler);
+
+  viewer_scale = scale;
 
   return error_OK;
 }
 
 void viewer_scale_fin(void)
 {
-  scale__destroy(scale);
+  scale__destroy(viewer_scale);
 }

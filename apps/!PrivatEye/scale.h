@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: scale.h
- * Purpose: Scale
+ * Purpose: Viewer scale dialogue
  * Version: $Id: scale.h,v 1.13 2009-05-20 21:38:19 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -13,13 +13,13 @@
 
 #include "viewer.h"
 
-int scale_for_box(drawable *d, int sw, int sh);
+int viewer_scale_for_box(drawable *d, int sw, int sh);
 
-extern dialogue_t *scale;
+extern dialogue_t *viewer_scale;
 
 error viewer_scale_init(void);
 void viewer_scale_fin(void);
 
-void scale_set(viewer_t *viewer, int scale, int redraw);
+void viewer_scale_set(viewer_t *viewer, int scale, int redraw);
 
 #endif /* VIEWER_SCALE_H */

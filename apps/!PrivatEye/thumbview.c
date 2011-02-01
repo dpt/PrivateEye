@@ -693,7 +693,7 @@ static void thumbview__update(thumbview *tv, thumbview__update_flags flags)
         int        s;
         os_factors factors;
 
-        s = scale_for_box(drawable, tv->thumb_w, tv->thumb_h);
+        s = viewer_scale_for_box(drawable, tv->thumb_w, tv->thumb_h);
         if (s > 100)
           s = 100;
 

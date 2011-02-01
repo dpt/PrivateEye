@@ -536,7 +536,7 @@ static void scale_for_screen(viewer_t *viewer)
 
   read_max_visible_area(viewer->main_w, &w, &h);
 
-  s = scale_for_box(viewer->drawable, w, h);
+  s = viewer_scale_for_box(viewer->drawable, w, h);
 
   viewer->scale.cur = viewer->scale.prev = s;
 }
