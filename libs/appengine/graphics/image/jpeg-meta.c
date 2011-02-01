@@ -373,7 +373,7 @@ static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf, size_t le
     unsigned short marker;
     unsigned char  type;
     int            i;
-    char           buf[100];
+    char           heading[100];
     ntree_t       *parent;
     ntree_t       *child;
     int            c;
@@ -396,9 +396,9 @@ static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf, size_t le
 
     /* create a heading */
 
-    c = sprintf(buf, "%s (%d)", application_record[i].name, type);
+    c = sprintf(heading, "%s (%d)", application_record[i].name, type);
 
-    err = str_to_node(buf, c, &parent);
+    err = str_to_node(heading, c, &parent);
     if (err)
       goto Failure;
 
@@ -545,7 +545,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
       char fmt[32];
       char desc[256];
       char desc2[256];
-      char buf[256];
+      char heading[256];
       int  used;
 
       /* insert on success */
@@ -563,13 +563,13 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
         memcpy(desc2, (const char *) p + 4 + 2 + 1, namelen);
         desc2[namelen] = '\0';
 
-        used = sprintf(buf, fmt, desc, desc2, id);
+        used = sprintf(heading, fmt, desc, desc2, id);
       }
       else
       {
         strcpy(fmt, message0("adobe.format"));
 
-        used = sprintf(buf, fmt, desc, id);
+        used = sprintf(heading, fmt, desc, id);
       }
 
       s = malloc(used + 1);
@@ -579,7 +579,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
         goto Failure;
       }
 
-      memcpy(s, buf, used + 1);
+      memcpy(s, heading, used + 1);
 
       ntree__set_data(subtree, s);
     }
