@@ -23,7 +23,7 @@
 #include "drawable-bitmap.h"
 #include "drawable-jpeg.h"
 
-static void jpeg_redraw(const drawable_choices *choices, wimp_draw *draw, drawable *drawable, int x, int y)
+static void jpeg_redraw(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
 {
   os_error         *e;
   const jpeg_image *jpeg;
@@ -42,7 +42,7 @@ static void jpeg_redraw(const drawable_choices *choices, wimp_draw *draw, drawab
 }
 
 // almost identical to bitmap_scaling
-static void jpeg_scaling(drawable *drawable, const os_factors *factors)
+static void jpeg_scaling(drawable_t *drawable, const os_factors *factors)
 {
   int         image_xeig, image_yeig;
   int         screen_xeig, screen_yeig;
@@ -60,7 +60,7 @@ static void jpeg_scaling(drawable *drawable, const os_factors *factors)
   scaled_factors->ydiv = factors->ydiv << screen_yeig;
 }
 
-void drawablejpeg_export_methods(drawable *drawable)
+void drawablejpeg_export_methods(drawable_t *drawable)
 {
   static const drawable_methods methods =
   {

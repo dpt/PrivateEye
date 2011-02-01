@@ -60,7 +60,7 @@ struct viewer_t
   background;
 
   image_t            *image;    /* The image we're viewing. */
-  drawable           *drawable; /* How to draw the image. */
+  drawable_t         *drawable; /* How to draw the image. */
 
   os_box              extent;   /* Bounding box of the viewer window. */
   os_box              imgbox;   /* Bounding box of the image we're viewing.

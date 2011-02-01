@@ -17,7 +17,7 @@
 
 #include "drawable-artworks.h"
 
-static void artworks_redraw(const drawable_choices *choices, wimp_draw *draw, drawable *drawable, int x, int y)
+static void artworks_redraw(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
 {
   os_trfm            *trfm;
   awrender_info_block info_block;
@@ -60,7 +60,7 @@ static void artworks_redraw(const drawable_choices *choices, wimp_draw *draw, dr
                            &handle);
 }
 
-static void artworks_colours(drawable *drawable)
+static void artworks_colours(drawable_t *drawable)
 {
   static const os_VDU_VAR_LIST(4) var_list =
   {{
@@ -76,7 +76,7 @@ static void artworks_colours(drawable *drawable)
   wimp_read_true_palette(drawable->details.artworks.vdu_block.palette);
 }
 
-void drawableartworks_export_methods(drawable *drawable)
+void drawableartworks_export_methods(drawable_t *drawable)
 {
   static const drawable_methods methods =
   {

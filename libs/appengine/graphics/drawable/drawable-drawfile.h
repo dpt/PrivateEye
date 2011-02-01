@@ -9,6 +9,6 @@
 
 #include "appengine/graphics/drawable.h"
 
-void drawabledrawfile_export_methods(drawable *drawable);
+void drawabledrawfile_export_methods(drawable_t *drawable);
 
 #endif /* DRAWABLE_DRAWFILE_H */

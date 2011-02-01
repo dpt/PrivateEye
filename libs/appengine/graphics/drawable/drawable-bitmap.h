@@ -11,8 +11,8 @@
 
 #include "appengine/graphics/drawable.h"
 
-void bitmap_get_dimensions(drawable *drawable, const os_factors *factors, os_box *box);
+void bitmap_get_dimensions(drawable_t *drawable, const os_factors *factors, os_box *box);
 
-void drawablebitmap_export_methods(drawable *drawable);
+void drawablebitmap_export_methods(drawable_t *drawable);
 
 #endif /* DRAWABLE_BITMAP */

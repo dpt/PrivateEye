@@ -544,7 +544,7 @@ static void scale_for_screen(viewer_t *viewer)
 /* Called when a change has occurred. */
 void viewer_update(viewer_t *viewer, viewer_update_flags flags)
 {
-  drawable *d;
+  drawable_t *d;
 
   d = viewer->drawable;
 
@@ -799,7 +799,7 @@ osbool viewer_load(viewer_t   *viewer,
 {
   error       err;
   image_t    *image = NULL;
-  drawable   *drawable;
+  drawable_t *drawable;
   osbool      r;
   wimp_caret  caret;
 

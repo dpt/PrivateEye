@@ -19,7 +19,7 @@
 
 #include "appengine/graphics/image.h"
 
-#define T drawable
+#define T drawable_t
 
 /* ----------------------------------------------------------------------- */
 

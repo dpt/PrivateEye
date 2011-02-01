@@ -31,7 +31,7 @@ error thumbnail_create(image_t          *image,
   size_t           sprimgbytes;
   os_mode          mode;
   int              c0,c1,c2,c3;
-  drawable        *drawable;
+  drawable_t      *drawable;
   os_factors       factors;
   wimp_draw        draw;
 

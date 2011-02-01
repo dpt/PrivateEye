@@ -17,7 +17,7 @@
 
 #include "scale.h"
 
-int viewer_scale_for_box(drawable *d, int sw, int sh)
+int viewer_scale_for_box(drawable_t *d, int sw, int sh)
 {
   static const os_factors one_to_one = { 1, 1, 1, 1 };
 

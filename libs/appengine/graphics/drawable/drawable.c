@@ -24,12 +24,12 @@
 
 #include "appengine/graphics/drawable.h"
 
-static void set_methods(drawable *d)
+static void set_methods(drawable_t *d)
 {
   static const struct
   {
     bits file_type;
-    void (*export)(drawable *);
+    void (*export)(drawable_t *);
   }
   map[] =
   {
@@ -53,9 +53,9 @@ static void set_methods(drawable *d)
     assert(0);
 }
 
-error drawable_create(image_t *image, drawable **new_drawable)
+error drawable_create(image_t *image, drawable_t **new_drawable)
 {
-  drawable *d;
+  drawable_t *d;
 
   d = malloc(sizeof(*d));
   if (d == NULL)
@@ -71,12 +71,12 @@ error drawable_create(image_t *image, drawable **new_drawable)
   return error_OK;
 }
 
-error drawable_clone(drawable *original, drawable **new_drawable)
+error drawable_clone(drawable_t *original, drawable_t **new_drawable)
 {
   return drawable_create(original->image, new_drawable);
 }
 
-void drawable_destroy(drawable *d)
+void drawable_destroy(drawable_t *d)
 {
   if (d)
   {
@@ -87,7 +87,7 @@ void drawable_destroy(drawable *d)
   }
 }
 
-void drawable_reset(drawable *d)
+void drawable_reset(drawable_t *d)
 {
   if (d->methods.reset)
     d->methods.reset(d);

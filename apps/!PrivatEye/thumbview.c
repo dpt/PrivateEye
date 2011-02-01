@@ -104,7 +104,7 @@ static error thumbview__set_display_mode(thumbview              *tv,
 typedef struct thumbview_entry
 {
   image_t    *image;
-  drawable   *drawable;
+  drawable_t *drawable;
   dict_index  text[InfoTextIndex__Limit];
 }
 thumbview_entry;
@@ -674,7 +674,7 @@ static void thumbview__update(thumbview *tv, thumbview__update_flags flags)
 
   for (i = 0; i < tv->nentries; i++)
   {
-    drawable *drawable;
+    drawable_t *drawable;
 
     drawable = tv->entries[i].drawable;
 
@@ -1061,7 +1061,7 @@ static error load_directory_cb(const char          *obj_name,
   thumbview       *tv = arg;
   thumbview_entry *entry;
   image_t         *image;
-  drawable        *drawable;
+  drawable_t      *drawable;
 
   if (!image_is_loadable(info->file_type))
     return error_OK;

@@ -13,7 +13,7 @@
 
 #include "viewer.h"
 
-int viewer_scale_for_box(drawable *d, int sw, int sh);
+int viewer_scale_for_box(drawable_t *d, int sw, int sh);
 
 extern dialogue_t *viewer_scale;
 
