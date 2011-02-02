@@ -1,10 +1,8 @@
 /* --------------------------------------------------------------------------
  *    Name: metadata.c
- * Purpose: Metadata
+ * Purpose: Metadata windows
  * Version: $Id: metadata.c,v 1.16 2009-11-29 23:18:36 dpt Exp $
  * ----------------------------------------------------------------------- */
-
-#ifdef EYE_META
 
 /* TODO
  *
@@ -35,27 +33,38 @@
 #include "appengine/gadgets/treeview.h"
 #include "appengine/wimp/window.h"
 
-#include "globals.h"
-#include "menunames.h"
+#include "appengine/gadgets/metadata.h"
 
-#include "metadata.h"
+/* ----------------------------------------------------------------------- */
+
+/* Menus */
+enum
+{
+  METADATA_EXPAND_ALL,
+  METADATA_COLLAPSE_ALL,
+};
+
+/* ----------------------------------------------------------------------- */
 
 typedef struct metadata_window
 {
-  list_t      list;
-  image_t    *image;
-  wimp_w      w;
-  treeview_t *tr;
+  list_t      list;         /* a metadata_window is a linked list node */
+  image_t    *image;        /* image we're the metadata of */
+  wimp_w      w;            /* our window handle */
+  treeview_t *tr;           /* treeview data */
+  os_colour   bgcolour;     /* colour to draw highlights */
+  int         wrapwidth;    /* column width to wrap at */
+  int         lineheight;   /* OS unit height of each line */
 }
 metadata_window;
-
-static list_t list_anchor;
 
 static struct
 {
   wimp_w           w;
   wimp_menu       *menu;
-  metadata_window *last_md;
+
+  list_t           list_anchor; /* linked list of metadata windows */
+  metadata_window *last_md; /* last metadata_window a menu was opened on */
 }
 LOCALS;
 
@@ -114,7 +123,7 @@ error metadata__init(void)
     if (err)
       return err;
 
-    list__init(&list_anchor);
+    list__init(&LOCALS.list_anchor);
   }
 
   err = error_OK;
@@ -144,7 +153,7 @@ void metadata__fin(void)
 
 static metadata_window *metadata__image_to_win(image_t *image)
 {
-  return (metadata_window *) list__find(&list_anchor,
+  return (metadata_window *) list__find(&LOCALS.list_anchor,
                                          offsetof(metadata_window, image),
                                    (int) image);
 }
@@ -172,7 +181,7 @@ static error metadata__compute(image_t *image)
 
   hourglass_on();
 
-  if (image->methods.get_meta(&GLOBALS.choices.image, image, &tree))
+  if (image->methods.get_meta(image, &tree))
   {
     /* FIXME: Cleanup. */
     return error_PRIVATEEYE_META_UNSUPP_FUNC;
@@ -184,11 +193,11 @@ static error metadata__compute(image_t *image)
   if (err)
     goto Failure;
 
-  treeview__set_text_width(md->tr, GLOBALS.choices.metadata.wrapwidth);
+  treeview__set_text_width(md->tr, md->wrapwidth);
 
-  treeview__set_line_height(md->tr, GLOBALS.choices.metadata.line_height);
+  treeview__set_line_height(md->tr, md->lineheight);
 
-  treeview__set_highlight_background(md->tr, GLOBALS.choices.metadata.bgcolour);
+  treeview__set_highlight_background(md->tr, md->bgcolour);
 
   treeview__set_tree(md->tr, tree);
 
@@ -380,7 +389,7 @@ static void metadata__image_changed_callback(image_t              *image,
   }
 }
 
-static error metadata__new(image_t *image, metadata_window **new_md)
+static error metadata__new(image_t *image, os_colour bgcolour, int wrapwidth, int lineheight, metadata_window **new_md)
 {
   error            err;
   metadata_window *md;
@@ -409,8 +418,11 @@ static error metadata__new(image_t *image, metadata_window **new_md)
 
   md->image        = image;
   md->tr           = NULL;
+  md->bgcolour     = bgcolour;
+  md->wrapwidth    = wrapwidth;
+  md->lineheight   = lineheight;
 
-  list__add_to_head(&list_anchor, &md->list);
+  list__add_to_head(&LOCALS.list_anchor, &md->list);
 
   metadata__set_handlers(1, md->w, md);
 
@@ -445,7 +457,7 @@ static void metadata__delete(metadata_window *md)
 
   metadata__set_handlers(0, md->w, md);
 
-  list__remove(&list_anchor, &md->list);
+  list__remove(&LOCALS.list_anchor, &md->list);
 
   treeview__destroy(md->tr);
 
@@ -456,7 +468,7 @@ static void metadata__delete(metadata_window *md)
 
 /* ----------------------------------------------------------------------- */
 
-void metadata__open(image_t *image)
+void metadata__open(image_t *image, os_colour bgcolour, int wrapwidth, int lineheight)
 {
   error            err;
   metadata_window *md;
@@ -470,7 +482,7 @@ void metadata__open(image_t *image)
   md = metadata__image_to_win(image);
   if (md == NULL)
   {
-    err = metadata__new(image, &md);
+    err = metadata__new(image, bgcolour, wrapwidth, lineheight, &md);
     if (err)
       goto Failure;
 
@@ -490,9 +502,3 @@ Failure:
 
   return;
 }
-
-#else
-
-extern int dummy;
-
-#endif /* EYE_META */

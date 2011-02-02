@@ -42,23 +42,19 @@
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (*segment_interpreter)(image_choices       *choices,
-                                     const unsigned char *buf,
+typedef error (*segment_interpreter)(const unsigned char *buf,
                                      int                  len,
                                      ntree_t             *root);
 
 /* ----------------------------------------------------------------------- */
 
-static error jpeg_meta_jfif(image_choices       *choices,
-                            const unsigned char *buf,
+static error jpeg_meta_jfif(const unsigned char *buf,
                             int                  len,
                             ntree_t             *root)
 {
   error          err;
   ntree_t       *tree;
   unsigned char *com;
-
-  NOT_USED(choices);
 
   /* create a new node to hold the comment data */
 
@@ -198,8 +194,7 @@ Failure:
   return err;
 }
 
-static error jpeg_meta_exif(image_choices       *choices,
-                            const unsigned char *buf,
+static error jpeg_meta_exif(const unsigned char *buf,
                             int                  len,
                             ntree_t             *root)
 {
@@ -220,8 +215,6 @@ static error jpeg_meta_exif(image_choices       *choices,
   struct exiftags *tags;
   int              i;
   int              emitted = 0;
-
-  NOT_USED(choices);
 
   /* parse the APP1 segment */
 
@@ -603,15 +596,12 @@ Failure:
   return NULL;
 }
 
-static error jpeg_meta_adobe(image_choices       *choices,
-                             const unsigned char *buf,
+static error jpeg_meta_adobe(const unsigned char *buf,
                              int                  len,
                              ntree_t             *root)
 {
   error    err;
   ntree_t *subtree;
-
-  NOT_USED(choices);
 
   /* parse the APP13 segment */
 
@@ -650,7 +640,7 @@ jpeg_marker_map[] =
   { M_APP13, "adobe", jpeg_meta_adobe },
 };
 
-int jpeg_get_meta(image_choices *choices, image_t *image, ntree_t **newtree)
+int jpeg_get_meta(image_t *image, ntree_t **newtree)
 {
   error    err;
   ntree_t *tree;
@@ -704,7 +694,7 @@ int jpeg_get_meta(image_choices *choices, image_t *image, ntree_t **newtree)
       if (err)
         goto Failure;
 
-      err = jpeg_marker_map[i].fn(choices, buf, len, subtree);
+      err = jpeg_marker_map[i].fn(buf, len, subtree);
 
       if (err == error_OK)
       {
@@ -746,11 +736,9 @@ Failure:
   return 1;
 }
 
-int jpeg_meta_available(image_choices *choices, image_t *image)
+int jpeg_meta_available(image_t *image)
 {
   int i;
-
-  NOT_USED(choices);
 
   for (i = 0; i < NELEMS(jpeg_marker_map); i++)
   {

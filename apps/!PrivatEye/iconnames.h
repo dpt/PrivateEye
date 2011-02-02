@@ -1,12 +1,5 @@
 /* Icon names exported by WinEd 2.84 */
 
-/* Icons for window "histogram" */
-typedef enum {
-  HISTOGRAM_D_DISPLAY = 0,
-  HISTOGRAM_O_CUMULATIVE = 3,
-  HISTOGRAM_P_COMPS = 5
-} icons_histogram;
-
 /* Icons for window "image_info" */
 typedef enum {
   IMAGE_INFO_D_TYPE = 1,

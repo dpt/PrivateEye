@@ -103,8 +103,7 @@ struct image_methods
                    T             *image,
                    int            angle);
 
-  int (*get_meta) (image_choices *choices,
-                   T             *image,
+  int (*get_meta) (T             *image,
                    ntree_t      **data);
 
   int (*to_spr)   (T             *image);

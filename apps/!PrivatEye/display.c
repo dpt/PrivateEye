@@ -47,6 +47,7 @@
 #include "appengine/base/strings.h"
 #include "appengine/base/bsearch.h"
 #include "appengine/gadgets/hist.h"
+#include "appengine/gadgets/metadata.h"
 
 #include "privateeye.h"
 #include "actions.h"
@@ -58,7 +59,6 @@
 #include "info.h"
 #include "keymap.h"
 #include "menunames.h"          /* not generated */
-#include "metadata.h"
 #include "rotate.h"
 #include "save.h"
 #include "scale.h"
@@ -1431,7 +1431,10 @@ static void action(viewer_t *viewer, int op)
 
   case MetaData:
 #ifdef EYE_META
-    metadata__open(viewer->drawable->image);
+    metadata__open(viewer->drawable->image,
+                   GLOBALS.choices.metadata.bgcolour,
+                   GLOBALS.choices.metadata.wrapwidth,
+                   GLOBALS.choices.metadata.line_height);
 #endif
     break;
 

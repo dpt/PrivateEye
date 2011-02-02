@@ -129,7 +129,7 @@ static int jpeg_load(image_choices *choices, image_t *image)
   /* signal if metadata is available.
    * this has to wait until now that the anchor is in image->image. */
 
-  if (jpeg_meta_available(choices, image))
+  if (jpeg_meta_available(image))
     image->flags |= image_FLAG_HAS_META;
 
   image->display.dims.bm.width  = width;
