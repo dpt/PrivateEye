@@ -122,38 +122,46 @@ static void hist__set_handlers(int reg, wimp_w w, void *handle)
 
 /* ----------------------------------------------------------------------- */
 
+static int hist__refcount = 0;
+
 error hist__init(void)
 {
   error err;
 
-  /* dependencies */
+  if (hist__refcount++ == 0)
+  {
+    /* dependencies */
 
-  err = help__init();
-  if (err)
-    return err;
+    err = help__init();
+    if (err)
+      return err;
 
-  /* init */
+    /* init */
 
-  LOCALS.hist_w = window_create("histogram");
+    LOCALS.hist_w = window_create("histogram");
 
-  LOCALS.hist_m = menu_create_from_desc(message0("menu.hist"));
+    LOCALS.hist_m = menu_create_from_desc(message0("menu.hist"));
 
-  err = help__add_menu(LOCALS.hist_m, "hist");
-  if (err)
-    return err;
+    err = help__add_menu(LOCALS.hist_m, "hist");
+    if (err)
+      return err;
 
-  list__init(&LOCALS.list_anchor);
+    list__init(&LOCALS.list_anchor);
+  }
 
   return error_OK;
 }
 
 void hist__fin(void)
 {
-  help__remove_menu(LOCALS.hist_m);
+  if (--hist__refcount == 0)
+  {
+    help__remove_menu(LOCALS.hist_m);
 
-  menu_destroy(LOCALS.hist_m);
+    menu_destroy(LOCALS.hist_m);
 
-  help__fin();
+    help__fin();
+  }
 }
 
 /* ----------------------------------------------------------------------- */
