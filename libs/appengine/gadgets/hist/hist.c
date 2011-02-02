@@ -61,7 +61,8 @@ enum
 #define flag_GREEN       2
 #define flag_BLUE        3
 #define flag_ALPHA       4
-#define flag_COMPS      (0x7 << 0) /* mask of components */
+/* values 5..7 unused */
+#define flag_COMPS      (0x7 << 0) /* mask of component indices */
 #define flag_CUMULATIVE (0x1 << 3)
 
 typedef unsigned int hist_flags;
