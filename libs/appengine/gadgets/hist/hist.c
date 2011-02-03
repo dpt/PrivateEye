@@ -15,16 +15,16 @@
 #include "oslib/wimp.h"
 
 #include "appengine/types.h"
-#include "appengine/wimp/event.h"
-#include "appengine/wimp/help.h"
-#include "appengine/wimp/icon.h"
-#include "appengine/graphics/image-observer.h"
-#include "appengine/graphics/image.h"
-#include "appengine/datastruct/list.h"
-#include "appengine/wimp/menu.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
+#include "appengine/datastruct/list.h"
+#include "appengine/graphics/image-observer.h"
+#include "appengine/graphics/image.h"
+#include "appengine/wimp/event.h"
+#include "appengine/wimp/help.h"
+#include "appengine/wimp/icon.h"
+#include "appengine/wimp/menu.h"
 #include "appengine/wimp/window.h"
 
 #include "appengine/gadgets/hist.h"
@@ -88,8 +88,8 @@ hist_window;
 
 static struct
 {
-  wimp_w        hist_w;
-  wimp_menu    *hist_m;
+  wimp_w        w;
+  wimp_menu    *menu;
 
   list_t        list_anchor; /* linked list of histogram windows */
   hist_window  *last_hw;     /* last hist_window a menu was opened on */
@@ -139,11 +139,11 @@ error hist__init(void)
 
     /* init */
 
-    LOCALS.hist_w = window_create("histogram");
+    LOCALS.w = window_create("histogram");
 
-    LOCALS.hist_m = menu_create_from_desc(message0("menu.hist"));
+    LOCALS.menu = menu_create_from_desc(message0("menu.hist"));
 
-    err = help__add_menu(LOCALS.hist_m, "hist");
+    err = help__add_menu(LOCALS.menu, "hist");
     if (err)
       return err;
 
@@ -157,9 +157,9 @@ void hist__fin(void)
 {
   if (--hist__refcount == 0)
   {
-    help__remove_menu(LOCALS.hist_m);
+    help__remove_menu(LOCALS.menu);
 
-    menu_destroy(LOCALS.hist_m);
+    menu_destroy(LOCALS.menu);
 
     help__fin();
   }
@@ -176,14 +176,14 @@ static hist_window *hist__image_to_win(image_t *image)
 
 /* ----------------------------------------------------------------------- */
 
-static void hist__delete(hist_window *hw);
+static void hist__delete(hist_window *self);
 
 /* ----------------------------------------------------------------------- */
 
 static error hist__compute(image_t *image)
 {
   error              err;
-  hist_window       *hw;
+  hist_window       *self;
   sprite_histograms *newhists;
   sprite_histograms *hists;
   unsigned int       t;
@@ -215,12 +215,12 @@ static error hist__compute(image_t *image)
     hourglass_off();
   }
 
-  hw = hist__image_to_win(image);
+  self = hist__image_to_win(image);
 
-  if (hw->display_hist == NULL)
+  if (self->display_hist == NULL)
   {
-    hw->display_hist = malloc(256 * sizeof(*hw->display_hist));
-    if (hw->display_hist == NULL)
+    self->display_hist = malloc(256 * sizeof(*self->display_hist));
+    if (self->display_hist == NULL)
       return error_OOM;
   }
 
@@ -244,29 +244,29 @@ static error hist__compute(image_t *image)
     int       h;
     os_colour c;
 
-    i = hw->flags & flag_COMPS;
+    i = self->flags & flag_COMPS;
 
     h = map[i].index;
     c = map[i].colour;
 
     for (i = 0; i < 256; i++)
-      hw->display_hist[i] = hists->h[h].v[i];
+      self->display_hist[i] = hists->h[h].v[i];
 
-    hw->colour = c;
+    self->colour = c;
   }
 
-  if (hw->flags & flag_CUMULATIVE)
+  if (self->flags & flag_CUMULATIVE)
   {
     /* add all the elements up, writing back */
 
     t = 0;
     for (i = 0; i < 256; i++)
     {
-      t += hw->display_hist[i];
-      hw->display_hist[i] = t;
+      t += self->display_hist[i];
+      self->display_hist[i] = t;
     }
 
-    peak = hw->display_hist[255];
+    peak = self->display_hist[255];
   }
   else
   {
@@ -276,25 +276,25 @@ static error hist__compute(image_t *image)
     peak = 0;
     for (i = 0; i < 256; i++)
     {
-      t += hw->display_hist[i];
-      if (hw->display_hist[i] > peak)
-        peak = hw->display_hist[i];
+      t += self->display_hist[i];
+      if (self->display_hist[i] > peak)
+        peak = self->display_hist[i];
     }
   }
 
   /* scale to a presentable range */
 
   for (i = 0; i < 256; i++)
-    hw->display_hist[i] = hw->display_hist[i] * 255 / peak;
+    self->display_hist[i] = self->display_hist[i] * 255 / peak;
 
   /* work out number of bars and size of gap inbetween */
 
-  hw->scale.nbars = hw->nbars * peak / t;
-  if (hw->scale.nbars)
+  self->scale.nbars = self->nbars * peak / t;
+  if (self->scale.nbars)
   {
     /* Here we multiply by 256 for the height of the box.
      * We also multiply by 256 to keep some fractional precision. */
-    hw->scale.gap = 256 * 256 / hw->scale.nbars;
+    self->scale.gap = 256 * 256 / self->scale.nbars;
   }
 
   return err;
@@ -303,7 +303,7 @@ static error hist__compute(image_t *image)
 static int hist__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_draw    *draw;
-  hist_window  *hw;
+  hist_window  *self;
   unsigned int *hist;
   os_box        b;
   int           more;
@@ -313,9 +313,9 @@ static int hist__event_redraw_window_request(wimp_event_no event_no, wimp_block 
 
   draw = &block->redraw;
 
-  hw = handle;
+  self = handle;
 
-  hist = hw->display_hist;
+  hist = self->display_hist;
   if (hist == NULL)
     return event_NOT_HANDLED; /* OOM */
 
@@ -343,13 +343,13 @@ static int hist__event_redraw_window_request(wimp_event_no event_no, wimp_block 
     os_plot(os_PLOT_RECTANGLE | os_PLOT_BY, b.x1 - b.x0 - 1, b.y1 - b.y0 - 1);
 
     wimp_set_colour(wimp_COLOUR_VERY_LIGHT_GREY);
-    for (i = 0; i < hw->scale.nbars; i++)
+    for (i = 0; i < self->scale.nbars; i++)
     {
-      os_plot(os_MOVE_TO, x, y + i * hw->scale.gap / 256);
+      os_plot(os_MOVE_TO, x, y + i * self->scale.gap / 256);
       os_plot(os_PLOT_RECTANGLE | os_PLOT_BY, 512 - 1, 0);
     }
 
-    colourtrans_set_gcol(hw->colour, 0, os_ACTION_OVERWRITE, NULL);
+    colourtrans_set_gcol(self->colour, 0, os_ACTION_OVERWRITE, NULL);
     for (i = 0; i < 256; i++)
     {
       unsigned int h;
@@ -369,62 +369,62 @@ static int hist__event_redraw_window_request(wimp_event_no event_no, wimp_block 
 static int hist__event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_close  *close;
-  hist_window *hw;
+  hist_window *self;
 
   NOT_USED(event_no);
   NOT_USED(handle);
 
   close = &block->close;
 
-  hw = handle;
+  self = handle;
 
-  hist__delete(hw);
+  hist__delete(self);
 
   return event_HANDLED;
 }
 
-static void hist__menu_update(hist_window *hw)
+static void hist__menu_update(hist_window *self)
 {
-  menu_set_icon_flags(LOCALS.hist_m,
+  menu_set_icon_flags(LOCALS.menu,
                       HIST_ALPHA,
-                     (hw->image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
+                     (self->image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
 
   /* FIXME: Strictly this needs to be a mapping from flags to menu indices.
    */
-  menu_tick_exclusive(LOCALS.hist_m, hw->flags & flag_COMPS);
+  menu_tick_exclusive(LOCALS.menu, self->flags & flag_COMPS);
 }
 
-static void hist__refresh(hist_window *hw)
+static void hist__refresh(hist_window *self)
 {
   error err;
 
-  err = hist__compute(hw->image);
+  err = hist__compute(self->image);
   if (err)
     return; /* FIXME: The error is lost. */
 
-  wimp_set_icon_state(hw->w, HIST_ICON, 0, 0);
+  wimp_set_icon_state(self->w, HIST_ICON, 0, 0);
 }
 
 static int hist__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
-  hist_window  *hw;
+  hist_window  *self;
 
   NOT_USED(event_no);
   NOT_USED(handle);
 
   pointer = &block->pointer;
 
-  hw = handle;
+  self = handle;
 
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_ADJUST))
   {
     switch (pointer->i)
     {
     case HISTOGRAM_O_CUMULATIVE:
-      hw->flags ^= flag_CUMULATIVE;
-      hist__refresh(hw);
+      self->flags ^= flag_CUMULATIVE;
+      hist__refresh(self);
       break;
     }
   }
@@ -434,9 +434,9 @@ static int hist__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
     switch (pointer->i)
     {
     case HISTOGRAM_P_COMPS:
-      hist__menu_update(hw);
-      menu_popup(pointer->w, pointer->i, LOCALS.hist_m);
-      LOCALS.last_hw = hw;
+      hist__menu_update(self);
+      menu_popup(pointer->w, pointer->i, LOCALS.menu);
+      LOCALS.last_hw = self;
       break;
     }
   }
@@ -448,7 +448,7 @@ static int hist__event_menu_selection(wimp_event_no event_no, wimp_block *block,
 {
   wimp_selection *selection;
   wimp_menu      *last;
-  hist_window    *hw;
+  hist_window    *self;
   hist_flags      new_flags;
   wimp_pointer    p;
 
@@ -458,10 +458,10 @@ static int hist__event_menu_selection(wimp_event_no event_no, wimp_block *block,
   selection = &block->selection;
 
   last = menu_last();
-  if (last != LOCALS.hist_m)
+  if (last != LOCALS.menu)
     return event_NOT_HANDLED;
 
-  hw = LOCALS.last_hw;
+  self = LOCALS.last_hw;
 
   switch (selection->items[0])
   {
@@ -473,16 +473,16 @@ static int hist__event_menu_selection(wimp_event_no event_no, wimp_block *block,
   case HIST_ALPHA: new_flags = flag_ALPHA; break;
   }
 
-  if (new_flags != hw->flags)
+  if (new_flags != self->flags)
   {
-    hw->flags = (hw->flags & ~flag_COMPS) | new_flags;
-    hist__refresh(hw);
+    self->flags = (self->flags & ~flag_COMPS) | new_flags;
+    hist__refresh(self);
   }
 
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
   {
-    hist__menu_update(hw);
+    hist__menu_update(self);
     menu_reopen();
   }
 
@@ -501,22 +501,22 @@ static void hist__image_changed_callback(image_t              *image,
                                          imageobserver_change  change,
                                          imageobserver_data   *data)
 {
-  hist_window *hw;
+  hist_window *self;
 
   NOT_USED(data);
 
-  hw = hist__image_to_win(image);
+  self = hist__image_to_win(image);
 
   switch (change)
   {
   case imageobserver_CHANGE_MODIFIED:
-    hist__refresh(hw);
+    hist__refresh(self);
     break;
 
   case imageobserver_CHANGE_HIDDEN:
   case imageobserver_CHANGE_ABOUT_TO_DESTROY:
     imageobserver_deregister(image, hist__image_changed_callback);
-    hist__delete(hw);
+    hist__delete(self);
     break;
   }
 }
@@ -524,41 +524,41 @@ static void hist__image_changed_callback(image_t              *image,
 static error hist__new(image_t *image, int nbars, hist_window **new_hw)
 {
   error        err;
-  hist_window *hw;
+  hist_window *self;
   const char  *leaf;
   char         title[256];
 
   /* no window for this image */
 
-  hw = malloc(sizeof(*hw));
-  if (hw == NULL)
+  self = malloc(sizeof(*self));
+  if (self == NULL)
     goto NoMem;
 
   /* clone ourselves a window */
 
-  hw->w = window_clone(LOCALS.hist_w);
-  if (hw->w == NULL)
+  self->w = window_clone(LOCALS.w);
+  if (self->w == NULL)
     goto NoMem;
 
   /* set its title, including the leafname of the image */
 
   leaf = str_leaf(image->file_name);
   sprintf(title, message0("hist.title"), leaf);
-  window_set_title_text(hw->w, title);
+  window_set_title_text(self->w, title);
 
   /* fill out */
 
-  hw->image        = image;
-  hw->display_hist = NULL;
-  hw->flags        = flag_LUMA;
-  hw->colour       = os_COLOUR_BLACK;
-  hw->nbars        = nbars;
+  self->image        = image;
+  self->display_hist = NULL;
+  self->flags        = flag_LUMA;
+  self->colour       = os_COLOUR_BLACK;
+  self->nbars        = nbars;
 
-  list__add_to_head(&LOCALS.list_anchor, &hw->list);
+  list__add_to_head(&LOCALS.list_anchor, &self->list);
 
-  hist__set_handlers(1, hw->w, hw);
+  hist__set_handlers(1, self->w, self);
 
-  err = help__add_window(hw->w, "hist");
+  err = help__add_window(self->w, "hist");
   if (err)
     return err;
 
@@ -566,36 +566,36 @@ static error hist__new(image_t *image, int nbars, hist_window **new_hw)
 
   imageobserver_register(image, hist__image_changed_callback);
 
-  *new_hw = hw;
+  *new_hw = self;
 
   return error_OK;
 
 
 NoMem:
 
-  if (hw)
-    window_delete_cloned(hw->w);
+  if (self)
+    window_delete_cloned(self->w);
 
-  free(hw);
+  free(self);
 
   return error_OOM;
 }
 
-static void hist__delete(hist_window *hw)
+static void hist__delete(hist_window *self)
 {
-  imageobserver_deregister(hw->image, hist__image_changed_callback);
+  imageobserver_deregister(self->image, hist__image_changed_callback);
 
-  help__remove_window(hw->w);
+  help__remove_window(self->w);
 
-  hist__set_handlers(0, hw->w, hw);
+  hist__set_handlers(0, self->w, self);
 
-  list__remove(&LOCALS.list_anchor, &hw->list);
+  list__remove(&LOCALS.list_anchor, &self->list);
 
-  free(hw->display_hist);
+  free(self->display_hist);
 
-  window_delete_cloned(hw->w);
+  window_delete_cloned(self->w);
 
-  free(hw);
+  free(self);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -603,7 +603,7 @@ static void hist__delete(hist_window *hw)
 void hist__open(image_t *image, int nbars)
 {
   error        err;
-  hist_window *hw;
+  hist_window *self;
 
   if (!hist__available(image))
   {
@@ -611,10 +611,10 @@ void hist__open(image_t *image, int nbars)
     return;
   }
 
-  hw = hist__image_to_win(image);
-  if (hw == NULL)
+  self = hist__image_to_win(image);
+  if (self == NULL)
   {
-    err = hist__new(image, nbars, &hw);
+    err = hist__new(image, nbars, &self);
     if (err)
       goto Failure;
 
@@ -623,7 +623,7 @@ void hist__open(image_t *image, int nbars)
       goto Failure;
   }
 
-  window_open_at(hw->w, AT_BOTTOMPOINTER);
+  window_open_at(self->w, AT_BOTTOMPOINTER);
 
   return;
 

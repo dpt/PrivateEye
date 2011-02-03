@@ -21,16 +21,16 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/wimp/event.h"
-#include "appengine/wimp/help.h"
-#include "appengine/graphics/image-observer.h"
-#include "appengine/graphics/image.h"
-#include "appengine/datastruct/list.h"
-#include "appengine/wimp/menu.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
+#include "appengine/datastruct/list.h"
 #include "appengine/gadgets/treeview.h"
+#include "appengine/graphics/image-observer.h"
+#include "appengine/graphics/image.h"
+#include "appengine/wimp/event.h"
+#include "appengine/wimp/help.h"
+#include "appengine/wimp/menu.h"
 #include "appengine/wimp/window.h"
 
 #include "appengine/gadgets/metadata.h"
@@ -160,14 +160,14 @@ static metadata_window *metadata__image_to_win(image_t *image)
 
 /* ----------------------------------------------------------------------- */
 
-static void metadata__delete(metadata_window *md);
+static void metadata__delete(metadata_window *self);
 
 /* ----------------------------------------------------------------------- */
 
 static error metadata__compute(image_t *image)
 {
   error              err;
-  metadata_window   *md;
+  metadata_window   *self;
   ntree_t           *tree;
   int                w,h;
   os_box             box;
@@ -175,9 +175,9 @@ static error metadata__compute(image_t *image)
   if ((image->flags & image_FLAG_HAS_META) == 0)
     return error_PRIVATEEYE_META_UNSUPP_FUNC;
 
-  md = metadata__image_to_win(image); /* FIXME: Wasteful repetition of
-                                         operation already done in the outer
-                                         scope. */
+  self = metadata__image_to_win(image); /* FIXME: Wasteful repetition of
+                                           operation already done in the outer
+                                           scope. */
 
   hourglass_on();
 
@@ -189,23 +189,23 @@ static error metadata__compute(image_t *image)
 
   hourglass_off();
 
-  err = treeview__create(&md->tr);
+  err = treeview__create(&self->tr);
   if (err)
     goto Failure;
 
-  treeview__set_text_width(md->tr, md->wrapwidth);
+  treeview__set_text_width(self->tr, self->wrapwidth);
 
-  treeview__set_line_height(md->tr, md->lineheight);
+  treeview__set_line_height(self->tr, self->lineheight);
 
-  treeview__set_highlight_background(md->tr, md->bgcolour);
+  treeview__set_highlight_background(self->tr, self->bgcolour);
 
-  treeview__set_tree(md->tr, tree);
+  treeview__set_tree(self->tr, tree);
 
   image_destroy_metadata(tree);
 
-  treeview__make_collapsible(md->tr);
+  treeview__make_collapsible(self->tr);
 
-  err = treeview__get_dimensions(md->tr, &w, &h);
+  err = treeview__get_dimensions(self->tr, &w, &h);
   if (err)
     goto Failure;
 
@@ -213,7 +213,7 @@ static error metadata__compute(image_t *image)
   box.y0 = h; /* this is negative */
   box.x1 = w;
   box.y1 = 0;
-  wimp_set_extent(md->w, &box);
+  wimp_set_extent(self->w, &box);
 
   return error_OK;
 
@@ -228,18 +228,18 @@ Failure:
 static int metadata__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_draw        *draw;
-  metadata_window  *md;
+  metadata_window  *self;
   int               more;
 
   NOT_USED(event_no);
   NOT_USED(handle);
 
   draw = &block->redraw;
-  md   = handle;
+  self   = handle;
 
   for (more = wimp_redraw_window(draw); more; more = wimp_get_rectangle(draw))
   {
-    treeview__draw(md->tr);
+    treeview__draw(self->tr);
   }
 
   return event_HANDLED;
@@ -248,38 +248,38 @@ static int metadata__event_redraw_window_request(wimp_event_no event_no, wimp_bl
 static int metadata__event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_close      *close;
-  metadata_window *md;
+  metadata_window *self;
 
   NOT_USED(event_no);
   NOT_USED(handle);
 
   close = &block->close;
 
-  md = handle;
+  self = handle;
 
-  metadata__delete(md);
+  metadata__delete(self);
 
   return event_HANDLED;
 }
 
-static void metadata__refresh(metadata_window *md)
+static void metadata__refresh(metadata_window *self)
 {
   error err;
 
-  err = metadata__compute(md->image);
+  err = metadata__compute(self->image);
 }
 
 static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer    *pointer;
-  metadata_window *md;
+  metadata_window *self;
 
   NOT_USED(event_no);
   NOT_USED(handle);
 
   pointer = &block->pointer;
 
-  md = handle;
+  self = handle;
 
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_ADJUST))
   {
@@ -299,7 +299,7 @@ static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block
         x = pointer->pos.x + (state.xscroll - state.visible.x0);
         y = pointer->pos.y + (state.yscroll - state.visible.y1);
 
-        (void) treeview__click(md->tr, x, y, &redraw_y);
+        (void) treeview__click(self->tr, x, y, &redraw_y);
 
         if (redraw_y <= 0)
           wimp_force_redraw(pointer->w, 0, -32768, 32767, redraw_y);
@@ -309,7 +309,7 @@ static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block
   }
   else if (pointer->buttons & wimp_CLICK_MENU)
   {
-    LOCALS.last_md = md;
+    LOCALS.last_md = self;
     menu_open(LOCALS.menu, pointer->pos.x - 64, pointer->pos.y);
   }
 
@@ -320,7 +320,7 @@ static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *bl
 {
   wimp_selection  *selection;
   wimp_menu       *last;
-  metadata_window *md;
+  metadata_window *self;
   treeview__mark   mark;
   wimp_pointer     p;
 
@@ -333,7 +333,7 @@ static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *bl
   if (last != LOCALS.menu)
     return event_NOT_HANDLED;
 
-  md = LOCALS.last_md;
+  self = LOCALS.last_md;
 
   switch (selection->items[0])
   {
@@ -346,9 +346,9 @@ static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *bl
     break;
   }
 
-  treeview__mark_all(md->tr, mark);
+  treeview__mark_all(self->tr, mark);
 
-  wimp_force_redraw(md->w, 0, -32768, 32767, 0);
+  wimp_force_redraw(self->w, 0, -32768, 32767, 0);
 
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
@@ -369,22 +369,22 @@ static void metadata__image_changed_callback(image_t              *image,
                                              imageobserver_change  change,
                                              imageobserver_data   *data)
 {
-  metadata_window *md;
+  metadata_window *self;
 
   NOT_USED(data);
 
-  md = metadata__image_to_win(image);
+  self = metadata__image_to_win(image);
 
   switch (change)
   {
   case imageobserver_CHANGE_MODIFIED:
-    metadata__refresh(md);
+    metadata__refresh(self);
     break;
 
   case imageobserver_CHANGE_HIDDEN:
   case imageobserver_CHANGE_ABOUT_TO_DESTROY:
     imageobserver_deregister(image, metadata__image_changed_callback);
-    metadata__delete(md);
+    metadata__delete(self);
     break;
   }
 }
@@ -392,41 +392,41 @@ static void metadata__image_changed_callback(image_t              *image,
 static error metadata__new(image_t *image, os_colour bgcolour, int wrapwidth, int lineheight, metadata_window **new_md)
 {
   error            err;
-  metadata_window *md;
+  metadata_window *self;
   const char      *leaf;
   char             title[256];
 
   /* no window for this image */
 
-  md = malloc(sizeof(*md));
-  if (md == NULL)
+  self = malloc(sizeof(*self));
+  if (self == NULL)
     goto NoMem;
 
   /* clone ourselves a window */
 
-  md->w = window_clone(LOCALS.w);
-  if (md->w == NULL)
+  self->w = window_clone(LOCALS.w);
+  if (self->w == NULL)
     goto NoMem;
 
   /* set its title, including the leafname of the image */
 
   leaf = str_leaf(image->file_name);
   sprintf(title, message0("metadata.title"), leaf);
-  window_set_title_text(md->w, title);
+  window_set_title_text(self->w, title);
 
   /* fill out */
 
-  md->image        = image;
-  md->tr           = NULL;
-  md->bgcolour     = bgcolour;
-  md->wrapwidth    = wrapwidth;
-  md->lineheight   = lineheight;
+  self->image        = image;
+  self->tr           = NULL;
+  self->bgcolour     = bgcolour;
+  self->wrapwidth    = wrapwidth;
+  self->lineheight   = lineheight;
 
-  list__add_to_head(&LOCALS.list_anchor, &md->list);
+  list__add_to_head(&LOCALS.list_anchor, &self->list);
 
-  metadata__set_handlers(1, md->w, md);
+  metadata__set_handlers(1, self->w, self);
 
-  err = help__add_window(md->w, "metadata");
+  err = help__add_window(self->w, "metadata");
   if (err)
     return err;
 
@@ -434,36 +434,36 @@ static error metadata__new(image_t *image, os_colour bgcolour, int wrapwidth, in
 
   imageobserver_register(image, metadata__image_changed_callback);
 
-  *new_md = md;
+  *new_md = self;
 
   return error_OK;
 
 
 NoMem:
 
-  if (md)
-    window_delete_cloned(md->w);
+  if (self)
+    window_delete_cloned(self->w);
 
-  free(md);
+  free(self);
 
   return error_OOM;
 }
 
-static void metadata__delete(metadata_window *md)
+static void metadata__delete(metadata_window *self)
 {
-  imageobserver_deregister(md->image, metadata__image_changed_callback);
+  imageobserver_deregister(self->image, metadata__image_changed_callback);
 
-  help__remove_window(md->w);
+  help__remove_window(self->w);
 
-  metadata__set_handlers(0, md->w, md);
+  metadata__set_handlers(0, self->w, self);
 
-  list__remove(&LOCALS.list_anchor, &md->list);
+  list__remove(&LOCALS.list_anchor, &self->list);
 
-  treeview__destroy(md->tr);
+  treeview__destroy(self->tr);
 
-  window_delete_cloned(md->w);
+  window_delete_cloned(self->w);
 
-  free(md);
+  free(self);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -471,7 +471,7 @@ static void metadata__delete(metadata_window *md)
 void metadata__open(image_t *image, os_colour bgcolour, int wrapwidth, int lineheight)
 {
   error            err;
-  metadata_window *md;
+  metadata_window *self;
 
   if (!metadata__available(image))
   {
@@ -479,10 +479,10 @@ void metadata__open(image_t *image, os_colour bgcolour, int wrapwidth, int lineh
     return;
   }
 
-  md = metadata__image_to_win(image);
-  if (md == NULL)
+  self = metadata__image_to_win(image);
+  if (self == NULL)
   {
-    err = metadata__new(image, bgcolour, wrapwidth, lineheight, &md);
+    err = metadata__new(image, bgcolour, wrapwidth, lineheight, &self);
     if (err)
       goto Failure;
 
@@ -491,7 +491,7 @@ void metadata__open(image_t *image, os_colour bgcolour, int wrapwidth, int lineh
       goto Failure;
   }
 
-  window_open_at(md->w, AT_DEFAULT);
+  window_open_at(self->w, AT_DEFAULT);
 
   return;
 

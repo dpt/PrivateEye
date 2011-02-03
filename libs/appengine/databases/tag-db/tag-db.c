@@ -172,9 +172,9 @@ static error tagdb__parse_line(tagdb *db, char *buf)
 
   p = buf;
 
-  for (t = 0; t < 64; t++)
+  for (t = 0; t < MAXTOKENS; t++)
   {
-    p = strchr(p, ' ');
+    p = strchr(p, ' '); /* split at space */
     if (p == NULL)
       break; /* end of string */
 
@@ -185,7 +185,7 @@ static error tagdb__parse_line(tagdb *db, char *buf)
       p++;
 
     if (*p == '\0')
-      break; /* space(s), then end of string */
+      break; /* hit end of string */
 
     /* token */
     tokens[t] = p;
