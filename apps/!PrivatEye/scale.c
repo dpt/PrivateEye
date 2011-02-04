@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: scale.c
- * Purpose: Viewer scale dialogue
+ * Purpose: Viewer scale dialogue handler
  * Version: $Id: scale.c,v 1.26 2009-05-21 22:45:38 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -38,11 +38,11 @@ int viewer_scale_for_box(drawable_t *d, int sw, int sh)
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *viewer_scale;
+dialogue_t *viewer_scaledlg;
 
 /* ----------------------------------------------------------------------- */
 
-void viewer_scale_set(viewer_t *viewer, int scale, int redraw)
+void viewer_scaledlg_set(viewer_t *viewer, int scale, int redraw)
 {
   viewer_update_flags flags;
 
@@ -66,7 +66,7 @@ void viewer_scale_set(viewer_t *viewer, int scale, int redraw)
 
 /* ----------------------------------------------------------------------- */
 
-static void viewer_scale_fillout(dialogue_t *d, void *arg)
+static void viewer_scaledlg_fillout(dialogue_t *d, void *arg)
 {
   viewer_t *viewer;
   image_t  *image;
@@ -84,7 +84,7 @@ static void viewer_scale_fillout(dialogue_t *d, void *arg)
   scale__set(d, viewer->scale.cur);
 }
 
-static void viewer_scale_set_fit_screen(dialogue_t *d, viewer_t *viewer)
+static void viewer_scaledlg_set_fit_screen(dialogue_t *d, viewer_t *viewer)
 {
   int sw,sh;
   int s;
@@ -96,7 +96,7 @@ static void viewer_scale_set_fit_screen(dialogue_t *d, viewer_t *viewer)
   scale__set(d, s);
 }
 
-static void viewer_scale_set_fit_window(dialogue_t *d, viewer_t *viewer)
+static void viewer_scaledlg_set_fit_window(dialogue_t *d, viewer_t *viewer)
 {
   wimp_window_state state;
   int ww,wh;
@@ -113,7 +113,7 @@ static void viewer_scale_set_fit_window(dialogue_t *d, viewer_t *viewer)
   scale__set(d, s);
 }
 
-static void viewer_scale_handler(dialogue_t *d, scale__type type, int scale)
+static void viewer_scaledlg_handler(dialogue_t *d, scale__type type, int scale)
 {
   viewer_t *viewer;
 
@@ -129,22 +129,22 @@ static void viewer_scale_handler(dialogue_t *d, scale__type type, int scale)
   switch (type)
   {
   case scale__TYPE_VALUE:
-    viewer_scale_set(viewer, scale, 1 /* redraw */);
+    viewer_scaledlg_set(viewer, scale, 1 /* redraw */);
     break;
 
   case scale__TYPE_FIT_TO_SCREEN:
-    viewer_scale_set_fit_screen(d, viewer);
+    viewer_scaledlg_set_fit_screen(d, viewer);
     break;
 
   case scale__TYPE_FIT_TO_WINDOW:
-    viewer_scale_set_fit_window(d, viewer);
+    viewer_scaledlg_set_fit_window(d, viewer);
     break;
   }
 }
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_scale_init(void)
+error viewer_scaledlg_init(void)
 {
   dialogue_t *scale;
 
@@ -152,17 +152,17 @@ error viewer_scale_init(void)
   if (scale == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(scale, viewer_scale_fillout, NULL);
+  dialogue__set_fillout_handler(scale, viewer_scaledlg_fillout, NULL);
   scale__set_steppings(scale, GLOBALS.choices.scale.step,
                               GLOBALS.choices.scale.mult);
-  scale__set_scale_handler(scale, viewer_scale_handler);
+  scale__set_scale_handler(scale, viewer_scaledlg_handler);
 
-  viewer_scale = scale;
+  viewer_scaledlg = scale;
 
   return error_OK;
 }
 
-void viewer_scale_fin(void)
+void viewer_scaledlg_fin(void)
 {
-  scale__destroy(viewer_scale);
+  scale__destroy(viewer_scaledlg);
 }

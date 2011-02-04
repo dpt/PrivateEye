@@ -1,18 +1,18 @@
 /* --------------------------------------------------------------------------
  *    Name: info.h
- * Purpose: Info
+ * Purpose: Viewer info dialogue handler
  * Version: $Id: info.h,v 1.9 2009-05-20 21:38:18 dpt Exp $
  * ----------------------------------------------------------------------- */
 
-#ifndef VIEWER_INFO_H
-#define VIEWER_INFO_H
+#ifndef VIEWER_INFODLG_H
+#define VIEWER_INFODLG_H
 
 #include "appengine/base/errors.h"
 
-extern dialogue_t *viewer_info;
-extern dialogue_t *viewer_source_info;
+extern dialogue_t *viewer_infodlg;
+extern dialogue_t *viewer_srcinfodlg;
 
-error viewer_info_init(void);
-void viewer_info_fin(void);
+error viewer_infodlg_init(void);
+void viewer_infodlg_fin(void);
 
-#endif /* VIEWER_INFO_H */
+#endif /* VIEWER_INFODLG_H */

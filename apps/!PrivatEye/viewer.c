@@ -927,7 +927,7 @@ int viewer_query_unload(viewer_t *viewer)
       return 0;
 
     case dcs_quit_SAVE:
-      dialogue__show(save);
+      dialogue__show(viewer_savedlg);
       return 0;
     }
   }

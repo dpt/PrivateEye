@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: info.c
- * Purpose: Info
+ * Purpose: Viewer info dialogue handler
  * Version: $Id: info.c,v 1.23 2009-05-20 21:38:18 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -167,9 +167,9 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *viewer_info;
+dialogue_t *viewer_infodlg;
 
-static void viewer_info_fillout(dialogue_t *d, void *arg)
+static void viewer_infodlg_fillout(dialogue_t *d, void *arg)
 {
   static const InfoDialogueSpecifier info =
   {
@@ -186,9 +186,9 @@ static void viewer_info_fillout(dialogue_t *d, void *arg)
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *viewer_source_info;
+dialogue_t *viewer_srcinfodlg;
 
-static void viewer_source_info_fillout(dialogue_t *d, void *arg)
+static void viewer_srcinfodlg_fillout(dialogue_t *d, void *arg)
 {
   static const InfoDialogueSpecifier info =
   {
@@ -205,33 +205,33 @@ static void viewer_source_info_fillout(dialogue_t *d, void *arg)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_info_init(void)
+error viewer_infodlg_init(void)
 {
   /* Info dialogue */
 
-  viewer_info = info__create("image_info");
-  if (viewer_info == NULL)
+  viewer_infodlg = info__create("image_info");
+  if (viewer_infodlg == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(viewer_info, viewer_info_fillout, NULL);
+  dialogue__set_fillout_handler(viewer_infodlg, viewer_infodlg_fillout, NULL);
 
-  info__set_padding(viewer_info, GLOBALS.choices.info.padding);
+  info__set_padding(viewer_infodlg, GLOBALS.choices.info.padding);
 
   /* Source Info dialogue */
 
-  viewer_source_info = info__create("source_info");
-  if (viewer_source_info == NULL)
+  viewer_srcinfodlg = info__create("source_info");
+  if (viewer_srcinfodlg == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(viewer_source_info, viewer_source_info_fillout, NULL);
+  dialogue__set_fillout_handler(viewer_srcinfodlg, viewer_srcinfodlg_fillout, NULL);
 
-  info__set_padding(viewer_source_info, GLOBALS.choices.info.padding);
+  info__set_padding(viewer_srcinfodlg, GLOBALS.choices.info.padding);
 
   return error_OK;
 }
 
-void viewer_info_fin(void)
+void viewer_infodlg_fin(void)
 {
-  info__destroy(viewer_source_info);
-  info__destroy(viewer_info);
+  info__destroy(viewer_srcinfodlg);
+  info__destroy(viewer_infodlg);
 }

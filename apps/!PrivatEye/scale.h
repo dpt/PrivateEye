@@ -1,11 +1,11 @@
 /* --------------------------------------------------------------------------
  *    Name: scale.h
- * Purpose: Viewer scale dialogue
+ * Purpose: Viewer scale dialogue handler
  * Version: $Id: scale.h,v 1.13 2009-05-20 21:38:19 dpt Exp $
  * ----------------------------------------------------------------------- */
 
-#ifndef VIEWER_SCALE_H
-#define VIEWER_SCALE_H
+#ifndef VIEWER_SCALEDLG_H
+#define VIEWER_SCALEDLG_H
 
 #include "appengine/graphics/drawable.h"
 #include "appengine/wimp/dialogue.h"
@@ -15,11 +15,11 @@
 
 int viewer_scale_for_box(drawable_t *d, int sw, int sh);
 
-extern dialogue_t *viewer_scale;
+extern dialogue_t *viewer_scaledlg;
 
-error viewer_scale_init(void);
-void viewer_scale_fin(void);
+error viewer_scaledlg_init(void);
+void viewer_scaledlg_fin(void);
 
-void viewer_scale_set(viewer_t *viewer, int scale, int redraw);
+void viewer_scaledlg_set(viewer_t *viewer, int scale, int redraw);
 
-#endif /* VIEWER_SCALE_H */
+#endif /* VIEWER_SCALEDLG_H */

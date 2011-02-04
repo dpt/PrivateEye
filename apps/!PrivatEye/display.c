@@ -169,11 +169,11 @@ error display__init(void)
 
   GLOBALS.display_w = window_create("display");
 
-  err = viewer_save_init();
+  err = viewer_savedlg_init();
   if (!err)
-    err = viewer_scale_init();
+    err = viewer_scaledlg_init();
   if (!err)
-    err = viewer_info_init();
+    err = viewer_infodlg_init();
   if (err)
     return err;
 
@@ -181,10 +181,10 @@ error display__init(void)
 
   GLOBALS.image_m = menu_create_from_desc(
                                       message0("menu.image"),
-                                      dialogue__get_window(viewer_info),
-                                      dialogue__get_window(viewer_source_info),
-                                      dialogue__get_window(save),
-                                      dialogue__get_window(viewer_scale));
+                                      dialogue__get_window(viewer_infodlg),
+                                      dialogue__get_window(viewer_srcinfodlg),
+                                      dialogue__get_window(viewer_savedlg),
+                                      dialogue__get_window(viewer_scaledlg));
 
   err = help__add_menu(GLOBALS.image_m, "image");
   if (err)
@@ -206,9 +206,9 @@ void display__fin(void)
   menu_destroy(GLOBALS.image_m);
 
   viewer_keymap_fin();
-  viewer_info_fin();
-  viewer_scale_fin();
-  viewer_save_fin();
+  viewer_infodlg_fin();
+  viewer_scaledlg_fin();
+  viewer_savedlg_fin();
 
   display__set_single_handlers(0);
 
@@ -361,7 +361,7 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
 
   /* this scale then set order is probably important */
 
-  viewer_scale_set(viewer, s / ScrollingScale, 1);
+  viewer_scaledlg_set(viewer, s / ScrollingScale, 1);
 
   /* 'viewer' is possibly stale here now */
 
@@ -740,7 +740,7 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
   else
     new_scale = old_scale / 2;
 #if 0
-  viewer_scale_set(GLOBALS.current_display_w, new_scale, 0);
+  viewer_scaledlg_set(GLOBALS.current_display_w, new_scale, 0);
 
   info.xscroll = (wax * new_scale / old_scale) - visible_w / 2;
   info.yscroll = (way * new_scale / old_scale) + visible_h / 2;
@@ -1008,7 +1008,7 @@ static int zoombox__event_user_drag_box(wimp_event_no event_no, wimp_block *bloc
 
     if (old_scale != new_scale)
     {
-      viewer_scale_set(viewer, new_scale, 0);
+      viewer_scaledlg_set(viewer, new_scale, 0);
 
       /* Set middle point of user's selection (ish) */
       info.xscroll = x0 * new_scale / old_scale;
@@ -1223,7 +1223,7 @@ static void action_zoom(viewer_t *viewer, int op)
   case ZoomToggle: new_scale = viewer->scale.prev; break;
   }
 
-  viewer_scale_set(viewer, new_scale, 1);
+  viewer_scaledlg_set(viewer, new_scale, 1);
 }
 
 static void action_step(viewer_t *viewer, int op)
@@ -1376,15 +1376,15 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Save:
-    dialogue__show(save);
+    dialogue__show(viewer_savedlg);
     break;
 
   case Info:
-    dialogue__show(viewer_info);
+    dialogue__show(viewer_infodlg);
     break;
 
   case SourceInfo:
-    dialogue__show(viewer_source_info);
+    dialogue__show(viewer_srcinfodlg);
     break;
 
   case Hist:
@@ -1396,7 +1396,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Scale:
-    dialogue__show(viewer_scale);
+    dialogue__show(viewer_scaledlg);
     break;
 
 #ifdef EYE_TAGS

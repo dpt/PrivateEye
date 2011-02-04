@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: save.c
- * Purpose: Save
+ * Purpose: Viewer save dialogue handler
  * Version: $Id: save.c,v 1.18 2009-05-21 22:43:42 dpt Exp $
  * ----------------------------------------------------------------------- */
 
@@ -18,11 +18,11 @@
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *save;
+dialogue_t *viewer_savedlg;
 
 /* ----------------------------------------------------------------------- */
 
-static void save_fillout(dialogue_t *d, void *arg)
+static void viewer_savedlg_fillout(dialogue_t *d, void *arg)
 {
   viewer_t *viewer;
   image_t  *image;
@@ -40,7 +40,7 @@ static void save_fillout(dialogue_t *d, void *arg)
 }
 
 /* Called on 'Save' button clicks, but not on drag saves. */
-static void save_handler(dialogue_t *d, const char *file_name)
+static void viewer_savedlg_handler(dialogue_t *d, const char *file_name)
 {
   viewer_t *viewer;
 
@@ -55,19 +55,19 @@ static void save_handler(dialogue_t *d, const char *file_name)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_save_init(void)
+error viewer_savedlg_init(void)
 {
-  save = save__create();
-  if (save == NULL)
+  viewer_savedlg = save__create();
+  if (viewer_savedlg == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(save, save_fillout, NULL);
-  save__set_save_handler(save, save_handler);
+  dialogue__set_fillout_handler(viewer_savedlg, viewer_savedlg_fillout, NULL);
+  save__set_save_handler(viewer_savedlg, viewer_savedlg_handler);
 
   return error_OK;
 }
 
-void viewer_save_fin(void)
+void viewer_savedlg_fin(void)
 {
-  save__destroy(save);
+  save__destroy(viewer_savedlg);
 }
