@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: ffg.c
  * Purpose: Computer Concepts Foreign Format Graphics converters interface
- * Version: $Id: ffg.c,v 1.8 2009-05-20 21:38:18 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* TODO

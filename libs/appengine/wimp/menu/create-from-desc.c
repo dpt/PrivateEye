@@ -1,4 +1,3 @@
-/* $Id: create-from-desc.c,v 1.4 2009-05-18 22:07:52 dpt Exp $ */
 
 /* EXAMPLES
  *

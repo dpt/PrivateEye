@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: filerwin.h
  * Purpose: Filer-style grid window
- * Version: $Id: filerwin.h,v 1.2 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_FILERWIN_H

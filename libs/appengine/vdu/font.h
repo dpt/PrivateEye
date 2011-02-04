@@ -2,7 +2,6 @@
  *    Name: font.h
  * Purpose: Declarations for the font library
  *  Author: David Thomas
- * Version: $Id: font.h,v 1.2 2009-12-14 22:25:41 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_FONT_H

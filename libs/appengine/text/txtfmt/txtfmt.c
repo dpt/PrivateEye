@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: txtfmt.c
  * Purpose: Text formatting
- * Version: $Id: txtfmt.c,v 1.1 2010-01-10 00:48:18 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* Text formatting library. Wraps to character widths, not measured widths,

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: menunames.h
  * Purpose: Identifiers for menu entries
- * Version: $Id: menunames.h,v 1.2 2010-06-02 21:58:50 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef TAGCLOUD_MENUNAMES_H

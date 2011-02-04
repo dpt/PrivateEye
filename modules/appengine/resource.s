@@ -2,7 +2,6 @@
 ;    Name: Resource
 ; Purpose: Application resource management
 ;  Author: © David Thomas, 1996-2009
-; Version: $Id: resource.s,v 1.4 2009-09-02 23:36:13 dpt Exp $
 ; --------------------------------------------------------------------------
 
 

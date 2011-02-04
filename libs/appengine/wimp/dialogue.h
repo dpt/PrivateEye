@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: dialogue.h
  * Purpose: Dialogue base class
- * Version: $Id: dialogue.h,v 1.2 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* The dialogue class encapsulates those behaviours common to all types of

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: mkgrey.c
  * Purpose: Populates a grey palette
- * Version: $Id: mkgrey.c,v 1.1 2009-05-21 22:27:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "appengine/vdu/sprite.h"

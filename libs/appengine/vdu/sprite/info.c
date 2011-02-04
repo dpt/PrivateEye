@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: info.c
  * Purpose: Retrieves sprite dimensions, mode and log2bpp
- * Version: $Id: info.c,v 1.1 2009-05-21 22:27:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "oslib/types.h"

@@ -1,4 +1,3 @@
-/* $Id: free.c,v 1.2 2008-08-05 22:04:51 dpt Exp $ */
 
 #include <assert.h>
 #include <stdarg.h>

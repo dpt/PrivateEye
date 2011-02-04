@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: drawable-bitmap.h
  * Purpose: Generic bitmap methods
- * Version: $Id: drawable-bitmap.h,v 1.1 2009-04-28 23:32:24 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef DRAWABLE_BITMAP

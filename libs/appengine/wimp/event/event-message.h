@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: event-message.h
  * Purpose: Event library
- * Version: $Id: event-message.h,v 1.1 2009-05-20 20:58:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_EVENT_MESSAGE_H

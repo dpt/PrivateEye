@@ -1,4 +1,3 @@
-/* $Id: set-text.c,v 1.3 2009-12-16 23:54:35 dpt Exp $ */
 
 #include <stdio.h>
 #include <string.h>

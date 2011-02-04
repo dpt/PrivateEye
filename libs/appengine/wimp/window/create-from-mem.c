@@ -1,4 +1,3 @@
-/* $Id: create-from-mem.c,v 1.3 2009-05-18 22:07:52 dpt Exp $ */
 
 #include "oslib/osspriteop.h"
 #include "oslib/wimp.h"

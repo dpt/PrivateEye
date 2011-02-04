@@ -2,7 +2,6 @@
 ;    Name: Window
 ; Purpose: Wimp window operations
 ;  Author: © David Thomas, 1996-2009
-; Version: $Id: window.s,v 1.5 2009-09-08 23:05:37 dpt Exp $
 ; --------------------------------------------------------------------------
 
 

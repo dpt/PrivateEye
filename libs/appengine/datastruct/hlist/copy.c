@@ -1,4 +1,3 @@
-/* $Id: copy.c,v 1.2 2008-08-05 22:04:51 dpt Exp $ */
 
 #include <stdarg.h>
 #include <stddef.h>

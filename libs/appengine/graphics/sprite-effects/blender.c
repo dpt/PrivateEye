@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: blender.c
  * Purpose: Alpha blending between two bitmaps
- * Version: $Id: blender.c,v 1.3 2009-05-21 22:27:20 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "kernel.h"

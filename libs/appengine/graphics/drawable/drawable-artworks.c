@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: artworks.c
  * Purpose: ArtWorks module
- * Version: $Id: drawable-artworks.c,v 1.2 2009-09-13 17:02:13 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "fortify/fortify.h"

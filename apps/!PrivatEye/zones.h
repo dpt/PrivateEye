@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: zones.h
  * Purpose: Zone management header
- * Version: $Id: zones.h,v 1.7 2009-04-28 23:32:37 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* A zone is a small monochrome map of which parts of the image have been

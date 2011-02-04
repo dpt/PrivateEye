@@ -2,7 +2,6 @@
  *    Name: oserror.h
  * Purpose: Handling OS errors
  *  Author: David Thomas
- * Version: $Id: oserror.h,v 1.1 2009-05-18 22:07:49 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_OSERROR_H

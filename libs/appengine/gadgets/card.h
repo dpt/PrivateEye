@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: card.h
  * Purpose: Draws regions bordered by sprites
- * Version: $Id: card.h,v 1.1 2008-07-27 18:59:04 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_CARD_H

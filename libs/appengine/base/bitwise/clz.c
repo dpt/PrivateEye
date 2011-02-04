@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: clz.c
  * Purpose: Returns the count of leading zeros of the argument
- * Version: $Id: clz.c,v 1.1 2010-01-10 21:54:23 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "appengine/base/bitwise.h"

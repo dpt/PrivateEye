@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: dcs-quit.c
  * Purpose: Discard/Cancel/Save and Quit dialogues
- * Version: $Id: dcs-quit.c,v 1.7 2009-06-11 21:20:25 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <stdio.h>

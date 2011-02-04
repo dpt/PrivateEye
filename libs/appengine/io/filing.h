@@ -2,7 +2,6 @@
  *    Name: Filing.h
  * Purpose: Declarations for the Filing library
  *  Author: David Thomas
- * Version: $Id: filing.h,v 1.1 2010-01-09 22:21:11 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_FILING_H

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: stream-stdio.h
  * Purpose: C standard IO stream implementation
- * Version: $Id: stream-stdio.h,v 1.3 2010-01-29 14:48:17 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_STREAM_STDIO_H

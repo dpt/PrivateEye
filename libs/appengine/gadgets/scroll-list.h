@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: scroll-list.h
  * Purpose: Scrolling list
- * Version: $Id: scroll-list.h,v 1.2 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_SCROLL_LIST_H

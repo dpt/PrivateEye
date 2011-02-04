@@ -1,4 +1,3 @@
-/* $Id: set-int.c,v 1.1 2009-04-29 23:32:01 dpt Exp $ */
 
 #include <stdio.h>
 

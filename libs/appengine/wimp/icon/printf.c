@@ -1,4 +1,3 @@
-/* $Id: printf.c,v 1.1 2009-04-29 23:32:01 dpt Exp $ */
 
 #include <stdarg.h>
 #include <stdio.h>

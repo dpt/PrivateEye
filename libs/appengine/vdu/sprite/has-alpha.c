@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: has-alpha.c
  * Purpose: Returns whether a sprite has alpha data
- * Version: $Id: has-alpha.c,v 1.1 2009-05-21 22:27:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "oslib/osspriteop.h"

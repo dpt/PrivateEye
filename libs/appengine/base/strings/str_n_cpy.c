@@ -1,4 +1,3 @@
-/* $Id: str_n_cpy.c,v 1.1 2009-05-18 22:07:49 dpt Exp $ */
 
 #include "appengine/base/strings.h"
 

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: set-handlers.c
  * Purpose: Tag cloud
- * Version: $Id: set-handlers.c,v 1.1 2010-01-05 22:39:36 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "appengine/gadgets/tag-cloud.h"

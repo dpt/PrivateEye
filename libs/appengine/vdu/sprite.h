@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: sprite-data.h
  * Purpose: Sprite data processing
- * Version: $Id: sprite.h,v 1.1 2009-05-21 22:27:20 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_SPRITE_H

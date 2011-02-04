@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: vector.c
  * Purpose: Generic vector viewer methods
- * Version: $Id: drawable-vector.c,v 1.1 2009-04-28 23:32:24 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "fortify/fortify.h"

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: mask-pixel.c
  * Purpose: Adds a mask covering the specified pixel value
- * Version: $Id: mask-pixel.c,v 1.1 2009-05-21 22:27:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <assert.h>

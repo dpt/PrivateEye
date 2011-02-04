@@ -2,7 +2,6 @@
  *    Name: window.h
  * Purpose: Declarations for the window library
  *  Author: David Thomas
- * Version: $Id: window.h,v 1.3 2009-05-18 22:07:52 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_WINDOW_H

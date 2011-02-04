@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: tag-db.h
  * Purpose: Tag database
- * Version: $Id: tag-db.h,v 1.4 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* The tagdb maintains a series of key-value pairs. The key is a string (a

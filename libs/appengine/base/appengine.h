@@ -2,7 +2,6 @@
  *    Name: AppEngine.h
  * Purpose: Stuff for dealing with the AppEngine Heap and AppEngine Module
  *  Author: David Thomas
- * Version: $Id: appengine.h,v 1.1 2009-05-18 22:07:48 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_APPENGINE_H

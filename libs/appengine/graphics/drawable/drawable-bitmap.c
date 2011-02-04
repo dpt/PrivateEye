@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: generic-bitmap.c
  * Purpose: Generic bitmap methods
- * Version: $Id: drawable-bitmap.c,v 1.6 2009-09-13 17:02:13 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "kernel.h"

@@ -2,7 +2,6 @@
  *    Name: BASIC.h
  * Purpose: Declarations for the BASIC library
  *  Author: David Thomas
- * Version: $Id: basic.h,v 1.1 2010-01-09 22:08:10 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_BASIC_H

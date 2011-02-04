@@ -2,7 +2,6 @@
  *    Name: keymap.h
  * Purpose: Allows clients to offer customisable keymaps
  *  Author: David Thomas
- * Version: $Id: keymap.h,v 1.2 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_KEYMAP_H

@@ -1,4 +1,3 @@
-/* $Id: comma-num.c,v 1.1 2009-05-18 22:07:49 dpt Exp $ */
 
 #include "oslib/os.h"
 #include "oslib/territory.h"

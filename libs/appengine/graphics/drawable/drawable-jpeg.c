@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: drawable-jpeg.c
  * Purpose: Stuff for drawing JPEGs, distinct from loading
- * Version: $Id: drawable-jpeg.c,v 1.4 2009-09-13 17:02:13 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "kernel.h"

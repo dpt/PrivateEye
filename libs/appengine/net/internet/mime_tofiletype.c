@@ -1,4 +1,3 @@
-/* $Id: mime_tofiletype.c,v 1.5 2009-05-18 22:07:51 dpt Exp $ */
 
 #include "kernel.h"
 #include "swis.h"

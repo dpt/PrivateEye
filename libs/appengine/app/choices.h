@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: choices.h
  * Purpose: Choices library interface
- * Version: $Id: choices.h,v 1.1 2009-06-11 20:49:28 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_CHOICES_H

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: menunames.h
  * Purpose: Identifiers for menu numbers
- * Version: $Id: menunames.h,v 1.22 2009-03-29 18:18:27 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef MENUNAMES_H

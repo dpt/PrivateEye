@@ -1,4 +1,3 @@
-/* $Id: scan.c,v 1.1 2010-01-09 22:21:11 dpt Exp $ */
 
 #include <assert.h>
 #include <limits.h>

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: thumbview.c
  * Purpose: Filer-like thumbnail viewing
- * Version: $Id: thumbview.c,v 1.22 2010-01-29 15:09:00 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifdef EYE_THUMBVIEW

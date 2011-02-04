@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: name.h
  * Purpose: Name dialogue (inputting a single line of text)
- * Version: $Id: name.h,v 1.3 2009-05-20 21:20:41 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_DIALOGUE_NAME_H

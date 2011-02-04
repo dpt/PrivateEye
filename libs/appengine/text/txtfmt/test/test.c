@@ -1,4 +1,3 @@
-/* $Id: test.c,v 1.1 2010-01-10 00:48:18 dpt Exp $ */
 
 #include <stdio.h>
 

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: read-furn-dims.c
  * Purpose: read_furniture_dimensions
- * Version: $Id: read-furn-dims.c,v 1.1 2009-04-29 23:32:01 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "oslib/types.h"

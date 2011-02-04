@@ -2,7 +2,6 @@
  *    Name: Internet.h
  * Purpose: Declarations for the Internet library
  *  Author: David Thomas
- * Version: $Id: internet.h,v 1.2 2005-03-06 18:29:44 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_INTERNET_H

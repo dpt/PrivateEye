@@ -2,7 +2,6 @@
 ;    Name: Memory
 ; Purpose: Memory operations
 ;  Author: © David Thomas, 1995-2009
-; Version: $Id: memory.s,v 1.3 2009-09-02 23:36:13 dpt Exp $
 ; --------------------------------------------------------------------------
 
 ; Includes

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: recognise.c
  * Purpose: Recognise a file based on its type
- * Version: $Id: recognise.c,v 1.3 2010-01-06 00:36:20 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "oslib/types.h"

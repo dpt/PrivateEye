@@ -1,4 +1,3 @@
-/* $Id: create-device-icon.c,v 1.1 2009-06-11 21:20:26 dpt Exp $ */
 
 #include <stddef.h>
 #include <string.h>

@@ -2,7 +2,6 @@
  *    Name: txtscr.c
  * Purpose: Text format 'screen'
  *  Author: David Thomas
- * Version: $Id: txtscr.c,v 1.1 2010-01-10 00:11:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <stdio.h>

@@ -2,7 +2,6 @@
  *    Name: Messages.h
  * Purpose: Declarations for the MessageTrans library
  *  Author: David Thomas
- * Version: $Id: messages.h,v 1.1 2009-05-17 23:06:14 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_MESSAGES_H

@@ -1,4 +1,3 @@
-/* $Id: heap.c,v 1.1 2009-05-18 22:07:49 dpt Exp $ */
 
 #include "kernel.h"
 #include "swis.h"

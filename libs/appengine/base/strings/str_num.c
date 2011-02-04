@@ -1,4 +1,3 @@
-/* $Id: str_num.c,v 1.1 2009-05-18 22:07:49 dpt Exp $ */
 
 #include <stdio.h>
 #include <stdlib.h>

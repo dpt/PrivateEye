@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: hlist.h
  * Purpose: "Hanson" linked lists
- * Version: $Id: hlist.h,v 1.2 2008-08-05 22:04:51 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* See chapter 5 of C Interfaces and Implementations. */

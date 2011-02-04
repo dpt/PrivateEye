@@ -2,7 +2,6 @@
 ;    Name: Codec
 ; Purpose: Encoding and decoding into/from various formats
 ;  Author: © David Thomas, 1996-2009
-; Version: $Id: codec.s,v 1.3 2009-09-02 23:36:12 dpt Exp $
 ; --------------------------------------------------------------------------
 
 ; 0.00 (30 Jan 1997)

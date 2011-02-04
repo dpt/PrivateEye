@@ -1,4 +1,3 @@
-/* $Id: set-submenu-extent.c,v 1.2 2009-05-04 22:29:38 dpt Exp $ */
 
 #include "oslib/os.h"
 #include "oslib/wimp.h"

@@ -1,5 +1,4 @@
 /* iconnames2.h */
-/* $Id: iconnames2.h,v 1.7 2009-03-29 18:18:27 dpt Exp $ */
 
 /* These are the names for icons which aren't indirected, so don't have any
  * N<name> fields associated with them. */

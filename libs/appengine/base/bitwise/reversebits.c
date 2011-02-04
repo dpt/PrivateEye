@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: reversebits.c
  * Purpose: Returns the argument reversed bitwise
- * Version: $Id: reversebits.c,v 1.1 2010-01-06 00:36:19 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "appengine/base/bitwise.h"

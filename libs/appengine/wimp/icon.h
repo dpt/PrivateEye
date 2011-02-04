@@ -2,7 +2,6 @@
  *    Name: icon.h
  * Purpose: Declarations for the icon library
  *  Author: David Thomas
- * Version: $Id: icon.h,v 1.1 2009-04-29 23:32:01 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_ICON_H

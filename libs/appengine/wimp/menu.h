@@ -2,7 +2,6 @@
  *    Name: menu.h
  * Purpose: Declarations for the menu library
  *  Author: David Thomas
- * Version: $Id: menu.h,v 1.3 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_MENU_H

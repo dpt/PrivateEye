@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: mode.c
  * Purpose: Returns the best mode for the specified args
- * Version: $Id: mode.c,v 1.1 2009-05-21 22:27:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "oslib/osspriteop.h"

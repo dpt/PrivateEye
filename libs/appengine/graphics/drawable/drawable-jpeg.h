@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: drawable-jpeg.h
  * Purpose: JPEG module header
- * Version: $Id: drawable-jpeg.h,v 1.1 2009-04-28 23:32:24 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef DRAWABLE_JPEG_H

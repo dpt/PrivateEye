@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: ffg.h
  * Purpose: Computer Concepts Foreign Format Graphics converters interface
- * Version: $Id: ffg.h,v 1.4 2007-01-28 20:24:12 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef FFG_H

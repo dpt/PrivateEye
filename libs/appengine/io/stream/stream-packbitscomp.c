@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: stream-packbitscomp.c
  * Purpose: PackBits compression
- * Version: $Id: stream-packbitscomp.c,v 1.3 2010-01-29 14:48:17 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <assert.h>

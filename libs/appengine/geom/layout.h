@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: layout.h
  * Purpose: Laying out elements using the Packer
- * Version: $Id: layout.h,v 1.1 2009-05-18 22:25:31 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_LAYOUT_H

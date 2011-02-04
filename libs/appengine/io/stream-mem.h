@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: stream-mem.h
  * Purpose: Memory block IO stream implementation
- * Version: $Id: stream-mem.h,v 1.2 2010-01-29 14:48:17 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_STREAM_MEM_H

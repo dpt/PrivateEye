@@ -2,7 +2,6 @@
  *    Name: txtscr.h
  * Purpose: Text format 'screen'
  *  Author: David Thomas
- * Version: $Id: txtscr.h,v 1.2 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_TXTSCR_H

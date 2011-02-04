@@ -1,4 +1,3 @@
-/* $Id: group-set-flags.c,v 1.2 2009-05-20 20:58:21 dpt Exp $ */
 
 #include "oslib/wimp.h"
 

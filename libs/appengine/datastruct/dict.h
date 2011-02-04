@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: dict.h
  * Purpose: Dictionary
- * Version: $Id: dict.h,v 1.6 2009-05-25 22:07:25 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* Maintains a set of strings. Each string is assigned a number. */

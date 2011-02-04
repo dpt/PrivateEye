@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: image-observer.h
  * Purpose: Informs clients when image objects change
- * Version: $Id: image-observer.h,v 1.1 2009-04-28 23:32:23 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_IMAGE_OBSERVER_H

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: event-wimp-group.c
  * Purpose: Event library
- * Version: $Id: event-wimp-group.c,v 1.1 2009-05-20 20:58:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "fortify/fortify.h"

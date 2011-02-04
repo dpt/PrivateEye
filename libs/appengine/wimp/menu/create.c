@@ -1,4 +1,3 @@
-/* $Id: create.c,v 1.4 2009-05-18 22:07:52 dpt Exp $ */
 
 #include <stddef.h>
 #include <string.h>

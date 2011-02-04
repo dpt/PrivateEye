@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: thumbnail.h
  * Purpose: Thumbnail creator
- * Version: $Id: thumbnail.h,v 1.1 2009-09-13 16:21:55 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_THUMBNAILS_H

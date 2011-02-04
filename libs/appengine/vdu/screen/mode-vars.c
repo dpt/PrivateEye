@@ -2,7 +2,6 @@
  *    Name: mode-vars.c
  * Purpose: cache_mode_vars, read_current_mode_vars,
  *          read_screen_dimensions, read_drag_box_for_screen
- * Version: $Id: mode-vars.c,v 1.1 2009-05-21 22:27:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "oslib/os.h"

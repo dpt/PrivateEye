@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: stream-mem.c
  * Purpose: Memory block IO stream implementation
- * Version: $Id: stream-mem.c,v 1.2 2010-01-29 14:48:17 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <assert.h>

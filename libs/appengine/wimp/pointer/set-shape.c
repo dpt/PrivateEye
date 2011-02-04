@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: set-shape.c
  * Purpose: set_pointer_shape, restore_pointer_shape
- * Version: $Id: set-shape.c,v 1.1 2009-04-29 23:32:01 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <stddef.h>

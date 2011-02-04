@@ -2,7 +2,6 @@
 ;    Name: String
 ; Purpose: Handling of strings
 ;  Author: © David Thomas, 1996-2009
-; Version: $Id: string.s,v 1.4 2009-09-02 23:36:13 dpt Exp $
 ; --------------------------------------------------------------------------
 
 

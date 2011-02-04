@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: filename-db.h
  * Purpose: Filename database
- * Version: $Id: filename-db.h,v 1.3 2010-01-13 18:41:09 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 // this is probably more general than i've set it up for:

@@ -2,7 +2,6 @@
  *    Name: iconbar.h
  * Purpose: Declarations for the iconbar library
  *  Author: David Thomas
- * Version: $Id: iconbar.h,v 1.1 2009-06-11 21:20:26 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_ICONBAR_H

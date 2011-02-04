@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: treeview.c
  * Purpose: Tree view
- * Version: $Id: treeview.c,v 1.7 2010-01-10 00:24:15 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* Each node is drawn on its own line (nodes never share a line). */

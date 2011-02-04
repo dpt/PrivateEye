@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: jpegtran.h
  * Purpose: JPEG cleaner header
- * Version: $Id: jpegtran.h,v 1.1 2009-04-28 23:32:23 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_JPEGTRAN_H

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: dcs-quit.h
  * Purpose: Discard/Cancel/Save and Quit dialogues
- * Version: $Id: dcs-quit.h,v 1.2 2009-05-18 22:07:50 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_DIALOGUE_DCS_QUIT_H

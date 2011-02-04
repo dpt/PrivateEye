@@ -2,7 +2,6 @@
  *    Name: box.h
  * Purpose: Box operations
  *  Author: David Thomas
- * Version: $Id: box.h,v 1.1 2009-05-18 22:25:31 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_BOX_H

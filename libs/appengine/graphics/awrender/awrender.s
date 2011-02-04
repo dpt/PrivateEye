@@ -2,7 +2,6 @@
 ;     Name: awrender.s
 ;  Purpose: Low level ArtWorks rendering
 ;   Author: Tony Houghton
-;  Version: $Id: awrender.s,v 1.1 2009-04-28 23:32:23 dpt Exp $
 ; ---------------------------------------------------------------------------
 
 X_Bit                           EQU     &20000

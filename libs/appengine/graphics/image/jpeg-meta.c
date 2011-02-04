@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: jpeg-meta.c
  * Purpose: JPEG meta data handling, using exiftags library
- * Version: $Id: jpeg-meta.c,v 1.4 2010-01-06 00:36:20 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 // TODO

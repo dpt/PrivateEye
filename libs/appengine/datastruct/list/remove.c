@@ -1,4 +1,3 @@
-/* $Id: remove.c,v 1.2 2008-08-05 22:05:05 dpt Exp $ */
 
 #include <assert.h>
 

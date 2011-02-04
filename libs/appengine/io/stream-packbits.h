@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: stream-packbits.h
  * Purpose: PackBits compression
- * Version: $Id: stream-packbits.h,v 1.3 2010-01-29 14:48:17 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_STREAM_PACKBITS_H

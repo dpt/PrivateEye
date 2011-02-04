@@ -2,7 +2,6 @@
 ;    Name: Date
 ; Purpose: Date operations
 ;  Author: © David Thomas, 1997-2009
-; Version: $Id: date.s,v 1.3 2009-09-02 23:36:12 dpt Exp $
 ; --------------------------------------------------------------------------
 
 ; 0.00 (30 Jan 1997)

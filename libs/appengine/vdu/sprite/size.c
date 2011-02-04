@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: size.c
  * Purpose: Calculates the byte size of a sprite
- * Version: $Id: size.c,v 1.1 2009-05-21 22:27:21 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "oslib/osspriteop.h"

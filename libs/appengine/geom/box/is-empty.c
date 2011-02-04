@@ -1,4 +1,3 @@
-/* $Id: is-empty.c,v 1.2 2010-01-13 18:13:07 dpt Exp $ */
 
 #include "oslib/os.h"
 

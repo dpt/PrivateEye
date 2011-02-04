@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: image-observer.c
  * Purpose: Informs clients when Image objects change
- * Version: $Id: image-observer.c,v 1.1 2009-04-28 23:32:24 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <stdlib.h>

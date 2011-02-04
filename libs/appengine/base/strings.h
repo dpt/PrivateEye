@@ -2,7 +2,6 @@
  *    Name: Strings.h
  * Purpose: Declarations for the Strings library
  *  Author: David Thomas
- * Version: $Id: strings.h,v 1.1 2009-05-18 22:07:49 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_STRINGS_H

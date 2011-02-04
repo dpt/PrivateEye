@@ -2,7 +2,6 @@
 ;    Name: Resolver2.s
 ; Purpose: Resolver library (using the ANT interface)
 ;  Author: David Thomas
-; Version: $Id: xresolver_get_host_by_name.s,v 1.2 2005-03-06 18:28:46 dpt Exp $
 ; ---------------------------------------------------------------------------
 
 	AREA	|C$$code|, CODE, READONLY

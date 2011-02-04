@@ -2,7 +2,6 @@
 ;    Name: URL
 ; Purpose: URL utilities
 ;  Author: © David Thomas, 1997-2009
-; Version: $Id: url.s,v 1.4 2009-09-02 23:36:13 dpt Exp $
 ; --------------------------------------------------------------------------
 
 ; Includes

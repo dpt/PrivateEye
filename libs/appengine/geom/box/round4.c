@@ -1,4 +1,3 @@
-/* $Id: round4.c,v 1.1 2009-05-18 22:25:31 dpt Exp $ */
 
 #include "oslib/os.h"
 

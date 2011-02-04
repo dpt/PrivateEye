@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: thumbview.h
  * Purpose: Filer-like thumbnail viewing
- * Version: $Id: thumbview.h,v 1.2 2007-12-03 23:01:03 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef THUMBVIEW_H

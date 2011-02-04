@@ -2,7 +2,6 @@
  *    Name: Heap.h
  * Purpose: Declarations for the heap manager library
  *  Author: David Thomas
- * Version: $Id: heap.h,v 1.1 2009-05-18 22:07:49 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_HEAP_H

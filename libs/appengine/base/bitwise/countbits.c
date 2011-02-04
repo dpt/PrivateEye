@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: countbits.c
  * Purpose: Returns the number of bits set in the argument
- * Version: $Id: countbits.c,v 1.1 2010-01-06 00:36:19 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "appengine/base/bitwise.h"

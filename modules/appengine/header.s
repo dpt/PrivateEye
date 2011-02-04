@@ -2,7 +2,6 @@
 ;    Name: AppEngine module header
 ; Purpose: Header for the AppEngine library system's shared module
 ;  Author: © David Thomas, 1996-2009
-; Version: $Id: header.s,v 1.7 2009-09-08 23:05:37 dpt Exp $
 ; ---------------------------------------------------------------------------
 
 ; Includes

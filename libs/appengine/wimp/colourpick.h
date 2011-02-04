@@ -2,7 +2,6 @@
  *    Name: ColourPick.h
  * Purpose: Declarations for the ColourPicker library
  *  Author: David Thomas
- * Version: $Id: colourpick.h,v 1.1 2009-06-11 21:20:26 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_COLOURPICK_H

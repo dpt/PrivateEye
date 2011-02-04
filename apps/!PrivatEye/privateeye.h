@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: privateeye.h
  * Purpose: Picture viewer core header
- * Version: $Id: privateeye.h,v 1.29 2009-04-28 23:32:37 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef PRIVATEEYE_H

@@ -2,7 +2,6 @@
  *    Name: match.c
  * Purpose: Font matching
  *  Author: David Thomas
- * Version: $Id: match.c,v 1.2 2010-01-13 18:08:40 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <limits.h>

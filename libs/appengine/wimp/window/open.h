@@ -1,4 +1,3 @@
-/* $Id: open.h,v 1.2 2009-05-04 22:29:38 dpt Exp $ */
 
 #ifndef WINDOW_OPEN
 #define WINDOW_OPEN

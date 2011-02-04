@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: filename-db.c
  * Purpose: Filename database
- * Version: $Id: filename-db.c,v 1.3 2010-01-06 00:36:20 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* filenamedb maps md5 digests to filenames so that we can search for files

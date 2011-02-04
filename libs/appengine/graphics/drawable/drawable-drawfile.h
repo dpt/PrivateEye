@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: drawable-drawfile.h
  * Purpose: DrawFile module header
- * Version: $Id: drawable-drawfile.h,v 1.1 2009-04-28 23:32:24 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef DRAWABLE_DRAWFILE_H

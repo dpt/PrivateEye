@@ -1,4 +1,3 @@
-/* $Id: parse.c,v 1.2 2009-02-05 23:49:24 dpt Exp $ */
 
 #include <stdio.h>
 #include <stdlib.h>

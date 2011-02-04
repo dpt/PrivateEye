@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: choices-colour.c
  * Purpose: Colour correction choices
- * Version: $Id: choices-colour.c,v 1.18 2009-11-29 23:18:36 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include "fortify/fortify.h"

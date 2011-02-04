@@ -1,4 +1,3 @@
-/* $Id: find-template-size.c,v 1.3 2009-05-18 22:07:52 dpt Exp $ */
 
 #include <stddef.h>
 #include <string.h>

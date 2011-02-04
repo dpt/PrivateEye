@@ -2,7 +2,6 @@
 ;    Name: Icon
 ; Purpose: Wimp icon operations
 ;  Author: © David Thomas, 1996-2009
-; Version: $Id: icon.s,v 1.4 2009-09-02 23:36:12 dpt Exp $
 ; ---------------------------------------------------------------------------
 
 ; Includes

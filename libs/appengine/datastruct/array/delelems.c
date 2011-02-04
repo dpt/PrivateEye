@@ -1,4 +1,3 @@
-/* $Id: delelems.c,v 1.2 2008-08-05 21:36:33 dpt Exp $ */
 
 #include <stdlib.h>
 #include <string.h>

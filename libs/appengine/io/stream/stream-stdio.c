@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: stream-stdio.c
  * Purpose: C standard IO stream implementation
- * Version: $Id: stream-stdio.c,v 1.4 2010-01-29 14:48:17 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <assert.h>

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: convolve.c
  * Purpose: Convolves images
- * Version: $Id: convolve.c,v 1.3 2009-05-21 22:27:20 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* Based on "Fast Convolution with Packed Lookup Tables"

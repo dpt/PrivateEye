@@ -2,7 +2,6 @@
 ;    Name: Heap
 ; Purpose: Sliding heap manager
 ;  Author: © David Thomas, 1997-2009
-; Version: $Id: heap.s,v 1.4 2009-09-02 23:36:12 dpt Exp $
 ; --------------------------------------------------------------------------
 
 

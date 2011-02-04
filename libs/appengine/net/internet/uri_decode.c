@@ -1,4 +1,3 @@
-/* $Id: uri_decode.c,v 1.4 2009-05-18 22:07:51 dpt Exp $ */
 
 #include "kernel.h"
 #include "swis.h"

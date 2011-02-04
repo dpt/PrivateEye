@@ -2,7 +2,6 @@
  *    Name: awrender.h
  * Purpose: Low level ArtWorks rendering
  *  Author: Tony Houghton
- * Version: $Id: awrender.h,v 1.1 2009-04-28 23:32:23 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_AWRENDER_H

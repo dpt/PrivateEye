@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: choices-colour.h
  * Purpose: Colour correction choices header
- * Version: $Id: choices-colour.h,v 1.7 2009-06-11 20:54:29 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef CHOICES_COLOUR_H

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: hash.h
  * Purpose: Hash
- * Version: $Id: hash.h,v 1.4 2010-01-13 18:01:18 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 /* The interface presently forces you to malloc all keys, and values passed

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: drawable-vector.h
  * Purpose: Generic vector module header
- * Version: $Id: drawable-vector.h,v 1.1 2009-04-28 23:32:24 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef DRAWABLE_VECTOR_H

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: name.c
  * Purpose: Name dialogue (inputting a single line of text)
- * Version: $Id: name.c,v 1.8 2009-05-20 21:20:41 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #include <stdlib.h>

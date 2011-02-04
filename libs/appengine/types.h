@@ -2,7 +2,6 @@
  *    Name: types.h
  * Purpose: Common types and macros
  *  Author: David Thomas
- * Version: $Id: types.h,v 1.2 2009-02-05 23:49:18 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_TYPES_H

@@ -1,7 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: prog-info.h
  * Purpose: ProgInfo window
- * Version: $Id: prog-info.h,v 1.2 2009-05-20 21:20:41 dpt Exp $
  * ----------------------------------------------------------------------- */
 
 #ifndef APPENGINE_DIALOGUE_PROGINFO_H
