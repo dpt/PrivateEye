@@ -21,67 +21,6 @@
 
 /* ----------------------------------------------------------------------- */
 
-typedef struct
-{
-  struct jpeg_source_mgr pub;
-}
-source_mgr;
-
-typedef source_mgr *src_ptr;
-
-METHODDEF(void) init_source(j_decompress_ptr cinfo)
-{
-  NOT_USED(cinfo);
-}
-
-METHODDEF(boolean) fill_input_buffer(j_decompress_ptr cinfo)
-{
-  NOT_USED(cinfo);
-
-  return TRUE;
-}
-
-METHODDEF(void) skip_input_data(j_decompress_ptr cinfo, long num_bytes)
-{
-  src_ptr src = (src_ptr) cinfo->src;
-
-  src->pub.next_input_byte += (size_t) num_bytes;
-  src->pub.bytes_in_buffer -= (size_t) num_bytes;
-}
-
-METHODDEF(void) term_source(j_decompress_ptr cinfo)
-{
-  NOT_USED(cinfo);
-}
-
-static void jpeg_mem_src(j_decompress_ptr cinfo,
-                         const JOCTET    *data,
-                         size_t           length)
-{
-  src_ptr src;
-
-  if (cinfo->src == NULL)
-  {
-    cinfo->src = (*cinfo->mem->alloc_small)(
-                             (j_common_ptr) cinfo,
-                                            JPOOL_PERMANENT,
-                                            SIZEOF(source_mgr));
-  }
-
-  src = (src_ptr) cinfo->src;
-
-  src->pub.init_source       = init_source;
-  src->pub.fill_input_buffer = fill_input_buffer;
-  src->pub.skip_input_data   = skip_input_data;
-  src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
-  src->pub.term_source       = term_source;
-
-  src->pub.bytes_in_buffer   = length;
-  src->pub.next_input_byte   = data;
-}
-
-/* ----------------------------------------------------------------------- */
-
 enum { OUTPUT_BUF_SIZE = 256 * 1024 }; /* initial allocation */
 
 typedef struct
@@ -159,9 +98,9 @@ METHODDEF(void) term_destination(j_compress_ptr cinfo)
   *dest->newlength = length;
 }
 
-static void jpeg_mem_dest(j_compress_ptr cinfo,
-                          JOCTET       **newbuffer,
-                          size_t        *newlength)
+static void jpeg_flexmem_dest(j_compress_ptr cinfo,
+                              JOCTET       **newbuffer,
+                              size_t        *newlength)
 {
   dest_ptr dest;
 
@@ -409,7 +348,7 @@ static int jpegtran(const unsigned char *data,
   start_progress_monitor((j_common_ptr) &dstinfo, &progress);
 
   /* Specify data source for decompression */
-  jpeg_mem_src(&srcinfo, data, length);
+  jpeg_mem_src(&srcinfo, (unsigned char *) data, length);
 
   /* Enable saving of extra markers that we want to copy */
   jcopy_markers_setup(&srcinfo, copyoption);
@@ -436,7 +375,7 @@ static int jpegtran(const unsigned char *data,
                                                  &transformoption);
 
   /* Specify data destination for compression */
-  jpeg_mem_dest(&dstinfo, newbuffer, newlength);
+  jpeg_flexmem_dest(&dstinfo, newbuffer, newlength);
 
   /* Start compressor (note no image data is actually written here) */
   jpeg_write_coefficients(&dstinfo, dst_coef_arrays);
