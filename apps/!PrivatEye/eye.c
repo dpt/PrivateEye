@@ -298,14 +298,14 @@ int main(int argc, char *argv[])
   install_choices();
 
   {
-    int max_app;
     int dynamic_size;
+    int max_app;
+
+    dynamic_size = -1;
 
     /* Read the maximum size of application space. If it's more than 28,640K
      * then use the application slot. This allows us to cope with Aemulor
      * restricting the maximum size of application space. */
-
-    dynamic_size = -1; /* use a dynamic area by default */
 
     os_read_dynamic_area(os_DYNAMIC_AREA_APPLICATION_SPACE, 0, &max_app);
     if (max_app > 28640 * 1024)
@@ -315,6 +315,15 @@ int main(int argc, char *argv[])
       env = getenv("PrivateEye$Flex");
       if (env && strcmp(env, "WimpSlot") == 0)
         dynamic_size = 0; /* use application slot */
+    }
+
+    if (dynamic_size == -1)
+    {
+      dynamic_size = atoi(getenv("PrivateEye$DALimit"));
+      if (dynamic_size > 0)
+        dynamic_size *= 1024 * 1024; /* convert to megabytes */
+      else
+        dynamic_size = -1; /* system default maximum area size */
     }
 
     flex_init(APPNAME, 0, dynamic_size);

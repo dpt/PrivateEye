@@ -38,6 +38,23 @@ RMEnsure AppEngine      0.16 Error PrivateEye requires AppEngine 0.16 or later
 
 Unset Alias$PrivateEyeRMLoad
 
+| PrivateEye by default allocates workspace memory from a dynamic area. If
+| you uncomment the following line it will enable the use of wimp slots
+| larger than 28,640K on suitable systems. This allows for allocations of up
+| to 512M on RISC OS 5.
+|
+| Set PrivateEye$Flex WimpSlot
+|
+| However not all of PrivateEye's internals can yet cope with the sliding
+| heap. You are advised to also boost the wimp slot so that the malloc pool
+| has a reasonable reserve to itself and never needs to shunt the flex heap
+| forwards.
+
+| When using a dynamic area the following system variable can either be set
+| to zero to use the system default dynamic area limit, or a megabyte value. 
+| 
+Set PrivateEye$DALimit 0
+
 WimpSlot -min 8000K -max 8000K
 
 Run <PrivateEye$Dir>.Resources.PhotoCheck

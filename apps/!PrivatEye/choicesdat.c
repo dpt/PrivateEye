@@ -193,8 +193,8 @@ static const choices_numberrange cache_size =
   CHOICES_VWR_D_CACHE,
   CHOICES_VWR_B_CACHEDOWN,
   CHOICES_VWR_B_CACHEUP,
-  0, 16384,
-  128,
+  0, 256 * 1024,
+  1024,
   0 /* precision */
 };
 
