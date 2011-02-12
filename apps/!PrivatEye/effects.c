@@ -1898,8 +1898,13 @@ static void image_changed_callback(image_t              *image,
   NOT_USED(image);
   NOT_USED(data);
 
-  if (change == imageobserver_CHANGE_ABOUT_TO_DESTROY)
+  switch (change)
+  {
+  case imageobserver_CHANGE_HIDDEN:
+  case imageobserver_CHANGE_ABOUT_TO_DESTROY:
     effects__close();
+    break;
+  }
 }
 
 void effects__open(image_t *image)
