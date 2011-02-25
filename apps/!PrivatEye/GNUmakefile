@@ -23,10 +23,10 @@ objsdbg		= $(objs:.o=.odf)
 
 .PHONY:	normal module debug all
 
-$(app):	$(objs)
+$(app):	$(objs) $(fortify) $(flex) $(appengine) $(exiftags) $(libjpeg) $(libjpegtran) $(libpng) $(md5) $(zlib)
 	$(link) -o $@ $(objs) $(libraries)
 
-$(appdbg):	$(objsdbg)
+$(appdbg):	$(objsdbg) $(fortifydbg) $(flexdbg) $(appenginedbg) $(exiftagsdbg) $(libjpegdbg) $(libjpegtrandbg) $(libpngdbg) $(md5dbg) $(zlibdbg)
 	$(link) -o $@ $(objsdbg) $(librariesdbg)
 
 normal:	$(app)
