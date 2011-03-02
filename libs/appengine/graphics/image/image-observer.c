@@ -13,12 +13,13 @@
 
 /* ----------------------------------------------------------------------- */
 
-/* (image,callback) pairs are unique to an element. */
+/* (image,callback,opaque) pairs are unique to an element. */
 typedef struct element
 {
   struct element         *next;
   image_t                *image; /* NULL => interested in all images */
   imageobserver_callback *callback;
+  void                   *opaque;
   int                     nrefs;
 }
 element;
@@ -32,14 +33,15 @@ static element *first = NULL;
 /* ----------------------------------------------------------------------- */
 
 int imageobserver_register(image_t                *image,
-                           imageobserver_callback *callback)
+                           imageobserver_callback *callback,
+                           void                   *opaque)
 {
   element *e;
 
   /* Find existing matching element, if any */
 
   for (e = first; e != NULL; e = e->next)
-    if (e->image == image && e->callback == callback)
+    if (e->image == image && e->callback == callback && e->opaque == opaque)
       break;
 
   if (e) /* exists */
@@ -54,6 +56,7 @@ int imageobserver_register(image_t                *image,
 
   e->image    = image;
   e->callback = callback;
+  e->opaque   = opaque;
   e->nrefs    = 1;
 
   /* Insert at the start of the list */
@@ -65,7 +68,8 @@ int imageobserver_register(image_t                *image,
 }
 
 int imageobserver_deregister(image_t                *image,
-                             imageobserver_callback *callback)
+                             imageobserver_callback *callback,
+                             void                   *opaque)
 {
   element *prev;
   element *e;
@@ -79,7 +83,7 @@ int imageobserver_deregister(image_t                *image,
   {
     next = e->next;
 
-    if (e->image == image && e->callback == callback)
+    if (e->image == image && e->callback == callback && e->opaque == opaque)
       break;
 
     prev = e;
@@ -103,14 +107,15 @@ int imageobserver_deregister(image_t                *image,
   return 0; /* ok */
 }
 
-int imageobserver_register_greedy(imageobserver_callback *callback)
+int imageobserver_register_greedy(imageobserver_callback *callback,
+                                  void                   *opaque)
 {
   element *e;
 
   /* Find existing matching element, if any */
 
   for (e = first; e != NULL; e = e->next)
-    if (e->callback == callback)
+    if (e->callback == callback && e->opaque == opaque)
       break;
 
   if (e) /* exists */
@@ -125,6 +130,7 @@ int imageobserver_register_greedy(imageobserver_callback *callback)
 
   e->image    = NULL;
   e->callback = callback;
+  e->opaque   = opaque;
   e->nrefs    = 1;
 
   /* Insert at the start of the list */
@@ -135,7 +141,8 @@ int imageobserver_register_greedy(imageobserver_callback *callback)
   return 0; /* ok */
 }
 
-int imageobserver_deregister_greedy(imageobserver_callback *callback)
+int imageobserver_deregister_greedy(imageobserver_callback *callback,
+                                    void                   *opaque)
 {
   element *prev;
   element *e;
@@ -149,7 +156,7 @@ int imageobserver_deregister_greedy(imageobserver_callback *callback)
   {
     next = e->next;
 
-    if (e->callback == callback)
+    if (e->callback == callback && e->opaque == opaque)
       break;
 
     prev = e;
@@ -190,7 +197,7 @@ int imageobserver_event(image_t              *image,
     next = e->next;
 
     if (e->image == NULL || e->image == image)
-      e->callback(image, change, data);
+      e->callback(image, change, data, e->opaque);
   }
 
   return 0; /* ok */

@@ -14,7 +14,7 @@ workspace.image:PrivateEye images
 menu.iconbar:PrivateEye,>Info,Close all,Empty cache,Search tags...,Choices...,Quit
 menu.image:PrivateEye,File{File,>Info        ãF1,>Source info ^F1,Metadata    ã^F1,Histogram    ^I,Tags         ^G|New view     ^N},>Save        F3,Edit{Edit,Effects...        ^E,Rotate...         ^O|Convert to Sprite ^S|Copy to clipboard ^C,Clear clipboard},>Scale view F11
 menu.metadata:Metadata,Expand all,Collapse all
-menu.hist:Components,Luma,Red,Green,Blue,Alpha
+menu.histogram:Components,Luma,Red,Green,Blue,Alpha
 menu.tagcloud:Tag Cloud,Display{Display,List                 F2,Cloud                F3|Sort by name        ãF2,Sort by count       ãF3|Selected tags first ^F3},Tag ê%së{Tag,>Rename  ^R,Delete  ^K,>Info    ^I,},>New tag ^N|Commit|Toolbar
 menu.thumbview:PrivateEye,Display{Display,Large thumbnails,Small thumbnails,Full info horizontal,Full info vertical},Image ê%së{Image,>Tag,Rotate...},Select all,Clear selection,Options{Options,Auto-rotate}
 
@@ -55,7 +55,7 @@ unspec:Unspecified
 
 # Histogram window
 
-hist.title:Histogram of %s
+histogram.title:Histogram of %s
 
 # DCS window
 
@@ -253,9 +253,9 @@ hw.effects_crv.r_green:\Sedit the green channel.
 hw.effects_crv.r_red:\Sedit the red channel.
 hw.effects_crv:\Tcurve effect editor \w.|MIt allows you to simultaneously adjust gamma, brightness, contrast, bias and gain.|MDrag the sliders to alter the curve.
 hw.effects_list:\Teffects list.|M\Sselect effects. \Adeselect.|MSelected effects can be edited, if available, or deleted.|MDrag effects to reorder them.
-hw.hist.o_cumulative:Enable this option to show an accumulated view of the histogram.
-hw.hist.p_comps:\Schoose which colour component is shown in the histogram.
-hw.hist:\Thistogram \w.|MBy default it shows a histogram of the imageës luma.|MGridlines are shown every 3.125% (32 intervals).
+hw.histogram.o_cumulative:Enable this option to show an accumulated view of the histogram.
+hw.histogram.p_comps:\Schoose which colour component is shown in the histogram.
+hw.histogram:\Thistogram \w.|MBy default it shows a histogram of the imageës luma.|MGridlines are shown every 3.125% (32 intervals).
 hw.iconbar:\TPrivateEye application, an image viewer.|MDrag a Sprite, DrawFile, JPEG, ArtWork, GIF or PNG file here to view it.
 hw.image_info.d_colours:\Têdepthë of the display image in bits per pixel.|MAlso shown is whether the image is colour or monochrome and if it has transparency.
 hw.image_info.d_dimensions:\Tphysical dimensions of the display image.
@@ -313,12 +313,12 @@ hm.drawfile.0:\Schoose the coarse, fast curve approximation.
 hm.drawfile.1:\Schoose the normal curve approximation
 hm.drawfile.2:\Schoose the best, slow curve approximation.
 hm.drawfile.3:\Schoose the automatic curve approximation method.|MThis is recommended, but may not work well at high view scaling values.
-hm.hist.0:\Sview a histogram of the luma component.
-hm.hist.1:\Sview a histogram of the red component.
-hm.hist.2:\Sview a histogram of the green component.
-hm.hist.3:\Sview a histogram of the blue component.
-hm.hist.4:\Sview a histogram of the alpha component.
-hm.hist.4g:\Gno alpha channel is present.
+hm.histogram.0:\Sview a histogram of the luma component.
+hm.histogram.1:\Sview a histogram of the red component.
+hm.histogram.2:\Sview a histogram of the green component.
+hm.histogram.3:\Sview a histogram of the blue component.
+hm.histogram.4:\Sview a histogram of the alpha component.
+hm.histogram.4g:\Gno alpha channel is present.
 hm.iconbar.0:\Rsee information about PrivateEye.
 hm.iconbar.1:\Sto close all images.
 hm.iconbar.1g:\Gno images are open.

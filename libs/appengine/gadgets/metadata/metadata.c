@@ -3,14 +3,6 @@
  * Purpose: Metadata windows
  * ----------------------------------------------------------------------- */
 
-/* TODO
- *
- * There's an awful lot of common ground between this module and the
- * histogram window. Perhaps I should factor out the common code into an
- * image observing window base class.
- */
-
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "fortify/fortify.h"
@@ -20,19 +12,27 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/base/messages.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/list.h"
+#include "appengine/gadgets/imageobwin.h"
 #include "appengine/gadgets/treeview.h"
-#include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
 #include "appengine/wimp/event.h"
-#include "appengine/wimp/help.h"
 #include "appengine/wimp/menu.h"
 #include "appengine/wimp/window.h"
 
 #include "appengine/gadgets/metadata.h"
+
+/* ----------------------------------------------------------------------- */
+
+static imageobwin_alloc   metadata__alloc;
+static imageobwin_dealloc metadata__dealloc;
+static imageobwin_compute metadata__compute;
+static imageobwin_refresh metadata__refresh;
+
+static event_wimp_handler metadata__event_redraw_window_request,
+                          metadata__event_mouse_click,
+                          metadata__event_menu_selection;
 
 /* ----------------------------------------------------------------------- */
 
@@ -45,146 +45,150 @@ enum
 
 /* ----------------------------------------------------------------------- */
 
+typedef struct metadata_config
+{
+  os_colour bgcolour;   /* colour to draw highlights */
+  int       wrapwidth;  /* column width to wrap at */
+  int       lineheight; /* OS unit height of each line */
+}
+metadata_config;
+
+/* ----------------------------------------------------------------------- */
+
 typedef struct metadata_window
 {
-  list_t      list;         /* a metadata_window is a linked list node */
-  image_t    *image;        /* image we're the metadata of */
-  wimp_w      w;            /* our window handle */
-  treeview_t *tr;           /* treeview data */
-  os_colour   bgcolour;     /* colour to draw highlights */
-  int         wrapwidth;    /* column width to wrap at */
-  int         lineheight;   /* OS unit height of each line */
+  imageobwin_t     base; /* a metadata_window is an image observer window */
+
+  metadata_config  config;
+
+  treeview_t      *tr;   /* treeview data */
 }
 metadata_window;
 
 static struct
 {
-  wimp_w           w;
-  wimp_menu       *menu;
-
-  list_t           list_anchor; /* linked list of metadata windows */
-  metadata_window *last_md; /* last metadata_window a menu was opened on */
+  imageobwin_factory_t factory;
+  unsigned int         refcount;
 }
 LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler metadata__event_redraw_window_request,
-                          metadata__event_close_window_request,
-                          metadata__event_mouse_click,
-                          metadata__event_menu_selection;
-
-/* ----------------------------------------------------------------------- */
-
-static void metadata__set_handlers(int reg, wimp_w w, void *handle)
-{
-  static const event_wimp_handler_spec wimp_handlers[] =
-  {
-    { wimp_REDRAW_WINDOW_REQUEST, metadata__event_redraw_window_request },
-    { wimp_CLOSE_WINDOW_REQUEST,  metadata__event_close_window_request  },
-    { wimp_MOUSE_CLICK,           metadata__event_mouse_click           },
-    { wimp_MENU_SELECTION,        metadata__event_menu_selection        },
-  };
-
-  event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            w, event_ANY_ICON,
-                            handle);
-}
-
-/* ----------------------------------------------------------------------- */
-
-static int metadata__refcount = 0;
-
 error metadata__init(void)
 {
   error err;
 
-  if (metadata__refcount++ == 0)
+  if (LOCALS.refcount)
+      return error_OK; /* already initialised */
+
+  /* dependencies */
+
+  err = treeview__init();
+  if (err)
+    return err;
+
+  err = imageobwin__construct(&LOCALS.factory,
+                              "metadata",
+                              AT_DEFAULT,
+                              metadata__available,
+                              metadata__alloc,
+                              metadata__dealloc,
+                              metadata__compute,
+                              metadata__refresh,
+                              metadata__event_redraw_window_request,
+                              metadata__event_mouse_click,
+                              metadata__event_menu_selection);
+  if (err)
   {
-    /* dependencies */
-
-    err = help__init();
-    if (err)
-      return err;
-
-    err = treeview__init();
-    if (err)
-      goto Failure;
-
-    /* handlers */
-
-    LOCALS.w = window_create("metadata");
-
-    LOCALS.menu = menu_create_from_desc(message0("menu.metadata"));
-
-    err = help__add_menu(LOCALS.menu, "metadata");
-    if (err)
-      return err;
-
-    list__init(&LOCALS.list_anchor);
+    treeview__fin();
+    return err;
   }
 
-  err = error_OK;
+  LOCALS.refcount++;
 
-  /* FALLTHROUGH */
-
-Failure:
-
-  return err;
+  return error_OK;
 }
 
 void metadata__fin(void)
 {
-  if (--metadata__refcount == 0)
-  {
-    help__remove_menu(LOCALS.menu);
+  if (LOCALS.refcount == 0)
+    return;
 
-    menu_destroy(LOCALS.menu);
+  imageobwin__destruct(&LOCALS.factory);
 
-    treeview__fin();
+  treeview__fin();
 
-    help__fin();
-  }
+  LOCALS.refcount--;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static metadata_window *metadata__image_to_win(image_t *image)
+void metadata__open(image_t *image,
+                    os_colour bgcolour, int wrapwidth, int lineheight)
 {
-  return (metadata_window *) list__find(&LOCALS.list_anchor,
-                                         offsetof(metadata_window, image),
-                                   (int) image);
+  metadata_config config;
+
+  config.bgcolour   = bgcolour;
+  config.wrapwidth  = wrapwidth;
+  config.lineheight = lineheight;
+
+  imageobwin__open(&LOCALS.factory, image, &config);
+}
+
+int metadata__available(const image_t *image)
+{
+  return image &&
+         image->flags & image_FLAG_HAS_META;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void metadata__delete(metadata_window *self);
-
-/* ----------------------------------------------------------------------- */
-
-static error metadata__compute(image_t *image)
+static error metadata__alloc(const void    *opaque_config,
+                             imageobwin_t **obwin)
 {
-  error              err;
-  metadata_window   *self;
-  ntree_t           *tree;
-  int                w,h;
-  os_box             box;
+  metadata_window       *self;
+  const metadata_config *config = opaque_config;
 
-  if ((image->flags & image_FLAG_HAS_META) == 0)
-    return error_PRIVATEEYE_META_UNSUPP_FUNC;
+  *obwin = NULL;
 
-  self = metadata__image_to_win(image); /* FIXME: Wasteful repetition of
-                                           operation already done in the outer
-                                           scope. */
+  self = malloc(sizeof(*self));
+  if (self == NULL)
+      return error_OOM;
+
+  self->config = *config;
+
+  self->tr     = NULL;
+
+  *obwin = &self->base;
+
+  return error_OK;
+}
+
+static void metadata__dealloc(imageobwin_t *doomed)
+{
+  metadata_window *self = (metadata_window *) doomed;
+
+  treeview__destroy(self->tr);
+
+  free(self);
+}
+
+static error metadata__compute(imageobwin_t *obwin)
+{
+  error            err;
+  metadata_window *self;
+  image_t         *image;
+  ntree_t         *tree;
+  int              w,h;
+  os_box           box;
+
+  self  = (metadata_window *) obwin;
+  image = self->base.image;
 
   hourglass_on();
 
   if (image->methods.get_meta(image, &tree))
-  {
-    /* FIXME: Cleanup. */
     return error_PRIVATEEYE_META_UNSUPP_FUNC;
-  }
 
   hourglass_off();
 
@@ -192,11 +196,9 @@ static error metadata__compute(image_t *image)
   if (err)
     goto Failure;
 
-  treeview__set_text_width(self->tr, self->wrapwidth);
-
-  treeview__set_line_height(self->tr, self->lineheight);
-
-  treeview__set_highlight_background(self->tr, self->bgcolour);
+  treeview__set_text_width(self->tr, self->config.wrapwidth);
+  treeview__set_line_height(self->tr, self->config.lineheight);
+  treeview__set_highlight_background(self->tr, self->config.bgcolour);
 
   treeview__set_tree(self->tr, tree);
 
@@ -212,7 +214,7 @@ static error metadata__compute(image_t *image)
   box.y0 = h; /* this is negative */
   box.x1 = w;
   box.y1 = 0;
-  wimp_set_extent(self->w, &box);
+  wimp_set_extent(self->base.w, &box);
 
   return error_OK;
 
@@ -222,63 +224,41 @@ Failure:
   return err;
 }
 
+static void metadata__refresh(imageobwin_t *obwin)
+{
+  metadata_window *self = (metadata_window *) obwin;
+
+  wimp_force_redraw(self->base.w, 0, -32768, 32767, 0);
+}
+
 /* ----------------------------------------------------------------------- */
 
 static int metadata__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
-  wimp_draw        *draw;
-  metadata_window  *self;
-  int               more;
-
-  NOT_USED(event_no);
-  NOT_USED(handle);
-
-  draw = &block->redraw;
-  self   = handle;
-
-  for (more = wimp_redraw_window(draw); more; more = wimp_get_rectangle(draw))
-  {
-    treeview__draw(self->tr);
-  }
-
-  return event_HANDLED;
-}
-
-static int metadata__event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
-{
-  wimp_close      *close;
   metadata_window *self;
+  wimp_draw       *draw;
+  int              more;
 
   NOT_USED(event_no);
-  NOT_USED(handle);
-
-  close = &block->close;
 
   self = handle;
+  draw = &block->redraw;
 
-  metadata__delete(self);
+  for (more = wimp_redraw_window(draw); more; more = wimp_get_rectangle(draw))
+    treeview__draw(self->tr);
 
   return event_HANDLED;
-}
-
-static void metadata__refresh(metadata_window *self)
-{
-  error err;
-
-  err = metadata__compute(self->image);
 }
 
 static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
-  wimp_pointer    *pointer;
   metadata_window *self;
+  wimp_pointer    *pointer;
 
   NOT_USED(event_no);
-  NOT_USED(handle);
 
+  self    = handle;
   pointer = &block->pointer;
-
-  self = handle;
 
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_ADJUST))
   {
@@ -308,8 +288,7 @@ static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block
   }
   else if (pointer->buttons & wimp_CLICK_MENU)
   {
-    LOCALS.last_md = self;
-    menu_open(LOCALS.menu, pointer->pos.x - 64, pointer->pos.y);
+    menu_open(self->base.factory->menu, pointer->pos.x - 64, pointer->pos.y);
   }
 
   return event_HANDLED;
@@ -317,22 +296,20 @@ static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block
 
 static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
 {
+  metadata_window *self;
   wimp_selection  *selection;
   wimp_menu       *last;
-  metadata_window *self;
   treeview__mark   mark;
   wimp_pointer     p;
 
   NOT_USED(event_no);
-  NOT_USED(handle);
 
+  self      = handle;
   selection = &block->selection;
 
   last = menu_last();
-  if (last != LOCALS.menu)
+  if (last != self->base.factory->menu)
     return event_NOT_HANDLED;
-
-  self = LOCALS.last_md;
 
   switch (selection->items[0])
   {
@@ -347,7 +324,7 @@ static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *bl
 
   treeview__mark_all(self->tr, mark);
 
-  wimp_force_redraw(self->w, 0, -32768, 32767, 0);
+  wimp_force_redraw(self->base.w, 0, -32768, 32767, 0);
 
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
@@ -356,148 +333,3 @@ static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *bl
   return event_HANDLED;
 }
 
-/* ----------------------------------------------------------------------- */
-
-int metadata__available(const image_t *image)
-{
-  return image &&
-         image->flags & image_FLAG_HAS_META;
-}
-
-static void metadata__image_changed_callback(image_t              *image,
-                                             imageobserver_change  change,
-                                             imageobserver_data   *data)
-{
-  metadata_window *self;
-
-  NOT_USED(data);
-
-  self = metadata__image_to_win(image);
-
-  switch (change)
-  {
-  case imageobserver_CHANGE_MODIFIED:
-    metadata__refresh(self);
-    break;
-
-  case imageobserver_CHANGE_HIDDEN:
-  case imageobserver_CHANGE_ABOUT_TO_DESTROY:
-    imageobserver_deregister(image, metadata__image_changed_callback);
-    metadata__delete(self);
-    break;
-  }
-}
-
-static error metadata__new(image_t *image, os_colour bgcolour, int wrapwidth, int lineheight, metadata_window **new_md)
-{
-  error            err;
-  metadata_window *self;
-  const char      *leaf;
-  char             title[256];
-
-  /* no window for this image */
-
-  self = malloc(sizeof(*self));
-  if (self == NULL)
-    goto NoMem;
-
-  /* clone ourselves a window */
-
-  self->w = window_clone(LOCALS.w);
-  if (self->w == NULL)
-    goto NoMem;
-
-  /* set its title, including the leafname of the image */
-
-  leaf = str_leaf(image->file_name);
-  sprintf(title, message0("metadata.title"), leaf);
-  window_set_title_text(self->w, title);
-
-  /* fill out */
-
-  self->image        = image;
-  self->tr           = NULL;
-  self->bgcolour     = bgcolour;
-  self->wrapwidth    = wrapwidth;
-  self->lineheight   = lineheight;
-
-  list__add_to_head(&LOCALS.list_anchor, &self->list);
-
-  metadata__set_handlers(1, self->w, self);
-
-  err = help__add_window(self->w, "metadata");
-  if (err)
-    return err;
-
-  /* watch for changes */
-
-  imageobserver_register(image, metadata__image_changed_callback);
-
-  *new_md = self;
-
-  return error_OK;
-
-
-NoMem:
-
-  if (self)
-    window_delete_cloned(self->w);
-
-  free(self);
-
-  return error_OOM;
-}
-
-static void metadata__delete(metadata_window *self)
-{
-  imageobserver_deregister(self->image, metadata__image_changed_callback);
-
-  help__remove_window(self->w);
-
-  metadata__set_handlers(0, self->w, self);
-
-  list__remove(&LOCALS.list_anchor, &self->list);
-
-  treeview__destroy(self->tr);
-
-  window_delete_cloned(self->w);
-
-  free(self);
-}
-
-/* ----------------------------------------------------------------------- */
-
-void metadata__open(image_t *image, os_colour bgcolour, int wrapwidth, int lineheight)
-{
-  error            err;
-  metadata_window *self;
-
-  if (!metadata__available(image))
-  {
-    beep();
-    return;
-  }
-
-  self = metadata__image_to_win(image);
-  if (self == NULL)
-  {
-    err = metadata__new(image, bgcolour, wrapwidth, lineheight, &self);
-    if (err)
-      goto Failure;
-
-    err = metadata__compute(image);
-    if (err)
-      goto Failure;
-  }
-
-  window_open_at(self->w, AT_DEFAULT);
-
-  return;
-
-
-Failure:
-
-  error__report(err);
-
-  return;
-}

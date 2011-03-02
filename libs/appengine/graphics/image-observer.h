@@ -38,18 +38,23 @@ imageobserver_data;
 
 typedef void (imageobserver_callback)(image_t              *image,
                                       imageobserver_change  change,
-                                      imageobserver_data   *data);
+                                      imageobserver_data   *data,
+                                      void                 *opaque);
 
 int imageobserver_register(image_t                *image,
-                           imageobserver_callback *callback);
+                           imageobserver_callback *callback,
+                           void                   *opaque);
 
 int imageobserver_deregister(image_t                *image,
-                             imageobserver_callback *callback);
+                             imageobserver_callback *callback,
+                             void                   *opaque);
 
 /* 'Greedy' functions are called for changes on all images. */
-int imageobserver_register_greedy(imageobserver_callback *callback);
+int imageobserver_register_greedy(imageobserver_callback *callback,
+                                  void                   *opaque);
 
-int imageobserver_deregister_greedy(imageobserver_callback *callback);
+int imageobserver_deregister_greedy(imageobserver_callback *callback,
+                                    void                   *opaque);
 
 int imageobserver_event(image_t              *image,
                         imageobserver_change  change,

@@ -1893,10 +1893,12 @@ static int delete_images(void)
 
 static void image_changed_callback(image_t              *image,
                                    imageobserver_change  change,
-                                   imageobserver_data   *data)
+                                   imageobserver_data   *data,
+                                   void                 *opaque)
 {
   NOT_USED(image);
   NOT_USED(data);
+  NOT_USED(opaque);
 
   switch (change)
   {
@@ -1946,7 +1948,7 @@ void effects__open(image_t *image)
   image_select(image, 2);
 
   /* watch for changes */
-  imageobserver_register(image, image_changed_callback);
+  imageobserver_register(image, image_changed_callback, NULL);
 
   /* open as a proper window */
   window_open_at(GLOBALS.effects_w, AT_BOTTOMPOINTER);
@@ -1961,7 +1963,7 @@ static void effects__close(void)
   /* this kicks apply_effects, so is doing more work than necessary */
   remove_all_effects();
 
-  imageobserver_deregister(LOCALS.image, image_changed_callback);
+  imageobserver_deregister(LOCALS.image, image_changed_callback, NULL);
 
   image_select(LOCALS.image, 0);
   image_preview(LOCALS.image); /* force an update */

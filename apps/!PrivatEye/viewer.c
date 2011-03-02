@@ -655,9 +655,12 @@ static int reset_callback(viewer_t *viewer, void *arg)
 /* Called by imageobserver when a registered image changes. */
 static void image_changed_callback(image_t              *image,
                                    imageobserver_change  change,
-                                   imageobserver_data   *data)
+                                   imageobserver_data   *data,
+                                   void                 *opaque)
 {
   struct update_image_args args;
+
+  NOT_USED(opaque);
 
   switch (change)
   {
@@ -766,7 +769,7 @@ error viewer_clone_from_window(wimp_w w, viewer_t **pviewer)
   /* Note that zones can validly be NULL (e.g. for vectors). */
 
   /* Watch for changes. */
-  imageobserver_register(newv->drawable->image, image_changed_callback);
+  imageobserver_register(newv->drawable->image, image_changed_callback, NULL);
 
   *pviewer = newv;
 
@@ -849,7 +852,7 @@ osbool viewer_load(viewer_t   *viewer,
 #endif
 
   /* Watch for changes. */
-  imageobserver_register(image, image_changed_callback);
+  imageobserver_register(image, image_changed_callback, NULL);
 
   /* If we have the focus - inform the image. */
 
@@ -896,7 +899,7 @@ void viewer_unload(viewer_t *viewer)
   /* FIXME: Only if we have the focus... */
   image_defocus(viewer->image);
 
-  imageobserver_deregister(viewer->image, image_changed_callback);
+  imageobserver_deregister(viewer->image, image_changed_callback, NULL);
 
 #ifdef EYE_ZONES
   zones_destroy(viewer->zones);

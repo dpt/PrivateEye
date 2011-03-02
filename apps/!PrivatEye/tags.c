@@ -152,13 +152,15 @@ static tag_cloud__event keyhandler(wimp_key_no  key_no,
 
 static void tags__image_changed_callback(image_t              *image,
                                          imageobserver_change  change,
-                                         imageobserver_data   *data)
+                                         imageobserver_data   *data,
+                                         void                 *opaque)
 {
   error err;
 
   /* remember that this gets called even when the tags window is closed */
 
   NOT_USED(data);
+  NOT_USED(opaque);
 
   switch (change)
   {
@@ -298,7 +300,7 @@ static error tags__properinit(void)
       goto Failure;
     }
 
-    imageobserver_register_greedy(tags__image_changed_callback);
+    imageobserver_register_greedy(tags__image_changed_callback, NULL);
 
     db = tags_common__get_db(); /* FIXME: Feels a bit grotty. */
 
@@ -336,7 +338,7 @@ static void tags__properfin(int force)
 
   if (--tags__properrefcount == 0)
   {
-    imageobserver_deregister_greedy(tags__image_changed_callback);
+    imageobserver_deregister_greedy(tags__image_changed_callback, NULL);
 
     tag_cloud__destroy(LOCALS.tc);
 
