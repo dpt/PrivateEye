@@ -221,16 +221,21 @@ void ffg_initialise(osbool (*loadable_fn)(bits))
   for (i = 0; i < (int) (sizeof(vars) / sizeof(vars[0])); i++)
     read_translators(vars[i], loadable_fn);
 
-  event_register_message_handler(message_TRANSLATE_FFG,
-                                 event_ANY_WINDOW, event_ANY_ICON,
-                                 messageack_translate_ffg,
-                                 NULL);
+  event_register_messageack_handler(message_TRANSLATE_FFG,
+                                    event_ANY_WINDOW, event_ANY_ICON,
+                                    messageack_translate_ffg,
+                                    NULL);
 }
 
 void ffg_finalise(void)
 {
   Translator *f;
   Translator *next;
+
+  event_deregister_messageack_handler(message_TRANSLATE_FFG,
+                                      event_ANY_WINDOW, event_ANY_ICON,
+                                      messageack_translate_ffg,
+                                      NULL);
 
   for (f = first_ffg; f != NULL; f = next)
   {

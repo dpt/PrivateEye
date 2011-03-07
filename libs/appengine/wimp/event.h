@@ -50,7 +50,7 @@ int event_dispatch(wimp_event_no event_no, wimp_block *block);
 
 /* ----------------------------------------------------------------------- */
 
-/* Note that const is lost on the callback! */
+/* Note that handle's const is lost on the callback! */
 
 typedef int (event_wimp_handler)(wimp_event_no event_no,
                                  wimp_block   *block,
@@ -79,7 +79,9 @@ typedef int (event_register_message_handler_prototype)(bits                   ms
                                                        const void            *handle);
 
 event_register_message_handler_prototype event_register_message_handler,
-                                         event_deregister_message_handler;
+                                         event_deregister_message_handler,
+                                         event_register_messageack_handler,
+                                         event_deregister_messageack_handler;
 
 /* ----------------------------------------------------------------------- */
 

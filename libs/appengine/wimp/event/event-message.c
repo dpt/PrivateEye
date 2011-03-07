@@ -39,7 +39,8 @@ typedef struct
 }
 message_handler_array;
 
-static message_handler_array client_handler_array = { NULL, 0, 0 };
+static message_handler_array usermsg_handlers    = { NULL, 0, 0 };
+static message_handler_array usermsgack_handlers = { NULL, 0, 0 };
 
 /* ----------------------------------------------------------------------- */
 
@@ -94,7 +95,15 @@ static int event_message(wimp_event_no event_no,
   else
     w = event_ANY_WINDOW;
 
-  v = &client_handler_array;
+  switch (event_no)
+  {
+  default:
+    v = &usermsg_handlers;
+    break;
+  case wimp_USER_MESSAGE_ACKNOWLEDGE:
+    v = &usermsgack_handlers;
+    break;
+  }
 
   for (e = v->entries; e < v->entries + v->nentries; e++)
   {
@@ -110,8 +119,7 @@ static int event_message(wimp_event_no event_no,
 
   /* client handlers haven't handled it so ... */
 
-  if (event_no == wimp_USER_MESSAGE ||
-      event_no == wimp_USER_MESSAGE_RECORDED)
+  if (event_no != wimp_USER_MESSAGE_ACKNOWLEDGE)
   {
     switch (block->message.action)
     {
@@ -159,7 +167,8 @@ void event_finalise_message(void)
 {
   set_handlers(0);
 
-  free(client_handler_array.entries);
+  free(usermsgack_handlers.entries);
+  free(usermsg_handlers.entries);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -199,18 +208,16 @@ static int compare_message_handler_elements(const void *va, const void *vb)
   else return 0;
 }
 
-int event_register_message_handler(bits                   msg_no,
-                                   wimp_w                 w,
-                                   wimp_i                 i,
-                                   event_message_handler *handler,
-                                   const void            *handle)
+static int register_message_handler(bits                   msg_no,
+                                    wimp_w                 w,
+                                    wimp_i                 i,
+                                    event_message_handler *handler,
+                                    const void            *handle,
+                                    message_handler_array *v)
 {
-  message_handler_array   *v;
   message_handler_element *e;
   message_handler_element *end;
   wimp_MESSAGE_LIST(2)     list;
-
-  v = &client_handler_array;
 
   /* check for an already registered handler */
 
@@ -271,6 +278,26 @@ int event_register_message_handler(bits                   msg_no,
   return 0; /* success */
 }
 
+int event_register_message_handler(bits                   msg_no,
+                                   wimp_w                 w,
+                                   wimp_i                 i,
+                                   event_message_handler *handler,
+                                   const void            *handle)
+{
+  return register_message_handler(msg_no, w, i, handler, handle,
+                                  &usermsg_handlers);
+}
+
+int event_register_messageack_handler(bits                   msg_no,
+                                      wimp_w                 w,
+                                      wimp_i                 i,
+                                      event_message_handler *handler,
+                                      const void            *handle)
+{
+  return register_message_handler(msg_no, w, i, handler, handle,
+                                  &usermsgack_handlers);
+}
+
 static void delete_message_handler_element(message_handler_array   *v,
                                            message_handler_element *e)
 {
@@ -284,17 +311,15 @@ static void delete_message_handler_element(message_handler_array   *v,
   v->nentries--;
 }
 
-int event_deregister_message_handler(bits                   msg_no,
-                                     wimp_w                 w,
-                                     wimp_i                 i,
-                                     event_message_handler *handler,
-                                     const void            *handle)
+static int deregister_message_handler(bits                   msg_no,
+                                      wimp_w                 w,
+                                      wimp_i                 i,
+                                      event_message_handler *handler,
+                                      const void            *handle,
+                                      message_handler_array *v)
 {
-  message_handler_array   *v;
   message_handler_element *e;
   message_handler_element *end;
-
-  v = &client_handler_array;
 
   /* find the handler */
 
@@ -320,4 +345,24 @@ int event_deregister_message_handler(bits                   msg_no,
   delete_message_handler_element(v, e);
 
   return 0; /* success */
+}
+
+int event_deregister_message_handler(bits                   msg_no,
+                                     wimp_w                 w,
+                                     wimp_i                 i,
+                                     event_message_handler *handler,
+                                     const void            *handle)
+{
+  return deregister_message_handler(msg_no, w, i, handler, handle,
+                                    &usermsg_handlers);
+}
+
+int event_deregister_messageack_handler(bits                   msg_no,
+                                        wimp_w                 w,
+                                        wimp_i                 i,
+                                        event_message_handler *handler,
+                                        const void            *handle)
+{
+  return deregister_message_handler(msg_no, w, i, handler, handle,
+                                    &usermsgack_handlers);
 }
