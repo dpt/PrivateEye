@@ -24,7 +24,7 @@ static void tag_cloud__kick_highlight(tag_cloud *tc)
   tag_cloud__schedule_redraw(tc);
 }
 
-static error tag_cloud__add_highlights(tag_cloud *tc, int *indices, int nindices)
+static error tag_cloud__add_highlights(tag_cloud *tc, const int *indices, int nindices)
 {
   error err;
   int   i;
@@ -48,7 +48,7 @@ static error tag_cloud__add_highlights(tag_cloud *tc, int *indices, int nindices
   return error_OK;
 }
 
-error tag_cloud__highlight(tag_cloud *tc, int *indices, int nindices)
+error tag_cloud__highlight(tag_cloud *tc, const int *indices, int nindices)
 {
   error err;
 
