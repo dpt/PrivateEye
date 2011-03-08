@@ -142,7 +142,7 @@ error tag_cloud__set_tags(T                    *tc,
 
 /* ----------------------------------------------------------------------- */
 
-/* Highlights the specified indicies.
+/* Highlights the specified indices.
  * Indices must be given in ascending order.
  * Use nindices == 0 and indices == NULL to clear highlights. */
 error tag_cloud__highlight(T *tc, const int *indices, int nindices);
