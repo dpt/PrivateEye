@@ -88,9 +88,7 @@ static event_message_handler message_quit,
                              message_save_desktop,
                              message_pre_quit,
                              message_palette_change,
-                             message_mode_change,
-                             message_claim_entity,
-                             message_data_request;
+                             message_mode_change;
 
 /* ----------------------------------------------------------------------- */
 
@@ -107,8 +105,6 @@ static void register_event_handlers(int reg)
     { message_PRE_QUIT,       message_pre_quit       },
     { message_PALETTE_CHANGE, message_palette_change },
     { message_SAVE_DESKTOP,   message_save_desktop   },
-    { message_CLAIM_ENTITY,   message_claim_entity   },
-    { message_DATA_REQUEST,   message_data_request   },
     { message_MODE_CHANGE,    message_mode_change    },
   };
 
@@ -136,6 +132,7 @@ static error initialise_subsystems(void)
 #ifdef EYE_THUMBVIEW
     thumbview__init,
 #endif
+    clipboard__init
   };
 
   error err;
@@ -157,6 +154,7 @@ static void finalise_subsystems(void)
 
   static const finfn finfns[] =
   {
+    clipboard__fin,
 #ifdef EYE_THUMBVIEW
     thumbview__fin,
 #endif
@@ -877,63 +875,4 @@ static int message_mode_change(wimp_message *message, void *handle)
   }
 
   return event_PASS_ON;
-}
-
-static int message_claim_entity(wimp_message *message, void *handle)
-{
-  NOT_USED(handle);
-
-  if (message->sender != GLOBALS.task_handle)
-    if (message->data.claim_entity.flags == wimp_CLAIM_CLIPBOARD)
-      clipboard_release(); /* we no longer own it */
-
-  return event_HANDLED;
-}
-
-static int message_data_request(wimp_message *message, void *handle)
-{
-  bits file_type;
-  bits *types_list;
-  wimp_message datasave;
-  int i;
-
-  NOT_USED(handle);
-
-  if (GLOBALS.clipboard_viewer != NULL &&
-      message->data.data_request.flags == wimp_DATA_REQUEST_CLIPBOARD)
-  {
-    /* The clipboard was requested and we own the clipboard. */
-
-    types_list = message->data.data_request.file_types;
-
-    file_type = GLOBALS.clipboard_viewer->drawable->image->display.file_type;
-
-    /* If the file type is in the list, or if the list is empty, then send. */
-
-    for (i = 0; types_list[i] != file_type && types_list[i] != 0xffffffffu; i++)
-      ;
-
-    if (types_list[0] == 0xffffffffu || types_list[i] != 0xffffffffu)
-    {
-      /* They requested a format we can provide. Respond with a DataSave. */
-
-      datasave.data.data_xfer.w         = message->data.data_xfer.w;
-      datasave.data.data_xfer.i         = message->data.data_xfer.i;
-      datasave.data.data_xfer.pos.x     = message->data.data_xfer.pos.x;
-      datasave.data.data_xfer.pos.y     = message->data.data_xfer.pos.y;
-      datasave.data.data_xfer.est_size  = GLOBALS.clipboard_viewer->drawable->image->display.file_size;
-      datasave.data.data_xfer.file_type = file_type;
-      strcpy(datasave.data.data_xfer.file_name, str_leaf(GLOBALS.clipboard_viewer->drawable->image->file_name));
-
-      datasave.size = wimp_SIZEOF_MESSAGE_HEADER((
-                        offsetof(wimp_message_data_xfer, file_name) +
-                        strlen(datasave.data.data_xfer.file_name) + 1 + 3) & ~3);
-      datasave.your_ref = message->my_ref;
-      datasave.action = message_DATA_SAVE;
-
-      wimp_send_message(wimp_USER_MESSAGE, &datasave, message->sender);
-    }
-  }
-
-  return event_HANDLED;
 }

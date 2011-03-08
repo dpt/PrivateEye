@@ -9,6 +9,9 @@
 #include "oslib/types.h"
 #include "oslib/wimp.h"
 
+error clipboard__init(void);
+void clipboard__fin(void);
+
 void clipboard_claim(wimp_w w);
 void clipboard_release(void);
 osbool clipboard_own(void);
