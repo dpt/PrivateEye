@@ -147,6 +147,9 @@ error tag_cloud__set_tags(T                    *tc,
  * Use nindices == 0 and indices == NULL to clear highlights. */
 error tag_cloud__highlight(T *tc, int *indices, int nindices);
 
+error tag_cloud__add_highlight(T *tc, int index);
+void tag_cloud__remove_highlight(T *tc, int index);
+
 /* ----------------------------------------------------------------------- */
 
 #define tag_cloud__DISPLAY_TYPE_LIST   0

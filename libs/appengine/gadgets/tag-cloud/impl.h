@@ -10,6 +10,7 @@
 #include "oslib/wimp.h"
 
 #include "appengine/wimp/dialogue.h"
+#include "appengine/datastruct/bitvec.h"
 #include "appengine/datastruct/dict.h"
 #include "appengine/base/errors.h"
 
@@ -89,12 +90,7 @@ typedef struct tag_cloud__layout_data
 }
 tag_cloud__layout_data;
 
-typedef struct tag_cloud__highlight_data
-{
-  dict_index      *indices;
-  int              nindices;
-}
-tag_cloud__highlight_data;
+typedef bitvec_t *tag_cloud__highlight_data;
 
 typedef struct tag_cloud__hover_data
 {

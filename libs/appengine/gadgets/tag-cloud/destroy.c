@@ -20,7 +20,7 @@ void tag_cloud__destroy(tag_cloud *doomed)
   if (doomed == NULL)
     return;
 
-  free(doomed->highlight.indices);
+  bitvec__destroy(doomed->highlight);
 
   tag_cloud__layout_discard(doomed);
 
