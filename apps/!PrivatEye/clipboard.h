@@ -9,6 +9,8 @@
 #include "oslib/types.h"
 #include "oslib/wimp.h"
 
+#include "appengine/base/errors.h"
+
 error clipboard__init(void);
 void clipboard__fin(void);
 
