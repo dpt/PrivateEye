@@ -37,7 +37,9 @@ static void imageobwin__close(imageobwin_t *obwin);
 /* ----------------------------------------------------------------------- */
 
 static void imageobwin__set_handlers(imageobwin_factory_t *factory,
-                                     int reg, wimp_w w, void *handle)
+                                     int                   reg,
+                                     wimp_w                w,
+                                     void                 *handle)
 {
   event_wimp_handler_spec wimp_handlers[4];
 
@@ -110,70 +112,87 @@ error imageobwin__construct(imageobwin_factory_t *factory,
                             event_wimp_handler   *click,
                             event_wimp_handler   *menu)
 {
-    error err;
-    char  scratch[32]; /* Careful Now */
+  error  err;
+  char   scratch[32]; /* Careful Now */
+  size_t len;
 
-    err = help__init();
-    if (err)
-        return err;
+  /* initialise member(s) used in error cleanup */
 
-    /* init */
+  factory->menu = NULL;
 
-    factory->w = window_create(name);
+  /* dependencies */
 
-    sprintf(scratch, "menu.%s", name);
-    factory->menu = menu_create_from_desc(message0(scratch));
-    if (factory->menu == NULL)
-    {
-        help__fin();
-        return error_OOM;
-    }
+  err = help__init();
+  if (err)
+    return err;
 
-    err = help__add_menu(factory->menu, name);
-    if (err)
-    {
-        menu_destroy(factory->menu);
-        help__fin();
-        return err;
-    }
+  /* init */
 
-    list__init(&factory->list_anchor);
+  factory->w = window_create(name);
 
-    factory->name = malloc(strlen(name) + 1);
-    if (factory->name == NULL)
-    {
-        help__remove_menu(factory->menu);
-        menu_destroy(factory->menu);
-        help__fin();
-        return error_OOM;
-    }
-    strcpy(factory->name, name);
+  sprintf(scratch, "menu.%s", name);
+  factory->menu = menu_create_from_desc(message0(scratch));
+  if (factory->menu == NULL)
+  {
+    err = error_OOM;
+    goto Failure;
+  }
 
-    factory->open_at                     = open_at;
+  err = help__add_menu(factory->menu, name);
+  if (err)
+    goto Failure;
 
-    factory->available                   = available;
-    factory->alloc                       = alloc;
-    factory->dealloc                     = dealloc;
-    factory->compute                     = compute;
-    factory->refresh                     = refresh;
+  list__init(&factory->list_anchor);
 
-    factory->event_redraw_window_request = redraw;
-    factory->event_mouse_click_request   = click;
-    factory->event_menu_selection        = menu;
+  len = strlen(name) + 1;
+  factory->name = malloc(len);
+  if (factory->name == NULL)
+  {
+    help__remove_menu(factory->menu);
+    goto Failure;
+  }
+  memcpy(factory->name, name, len);
 
-    return error_OK;
+  factory->open_at                     = open_at;
+
+  factory->available                   = available;
+  factory->alloc                       = alloc;
+  factory->dealloc                     = dealloc;
+  factory->compute                     = compute;
+  factory->refresh                     = refresh;
+
+  factory->event_redraw_window_request = redraw;
+  factory->event_mouse_click_request   = click;
+  factory->event_menu_selection        = menu;
+
+  return error_OK;
+
+Failure:
+
+  if (factory->menu)
+    menu_destroy(factory->menu);
+
+  help__fin();
+
+  return err;
 }
 
 void imageobwin__destruct(imageobwin_factory_t *doomed)
 {
-    free(doomed->name);
+  if (doomed == NULL)
+    return;
 
-    help__remove_menu(doomed->menu);
-    menu_destroy(doomed->menu);
-    help__fin();
+  free(doomed->name);
+
+  help__remove_menu(doomed->menu);
+  menu_destroy(doomed->menu);
+
+  help__fin();
 }
 
-static int imageobwin__event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int imageobwin__event_close_window_request(wimp_event_no  event_no,
+                                                  wimp_block    *block,
+                                                  void          *handle)
 {
   imageobwin_t *obwin = handle;
 
@@ -202,13 +221,20 @@ static error imageobwin__new(imageobwin_factory_t *factory,
 
   err = factory->alloc(config, &obwin);
   if (err)
-      return err;
+    return err;
 
   /* clone ourselves a window */
 
   obwin->w = window_clone(factory->w);
   if (obwin->w == NULL)
-    goto NoMem;
+  {
+    err = error_OOM;
+    goto Failure;
+  }
+
+  err = help__add_window(obwin->w, factory->name);
+  if (err)
+    goto Failure;
 
   /* set its title, including the leafname of the image */
 
@@ -224,10 +250,6 @@ static error imageobwin__new(imageobwin_factory_t *factory,
 
   imageobwin__set_handlers(factory, 1, obwin->w, obwin);
 
-  err = help__add_window(obwin->w, factory->name);
-  if (err)
-    return err;
-
   /* watch for changes */
 
   imageobserver_register(image, imageobwin__image_changed_callback, obwin);
@@ -240,8 +262,7 @@ static error imageobwin__new(imageobwin_factory_t *factory,
 
   return error_OK;
 
-
-NoMem:
+Failure:
 
   if (obwin)
   {
@@ -283,7 +304,8 @@ error imageobwin__open(imageobwin_factory_t *factory,
 
 static void imageobwin__close(imageobwin_t *obwin)
 {
-  imageobserver_deregister(obwin->image, imageobwin__image_changed_callback, obwin);
+  imageobserver_deregister(obwin->image, imageobwin__image_changed_callback,
+                           obwin);
 
   help__remove_window(obwin->w);
 
@@ -293,8 +315,8 @@ static void imageobwin__close(imageobwin_t *obwin)
 
   window_delete_cloned(obwin->w);
 
-  obwin->factory->dealloc(obwin); /* client callback, destroys structure so
-                                     must come last */
+  obwin->factory->dealloc(obwin); /* client destroys structure so this must
+                                     come last */
 }
 
 void imageobwin__kick(imageobwin_t *obwin)

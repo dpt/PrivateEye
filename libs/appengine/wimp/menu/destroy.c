@@ -9,6 +9,9 @@ void menu_destroy(wimp_menu *menu)
 {
   const wimp_menu_entry *entry;
 
+  if (menu == NULL)
+    return;
+
   /* walk menu data, freeing all indirected items */
 
   entry = menu->entries;
