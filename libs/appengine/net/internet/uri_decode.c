@@ -35,7 +35,7 @@ int uri_decode(const char *uri, char *scheme, char *creds, char *host, int *port
   *q++ = '\0';
 
   if (*p++ != ':' || *p++ != '/' || *p++ != '/')
-    return -1;	/* invalid */
+    return -1; /* invalid */
 
   /* Credentials, Host and Port */
   q = host;
@@ -74,5 +74,5 @@ int uri_decode(const char *uri, char *scheme, char *creds, char *host, int *port
     path = "/";
   }
 
-  return 0;	/* valid */
+  return 0; /* valid */
 }

@@ -15,9 +15,9 @@ int basic_data_open(char *filename)
 {
   data = fopen(filename, "rb");
   if (data == NULL)
-    return 1;	/* failure */
+    return 1; /* failure */
 
-  return 0;	/* success */
+  return 0; /* success */
 }
 
 /*
@@ -43,14 +43,14 @@ int basic_data_read(void *buffer_v, int buffer_size)
   int c, d;
 
   if (data == NULL)
-    return -1;	/* no data file open */
+    return -1; /* no data file open */
 
   buffer = (char *) buffer_v;
 
   c = fgetc(data);
   switch (c)
   {
-    case 0:	/* string (length specified as first byte) */
+    case 0: /* string (length specified as first byte) */
       d = fgetc(data);
       if (buffer_size <= d)
         /* buffer insufficient (even with accounting for terminator byte) */
@@ -60,13 +60,13 @@ int basic_data_read(void *buffer_v, int buffer_size)
         buffer[--d] = fgetc(data);
       break;
 
-    case 64:	/* integer (four bytes, big endian) */
+    case 64: /* integer (four bytes, big endian) */
       d = 4;
       while (d)
         buffer[--d] = fgetc(data);
       break;
 
-    case 128:	/* real (four bytes) */
+    case 128: /* real (four bytes) */
       break;
   }
 
