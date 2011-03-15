@@ -1,0 +1,135 @@
+2011-03-11
+
+PrivateEye bugs/todo list
+-------------------------
+
+Classes: BUG         - a bug which needs fixing
+         REFACtor    - a code improvement with no functional change
+         ENHancement - an improvement to something existing
+         FEAture     - an entire new feature
+
+
+BUG - Load/Save
+Build a data transfer library capable of correctly handling simultaneous FFG
+conversions and app-to-app RAM transfers. (CBLibrary's Loader exists to do the
+same job already... and RISCOS_Lib is also available for inspection).
+
+BUG - Tags
+1,024 byte buffer size (line length) limit when hit causes data loss.
+
+BUG - Tags
+Allow spaces in tags by allowing quotes around tags in the tag db.
+
+BUG - Effects
+If you save the image when editing is in effect then you also get the temporary
+images saved out too in a multi-sprite file.
+
+BUG - Cache
+Unsafe files, such as files from app-to-app transfers, are cached when disposed
+of. They should be thrown away entirely. Need a flag to indicate 'unsafe'.
+
+BUG - Load/Save
+FFG it seems may say 'This is a TIFF' in the message header but on disc the
+file type will be set to Data. Need to allow the message header file type to
+override the disc file type.
+
+BUG - Tags
+Tag sort is unstable.
+
+
+
+REFAC - General
+Add a window_redraw_all function to redraw the entire window workarea and
+factor out calls which do the same in treeview.
+
+REFAC - General
+Separate out memory management for individual components so that they're
+accessed through a memory manager struct (like Bitstream Font Fusion / TLS
+Plus / other third party libraries do to insulate themselves from their host
+environments).
+
+  typdef struct memmgr_t {
+      void *(*malloc)(size_t size);
+      void *(*calloc)(size_t count, size_t size);
+      void *(*realloc)(void *ptr, size_t size);
+      void (*free)(void *ptr);
+  } memmgr_t;
+
+This will let us write more specialised memory managers appropriate to the
+implementation.
+
+REFAC - General
+Fix the function naming across entire system:
+
+  component_externalthing(),
+  component__internalthing()
+
+REFAC - General
+Make better use of reference counting, e.g. reference count clipboard
+initialisations and initialise that from the display/viewer code rather than
+eye.c.
+
+REFAC - Effects
+(Try to) make the effects window an image observer window.
+
+
+
+ENH - Clipboard
+Improvements to clipboard handling. It's not always obvious why something does
+not paste. e.g. ^C a JPEG in PrivateEye then try to paste in OvPro it won't
+paste as OvPro does not list &C85 in its accepted file types list.
+
+ENH - Tags
+'Stars' -- a class system for tags and additional behaviours in the tag cloud
+so that we can implement five star rating type controls. See separate document.
+
+ENH - Tags
+Tag backups could do with being more intelligent. e.g. backing up based on
+elapsed time since previous backup. Presently it just copies whatever was there
+before which means the backup is at risk of being of something recently
+corrupted.
+
+ENH - Viewer
+Allow mouse events to be configured using the keymap.
+
+ENH - Keymap
+Don't obliterate a user's keymap when upgrading, either warn (query the user
+"Do you want this upgraded?") or merge.
+
+ENH - Effects
+Extend the range of allowable blurs further.
+
+ENH - Tags
+Put "Tags for <file>" in the tag cloud titlebar.
+
+ENH - Keymap
+Report errors in keymaps (ideally quoting line number and error details).
+
+ENH - Tags
+Tag/detag clicks are slow as the entire database is re-queried and highlights
+re-populated. Need to allow fast bypasses which keep both the tag cloud and tag
+db up to date and in sync.
+
+
+
+FEA - Load/Save
+Save as JPEG.
+
+FEA - Load/Save
+ZX Spectrum format screen loader.
+
+FEA - General
+Add another imageobwin user, e.g. a window which logs image events.
+
+FEA - General
+Add a formatted message list window. Use this to report nonfatal errors and
+logging.
+
+FEA - Tags
+Allow multiple sets of tags and tag clouds.
+
+FEA - Effects
+Trim/Crop/Resize/Resample etc. etc.
+
+FEA - General
+Idea: FFG-to-IFG adaptor.
