@@ -446,7 +446,7 @@ PICT_122={pictframe
 }
 
 PICTURE_123={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.logo"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.logo"}
 }
 
 CHAP_125={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
@@ -772,7 +772,7 @@ PICT_14f={pictframe
 }
 
 PICTURE_150={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.viewerwin"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.viewerwin"}
 }
 
 PICT_151={pictframe
@@ -804,7 +804,7 @@ PICT_151={pictframe
 }
 
 PICTURE_152={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.scalewin"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.scalewin"}
 }
 
 PICT_153={pictframe
@@ -836,7 +836,7 @@ PICT_153={pictframe
 }
 
 PICTURE_154={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.zoombox"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.zoombox"}
 }
 
 TEXT_155={textframe
@@ -1222,7 +1222,7 @@ PICT_17b={pictframe
 }
 
 PICTURE_17c={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.infowin"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.infowin"}
 }
 
 PICT_17d={pictframe
@@ -1254,7 +1254,7 @@ PICT_17d={pictframe
 }
 
 PICTURE_17e={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.sourcewin"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.sourcewin"}
 }
 
 TEXT_17f={textframe
@@ -1437,7 +1437,7 @@ PICT_196={pictframe
 }
 
 PICTURE_197={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.metadata"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.metadata"}
 }
 
 TEXT_198={textframe
@@ -1679,7 +1679,7 @@ PICT_1bc={pictframe
 }
 
 PICTURE_1bd={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.histwin"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.histwin"}
 }
 
 PICT_1be={pictframe
@@ -1711,7 +1711,7 @@ PICT_1be={pictframe
 }
 
 PICTURE_1bf={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.histcumul"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.histcumul"}
 }
 
 TEXT_1c0={textframe
@@ -1893,7 +1893,7 @@ PICT_1d0={pictframe
 }
 
 PICTURE_1d1={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectswin"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectswin"}
 }
 
 PICT_1d2={pictframe
@@ -1925,7 +1925,7 @@ PICT_1d2={pictframe
 }
 
 PICTURE_1d3={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectspal"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectspal"}
 }
 
 PICT_1d4={pictframe
@@ -1957,7 +1957,7 @@ PICT_1d4={pictframe
 }
 
 PICTURE_1d5={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.slider"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.slider"}
 }
 
 PICT_1d6={pictframe
@@ -1989,7 +1989,7 @@ PICT_1d6={pictframe
 }
 
 PICTURE_1d7={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectsdrag"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectsdrag"}
 }
 
 PICT_1d8={pictframe
@@ -2021,7 +2021,7 @@ PICT_1d8={pictframe
 }
 
 PICTURE_1d9={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectscrv"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectscrv"}
 }
 
 PICT_1da={pictframe
@@ -2053,7 +2053,7 @@ PICT_1da={pictframe
 }
 
 PICTURE_1db={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectclear"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectclear"}
 }
 
 PICT_1dc={pictframe
@@ -2085,7 +2085,7 @@ PICT_1dc={pictframe
 }
 
 PICTURE_1dd={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectcont"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectcont"}
 }
 
 PICT_1de={pictframe
@@ -2117,7 +2117,7 @@ PICT_1de={pictframe
 }
 
 PICTURE_1df={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectgrey"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectgrey"}
 }
 
 PICT_1e0={pictframe
@@ -2149,7 +2149,7 @@ PICT_1e0={pictframe
 }
 
 PICTURE_1e1={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectshrp"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectshrp"}
 }
 
 PICT_1e2={pictframe
@@ -2181,7 +2181,7 @@ PICT_1e2={pictframe
 }
 
 PICTURE_1e3={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.effectcomb"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectcomb"}
 }
 
 TEXT_1e4={textframe
@@ -2603,7 +2603,7 @@ PICT_21d={pictframe
 }
 
 PICTURE_21e={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.rotatewin"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.rotatewin"}
 }
 
 TEXT_21f={textframe
@@ -2808,7 +2808,7 @@ PICT_235={pictframe
 }
 
 PICTURE_236={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choiceview"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceview"}
 }
 
 PICT_237={pictframe
@@ -2840,7 +2840,7 @@ PICT_237={pictframe
 }
 
 PICTURE_238={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choicecol"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicecol"}
 }
 
 PICT_239={pictframe
@@ -2872,7 +2872,7 @@ PICT_239={pictframe
 }
 
 PICTURE_23a={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choicespr"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicespr"}
 }
 
 PICT_23b={pictframe
@@ -2904,7 +2904,7 @@ PICT_23b={pictframe
 }
 
 PICTURE_23c={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choicejpg"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicejpg"}
 }
 
 PICT_23d={pictframe
@@ -2936,7 +2936,7 @@ PICT_23d={pictframe
 }
 
 PICTURE_23e={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choicegif"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicegif"}
 }
 
 PICT_23f={pictframe
@@ -2968,7 +2968,7 @@ PICT_23f={pictframe
 }
 
 PICTURE_240={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choicepng"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicepng"}
 }
 
 PICT_241={pictframe
@@ -3000,7 +3000,7 @@ PICT_241={pictframe
 }
 
 PICTURE_242={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choicedrw"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicedrw"}
 }
 
 PICT_243={pictframe
@@ -3032,7 +3032,7 @@ PICT_243={pictframe
 }
 
 PICTURE_244={picture
-{reference "<PrivateEye$Dir>.~docs.Pictures.choiceart"}
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceart"}
 }
 
 TEXT_245={textframe
