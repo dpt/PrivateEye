@@ -48,7 +48,8 @@ static int sort_by_count(const void *va, const void *vb)
 
        if (counta > countb) return -1;
   else if (counta < countb) return  1;
-  else                      return  0;
+
+  return *a - *b; /* compare indices to keep sort stable */
 }
 
 /* sort_by_name with highlights first */
@@ -139,7 +140,7 @@ static void sort(tag_cloud *tc)
 
   tc->flags |= tag_cloud__FLAG_NEW_SORT;
 
-  tc->sort.last_sort_type  = tc->sort_type;
+  tc->sort.last_sort_type  = sort_type;
   tc->sort.last_order_type = order_type;
 
   tag_cloud__schedule_redraw(tc);
