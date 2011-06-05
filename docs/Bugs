@@ -1,4 +1,4 @@
-2011-03-11
+2011-06-05
 
 PrivateEye bugs/todo list
 -------------------------
@@ -33,9 +33,6 @@ FFG it seems may say 'This is a TIFF' in the message header but on disc the
 file type will be set to Data. Need to allow the message header file type to
 override the disc file type.
 
-BUG - Tags
-Tag sort is unstable.
-
 
 
 REFAC - General
@@ -48,7 +45,7 @@ accessed through a memory manager struct (like Bitstream Font Fusion / TLS
 Plus / other third party libraries do to insulate themselves from their host
 environments).
 
-  typdef struct memmgr_t {
+  typedef struct memmgr_t {
       void *(*malloc)(size_t size);
       void *(*calloc)(size_t count, size_t size);
       void *(*realloc)(void *ptr, size_t size);
