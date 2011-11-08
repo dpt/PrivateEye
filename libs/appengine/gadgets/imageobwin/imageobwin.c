@@ -169,8 +169,7 @@ error imageobwin__construct(imageobwin_factory_t *factory,
 
 Failure:
 
-  if (factory->menu)
-    menu_destroy(factory->menu);
+  menu_destroy(factory->menu);
 
   help__fin();
 
