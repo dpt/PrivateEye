@@ -16,7 +16,9 @@
 #include "oslib/osfscontrol.h"
 
 #include "appengine/types.h"
+#include "appengine/base/messages.h"
 #include "appengine/base/errors.h"
+#include "appengine/base/strings.h"
 #include "appengine/databases/tag-db.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image-observer.h"
@@ -167,6 +169,17 @@ static void tags__image_changed_callback(image_t              *image,
   case imageobserver_CHANGE_GAINED_FOCUS:
     if (LOCALS.image != image)
     {
+      char        scratch[32];
+      const char *leaf;
+      char        title[256];
+
+      /* set its title, including the leafname of the image */
+
+      sprintf(scratch, "tagcloud.title");
+      leaf = str_leaf(image->file_name);
+      sprintf(title, message0(scratch), leaf);
+      window_set_title_text(tag_cloud__get_window_handle(LOCALS.tc), title);
+
       tag_cloud__shade(LOCALS.tc, 0);
 
       err = tags_common__set_highlights(LOCALS.tc, image);
@@ -188,6 +201,17 @@ static void tags__image_changed_callback(image_t              *image,
   case imageobserver_CHANGE_ABOUT_TO_DESTROY:
     if (LOCALS.image == image)
     {
+      char        scratch[32];
+      const char *leaf;
+      char        title[256];
+
+      /* set its title, including the leafname of the image */
+
+      sprintf(scratch, "tagcloud.title");
+      leaf = "(none)";
+      sprintf(title, message0(scratch), leaf);
+      window_set_title_text(tag_cloud__get_window_handle(LOCALS.tc), title);
+
       LOCALS.image = NULL;
 
       tags_common__clear_highlights(LOCALS.tc);
@@ -371,6 +395,17 @@ error tags__open(image_t *image)
   }
   else
   {
+    char        scratch[32];
+    const char *leaf;
+    char        title[256];
+
+    /* set its title, including the leafname of the image */
+
+    sprintf(scratch, "tagcloud.title");
+    leaf = str_leaf(image->file_name);
+    sprintf(title, message0(scratch), leaf);
+    window_set_title_text(tag_cloud__get_window_handle(LOCALS.tc), title);
+
     /* opening for the first(?) time */
 
     err = tags_common__set_tags(LOCALS.tc);

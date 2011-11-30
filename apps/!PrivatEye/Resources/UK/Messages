@@ -105,6 +105,7 @@ adobe.unknown:Unknown 8BIM
 
 # Tag Cloud window
 
+tagcloud.title:Tags of %s
 tagcloud.stats:%d tags applied %d times
 
 # Warnings
