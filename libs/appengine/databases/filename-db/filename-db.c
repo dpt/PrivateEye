@@ -22,12 +22,24 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
+#include "appengine/datastruct/dict.h"
 #include "appengine/datastruct/hash.h"
 #include "appengine/base/strings.h"
 
 #include "appengine/databases/filename-db.h"
 
 static const char signature[] = "1";
+
+/* ----------------------------------------------------------------------- */
+
+/* Hash bins. */
+#define HASHSIZE 97
+
+/* Long enough to hold any database line. */
+#define READBUFSZ 1024
+
+/* Size of buffer used when writing out the database. */
+#define WRITEBUFSZ 1024
 
 /* ----------------------------------------------------------------------- */
 
@@ -114,7 +126,9 @@ struct filenamedb_t
 {
   char             *filename;
 
-  hash_t           *ids;
+  dict_t           *ids;
+  dict_t           *filenames;
+  hash_t           *hash;
 
   struct
   {
@@ -163,7 +177,7 @@ static error filenamedb__read_db(filenamedb_t *db)
   int     occupied;
   int     used;
 
-  bufsz = 1024;
+  bufsz = READBUFSZ;
   buf = malloc(bufsz);
   if (buf == NULL)
     return error_OOM;
@@ -243,11 +257,18 @@ Failure:
   return err;
 }
 
+static void no_destroy(void *string)
+{
+  NOT_USED(string);
+}
+
 error filenamedb__open(const char *filename, filenamedb_t **pdb)
 {
   error         err;
   char         *filenamecopy = NULL;
-  hash_t       *ids          = NULL;
+  dict_t       *ids          = NULL;
+  dict_t       *filenames    = NULL;
+  hash_t       *hash         = NULL;
   filenamedb_t *db           = NULL;
 
   filenamecopy = str_dup(filename);
@@ -257,12 +278,32 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
     goto Failure;
   }
 
-  err = hash__create(97,
+  /* I could use the same dict for both the IDs and the filenames, but as I'm
+   * writing this I'm noticing that the IDs are presently always of a
+   * constant length. They could therefore live in their own dedicated array.
+   * Perhaps a specialised version of dict with fixed-length entries. So I'm
+   * keeping them separate for now. */
+
+  ids = dict__create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
+  if (ids == NULL)
+  {
+    err = error_OOM;
+    goto Failure;
+  }
+
+  filenames = dict__create_tuned(32768 / 80, 32768); /* est. 80 chars/entry */
+  if (filenames == NULL)
+  {
+    err = error_OOM;
+    goto Failure;
+  }
+
+  err = hash__create(HASHSIZE,
                      NULL, /* use default hash function */
                      NULL, /* use default string compare */
-                     NULL, /* use default destroy_key function */
-                     NULL, /* use default destroy_value function */
-                    &ids);
+                     no_destroy,
+                     no_destroy,
+                     &hash);
   if (err)
     goto Failure;
 
@@ -275,6 +316,8 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
 
   db->filename    = filenamecopy;
   db->ids         = ids;
+  db->filenames   = filenames;
+  db->hash        = hash;
 
   /* read the database in */
   err = filenamedb__read_db(db);
@@ -289,7 +332,9 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
 Failure:
 
   free(db);
-  hash__destroy(ids);
+  hash__destroy(hash);
+  dict__destroy(filenames);
+  dict__destroy(ids);
   free(filenamecopy);
 
   return err;
@@ -302,7 +347,9 @@ void filenamedb__close(filenamedb_t *db)
 
   filenamedb__commit(db);
 
-  hash__destroy(db->ids);
+  hash__destroy(db->hash);
+  dict__destroy(db->filenames);
+  dict__destroy(db->ids);
 
   free(db->filename);
 
@@ -344,25 +391,26 @@ error filenamedb__commit(filenamedb_t *db)
   struct commit_state state;
 
   state.db = db;
+  state.f  = 0;
 
-  state.buf = malloc(1024); // Careful Now
+  state.buf = malloc(WRITEBUFSZ);
   if (state.buf == NULL)
   {
     err = error_OOM;
     goto Failure;
   }
 
-  state.bufsz = 1024;
+  state.bufsz = WRITEBUFSZ;
 
   state.f = osfind_openoutw(osfind_NO_PATH, db->filename, NULL);
   if (state.f == 0)
     return error_FILENAMEDB_COULDNT_OPEN_FILE;
 
-  err =  filenamedb__write_header(state.f);
+  err = filenamedb__write_header(state.f);
   if (err)
     goto Failure;
 
-  hash__walk(db->ids, commit_cb, &state);
+  hash__walk(db->hash, commit_cb, &state);
 
   err = error_OK;
 
@@ -386,25 +434,31 @@ error filenamedb__add(filenamedb_t *db,
                       const char   *id,
                       const char   *filename)
 {
-  char *key;
-  char *val;
+  error       err;
+  dict_index  kindex;
+  dict_index  vindex;
+  const char *kval;
+  const char *vval;
 
-  key = str_dup(id);
-  val = str_dup(filename);
-  if (key == NULL || val == NULL)
-  {
-    free(key);
-    free(val);
-    return error_OOM;
-  }
+  err = dict__add(db->ids, id, &kindex);
+  if (err == error_DICT_NAME_EXISTS)
+    err = error_OK;
+  else if (err)
+    return err;
+
+  kval = dict__string(db->ids, kindex);
+
+  err = dict__add(db->filenames, filename, &vindex);
+  if (err == error_DICT_NAME_EXISTS)
+    err = error_OK;
+  else if (err)
+    return err;
+
+  vval = dict__string(db->filenames, vindex);
 
   /* this will update the value if the key is already present */
 
-  hash__insert(db->ids, key, val);
-
-#ifndef NDEBUG
-  printf("filenamedb__add: added %s:%s\n", id, filename);
-#endif
+  hash__insert(db->hash, (char *) kval, (char *) vval);
 
   return error_OK;
 }
@@ -414,7 +468,7 @@ error filenamedb__add(filenamedb_t *db,
 const char *filenamedb__get(filenamedb_t *db,
                             const char   *id)
 {
-  return hash__lookup(db->ids, id);
+  return hash__lookup(db->hash, id);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -429,7 +483,7 @@ static int prune_cb(const void *key, const void *value, void *arg)
   if (object_type == fileswitch_NOT_FOUND)
   {
     /* if not, delete it */
-    hash__remove(db->ids, key);
+    hash__remove(db->hash, key);
   }
 
   return 0;
@@ -437,7 +491,7 @@ static int prune_cb(const void *key, const void *value, void *arg)
 
 error filenamedb__prune(filenamedb_t *db)
 {
-  hash__walk(db->ids, prune_cb, db);
+  hash__walk(db->hash, prune_cb, db);
 
   return error_OK;
 }

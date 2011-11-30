@@ -72,60 +72,1062 @@ test: to string and length
 5 is 'pris' (length 4)
 6 is 'sebastian' (length 9)
 test: delete
-test: add
-adding 'deckard'... as 7
-adding 'batty'... as 8
-adding 'rachael'... as 9
-adding 'gaff'... as 10
-adding 'bryant'... as 11
-adding 'pris'... as 12
-adding 'sebastian'... as 13
-adding 'batty'... already exists as 8
-adding 'bryant'... already exists as 11
-adding 'deckard'... already exists as 7
-adding 'gaff'... already exists as 10
-adding 'pris'... already exists as 12
-adding 'rachael'... already exists as 9
-adding 'sebastian'... already exists as 13
-test: to string
-7 is 'deckard'
-8 is 'batty'
-9 is 'rachael'
-10 is 'gaff'
-11 is 'bryant'
-12 is 'pris'
-13 is 'sebastian'
-test: rename
-adding 'deckard'... already exists as 7
-renaming index 7 to 'fred'... ok
-adding 'batty'... already exists as 8
-renaming index 8 to 'barney'... ok
-adding 'rachael'... already exists as 9
-renaming index 9 to 'wilma'... ok
-adding 'gaff'... already exists as 10
-renaming index 10 to 'betty'... ok
-adding 'bryant'... already exists as 11
-renaming index 11 to 'pebbles'... ok
-adding 'pris'... already exists as 12
-renaming index 12 to 'bamm bamm'... ok
-adding 'sebastian'... already exists as 13
-renaming index 13 to 'fred'... already exists!
-test: to string
-7 is 'fred'
-8 is 'barney'
-9 is 'wilma'
-10 is 'betty'
-11 is 'pebbles'
-12 is 'bamm bamm'
-13 is 'sebastian'
 test: to string and length
-7 is 'fred' (length 4)
-8 is 'barney' (length 6)
-9 is 'wilma' (length 5)
-10 is 'betty' (length 5)
-11 is 'pebbles' (length 7)
-12 is 'bamm bamm' (length 9)
-13 is 'sebastian' (length 9)
+test: add
+adding 'deckard'... as 0
+adding 'batty'... as 1
+adding 'rachael'... as 2
+adding 'gaff'... as 3
+adding 'bryant'... as 4
+adding 'pris'... as 5
+adding 'sebastian'... as 6
+adding 'batty'... already exists as 1
+adding 'bryant'... already exists as 4
+adding 'deckard'... already exists as 0
+adding 'gaff'... already exists as 3
+adding 'pris'... already exists as 5
+adding 'rachael'... already exists as 2
+adding 'sebastian'... already exists as 6
+test: to string
+0 is 'deckard'
+1 is 'batty'
+2 is 'rachael'
+3 is 'gaff'
+4 is 'bryant'
+5 is 'pris'
+6 is 'sebastian'
+test: rename
+adding 'deckard'... already exists as 0
+renaming index 0 to 'fred'... ok
+adding 'batty'... already exists as 1
+renaming index 1 to 'barney'... ok
+adding 'rachael'... already exists as 2
+renaming index 2 to 'wilma'... ok
+adding 'gaff'... already exists as 3
+renaming index 3 to 'betty'... ok
+adding 'bryant'... already exists as 4
+renaming index 4 to 'pebbles'... ok
+adding 'pris'... already exists as 5
+renaming index 5 to 'bamm bamm'... ok
+adding 'sebastian'... already exists as 6
+renaming index 6 to 'fred'... already exists!
+test: to string
+0 is 'fred'
+1 is 'barney'
+2 is 'wilma'
+3 is 'betty'
+4 is 'pebbles'
+5 is 'bamm bamm'
+6 is 'sebastian'
+test: to string and length
+0 is 'fred' (length 4)
+1 is 'barney' (length 6)
+2 is 'wilma' (length 5)
+3 is 'betty' (length 5)
+4 is 'pebbles' (length 7)
+5 is 'bamm bamm' (length 9)
+6 is 'sebastian' (length 9)
+test: random
+adding 'jdop'... as 9
+adding 'ab'... as 11
+adding 'ycl'... as 12
+adding 'brbee'... as 13
+adding 'bscln'... as 14
+adding 'sjqy'... as 10
+adding 'uq'... as 15
+adding 'qfqw'... as 16
+adding 'w'... as 17
+adding 'dwt'... as 18
+adding 'oi'... as 19
+adding 'ynopb'... as 20
+adding 'jw'... as 21
+adding 'tvf'... as 22
+adding 'pznd'... as 23
+adding 'go'... as 24
+adding 'z'... as 25
+adding 'etv'... as 26
+adding 'v'... as 27
+adding 'u'... as 28
+adding 'vng'... as 29
+adding 'fkvfn'... as 30
+adding 'le'... as 31
+adding 'oye'... as 32
+adding 'tlh'... as 33
+adding 'ekt'... as 34
+adding 'umgq'... as 35
+adding 'bgji'... as 36
+adding 'udz'... as 37
+adding 'dvtvp'... as 38
+adding 'mzvrg'... as 39
+adding 'c'... as 40
+adding 'md'... as 41
+adding 'okz'... as 42
+adding 'u'... already exists as 28
+adding 'qlgb'... as 43
+adding 'tm'... as 44
+adding 'vmr'... as 45
+adding 'ce'... as 46
+adding 'w'... already exists as 17
+adding 'kwh'... as 47
+adding 'az'... as 48
+adding 'womwy'... as 49
+adding 'uyhm'... as 50
+adding 'rlk'... as 51
+adding 'vde'... as 52
+adding 'janbu'... as 53
+adding 'yx'... as 54
+adding 'fsqs'... as 55
+adding 'ivew'... as 56
+adding 'qrvul'... as 57
+adding 'lzsq'... as 58
+adding 'esfr'... as 59
+adding 'q'... as 60
+adding 'wtc'... as 61
+adding 'w'... already exists as 17
+adding 'y'... as 62
+adding 'berxy'... as 63
+adding 'taob'... as 64
+adding 'gr'... as 65
+adding 'mu'... as 66
+adding 'p'... as 67
+adding 'qgsb'... as 68
+adding 'zxvy'... as 69
+adding 'kviop'... as 70
+adding 'sc'... as 71
+adding 'quj'... as 72
+adding 'jwkj'... as 73
+adding 'sbew'... as 74
+adding 'kg'... as 75
+adding 'ugoq'... as 76
+adding 'xq'... as 77
+adding 'mc'... as 78
+adding 'p'... already exists as 67
+adding 'vd'... as 79
+adding 'suoze'... as 80
+adding 'w'... already exists as 17
+adding 'f'... as 81
+adding 'qwh'... as 82
+adding 'ucrih'... as 83
+adding 'zvebp'... as 84
+adding 'voq'... as 85
+adding 'ng'... as 86
+adding 'o'... as 87
+adding 't'... as 88
+adding 'fwz'... as 89
+adding 'zrw'... as 90
+adding 'q'... already exists as 60
+adding 'tok'... as 91
+adding 'nkxyj'... as 92
+adding 'qx'... as 93
+adding 'dpgjr'... as 94
+adding 'fckrk'... as 95
+adding 'tim'... as 96
+adding 'd'... as 97
+adding 'ybnnu'... as 98
+adding 'em'... as 99
+adding 'hgyvr'... as 100
+adding 'luu'... as 101
+adding 'kst'... as 102
+adding 'rp'... as 103
+adding 'xhu'... as 104
+adding 'mjjwx'... as 105
+adding 'uetfl'... as 106
+adding 'pu'... as 107
+adding 'j'... as 108
+adding 'n'... as 109
+adding 'fvze'... as 110
+adding 'hmlkt'... as 111
+adding 'ifd'... as 112
+adding 'spr'... as 113
+adding 'wqjo'... as 114
+adding 'ftzh'... as 115
+adding 'dm'... as 116
+adding 'aal'... as 117
+adding 'md'... already exists as 41
+adding 'mqq'... as 118
+adding 'jo'... as 119
+adding 'swpcq'... as 120
+adding 'qgmx'... as 121
+adding 'r'... as 122
+adding 'vrd'... as 123
+adding 'lwkqt'... as 124
+adding 'mliy'... as 125
+adding 'xz'... as 126
+adding 'seuqr'... as 127
+adding 'up'... as 128
+adding 'lw'... as 129
+adding 'lhyez'... as 130
+adding 'qo'... as 131
+adding 'px'... as 132
+adding 'ajuhe'... as 133
+adding 'xtkx'... as 134
+adding 've'... as 135
+adding 'hxlmy'... as 136
+adding 'iswnr'... as 137
+adding 'vbltn'... as 138
+adding 'r'... already exists as 122
+adding 'mbly'... as 139
+adding 'wktj'... as 140
+adding 's'... as 141
+adding 'mrkj'... as 142
+adding 'csx'... as 143
+adding 'cwvhx'... as 144
+adding 'xih'... as 145
+adding 'etjjj'... as 146
+adding 'y'... already exists as 62
+adding 'hkkv'... as 147
+adding 'tqqi'... as 148
+adding 'okwa'... as 149
+adding 'swwhn'... as 150
+adding 'iesz'... as 151
+adding 'vrmcb'... as 152
+adding 'm'... as 153
+adding 'jm'... as 154
+adding 'jnd'... as 155
+adding 'cmirl'... as 156
+adding 'upg'... as 157
+adding 'oa'... as 158
+adding 'a'... as 159
+adding 's'... already exists as 141
+adding 'r'... already exists as 122
+adding 'zfld'... as 160
+adding 'ygt'... as 161
+adding 'qqnnp'... as 162
+adding 'k'... as 163
+adding 'ux'... as 164
+adding 'bij'... as 165
+adding 'gep'... as 166
+adding 'h'... as 167
+adding 'vff'... as 168
+adding 'g'... as 169
+adding 'bybb'... as 170
+adding 'rphk'... as 171
+adding 'd'... already exists as 97
+adding 'glun'... as 172
+adding 'sgkij'... as 173
+adding 'bgw'... as 174
+adding 'kjc'... as 175
+adding 'bpnkc'... as 176
+adding 'uq'... already exists as 15
+adding 'bjso'... as 177
+adding 'lia'... as 178
+adding 'epeip'... as 179
+adding 'p'... already exists as 67
+adding 'nudj'... as 180
+adding 'haomw'... as 181
+adding 'h'... already exists as 167
+adding 'll'... as 182
+adding 'bo'... as 183
+adding 'afvmm'... as 184
+adding 'mnvi'... as 185
+adding 'b'... as 186
+adding 'yx'... already exists as 54
+adding 'ngovt'... as 187
+adding 'vnpvf'... as 188
+adding 'v'... already exists as 27
+adding 'xkmgt'... as 189
+adding 'sakm'... as 190
+adding 'ojhyi'... as 191
+adding 'miq'... as 192
+adding 'wg'... as 193
+adding 'mrd'... as 194
+adding 'xyo'... as 195
+adding 'hxh'... as 196
+adding 'fwhvz'... as 197
+adding 'e'... as 198
+adding 'rk'... as 199
+adding 'zgy'... as 200
+adding 'pviu'... as 201
+adding 'jnh'... as 202
+adding 'q'... already exists as 60
+adding 'hlfu'... as 203
+adding 'y'... already exists as 62
+adding 'vvu'... as 204
+adding 'evtqm'... as 205
+adding 'cqonq'... as 206
+adding 'gucb'... as 207
+adding 'dg'... as 208
+adding 'st'... as 209
+adding 'iwkaz'... as 210
+adding 'kq'... as 211
+adding 'clhc'... as 212
+adding 'nqh'... as 213
+adding 'wlz'... as 214
+adding 'dck'... as 215
+adding 'kwf'... as 216
+adding 'ygx'... as 217
+adding 'xo'... as 218
+adding 'ri'... as 219
+adding 'gok'... as 220
+adding 'aff'... as 221
+adding 'pq'... as 222
+adding 'xz'... already exists as 126
+adding 'ovq'... as 223
+adding 'pgbaz'... as 224
+adding 'b'... already exists as 186
+adding 'j'... already exists as 108
+adding 'sxtio'... as 225
+adding 'ydb'... as 226
+adding 'fa'... as 227
+adding 'nlha'... as 228
+adding 'j'... already exists as 108
+adding 'q'... already exists as 60
+adding 'njfqq'... as 229
+adding 'x'... as 230
+adding 'fgz'... as 231
+adding 'rznk'... as 232
+adding 'yvexp'... as 233
+adding 'vmhpc'... as 234
+adding 'qouaw'... as 235
+adding 'znai'... as 236
+adding 'zp'... as 237
+adding 'zydg'... as 238
+adding 'hw'... as 239
+adding 'kin'... as 240
+adding 'lda'... as 241
+adding 'r'... already exists as 122
+adding 'nq'... as 242
+adding 'oa'... already exists as 158
+adding 'xq'... already exists as 77
+adding 'bf'... as 243
+adding 'pjxd'... as 244
+adding 'z'... already exists as 25
+adding 'r'... already exists as 122
+adding 'urdm'... as 245
+adding 'mk'... as 246
+adding 'm'... already exists as 153
+adding 'a'... already exists as 159
+adding 'eiak'... as 247
+adding 'gm'... as 248
+adding 'tpg'... as 249
+adding 'zsvup'... as 250
+adding 'k'... already exists as 163
+adding 'r'... already exists as 122
+adding 'elwac'... as 251
+adding 'yexy'... as 252
+adding 'x'... already exists as 230
+adding 'y'... already exists as 62
+adding 'b'... already exists as 186
+adding 'b'... already exists as 186
+adding 'fbiq'... as 253
+adding 'u'... already exists as 28
+adding 'mv'... as 254
+adding 'qel'... as 255
+adding 'qx'... already exists as 93
+adding 'vfpn'... as 256
+adding 'snjjk'... as 257
+adding 'ozyhn'... as 258
+adding 'trr'... as 259
+adding 'zhr'... as 260
+adding 'tmw'... as 261
+adding 'k'... already exists as 163
+adding 'hh'... as 262
+adding 'h'... already exists as 167
+adding 'bmqpl'... as 263
+adding 'nyleb'... as 264
+adding 'xx'... as 265
+adding 'qhfc'... as 266
+adding 'h'... already exists as 167
+adding 'atz'... as 267
+adding 'a'... already exists as 159
+adding 'adzll'... as 268
+adding 'a'... already exists as 159
+adding 'q'... already exists as 60
+adding 'eiovr'... as 269
+adding 'iwvl'... as 270
+adding 'hc'... as 271
+adding 'kbmz'... as 272
+adding 'rbbic'... as 273
+adding 'swkzh'... as 274
+adding 'lsgl'... as 275
+adding 'zi'... as 276
+adding 'hafry'... as 277
+adding 'lbgf'... as 278
+adding 'mrx'... as 279
+adding 'rcu'... as 280
+adding 'jb'... as 281
+adding 'zclga'... as 282
+adding 'vx'... as 283
+adding 'u'... already exists as 28
+adding 'uf'... as 284
+adding 'advx'... as 285
+adding 'etc'... as 286
+adding 'zp'... already exists as 237
+adding 'mlu'... as 287
+adding 'fjbg'... as 288
+adding 'wsd'... as 289
+adding 'yft'... as 290
+adding 'hty'... as 291
+adding 'ihit'... as 292
+adding 'xx'... already exists as 265
+adding 'f'... already exists as 81
+adding 'fywa'... as 293
+adding 'ezzk'... as 294
+adding 'pyx'... as 295
+adding 'gyx'... as 296
+adding 'z'... already exists as 25
+adding 'jwat'... as 297
+adding 'qwsn'... as 298
+adding 'hlkj'... as 299
+adding 'nd'... as 300
+adding 't'... already exists as 88
+adding 'fuwde'... as 301
+adding 'dct'... as 302
+adding 'r'... already exists as 122
+adding 'hc'... already exists as 271
+adding 'ifda'... as 303
+adding 'kubt'... as 304
+adding 'waj'... as 305
+adding 'bbr'... as 306
+adding 'pgd'... as 307
+adding 'ltx'... as 308
+adding 's'... already exists as 141
+adding 'mbm'... as 309
+adding 'ubnmc'... as 310
+adding 'qy'... as 311
+adding 'n'... already exists as 109
+adding 'hl'... as 312
+adding 'x'... already exists as 230
+adding 'wltt'... as 313
+adding 'e'... already exists as 198
+adding 'bent'... as 314
+adding 'orrdj'... as 315
+adding 'qcry'... as 316
+adding 'sc'... already exists as 71
+adding 'yhp'... as 317
+adding 'yhh'... as 318
+adding 'arf'... as 319
+adding 'zm'... as 320
+adding 'eelq'... as 321
+adding 'kpif'... as 322
+adding 'fhqd'... as 323
+adding 'ivwjl'... as 324
+adding 'snzs'... as 325
+adding 'j'... already exists as 108
+adding 'pavx'... as 326
+adding 'wf'... as 327
+adding 'xw'... as 328
+adding 'td'... as 329
+adding 'ta'... as 330
+adding 'w'... already exists as 17
+adding 'usou'... as 331
+adding 'mv'... already exists as 254
+adding 'ajx'... as 332
+adding 'jntax'... as 333
+adding 'asc'... as 334
+adding 'yp'... as 335
+adding 'zhqe'... as 336
+adding 'au'... as 337
+adding 'ggyn'... as 338
+adding 'xvdhr'... as 339
+adding 'o'... already exists as 87
+adding 'i'... as 340
+adding 'za'... as 341
+adding 'fgqo'... as 342
+adding 'uco'... as 343
+adding 'j'... already exists as 108
+adding 'xme'... as 344
+adding 'kbcis'... as 345
+adding 'ckhwq'... as 346
+adding 'svjeh'... as 347
+adding 'a'... already exists as 159
+adding 'w'... already exists as 17
+adding 'hko'... as 348
+adding 'h'... already exists as 167
+adding 'lj'... as 349
+adding 'k'... already exists as 163
+adding 'znnuj'... as 350
+adding 'm'... already exists as 153
+adding 's'... already exists as 141
+adding 'ai'... as 351
+adding 'y'... already exists as 62
+adding 'z'... already exists as 25
+adding 'mzpeu'... as 352
+adding 'b'... already exists as 186
+adding 'h'... already exists as 167
+adding 'ni'... as 353
+adding 'xi'... as 354
+adding 'uds'... as 355
+adding 'asjfv'... as 356
+adding 'le'... already exists as 31
+adding 'r'... already exists as 122
+adding 'wpwnf'... as 357
+adding 'jzhzd'... as 358
+adding 'mtbmx'... as 359
+adding 'ueu'... as 360
+adding 'pio'... as 361
+adding 'rb'... as 362
+adding 'kyodq'... as 363
+adding 'jq'... as 364
+adding 'y'... already exists as 62
+adding 'omiu'... as 365
+adding 'yp'... already exists as 335
+adding 'qchz'... as 366
+adding 'emsoz'... as 367
+adding 'zw'... as 368
+adding 'ynrm'... as 369
+adding 'fbb'... as 370
+adding 'bwlv'... as 371
+adding 'twgb'... as 372
+adding 'rxgx'... as 373
+adding 'q'... already exists as 60
+adding 'yrx'... as 374
+adding 'bz'... as 375
+adding 'ktp'... as 376
+adding 'tlrru'... as 377
+adding 'wldak'... as 378
+adding 'z'... already exists as 25
+adding 'yka'... as 379
+adding 'edhzq'... as 380
+adding 'mz'... as 381
+adding 'sj'... as 382
+adding 'iyw'... as 383
+adding 'yryvs'... as 384
+adding 'nwkfs'... as 385
+adding 'k'... already exists as 163
+adding 'alee'... as 386
+adding 'tr'... as 387
+adding 'jrnyr'... as 388
+adding 'cp'... as 389
+adding 'he'... as 390
+adding 'nupzr'... as 391
+adding 'lhlnx'... as 392
+adding 'lf'... as 393
+adding 'kncn'... as 394
+adding 'h'... already exists as 167
+adding 'zi'... already exists as 276
+adding 'oo'... as 395
+adding 'tszyx'... as 396
+adding 'kylns'... as 397
+adding 'vw'... as 398
+adding 'ykxb'... as 399
+adding 'sdxcy'... as 400
+adding 'n'... already exists as 109
+adding 'blpua'... as 401
+adding 'tivvl'... as 402
+adding 'gl'... as 403
+adding 'wsxj'... as 404
+adding 'bv'... as 405
+adding 'rbg'... as 406
+adding 'uct'... as 407
+adding 'h'... already exists as 167
+adding 'j'... already exists as 108
+adding 'vfmr'... as 408
+adding 'ijfyw'... as 409
+adding 'lg'... as 410
+adding 'rscg'... as 411
+adding 'ks'... as 412
+adding 'wx'... as 413
+adding 'f'... already exists as 81
+adding 'lduw'... as 414
+adding 'jeh'... as 415
+adding 'ccnd'... as 416
+adding 'j'... already exists as 108
+adding 'tglr'... as 417
+adding 'yis'... as 418
+adding 'fybo'... as 419
+adding 'aok'... as 420
+adding 'udzho'... as 421
+adding 'jc'... as 422
+adding 'oekcc'... as 423
+adding 'uawx'... as 424
+adding 'bnh'... as 425
+adding 'lin'... as 426
+adding 'zneyt'... as 427
+adding 'vfx'... as 428
+adding 'frg'... as 429
+adding 'jtxmo'... as 430
+adding 'yfxpx'... as 431
+adding 'uwicv'... as 432
+adding 'wjeu'... as 433
+adding 'vx'... already exists as 283
+adding 'rkowc'... as 434
+adding 'q'... already exists as 60
+adding 'ykh'... as 435
+adding 'rszj'... as 436
+adding 'c'... already exists as 40
+adding 'mqeye'... as 437
+adding 'hcbj'... as 438
+adding 'hkyvq'... as 439
+adding 'roge'... as 440
+adding 'lu'... as 441
+adding 'z'... already exists as 25
+adding 'aylye'... as 442
+adding 'k'... already exists as 163
+adding 'dklo'... as 443
+adding 'rgs'... as 444
+adding 'iumlt'... as 445
+adding 'l'... as 446
+adding 'pns'... as 447
+adding 'okh'... as 448
+adding 'ssb'... as 449
+adding 'r'... already exists as 122
+adding 'o'... already exists as 87
+adding 're'... as 450
+adding 'k'... already exists as 163
+adding 'ttna'... as 451
+adding 'snij'... as 452
+adding 'dqhib'... as 453
+adding 'rscs'... as 454
+adding 'btlzv'... as 455
+adding 'a'... already exists as 159
+adding 'gh'... as 456
+adding 'ouf'... as 457
+adding 'g'... already exists as 169
+adding 'vat'... as 458
+adding 'kkd'... as 459
+adding 'ondp'... as 460
+adding 'o'... already exists as 87
+adding 'upjhh'... as 461
+adding 'aefj'... as 462
+adding 'bcrn'... as 463
+adding 'zgxr'... as 464
+adding 'vtn'... as 465
+adding 'ie'... as 466
+adding 'lf'... already exists as 393
+adding 'mfi'... as 467
+adding 'jqtew'... as 468
+adding 'qpk'... as 469
+adding 'yzq'... as 470
+adding 'ju'... as 471
+adding 'tcgu'... as 472
+adding 'eq'... as 473
+adding 'tib'... as 474
+adding 'iqmyl'... as 475
+adding 'rdg'... as 476
+adding 'pqxty'... as 477
+adding 'ivqa'... as 478
+adding 'nys'... as 479
+adding 'vogsn'... as 480
+adding 'w'... already exists as 17
+adding 'zx'... as 481
+adding 'uo'... as 482
+adding 'tphty'... as 483
+adding 'uj'... as 484
+adding 'nr'... as 485
+adding 'aoeg'... as 486
+adding 'nvig'... as 487
+adding 'bbcyj'... as 488
+adding 'osk'... as 489
+adding 'ihdwb'... as 490
+adding 'afkj'... as 491
+adding 'yuoze'... as 492
+adding 'g'... already exists as 169
+adding 'i'... already exists as 340
+adding 'guzqw'... as 493
+adding 'wyj'... as 494
+adding 'x'... already exists as 230
+adding 'taksf'... as 495
+adding 'odcqp'... as 496
+adding 'vb'... as 497
+adding 'htm'... as 498
+adding 'txf'... as 499
+adding 'wy'... as 500
+adding 'wh'... as 501
+adding 'youq'... as 502
+adding 'xuf'... as 503
+adding 'pnu'... as 504
+adding 'btgd'... as 505
+adding 'u'... already exists as 28
+adding 'wqzvq'... as 506
+adding 'svr'... as 507
+adding 'ddspm'... as 508
+adding 'ko'... as 509
+adding 'tb'... as 510
+adding 'xml'... as 511
+adding 'cdlqk'... as 512
+adding 'i'... already exists as 340
+adding 'b'... already exists as 186
+adding 'lcch'... as 513
+adding 'o'... already exists as 87
+adding 'satmm'... as 514
+adding 'ig'... as 515
+adding 'mv'... already exists as 254
+adding 'a'... already exists as 159
+adding 'y'... already exists as 62
+adding 'auzan'... as 516
+adding 'nkrfd'... as 517
+adding 'fp'... as 518
+adding 'gzs'... as 519
+adding 'ldadl'... as 520
+adding 'jp'... as 521
+adding 'z'... already exists as 25
+adding 's'... already exists as 141
+adding 'hff'... as 522
+adding 'flybl'... as 523
+adding 'zu'... as 524
+adding 'lqye'... as 525
+adding 'xgqs'... as 526
+adding 'dg'... already exists as 208
+adding 'ey'... as 527
+adding 'ksqqx'... as 528
+adding 'zmyz'... as 529
+adding 'zkj'... as 530
+adding 'vprp'... as 531
+adding 'bzsew'... as 532
+adding 'xe'... as 533
+adding 'gxy'... as 534
+adding 'jm'... already exists as 154
+adding 'fa'... already exists as 227
+adding 'fr'... as 535
+adding 'yafiw'... as 536
+adding 'edl'... as 537
+adding 'eziub'... as 538
+adding 'igbsd'... as 539
+adding 'tzk'... as 540
+adding 'ar'... as 541
+adding 'v'... already exists as 27
+adding 'jzf'... as 542
+adding 'm'... already exists as 153
+adding 'cdo'... as 543
+adding 'j'... already exists as 108
+adding 'bsel'... as 544
+adding 'vaxum'... as 545
+adding 'hb'... as 546
+adding 'z'... already exists as 25
+adding 'sgiby'... as 547
+adding 'ql'... as 548
+adding 'hrdd'... as 549
+adding 'rzeig'... as 550
+adding 'c'... already exists as 40
+adding 'bhdck'... as 551
+adding 'u'... already exists as 28
+adding 'xcj'... as 552
+adding 'tdm'... as 553
+adding 'awot'... as 554
+adding 'xbadr'... as 555
+adding 'raeih'... as 556
+adding 'reub'... as 557
+adding 'anivm'... as 558
+adding 'cer'... as 559
+adding 'vb'... already exists as 497
+adding 'lg'... already exists as 410
+adding 'i'... already exists as 340
+adding 'wgecv'... as 560
+adding 'kmgig'... as 561
+adding 'qdet'... as 562
+adding 'st'... already exists as 209
+adding 'ii'... as 563
+adding 'nx'... as 564
+adding 'c'... already exists as 40
+adding 'rtixm'... as 565
+adding 'itdr'... as 566
+adding 'megh'... as 567
+adding 'bkka'... as 568
+adding 'pj'... as 569
+adding 'dnt'... as 570
+adding 'e'... already exists as 198
+adding 'oodps'... as 571
+adding 'm'... already exists as 153
+adding 'eeq'... as 572
+adding 'rok'... as 573
+adding 'intir'... as 574
+adding 'o'... already exists as 87
+adding 'fy'... as 575
+adding 'ryo'... as 576
+adding 'xjjg'... as 577
+adding 'usx'... as 578
+adding 'of'... as 579
+adding 'rzdaf'... as 580
+adding 'k'... already exists as 163
+adding 'qui'... as 581
+adding 'xmvzg'... as 582
+adding 'lcuv'... as 583
+adding 'kppo'... as 584
+adding 'ofujx'... as 585
+adding 'eem'... as 586
+adding 'qguj'... as 587
+adding 'fe'... as 588
+adding 'p'... already exists as 67
+adding 'h'... already exists as 167
+adding 'n'... already exists as 109
+adding 'mo'... as 589
+adding 'yb'... as 590
+adding 'lpge'... as 591
+adding 'orqes'... as 592
+adding 'qrnap'... as 593
+adding 'hlmnq'... as 594
+adding 'a'... already exists as 159
+adding 'nyhlp'... as 595
+adding 'ieuiz'... as 596
+adding 'js'... as 597
+adding 'nod'... as 598
+adding 'xh'... as 599
+adding 'jzml'... as 600
+adding 'qa'... as 601
+adding 'tamzv'... as 602
+adding 'ilfo'... as 603
+adding 'r'... already exists as 122
+adding 'hg'... as 604
+adding 'gx'... as 605
+adding 'yiu'... as 606
+adding 'ynkg'... as 607
+adding 'tetl'... as 608
+adding 'bq'... as 609
+adding 'sysvn'... as 610
+adding 'wh'... already exists as 501
+adding 'mj'... as 611
+adding 'y'... already exists as 62
+adding 'r'... already exists as 122
+adding 'eo'... as 612
+adding 'k'... already exists as 163
+adding 'rowi'... as 613
+adding 'cbvp'... as 614
+adding 'msww'... as 615
+adding 'qpty'... as 616
+adding 'gx'... already exists as 605
+adding 'xwpmy'... as 617
+adding 'jy'... as 618
+adding 'mesqr'... as 619
+adding 'snadz'... as 620
+adding 'lzqpy'... as 621
+adding 'ov'... as 622
+adding 'nycaa'... as 623
+adding 'tnpct'... as 624
+adding 'rnhw'... as 625
+adding 'gt'... as 626
+adding 'bdso'... as 627
+adding 'arm'... as 628
+adding 'iw'... as 629
+adding 'lfvjf'... as 630
+adding 'i'... already exists as 340
+adding 'vt'... as 631
+adding 'au'... already exists as 337
+adding 'np'... as 632
+adding 'pej'... as 633
+adding 'rcj'... as 634
+adding 'xla'... as 635
+adding 'vtzmi'... as 636
+adding 'jo'... already exists as 119
+adding 'x'... already exists as 230
+adding 'k'... already exists as 163
+adding 'k'... already exists as 163
+adding 'lqgh'... as 637
+adding 'ztdt'... as 638
+adding 'krdc'... as 639
+adding 'ovbsd'... as 640
+adding 'mc'... already exists as 78
+adding 'fvyfd'... as 641
+adding 'immta'... as 642
+adding 'p'... already exists as 67
+adding 'jsw'... as 643
+adding 'pxflg'... as 644
+adding 'u'... already exists as 28
+adding 'p'... already exists as 67
+adding 'oqz'... as 645
+adding 'bjqoj'... as 646
+adding 'ledia'... as 647
+adding 'bwn'... as 648
+adding 'p'... already exists as 67
+adding 'm'... already exists as 153
+adding 'urjyh'... as 649
+adding 'rnwz'... as 650
+adding 'yk'... as 651
+adding 'ypfft'... as 652
+adding 'j'... already exists as 108
+adding 'h'... already exists as 167
+adding 'zbue'... as 653
+adding 'qdmyw'... as 654
+adding 'tsoa'... as 655
+adding 'sznt'... as 656
+adding 'qivor'... as 657
+adding 'cefg'... as 658
+adding 'hzapf'... as 659
+adding 'prrn'... as 660
+adding 'pq'... already exists as 222
+adding 'c'... already exists as 40
+adding 'kd'... as 661
+adding 'pm'... as 662
+adding 'q'... already exists as 60
+adding 'tgz'... as 663
+adding 'sd'... as 664
+adding 'nowje'... as 665
+adding 'xn'... as 666
+adding 'sgce'... as 667
+adding 'nymbd'... as 668
+adding 'xlkup'... as 669
+adding 'ylom'... as 670
+adding 'cfj'... as 671
+adding 'ww'... as 672
+adding 't'... already exists as 88
+adding 'g'... already exists as 169
+adding 's'... already exists as 141
+adding 'yaeke'... as 673
+adding 'k'... already exists as 163
+adding 'r'... already exists as 122
+adding 'rv'... as 674
+adding 'ecxmg'... as 675
+adding 'aywr'... as 676
+adding 'p'... already exists as 67
+adding 'w'... already exists as 17
+adding 'c'... already exists as 40
+adding 'f'... already exists as 81
+adding 'hn'... as 677
+adding 'fcn'... as 678
+adding 'amnf'... as 679
+adding 'pn'... as 680
+adding 'exwnu'... as 681
+adding 'qcjrw'... as 682
+adding 'bxtt'... as 683
+adding 'ecqt'... as 684
+adding 'qs'... as 685
+adding 'f'... already exists as 81
+adding 'sdh'... as 686
+adding 'yvs'... as 687
+adding 'fmyv'... as 688
+adding 'ro'... as 689
+adding 'xcdsr'... as 690
+adding 'u'... already exists as 28
+adding 'u'... already exists as 28
+adding 'uesoh'... as 691
+adding 'tq'... as 692
+adding 'fkk'... as 693
+adding 'abyne'... as 694
+adding 'yrplm'... as 695
+adding 'xv'... as 696
+adding 'ry'... as 697
+adding 'yffec'... as 698
+adding 'n'... already exists as 109
+adding 'iap'... as 699
+adding 'moppq'... as 700
+adding 'pqsut'... as 701
+adding 'jzujg'... as 702
+adding 'mh'... as 703
+adding 'zywoq'... as 704
+adding 'd'... already exists as 97
+adding 'no'... as 705
+adding 'j'... already exists as 108
+adding 'ghw'... as 706
+adding 'fzg'... as 707
+adding 'hkg'... as 708
+adding 'yvfl'... as 709
+adding 'wec'... as 710
+adding 'ztvz'... as 711
+adding 'g'... already exists as 169
+adding 'tced'... as 712
+adding 'fwj'... as 713
+adding 'nz'... as 714
+adding 'b'... already exists as 186
+adding 'avp'... as 715
+adding 'kemv'... as 716
+adding 'e'... already exists as 198
+adding 'kj'... as 717
+adding 'dn'... as 718
+adding 'cvk'... as 719
+adding 'nnctk'... as 720
+adding 'vtib'... as 721
+adding 'd'... already exists as 97
+adding 'fg'... as 722
+adding 'r'... already exists as 122
+adding 'lxx'... as 723
+adding 'ii'... already exists as 563
+adding 'acpfu'... as 724
+adding 'lg'... already exists as 410
+adding 'y'... already exists as 62
+adding 'qqj'... as 725
+adding 'qyb'... as 726
+adding 'yrmvp'... as 727
+adding 'rcgw'... as 728
+adding 'tttn'... as 729
+adding 'ncnr'... as 730
+adding 'eyf'... as 731
+adding 'rok'... already exists as 573
+adding 'q'... already exists as 60
+adding 'u'... already exists as 28
+adding 'invxc'... as 732
+adding 'j'... already exists as 108
+adding 'az'... already exists as 48
+adding 'ezx'... as 733
+adding 'a'... already exists as 159
+adding 'adr'... as 734
+adding 'ux'... already exists as 164
+adding 'kkpvt'... as 735
+adding 'nyuxx'... as 736
+adding 'h'... already exists as 167
+adding 'cits'... as 737
+adding 'j'... already exists as 108
+adding 'w'... already exists as 17
+adding 'y'... already exists as 62
+adding 'wlul'... as 738
+adding 'ihsuo'... as 739
+adding 'nvisw'... as 740
+adding 'kwlp'... as 741
+adding 'w'... already exists as 17
+adding 'c'... already exists as 40
+adding 'hqe'... as 742
+adding 'clj'... as 743
+adding 'ekim'... as 744
+adding 'ywdrr'... as 745
+adding 'rtzq'... as 746
+adding 'mtpy'... as 747
+adding 'ulrdq'... as 748
+adding 'lsm'... as 749
+adding 'gol'... as 750
+adding 'pa'... as 751
+adding 'gz'... as 752
+adding 'kwiys'... as 753
+adding 'vwmp'... as 754
+adding 'xuk'... as 755
+adding 't'... already exists as 88
+adding 'kyyjq'... as 756
+adding 'npbz'... as 757
+adding 'gjp'... as 758
+adding 'pm'... already exists as 662
+adding 'hddjq'... as 759
+adding 'sk'... as 760
+adding 'yryys'... as 761
+adding 'k'... already exists as 163
+adding 'k'... already exists as 163
+adding 'n'... already exists as 109
+adding 'urzb'... as 762
+adding 'fcmx'... as 763
+adding 'iipr'... as 764
+adding 'cz'... as 765
+adding 'xcc'... as 766
+adding 'cx'... as 767
+adding 'jjjw'... as 768
+adding 'djcp'... as 769
+adding 'ua'... as 770
+adding 'brwla'... as 771
+adding 'ycp'... as 772
+adding 'v'... already exists as 27
+adding 'txu'... as 773
+adding 'fvq'... as 774
+adding 'u'... already exists as 28
+adding 'r'... already exists as 122
+adding 'qfvk'... as 775
+adding 'px'... already exists as 132
+adding 'qhwvb'... as 776
+adding 'ucn'... as 777
+adding 'zdf'... as 778
+adding 'sbjk'... as 779
+adding 'gr'... already exists as 65
+adding 'u'... already exists as 28
+adding 'd'... already exists as 97
+adding 'vuuwt'... as 780
+adding 'ww'... already exists as 672
+adding 'c'... already exists as 40
+adding 'igeal'... as 781
+adding 'afjbk'... as 782
+adding 'fg'... already exists as 722
+adding 'vm'... as 783
+adding 'dur'... as 784
+adding 'ocirb'... as 785
+adding 'd'... already exists as 97
+adding 'dbct'... as 786
+adding 'c'... already exists as 40
+adding 'chif'... as 787
+adding 'dozk'... as 788
+adding 'bvx'... as 789
+adding 'zj'... as 790
+adding 'lixsp'... as 791
+adding 'emt'... as 792
+adding 'qjvhv'... as 793
+adding 'ptces'... as 794
+adding 'npsqt'... as 795
+adding 'pj'... already exists as 569
+adding 'wil'... as 796
+adding 'zvzcz'... as 797
 
 >> hash tests
 test: create
@@ -158,13 +1160,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-0001d7a8: sebastian
-0001d784: pris
-0001d760: bryant
-0001d73c: gaff
-0001d718: rachael
-0001d6f4: batty
-0001d6d0: deckard
+0001dea0: sebastian
+0001de7c: pris
+0001de58: bryant
+0001de34: gaff
+0001de10: rachael
+0001ddec: batty
+0001ddc8: deckard
 
 >> ntree tests
 test: build tree
@@ -10717,17 +11719,22 @@ test: filing: dirscan
 @./svn
 @.AETest
 @.app
+@.array_grow_idea
 @.base
 @.databases
 @.datastruct
 @.dialogues
+@.dictdiff
 @.gadgets
 @.geom
+@.GNUmakefile
 @.graphics
 @.h
 @.io
 @.Makefile
+@.MakefileG
 @.MakeMake
+@.MakeMakeG
 @.net
 @.o
 @.objs-debug
@@ -10735,11 +11742,16 @@ test: filing: dirscan
 @.objs-module
 @.objs-normal
 @.odf
+@.odfg
+@.og
 @.om
+@.omg
 @.output
 @.TemplateMF
+@.TemplateMFG
 @.test
 @.text
+@.thumbnail-diff
 @.vdu
 @.wimp
 
@@ -12970,9 +13982,9 @@ test: pack (array mode)
 
 Tests completed: 14/14 tests passed.
 
-Fortify: Statistics at test.main.c.main.135
+Fortify: Statistics at test.main.c.main.134
          Memory currently allocated: 0 bytes in 0 blocks
-         Maximum memory allocated at one time: 18431 bytes in 156 blocks
-         There have been 2178 allocations and 2178 deallocations
-         There was a total of 75145 bytes allocated
-         The average allocation was 34 bytes
+         Maximum memory allocated at one time: 47132 bytes in 1037 blocks
+         There have been 3174 allocations and 3174 deallocations
+         There was a total of 168099 bytes allocated
+         The average allocation was 52 bytes

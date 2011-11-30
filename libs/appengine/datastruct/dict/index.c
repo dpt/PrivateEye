@@ -36,21 +36,27 @@ dict_index dict__index_and_len(dict_t *d, const char *string, size_t *len)
 
 dict_index dict__index_with_len(dict_t *d, const char *string, size_t len)
 {
-  data *end;
-  data *e;
+  locpool *pend;
+  locpool *p;
 
   assert(d);
   assert(string);
 
-  /* don't assume there's a terminator following 'string' */
+  /* linear search every locpool until found */
 
-  /* linear search */
+  pend = d->locpools + d->l_used;
+  for (p = d->locpools; p < pend; p++)
+  {
+    loc *lend;
+    loc *l;
 
-  end = d->data + d->d_used;
-  for (e = d->data; e < end; e++)
-    if (e->length - 1 == len &&
-        memcmp(d->strings + e->offset, string, len) == 0)
-      return e - d->data;
+    /* don't assume there's a terminator following 'string' */
+
+    lend = p->locs + p->used;
+    for (l = p->locs; l < lend; l++)
+      if (l->length - 1 == len && memcmp(l->ptr, string, len) == 0)
+        return ((p - d->locpools) << d->log2locpoolsz) + (l - p->locs);
+  }
 
   return -1;
 }

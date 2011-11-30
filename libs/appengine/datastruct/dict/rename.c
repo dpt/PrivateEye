@@ -6,65 +6,45 @@
 #include <assert.h>
 #include <string.h>
 
-#include "oslib/types.h"
-
 #include "appengine/datastruct/dict.h"
 
 #include "impl.h"
 
-error dict__rename(dict_t *d, dict_index index, const char *string)
+error dict__rename(dict_t *d, dict_index idx, const char *string)
 {
-  error err;
-  int   newlen;
-  int   i;
-  int   oldlen;
-  char *ds;
+  error       err;
+  dict_index  newidx;
+  loc        *p, *q;
+  loc         t;
 
   assert(d);
   assert(string);
 
-  if ((unsigned int) index >= d->d_used)
+  if (!VALID(idx))
     return error_DICT_OUT_OF_RANGE;
 
-  newlen = strlen(string);
-
-  /* does the new name already exist in the dict? */
-
-  i = dict__index_with_len(d, string, newlen);
-  if (i >= 0)
+  err = dict__add(d, string, &newidx);
+  if (err == error_DICT_NAME_EXISTS && newidx == idx)
     /* renaming an index to its existing name is just ignored */
-    return (i == index) ? error_OK : error_DICT_NAME_EXISTS;
+    return error_OK;
+  else if (err)
+    return err;
 
-  oldlen = d->data[index].length - 1; /* uncount terminator */
+#ifndef NDEBUG
+  /* scribble over the deleted copy */
+  memset(PTR(idx), 'x', LENGTH(idx) - 1);
+#endif
 
-  if (newlen > oldlen)
-  {
-    /* need (newlen - oldlen) bytes spare */
-    err = dict__ensure_string_space(d, newlen - oldlen);
-    if (err)
-      return err;
-  }
+  dict__delete_index(d, idx);
 
-  ds = d->strings + d->data[index].offset;
+  /* now transpose idx and newidx */
 
-  if (newlen != oldlen)
-    memmove(ds + newlen + 1,
-            ds + oldlen + 1,
-            d->s_used - (d->data[index].offset + oldlen + 1));
+  p = &INDEXTOLOC(idx);
+  q = &INDEXTOLOC(newidx);
 
-  memcpy(ds, string, newlen);
-  ds[newlen] = '\0';
-
-  if (newlen != oldlen)
-    d->s_used += newlen - oldlen;
-
-  d->data[index].length = newlen + 1; /* count terminator */
-
-  /* shuffle all the affected pointers forward */
-
-  for (i = 0; i < d->d_used; i++)
-    if (d->strings + d->data[i].offset > ds)
-      d->data[i].offset += newlen - oldlen;
+  t = *p;
+  *p = *q;
+  *q = t;
 
   return error_OK;
 }

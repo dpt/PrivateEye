@@ -10,21 +10,26 @@
 
 #include "impl.h"
 
-const char *dict__string_and_len(dict_t *d, size_t *len, dict_index index)
+const char *dict__string_and_len(dict_t *d, size_t *len, dict_index idx)
 {
+  int length;
+
   assert(d);
 
-  if (!d->strings)
+  if (!d->locpools)
     return NULL; /* empty dict */
 
-  if ((unsigned int) index >= d->d_used)
+  assert(d->l_used >= 1);
+
+  if (!VALID(idx))
     return NULL; /* out of range */
 
-  if (d->data[index].length < 0)
+  length = LENGTH(idx);
+  if (length < 0)
     return NULL; /* deleted */
 
   if (len)
-    *len = d->data[index].length - 1; /* -1 for terminator */
+    *len = length - 1; /* -1 to account for terminator */
 
-  return d->strings + d->data[index].offset;
+  return PTR(idx);
 }

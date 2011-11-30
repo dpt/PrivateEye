@@ -141,13 +141,14 @@ struct tagdb
 {
   char                    *filename;
 
+  dict_t                  *ids;
   dict_t                  *tags; /* indexes tag names */
 
   struct tagdb__tag_entry *counts;
   int                      c_used;
   int                      c_allocated;
 
-  hash_t                  *ids; /* maps ids to bitvecs holding tag indices */
+  hash_t                  *hash; /* maps ids to bitvecs holding tag indices */
 
   struct
   {
@@ -310,12 +311,18 @@ Failure:
   return err;
 }
 
+static void no_destroy(void *string)
+{
+  NOT_USED(string);
+}
+
 error tagdb__open(const char *filename, tagdb **pdb)
 {
   error   err;
   char   *filenamecopy = NULL;
+  dict_t *ids          = NULL;
   dict_t *tags         = NULL;
-  hash_t *ids          = NULL;
+  hash_t *hash         = NULL;
   tagdb  *db           = NULL;
 
   assert(filename);
@@ -328,7 +335,14 @@ error tagdb__open(const char *filename, tagdb **pdb)
     goto Failure;
   }
 
-  tags = dict__create();
+  ids = dict__create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
+  if (ids == NULL)
+  {
+    err = error_OOM;
+    goto Failure;
+  }
+
+  tags = dict__create_tuned(1536 / 170, 1536); /* est. 9 chars/entry */
   if (tags == NULL)
   {
     err = error_OOM;
@@ -338,9 +352,9 @@ error tagdb__open(const char *filename, tagdb **pdb)
   err = hash__create(HASHSIZE,
                      NULL, /* use default hash function */
                      NULL, /* use default string compare */
-                     NULL, /* use default destroy_key function */
+                     no_destroy,
                      destroy_hash_value,
-                    &ids);
+                    &hash);
   if (err)
     goto Failure;
 
@@ -352,11 +366,12 @@ error tagdb__open(const char *filename, tagdb **pdb)
   }
 
   db->filename    = filenamecopy;
+  db->ids         = ids;
   db->tags        = tags;
   db->counts      = NULL;
   db->c_used      = 0;
   db->c_allocated = 0;
-  db->ids         = ids;
+  db->hash        = hash;
 
   /* read the database in */
   err = tagdb__read_db(db);
@@ -371,8 +386,9 @@ error tagdb__open(const char *filename, tagdb **pdb)
 Failure:
 
   free(db);
-  hash__destroy(ids);
+  hash__destroy(hash);
   dict__destroy(tags);
+  dict__destroy(ids);
   free(filenamecopy);
 
   return err;
@@ -385,9 +401,10 @@ void tagdb__close(tagdb *db)
 
   tagdb__commit(db);
 
-  hash__destroy(db->ids);
+  hash__destroy(db->hash);
   free(db->counts);
   dict__destroy(db->tags);
+  dict__destroy(db->ids);
 
   free(db->filename);
 
@@ -478,7 +495,7 @@ error tagdb__commit(tagdb *db)
   if (err)
     goto Failure;
 
-  hash__walk(db->ids, commit_cb, &state);
+  hash__walk(db->hash, commit_cb, &state);
 
   err = error_OK;
 
@@ -535,7 +552,7 @@ error tagdb__add(tagdb *db, const char *name, tagdb__tag *ptag)
     return err;
 
   /* use up all the entries until we run out of space. when we run out then
-   * go hunting for empty entries before extending the block.*/
+   * go hunting for empty entries before extending the block. */
 
   if (db->c_used >= db->c_allocated) /* out of space? */
   {
@@ -713,6 +730,7 @@ error tagdb__tagtoname(tagdb *db, tagdb__tag tag, char *buf, size_t bufsz)
 
 error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
 {
+  error     err;
   bitvec_t *val;
   int       inc;
 
@@ -724,7 +742,7 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
 
   inc = 1; /* set this if it's a new tagging */
 
-  val = hash__lookup(db->ids, id);
+  val = hash__lookup(db->hash, id);
   if (val)
   {
     /* update */
@@ -736,9 +754,15 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
   }
   else
   {
-    char *key;
+    dict_index index;
 
     /* create */
+
+    err = dict__add(db->ids, id, &index);
+    if (err == error_DICT_NAME_EXISTS)
+      err = error_OK;
+    else if (err)
+      return err;
 
     val = bitvec__create(1);
     if (val == NULL)
@@ -746,11 +770,7 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
 
     bitvec__set(val, tag);
 
-    key = str_dup(id);
-    if (key == NULL)
-      return error_OOM;
-
-    hash__insert(db->ids, key, val);
+    hash__insert(db->hash, (char *) dict__string(db->ids, index), val);
   }
 
   if (inc)
@@ -769,7 +789,7 @@ error tagdb__untagid(tagdb *db, const char *id, tagdb__tag tag)
   if (tag >= db->c_used || db->counts[tag].index == -1)
     return error_TAGDB_UNKNOWN_TAG;
 
-  val = hash__lookup(db->ids, id);
+  val = hash__lookup(db->hash, id);
   if (!val)
     return error_TAGDB_UNKNOWN_ID;
 
@@ -793,7 +813,7 @@ error tagdb__get_tags_for_id(tagdb *db, const char *id,
   assert(continuation);
   assert(tag);
 
-  v = hash__lookup(db->ids, id);
+  v = hash__lookup(db->hash, id);
   if (!v)
     return error_TAGDB_UNKNOWN_ID;
 
@@ -865,7 +885,7 @@ error tagdb__enumerate_ids(tagdb *db,
   state.count = 0;
   state.found = NULL;
 
-  if (hash__walk(db->ids, getid_cb, &state) < 0)
+  if (hash__walk(db->hash, getid_cb, &state) < 0)
   {
     size_t l;
 
@@ -923,7 +943,7 @@ error tagdb__enumerate_ids_by_tag(tagdb *db, tagdb__tag tag,
   state.found = NULL;
   state.tag   = tag;
 
-  if (hash__walk(db->ids, getidbytag_cb, &state) < 0)
+  if (hash__walk(db->hash, getidbytag_cb, &state) < 0)
   {
     size_t l;
 
@@ -1021,7 +1041,7 @@ error tagdb__enumerate_ids_by_tags(tagdb *db,
   state.want  = want;
   state.err   = error_OK;
 
-  if (hash__walk(db->ids, getidbytags_cb, &state) < 0)
+  if (hash__walk(db->hash, getidbytags_cb, &state) < 0)
   {
     size_t l;
 
@@ -1066,5 +1086,5 @@ void tagdb__forget(tagdb *db, const char *id)
   assert(db);
   assert(id);
 
-  hash__remove(db->ids, id);
+  hash__remove(db->hash, id);
 }
