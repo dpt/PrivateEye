@@ -1,4 +1,18 @@
 Starting tests.
+>> bitarr tests
+test: create
+test: set
+1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+97 bits set
+test: clear
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0 bits set
+test: toggle
+1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+97 bits set
+test: count
+97 bits set
+
 >> bitvec tests
 test: create
 test: set
@@ -1160,13 +1174,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-0001dea0: sebastian
-0001de7c: pris
-0001de58: bryant
-0001de34: gaff
-0001de10: rachael
-0001ddec: batty
-0001ddc8: deckard
+0001e170: sebastian
+0001e14c: pris
+0001e128: bryant
+0001e104: gaff
+0001e0e0: rachael
+0001e0bc: batty
+0001e098: deckard
 
 >> ntree tests
 test: build tree
@@ -13980,9 +13994,9 @@ test: unpack (array mode)
 test: pack (array mode)
 
 
-Tests completed: 14/14 tests passed.
+Tests completed: 15/15 tests passed.
 
-Fortify: Statistics at test.main.c.main.134
+Fortify: Statistics at test.main.c.main.136
          Memory currently allocated: 0 bytes in 0 blocks
          Maximum memory allocated at one time: 47132 bytes in 1037 blocks
          There have been 3174 allocations and 3174 deallocations

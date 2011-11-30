@@ -7,6 +7,7 @@
 
 typedef int (testfn)(void);
 
+extern int bitarr_test(void);
 extern int bitvec_test(void);
 extern int dict_test(void);
 extern int hash_test(void);
@@ -31,6 +32,7 @@ test;
 
 static const test tests[] =
 {
+  { "bitarr", bitarr_test },
   { "bitvec", bitvec_test },
   { "dict",   dict_test   },
   { "hash",   hash_test   },

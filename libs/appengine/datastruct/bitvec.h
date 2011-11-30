@@ -3,7 +3,7 @@
  * Purpose: Bit vectors
  * ----------------------------------------------------------------------- */
 
-/* Bit vectors are conceptually any length.
+/* Bit vectors can be any size.
  * The unallocated bits are treated as zero. */
 
 #ifndef APPENGINE_BITVEC_H
@@ -22,8 +22,9 @@ void bitvec__destroy(T *v);
 
 error bitvec__set(T *v, int bit);
 void bitvec__clear(T *v, int bit);
-int bitvec__get(const T *v, int bit);
 error bitvec__toggle(T *v, int bit);
+
+int bitvec__get(const T *v, int bit);
 
 /* Returns the length of the vector in bits. */
 int bitvec__length(const T *v);
