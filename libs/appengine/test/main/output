@@ -1,4 +1,12 @@
 Starting tests.
+>> array tests
+test: delete element
+test: delete elements
+test: squeeze elements
+test: squeeze elements variant 2
+test: stretch elements
+test: stretch elements variant 2
+
 >> bitarr tests
 test: create
 test: set
@@ -1174,13 +1182,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-0001e170: sebastian
-0001e14c: pris
-0001e128: bryant
-0001e104: gaff
-0001e0e0: rachael
-0001e0bc: batty
-0001e098: deckard
+0001eb80: sebastian
+0001eb5c: pris
+0001eb38: bryant
+0001eb14: gaff
+0001eaf0: rachael
+0001eacc: batty
+0001eaa8: deckard
 
 >> ntree tests
 test: build tree
@@ -11731,10 +11739,12 @@ test: destroy
 >> filing tests
 test: filing: dirscan
 @./svn
+@./svnignore
 @.AETest
 @.app
 @.array_grow_idea
 @.base
+@.bitarrdiff/txt
 @.databases
 @.datastruct
 @.dialogues
@@ -11760,7 +11770,6 @@ test: filing: dirscan
 @.og
 @.om
 @.omg
-@.output
 @.TemplateMF
 @.TemplateMFG
 @.test
@@ -11768,6 +11777,7 @@ test: filing: dirscan
 @.thumbnail-diff
 @.vdu
 @.wimp
+@.x
 
 >> font tests
 test: select
@@ -13994,9 +14004,9 @@ test: unpack (array mode)
 test: pack (array mode)
 
 
-Tests completed: 15/15 tests passed.
+Tests completed: 16/16 tests passed.
 
-Fortify: Statistics at test.main.c.main.136
+Fortify: Statistics at test.main.c.main.138
          Memory currently allocated: 0 bytes in 0 blocks
          Maximum memory allocated at one time: 47132 bytes in 1037 blocks
          There have been 3174 allocations and 3174 deallocations

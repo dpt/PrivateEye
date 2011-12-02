@@ -5,7 +5,8 @@
 #include "appengine/datastruct/array.h"
 
 /* Periodically wipe regions within the specified block. */
-static void array_memset_stride(unsigned char *base, int nelems, size_t width, int value)
+static void array_memset_stride(unsigned char *base, int nelems,
+                                size_t width, size_t stride, int value)
 {
   /* for certain values the alignment of base is predictable so that would
    * could conceivably move out of memset if it proves to be an overhead */
@@ -16,7 +17,7 @@ static void array_memset_stride(unsigned char *base, int nelems, size_t width, i
   while (nelems--)
   {
     memset(base, value, width);
-    base += width;
+    base += stride;
   }
 }
 
@@ -28,7 +29,8 @@ static void array_memset_stride(unsigned char *base, int nelems, size_t width, i
  */
 
 /* walk backwards, skip last element */
-void array_stretch1(unsigned char *base, int nelems, size_t oldwidth, size_t newwidth, int wipe_value)
+void array_stretch1(unsigned char *base, int nelems, size_t oldwidth,
+                    size_t newwidth, int wipe_value)
 {
   int i;
 
@@ -38,10 +40,11 @@ void array_stretch1(unsigned char *base, int nelems, size_t oldwidth, size_t new
     memmove(base + i * newwidth, base + i * oldwidth, oldwidth);
 
   array_memset_stride(base + oldwidth, nelems, newwidth - oldwidth,
-                      wipe_value);
+                      newwidth, wipe_value);
 }
 
-void array_stretch2(unsigned char *base, int nelems, size_t oldwidth, size_t newwidth, int wipe_value)
+void array_stretch2(unsigned char *base, int nelems, size_t oldwidth,
+                    size_t newwidth, int wipe_value)
 {
   unsigned char *p, *q;
 
@@ -59,5 +62,5 @@ void array_stretch2(unsigned char *base, int nelems, size_t oldwidth, size_t new
   }
 
   array_memset_stride(base + oldwidth, nelems, newwidth - oldwidth,
-                      wipe_value);
+                      newwidth, wipe_value);
 }
