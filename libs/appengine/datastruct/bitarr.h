@@ -59,8 +59,8 @@ struct bitarr_t {
   } while (0)
 
 /* Macro which implements the other operations. */
-#define BITARR_OP(arr, bit, op)                                              \
-    ((arr)->entries[(bit) >> BITARR_SHIFT] op (1u << ((bit) & BITARR_MASK))) \
+#define BITARR_OP(arr, bit, op) \
+    ((arr)->entries[(bit) >> BITARR_SHIFT] op (1u << ((bit) & BITARR_MASK)))
 
 /* Set a single bit. */
 #define bitarr__set(arr, bit) \
