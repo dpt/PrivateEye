@@ -8,9 +8,9 @@
 typedef int (testfn)(void);
 
 extern int array_test(void);
+extern int atom_test(void);
 extern int bitarr_test(void);
 extern int bitvec_test(void);
-extern int dict_test(void);
 extern int hash_test(void);
 extern int list_test(void);
 extern int ntree_test(void);
@@ -34,9 +34,9 @@ test;
 static const test tests[] =
 {
   { "array",  array_test },
+  { "atom",   atom_test   },
   { "bitarr", bitarr_test },
   { "bitvec", bitvec_test },
-  { "dict",   dict_test   },
   { "hash",   hash_test   },
   { "list",   list_test   },
   { "ntree",  ntree_test  },

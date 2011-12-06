@@ -18,6 +18,7 @@
 
 #include "appengine/types.h"
 #include "appengine/base/bitwise.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/geom/box.h"
 #include "appengine/wimp/event.h"
 #include "appengine/vdu/font.h"
@@ -274,8 +275,10 @@ static error metrics_calc(tag_cloud *tc)
     os_trfm     trfm;
     int         scale;
 
-    s = dict__string_and_len(tc->dict, &len, i);
+    s = (const char *) atom_get(tc->dict, i, &len);
     assert(s != NULL);
+
+    len--; /* discount terminator */
 
     scale = (tc->entries[i].count - tc->scale.min) / tc->scale.scale;
     scale = CLAMP(scale, 0, 4);
@@ -762,7 +765,9 @@ error tag_cloud__layout(tag_cloud *tc, int width)
 
       index = tc->sorted[j];
 
-      s = dict__string_and_len(tc->dict, &l, index);
+      s = (const char *) atom_get(tc->dict, index, &l);
+
+      l--; /* discount terminator */
 
       /* allocate enough to keep us in business (worst case) */
 

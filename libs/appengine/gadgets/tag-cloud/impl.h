@@ -11,7 +11,7 @@
 
 #include "appengine/wimp/dialogue.h"
 #include "appengine/datastruct/bitvec.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/base/errors.h"
 
 #include "appengine/gadgets/tag-cloud.h"
@@ -94,7 +94,7 @@ typedef bitvec_t *tag_cloud__highlight_data;
 
 typedef struct tag_cloud__hover_data
 {
-  dict_index       index; /* tag to underline */
+  atom_t           index; /* tag to underline */
   int              last_index;
   const char      *pointer_shape_name; /* or NULL if none */
 }
@@ -140,13 +140,13 @@ struct tag_cloud
   tag_cloud__key_handler_fn *key_handler;
   void                     *key_handler_arg;
 
-  dict_t                   *dict;
+  atom_set_t               *dict;
 
   tag_cloud__entry         *entries;
   int                       e_used;
   int                       e_allocated;
 
-  dict_index               *sorted; /* of length e_used */
+  atom_t                   *sorted; /* of length e_used */
 
   int                       sort_type;
   int                       order_type;

@@ -14,7 +14,7 @@
 
 #include "appengine/types.h"
 #include "appengine/base/bitwise.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/base/errors.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/menu.h"
@@ -26,7 +26,7 @@
 typedef struct help_element
 {
   unsigned int obj;
-  dict_index   i;
+  atom_t       atom;
 }
 help_element;
 
@@ -36,7 +36,7 @@ typedef struct
   int           nentries;  /* number of entries active */
   int           allocated; /* number of entries allocated */
 
-  dict_t       *dict;
+  atom_set_t   *atoms;
 }
 help_array;
 
@@ -76,15 +76,15 @@ error help__init(void)
   {
     register_event_handlers(1);
 
-    windows.dict = dict__create();
-    if (windows.dict == NULL)
+    windows.atoms = atom_create();
+    if (windows.atoms == NULL)
     {
       err = error_OOM;
       goto failure;
     }
 
-    menus.dict = dict__create();
-    if (menus.dict == NULL)
+    menus.atoms = atom_create();
+    if (menus.atoms == NULL)
     {
       err = error_OOM;
       goto failure;
@@ -103,17 +103,17 @@ void help__fin(void)
   if (--help__refcount == 0)
   {
     free(windows.entries);
-    dict__destroy(windows.dict);
+    atom_destroy(windows.atoms);
 
     free(menus.entries);
-    dict__destroy(menus.dict);
+    atom_destroy(menus.atoms);
 
     /* reset handles in case we're reinitialised */
 
     windows.entries = NULL;
-    windows.dict    = NULL;
+    windows.atoms   = NULL;
     menus.entries   = NULL;
-    menus.dict      = NULL;
+    menus.atoms     = NULL;
 
     register_event_handlers(0);
   }
@@ -148,8 +148,9 @@ static error add_element(help_array *arr, unsigned int obj, const char *name)
 
   e->obj = obj;
 
-  err = dict__add(arr->dict, name, &e->i);
-  if (err != error_DICT_NAME_EXISTS && err)
+  err = atom_new(arr->atoms, (const unsigned char *) name, strlen(name) + 1,
+                 &e->atom);
+  if (err != error_ATOM_NAME_EXISTS && err)
     return err;
 
   arr->nentries++;
@@ -184,7 +185,7 @@ static const char *get(help_array *arr, unsigned int obj)
 
   for (i = 0; i < arr->nentries; i++)
     if (arr->entries[i].obj == obj)
-      return dict__string(arr->dict, arr->entries[i].i);
+      return (const char *) atom_get(arr->atoms, arr->entries[i].atom, NULL);
 
   return NULL;
 }

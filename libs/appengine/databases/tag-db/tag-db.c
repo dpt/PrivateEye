@@ -25,7 +25,7 @@
 #include "appengine/base/bitwise.h"
 #include "appengine/base/errors.h"
 #include "appengine/datastruct/bitvec.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/datastruct/hash.h"
 #include "appengine/base/strings.h"
 
@@ -141,8 +141,8 @@ struct tagdb
 {
   char                    *filename;
 
-  dict_t                  *ids;
-  dict_t                  *tags; /* indexes tag names */
+  atom_set_t              *ids;
+  atom_set_t              *tags; /* indexes tag names */
 
   struct tagdb__tag_entry *counts;
   int                      c_used;
@@ -318,12 +318,12 @@ static void no_destroy(void *string)
 
 error tagdb__open(const char *filename, tagdb **pdb)
 {
-  error   err;
-  char   *filenamecopy = NULL;
-  dict_t *ids          = NULL;
-  dict_t *tags         = NULL;
-  hash_t *hash         = NULL;
-  tagdb  *db           = NULL;
+  error       err;
+  char       *filenamecopy = NULL;
+  atom_set_t *ids          = NULL;
+  atom_set_t *tags         = NULL;
+  hash_t     *hash         = NULL;
+  tagdb      *db           = NULL;
 
   assert(filename);
   assert(pdb);
@@ -335,14 +335,14 @@ error tagdb__open(const char *filename, tagdb **pdb)
     goto Failure;
   }
 
-  ids = dict__create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
+  ids = atom_create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
   if (ids == NULL)
   {
     err = error_OOM;
     goto Failure;
   }
 
-  tags = dict__create_tuned(1536 / 170, 1536); /* est. 9 chars/entry */
+  tags = atom_create_tuned(1536 / 170, 1536); /* est. 9 chars/entry */
   if (tags == NULL)
   {
     err = error_OOM;
@@ -387,8 +387,8 @@ Failure:
 
   free(db);
   hash__destroy(hash);
-  dict__destroy(tags);
-  dict__destroy(ids);
+  atom_destroy(tags);
+  atom_destroy(ids);
   free(filenamecopy);
 
   return err;
@@ -403,8 +403,8 @@ void tagdb__close(tagdb *db)
 
   hash__destroy(db->hash);
   free(db->counts);
-  dict__destroy(db->tags);
-  dict__destroy(db->ids);
+  atom_destroy(db->tags);
+  atom_destroy(db->ids);
 
   free(db->filename);
 
@@ -517,22 +517,23 @@ Failure:
 
 typedef struct tagdb__tag_entry
 {
-  dict_index index;
-  int        count;
+  atom_t index;
+  int    count;
 }
 tagdb__tag_entry;
 
 error tagdb__add(tagdb *db, const char *name, tagdb__tag *ptag)
 {
   error      err;
-  dict_index index;
+  atom_t     index;
   tagdb__tag i;
 
   assert(db);
   assert(name);
 
-  err = dict__add(db->tags, name, &index);
-  if (err == error_DICT_NAME_EXISTS)
+  err = atom_new(db->tags, (const unsigned char *) name, strlen(name) + 1,
+                 &index);
+  if (err == error_ATOM_NAME_EXISTS)
   {
     /* the name exists in the dict. we have to search to find out which
      * entry we assigned it to. */
@@ -641,7 +642,7 @@ void tagdb__remove(tagdb *db, tagdb__tag tag)
   /* remove from dictionary - do this after the tag is removed from all ids,
    * so that the tag validity tests don't trigger */
 
-  dict__delete_index(db->tags, db->counts[tag].index);
+  atom_delete(db->tags, db->counts[tag].index);
 
   db->counts[tag].index = -1;
   db->counts[tag].count = 0;
@@ -663,7 +664,8 @@ error tagdb__rename(tagdb *db, tagdb__tag tag, const char *name)
   assert(tag < db->c_used && db->counts[tag].index != -1);
   assert(name);
 
-  return dict__rename(db->tags, db->counts[tag].index, name);
+  return atom_set(db->tags, db->counts[tag].index,
+                  (const unsigned char *) name, strlen(name) + 1);
 }
 
 error tagdb__enumerate_tags(tagdb *db, int *continuation,
@@ -712,16 +714,15 @@ error tagdb__tagtoname(tagdb *db, tagdb__tag tag, char *buf, size_t bufsz)
   if (tag >= db->c_used || db->counts[tag].index == -1)
     return error_TAGDB_UNKNOWN_TAG;
 
-  s = dict__string_and_len(db->tags, &l, db->counts[tag].index);
+  s = (const char *) atom_get(db->tags, db->counts[tag].index, &l);
 
-  if (bufsz < l + 1)
+  if (bufsz < l)
     return error_TAGDB_BUFF_OVERFLOW;
 
   assert(buf);
   assert(bufsz > 0);
 
-  memcpy(buf, s, l);
-  buf[l] = '\0';
+  memcpy(buf, s, l); /* includes terminator */
 
   return error_OK;
 }
@@ -754,12 +755,13 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
   }
   else
   {
-    dict_index index;
+    atom_t index;
 
     /* create */
 
-    err = dict__add(db->ids, id, &index);
-    if (err == error_DICT_NAME_EXISTS)
+    err = atom_new(db->ids, (const unsigned char *) id, strlen(id) + 1,
+                   &index);
+    if (err == error_ATOM_NAME_EXISTS)
       err = error_OK;
     else if (err)
       return err;
@@ -770,7 +772,7 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
 
     bitvec__set(val, tag);
 
-    hash__insert(db->hash, (char *) dict__string(db->ids, index), val);
+    hash__insert(db->hash, (char *) atom_get(db->ids, index, NULL), val);
   }
 
   if (inc)

@@ -26,7 +26,7 @@ void tag_cloud__destroy(tag_cloud *doomed)
 
   free(doomed->sorted);
   free(doomed->entries);
-  dict__destroy(doomed->dict);
+  atom_destroy(doomed->dict);
 
   tag_cloud__internal_set_handlers(0, doomed);
 

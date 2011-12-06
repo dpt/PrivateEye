@@ -11,6 +11,7 @@
 #include "oslib/wimp.h"
 
 #include "appengine/wimp/pointer.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/gadgets/tag-cloud.h"
 
 #include "impl.h"
@@ -39,8 +40,8 @@ void tag_cloud__hover_init(tag_cloud *tc)
 
 void tag_cloud__hover(tag_cloud *tc, int x, int y)
 {
-  dict_index last_index;
-  int        index;
+  atom_t last_index;
+  int    index;
 
   last_index = tc->hover.last_index;
 

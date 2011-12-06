@@ -29,7 +29,7 @@
 #include "appengine/base/numstr.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/datastruct/list.h"
 #include "appengine/gadgets/card.h"
 #include "appengine/gadgets/filerwin.h"
@@ -104,7 +104,7 @@ typedef struct thumbview_entry
 {
   image_t    *image;
   drawable_t *drawable;
-  dict_index  text[InfoTextIndex__Limit];
+  atom_t      text[InfoTextIndex__Limit];
 }
 thumbview_entry;
 
@@ -114,7 +114,7 @@ struct thumbview
 
   thumbview_display_mode  mode;
 
-  dict_t                 *text; /* holds all strings */
+  atom_set_t             *text; /* holds all strings */
 
   filerwin               *fw;   /* our 'filer' window */
 
@@ -267,7 +267,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
 
     for (i = InfoTextIndex_FileType; i < InfoTextIndex__Limit; i++)
     {
-      s = dict__string(tv->text, e->text[i]);
+      s = (const char *) atom_get(tv->text, e->text[i], NULL);
 
       icon.data.indirected_text.text = (char *) s;
 
@@ -307,7 +307,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
     icon.extent.x1 += workarea_x;
     icon.extent.y1 += workarea_y;
 
-    s = dict__string(tv->text, e->text[InfoTextIndex_FileName]);
+    s = (const char *) atom_get(tv->text, e->text[InfoTextIndex_FileName], NULL);
 
     icon.data.indirected_text.text       = (char *) s;
     icon.data.indirected_text.validation = "";
@@ -751,16 +751,16 @@ static int thumbview__message_mode_change(wimp_message *message, void *handle)
 
 error thumbview_create(thumbview **new_tv)
 {
-  error      err;
-  thumbview *tv   = NULL;
-  dict_t    *text = NULL;
-  filerwin  *fw   = NULL;
+  error       err;
+  thumbview  *tv   = NULL;
+  atom_set_t *text = NULL;
+  filerwin   *fw   = NULL;
 
   tv = malloc(sizeof(*tv));
   if (tv == NULL)
     goto NoMem;
 
-  text = dict__create();
+  text = atom_create();
   if (text == NULL)
     goto NoMem;
 
@@ -790,7 +790,7 @@ error thumbview_create(thumbview **new_tv)
 
 NoMem:
 
-  dict__destroy(text);
+  atom_destroy(text);
 
   free(tv);
 
@@ -824,7 +824,7 @@ void thumbview_destroy(thumbview *doomed)
 
   filerwin__destroy(doomed->fw);
 
-  dict__destroy(doomed->text);
+  atom_destroy(doomed->text);
 
   free(doomed);
 }
@@ -1131,16 +1131,18 @@ static error load_directory_cb(const char          *obj_name,
     else
       leaf = obj_name;
 
-    err = dict__add(tv->text, leaf, &entry->text[0]);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(tv->text, (const unsigned char *) leaf, strlen(leaf) + 1,
+                   &entry->text[0]);
+    if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* file type */
 
     file_type_to_name(info->file_type, buf);
 
-    err = dict__add(tv->text, buf, &entry->text[1]);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(tv->text, (const unsigned char *) buf, strlen(buf) + 1,
+                   &entry->text[1]);
+    if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* resolution */
@@ -1153,24 +1155,27 @@ static error load_directory_cb(const char          *obj_name,
 
     sprintf(buf + 24, "%s x %s", buf, buf + 12);
 
-    err = dict__add(tv->text, buf + 24, &entry->text[2]);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(tv->text, (const unsigned char *) (buf + 24),
+                   strlen(buf + 24) + 1, &entry->text[2]);
+    if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* depth */
 
     sprintf(buf, "%dbpp", image->source.dims.bm.bpp);
 
-    err = dict__add(tv->text, buf, &entry->text[3]);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(tv->text, (const unsigned char *) buf, strlen(buf) + 1,
+                   &entry->text[3]);
+    if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* size */
 
     comma_number(image->source.file_size, buf, 12);
 
-    err = dict__add(tv->text, buf, &entry->text[4]);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(tv->text, (const unsigned char *) buf, strlen(buf) + 1,
+                   &entry->text[4]);
+    if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
   }
 

@@ -16,7 +16,7 @@
 #include "appengine/types.h"
 #include "appengine/wimp/icon.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 
 #include "appengine/gadgets/tag-cloud.h"
 
@@ -32,8 +32,8 @@ static int sort_by_name(const void *va, const void *vb)
   const char *sa;
   const char *sb;
 
-  sa = dict__string(sort_tc->dict, *a);
-  sb = dict__string(sort_tc->dict, *b);
+  sa = (const char *) atom_get(sort_tc->dict, *a, NULL);
+  sb = (const char *) atom_get(sort_tc->dict, *b, NULL);
 
   return strcasecmp(sa, sb);
 }

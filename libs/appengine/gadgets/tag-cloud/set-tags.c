@@ -10,7 +10,7 @@
 #include "fortify/fortify.h"
 
 #include "appengine/base/bitwise.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/wimp/icon.h"
 #include "appengine/base/messages.h"
 
@@ -59,7 +59,7 @@ error tag_cloud__set_tags(tag_cloud            *tc,
                           int                   ntags)
 {
   error                 err;
-  dict_t               *dict        = NULL;
+  atom_set_t           *dict        = NULL;
   int                   totalcount;
   const tag_cloud__tag *t;
   tag_cloud__entry     *entries     = NULL;
@@ -69,7 +69,7 @@ error tag_cloud__set_tags(tag_cloud            *tc,
   int                  *sorted;
   int                   i;
 
-  dict__destroy(tc->dict);
+  atom_destroy(tc->dict);
   tc->dict = NULL;
 
   free(tc->entries);
@@ -82,7 +82,7 @@ error tag_cloud__set_tags(tag_cloud            *tc,
    * array entries can be re-ordered to sort the data.
    */
 
-  dict = dict__create();
+  dict = atom_create();
   if (dict == NULL)
     return error_OOM;
 
@@ -90,10 +90,11 @@ error tag_cloud__set_tags(tag_cloud            *tc,
 
   for (t = tags; t < tags + ntags; t++)
   {
-    dict_index index;
+    atom_t index;
 
-    err = dict__add(dict, t->name, &index);
-    if (err != error_DICT_NAME_EXISTS && err)
+    err = atom_new(dict, (const unsigned char *) t->name,
+                   strlen(t->name) + 1, &index);
+    if (err != error_ATOM_NAME_EXISTS && err)
       return err;
 
     if (index < e_used)
@@ -191,7 +192,7 @@ error tag_cloud__set_tags(tag_cloud            *tc,
 
 Failure:
 
-  dict__destroy(dict);
+  atom_destroy(dict);
 
   free(entries);
 

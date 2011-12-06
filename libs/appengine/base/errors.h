@@ -19,7 +19,7 @@ typedef unsigned long int error;
 #define error_BASE_TREEVIEW                     0x0600
 #define error_BASE_IMAGE_JPEG                   0x0700
 #define error_BASE_FONT                         0x0800
-#define error_BASE_DICT                         0x0900
+#define error_BASE_ATOM                         0x0900
 #define error_BASE_FILENAMEDB                   0x0A00
 #define error_BASE_PACKER                       0x0B00
 #define error_BASE_LAYOUT                       0x0C00
@@ -61,8 +61,9 @@ typedef unsigned long int error;
 
 #define error_FONT_NO_MATCH                     (error_BASE_FONT        + 0)
 
-#define error_DICT_NAME_EXISTS                  (error_BASE_DICT        + 0)
-#define error_DICT_OUT_OF_RANGE                 (error_BASE_DICT        + 1)
+#define error_ATOM_SET_EMPTY                    (error_BASE_ATOM        + 0)
+#define error_ATOM_NAME_EXISTS                  (error_BASE_ATOM        + 1)
+#define error_ATOM_OUT_OF_RANGE                 (error_BASE_ATOM        + 2)
 
 #define error_FILENAMEDB_INCOMPATIBLE           (error_BASE_FILENAMEDB  + 0)
 #define error_FILENAMEDB_COULDNT_OPEN_FILE      (error_BASE_FILENAMEDB  + 1)

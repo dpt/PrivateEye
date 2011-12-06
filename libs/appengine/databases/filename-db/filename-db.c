@@ -22,7 +22,7 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/datastruct/hash.h"
 #include "appengine/base/strings.h"
 
@@ -126,8 +126,8 @@ struct filenamedb_t
 {
   char             *filename;
 
-  dict_t           *ids;
-  dict_t           *filenames;
+  atom_set_t       *ids;
+  atom_set_t       *filenames;
   hash_t           *hash;
 
   struct
@@ -266,8 +266,8 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
 {
   error         err;
   char         *filenamecopy = NULL;
-  dict_t       *ids          = NULL;
-  dict_t       *filenames    = NULL;
+  atom_set_t   *ids          = NULL;
+  atom_set_t   *filenames    = NULL;
   hash_t       *hash         = NULL;
   filenamedb_t *db           = NULL;
 
@@ -284,14 +284,14 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
    * Perhaps a specialised version of dict with fixed-length entries. So I'm
    * keeping them separate for now. */
 
-  ids = dict__create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
+  ids = atom_create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
   if (ids == NULL)
   {
     err = error_OOM;
     goto Failure;
   }
 
-  filenames = dict__create_tuned(32768 / 80, 32768); /* est. 80 chars/entry */
+  filenames = atom_create_tuned(32768 / 80, 32768); /* est. 80 chars/entry */
   if (filenames == NULL)
   {
     err = error_OOM;
@@ -333,8 +333,8 @@ Failure:
 
   free(db);
   hash__destroy(hash);
-  dict__destroy(filenames);
-  dict__destroy(ids);
+  atom_destroy(filenames);
+  atom_destroy(ids);
   free(filenamecopy);
 
   return err;
@@ -348,8 +348,8 @@ void filenamedb__close(filenamedb_t *db)
   filenamedb__commit(db);
 
   hash__destroy(db->hash);
-  dict__destroy(db->filenames);
-  dict__destroy(db->ids);
+  atom_destroy(db->filenames);
+  atom_destroy(db->ids);
 
   free(db->filename);
 
@@ -435,26 +435,28 @@ error filenamedb__add(filenamedb_t *db,
                       const char   *filename)
 {
   error       err;
-  dict_index  kindex;
-  dict_index  vindex;
+  atom_t      kindex;
+  atom_t      vindex;
   const char *kval;
   const char *vval;
 
-  err = dict__add(db->ids, id, &kindex);
-  if (err == error_DICT_NAME_EXISTS)
+  err = atom_new(db->ids, (const unsigned char *) id, strlen(id) + 1,
+                 &kindex);
+  if (err == error_ATOM_NAME_EXISTS)
     err = error_OK;
   else if (err)
     return err;
 
-  kval = dict__string(db->ids, kindex);
+  kval = (const char *) atom_get(db->ids, kindex, NULL);
 
-  err = dict__add(db->filenames, filename, &vindex);
-  if (err == error_DICT_NAME_EXISTS)
+  err = atom_new(db->filenames, (const unsigned char *) filename,
+                 strlen(filename) + 1, &vindex);
+  if (err == error_ATOM_NAME_EXISTS)
     err = error_OK;
   else if (err)
     return err;
 
-  vval = dict__string(db->filenames, vindex);
+  vval = (const char *) atom_get(db->filenames, vindex, NULL);
 
   /* this will update the value if the key is already present */
 

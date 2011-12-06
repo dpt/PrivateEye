@@ -7,61 +7,7 @@ test: squeeze elements variant 2
 test: stretch elements
 test: stretch elements variant 2
 
->> bitarr tests
-test: create
-test: set
-1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
-97 bits set
-test: clear
-0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0 bits set
-test: toggle
-1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
-97 bits set
-test: count
-97 bits set
-
->> bitvec tests
-test: create
-test: set
-test: get
-97 bits set
-test: count
-97 bits set
-test: clear
-test: get
-0 bits set
-test: count
-0 bits set
-test: length
-length=128 bits
-test: next
-set every 11th bit
-walk through set bits
-after -1 comes 0
-after 0 comes 11
-after 11 comes 22
-after 22 comes 33
-after 33 comes 44
-after 44 comes 55
-after 55 comes 66
-after 66 comes 77
-after 77 comes 88
-after 88 comes -1
-test: destroy
-test: eq
-created. equal? 1
-set bit 1 for v+w. equal? 1
-set bit 1000 for v+w. equal? 1
-clear bit 1000 for v. equal? 0
-clear bit 1000 for w. equal? 1
-clear bit 1 for v. recreate w. equal? 1
-test: and
-0000000000000000000000000000000100000000000000000000000000000000
-test: or
-0000000000000000000000000000000100000000000000000000000000000001
-
->> dict tests
+>> atom tests
 test: add
 adding 'deckard'... as 0
 adding 'batty'... as 1
@@ -86,13 +32,13 @@ test: to string
 5 is 'pris'
 6 is 'sebastian'
 test: to string and length
-0 is 'deckard' (length 7)
-1 is 'batty' (length 5)
-2 is 'rachael' (length 7)
-3 is 'gaff' (length 4)
-4 is 'bryant' (length 6)
-5 is 'pris' (length 4)
-6 is 'sebastian' (length 9)
+0 is 'deckard' (length 8)
+1 is 'batty' (length 6)
+2 is 'rachael' (length 8)
+3 is 'gaff' (length 5)
+4 is 'bryant' (length 7)
+5 is 'pris' (length 5)
+6 is 'sebastian' (length 10)
 test: delete
 test: to string and length
 test: add
@@ -142,13 +88,13 @@ test: to string
 5 is 'bamm bamm'
 6 is 'sebastian'
 test: to string and length
-0 is 'fred' (length 4)
-1 is 'barney' (length 6)
-2 is 'wilma' (length 5)
-3 is 'betty' (length 5)
-4 is 'pebbles' (length 7)
-5 is 'bamm bamm' (length 9)
-6 is 'sebastian' (length 9)
+0 is 'fred' (length 5)
+1 is 'barney' (length 7)
+2 is 'wilma' (length 6)
+3 is 'betty' (length 6)
+4 is 'pebbles' (length 8)
+5 is 'bamm bamm' (length 10)
+6 is 'sebastian' (length 10)
 test: random
 adding 'jdop'... as 9
 adding 'ab'... as 11
@@ -1151,6 +1097,60 @@ adding 'pj'... already exists as 569
 adding 'wil'... as 796
 adding 'zvzcz'... as 797
 
+>> bitarr tests
+test: create
+test: set
+1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+97 bits set
+test: clear
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0 bits set
+test: toggle
+1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+97 bits set
+test: count
+97 bits set
+
+>> bitvec tests
+test: create
+test: set
+test: get
+97 bits set
+test: count
+97 bits set
+test: clear
+test: get
+0 bits set
+test: count
+0 bits set
+test: length
+length=128 bits
+test: next
+set every 11th bit
+walk through set bits
+after -1 comes 0
+after 0 comes 11
+after 11 comes 22
+after 22 comes 33
+after 33 comes 44
+after 44 comes 55
+after 55 comes 66
+after 66 comes 77
+after 77 comes 88
+after 88 comes -1
+test: destroy
+test: eq
+created. equal? 1
+set bit 1 for v+w. equal? 1
+set bit 1000 for v+w. equal? 1
+clear bit 1000 for v. equal? 0
+clear bit 1000 for w. equal? 1
+clear bit 1 for v. recreate w. equal? 1
+test: and
+0000000000000000000000000000000100000000000000000000000000000000
+test: or
+0000000000000000000000000000000100000000000000000000000000000001
+
 >> hash tests
 test: create
 test: insert
@@ -1182,13 +1182,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-0001eb80: sebastian
-0001eb5c: pris
-0001eb38: bryant
-0001eb14: gaff
-0001eaf0: rachael
-0001eacc: batty
-0001eaa8: deckard
+0001eba8: sebastian
+0001eb84: pris
+0001eb60: bryant
+0001eb3c: gaff
+0001eb18: rachael
+0001eaf4: batty
+0001ead0: deckard
 
 >> ntree tests
 test: build tree
@@ -11739,16 +11739,13 @@ test: destroy
 >> filing tests
 test: filing: dirscan
 @./svn
-@./svnignore
 @.AETest
 @.app
 @.array_grow_idea
 @.base
-@.bitarrdiff/txt
 @.databases
 @.datastruct
 @.dialogues
-@.dictdiff
 @.gadgets
 @.geom
 @.GNUmakefile
@@ -11756,7 +11753,6 @@ test: filing: dirscan
 @.h
 @.io
 @.Makefile
-@.MakefileG
 @.MakeMake
 @.MakeMakeG
 @.net
@@ -11766,10 +11762,8 @@ test: filing: dirscan
 @.objs-module
 @.objs-normal
 @.odf
-@.odfg
-@.og
 @.om
-@.omg
+@.output
 @.TemplateMF
 @.TemplateMFG
 @.test
@@ -11777,7 +11771,6 @@ test: filing: dirscan
 @.thumbnail-diff
 @.vdu
 @.wimp
-@.x
 
 >> font tests
 test: select

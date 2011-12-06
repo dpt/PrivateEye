@@ -702,7 +702,7 @@ static error test_bash(State *state)
         if (err == error_OK)
           break;
 
-        if (err != error_DICT_NAME_EXISTS)
+        if (err != error_ATOM_NAME_EXISTS)
           goto failure;
 
         printf("..name clash..");

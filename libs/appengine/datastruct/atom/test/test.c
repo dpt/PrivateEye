@@ -5,7 +5,7 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/dict.h"
+#include "appengine/datastruct/atom.h"
 
 static const char *data[] =
 {
@@ -21,7 +21,7 @@ static const char *newnames[] =
   "fred", "barney", "wilma", "betty", "pebbles", "bamm bamm", "fred",
 };
 
-static error test_add(dict_t *d)
+static error test_add(atom_set_t *d)
 {
   error err;
   int   i;
@@ -30,15 +30,16 @@ static error test_add(dict_t *d)
 
   for (i = 0; i < NELEMS(data); i++)
   {
-    dict_index idx;
+    atom_t idx;
 
     printf("adding '%s'... ", data[i]);
 
-    err = dict__add(d, data[i], &idx);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(d, (const unsigned char *) data[i], strlen(data[i]) + 1,
+                   &idx);
+    if (err && err != error_ATOM_NAME_EXISTS)
       return err;
 
-    if (err == error_DICT_NAME_EXISTS)
+    if (err == error_ATOM_NAME_EXISTS)
       printf("already exists ");
 
     printf("as %d\n", idx);
@@ -47,7 +48,7 @@ static error test_add(dict_t *d)
   return error_OK;
 }
 
-static error test_to_string(dict_t *d)
+static error test_to_string(atom_set_t *d)
 {
   int i;
 
@@ -57,7 +58,7 @@ static error test_to_string(dict_t *d)
   {
     const char *string;
 
-    string = dict__string(d, i);
+    string = (const char *) atom_get(d, i, NULL);
     if (string)
       printf("%d is '%s'\n", i, string);
   }
@@ -65,7 +66,7 @@ static error test_to_string(dict_t *d)
   return error_OK;
 }
 
-static error test_to_string_and_len(dict_t *d)
+static error test_to_string_and_len(atom_set_t *d)
 {
   int i;
 
@@ -76,7 +77,7 @@ static error test_to_string_and_len(dict_t *d)
     const char *string;
     size_t      len;
 
-    string = dict__string_and_len(d, &len, i);
+    string = (const char *) atom_get(d, i, &len);
     if (string)
       printf("%d is '%.*s' (length %u)\n", i, (int) len, string, len);
   }
@@ -84,19 +85,19 @@ static error test_to_string_and_len(dict_t *d)
   return error_OK;
 }
 
-static error test_delete(dict_t *d)
+static error test_delete(atom_set_t *d)
 {
   int i;
 
   printf("test: delete\n");
 
   for (i = 0; i < NELEMS(data); i++)
-    dict__delete(d, data[i]);
+    atom_delete_block(d, (const unsigned char *) data[i], strlen(data[i]) + 1);
 
   return error_OK;
 }
 
-static error test_rename(dict_t *d)
+static error test_rename(atom_set_t *d)
 {
   error err;
   int   i;
@@ -105,23 +106,25 @@ static error test_rename(dict_t *d)
 
   for (i = 0; i < NELEMS(newnames); i++)
   {
-    dict_index idx;
+    atom_t idx;
 
     printf("adding '%s'... ", data[i]);
 
-    err = dict__add(d, data[i], &idx);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(d, (const unsigned char *) data[i],
+                   strlen(data[i]) + 1, &idx);
+    if (err && err != error_ATOM_NAME_EXISTS)
       return err;
 
-    if (err == error_DICT_NAME_EXISTS)
+    if (err == error_ATOM_NAME_EXISTS)
       printf("already exists ");
 
     printf("as %d\n", idx);
 
     printf("renaming index %d to '%s'... ", idx, newnames[i]);
 
-    err = dict__rename(d, idx, newnames[i]);
-    if (err == error_DICT_NAME_EXISTS)
+    err = atom_set(d, idx, (const unsigned char *) newnames[i],
+                   strlen(newnames[i]) + 1);
+    if (err == error_ATOM_NAME_EXISTS)
       printf("already exists!");
     else if (err)
       return err;
@@ -156,7 +159,7 @@ static const char *randomname(void)
   return buf;
 }
 
-static error test_random(dict_t *d)
+static error test_random(atom_set_t *d)
 {
   error err;
   int   i;
@@ -166,17 +169,17 @@ static error test_random(dict_t *d)
   for (i = 0; i < 1000; i++)
   {
     const char *name;
-    dict_index  idx;
+    atom_t  idx;
 
     name = randomname();
 
     printf("adding '%s'... ", name);
 
-    err = dict__add(d, name, &idx);
-    if (err && err != error_DICT_NAME_EXISTS)
+    err = atom_new(d, (const unsigned char *) name, strlen(name) + 1, &idx);
+    if (err && err != error_ATOM_NAME_EXISTS)
       return err;
 
-    if (err == error_DICT_NAME_EXISTS)
+    if (err == error_ATOM_NAME_EXISTS)
       printf("already exists ");
 
     printf("as %d\n", idx);
@@ -185,12 +188,12 @@ static error test_random(dict_t *d)
   return error_OK;
 }
 
-int dict_test(void)
+int atom_test(void)
 {
   error   err;
-  dict_t *d;
+  atom_set_t *d;
 
-  d = dict__create_tuned(1, 12);
+  d = atom_create_tuned(1, 12);
   if (d == NULL)
     return 1;
 
@@ -238,7 +241,7 @@ int dict_test(void)
   if (err)
     return 1;
 
-  dict__destroy(d);
+  atom_destroy(d);
 
   return 0;
 }

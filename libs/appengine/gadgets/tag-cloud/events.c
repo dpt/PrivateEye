@@ -22,6 +22,7 @@
 #include "appengine/base/messages.h"
 #include "appengine/base/numstr.h"
 #include "appengine/base/os.h"
+#include "appengine/datastruct/atom.h"
 #include "appengine/dialogues/info.h"
 #include "appengine/dialogues/name.h"
 
@@ -167,7 +168,7 @@ static void rename_fillout(dialogue_t *d, void *arg)
   if (tc->menued_tag_index < 0)
     return;
 
-  name__set(d, dict__string(tc->dict, tc->menued_tag_index));
+  name__set(d, (const char *) atom_get(tc->dict, tc->menued_tag_index, NULL));
 }
 
 static void tag_info_fillout(dialogue_t *d, void *arg)
@@ -181,7 +182,7 @@ static void tag_info_fillout(dialogue_t *d, void *arg)
 
   comma_number(tc->entries[tc->menued_tag_index].count, buf, sizeof(buf));
 
-  specs[0].value = dict__string(tc->dict, tc->menued_tag_index);
+  specs[0].value = (const char *) atom_get(tc->dict, tc->menued_tag_index, NULL);
   specs[1].value = buf;
 
   info__set_info(d, specs, 2);
@@ -461,7 +462,7 @@ static int tag_cloud__event_mouse_click(wimp_event_no event_no, wimp_block *bloc
 
     /* set tag name */
 
-    name = (i >= 0) ? dict__string(tc->dict, i) : "";
+    name = (i >= 0) ? (const char *) atom_get(tc->dict, i, NULL) : "";
 
     tc->main_m = menu_create_from_desc(message0("menu.tagcloud"),
                                        name,
