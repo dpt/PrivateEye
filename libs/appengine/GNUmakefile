@@ -10,7 +10,7 @@ ccflags		+= -DAPPENGINE_NO_TCPIP
 
 # Library references
 
-libraries_test	= $(oslib) $(fortify)
+libraries_test	= $(oslib) $(fortifydbg)
 
 lib		= appengine.a
 libdbg		= appenginedbg.a
