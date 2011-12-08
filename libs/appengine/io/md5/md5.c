@@ -20,18 +20,10 @@
 
 #include "appengine/io/md5.h"
 
-static void digest_to_string(char *s, const unsigned char *digest)
-{
-  char *p;
-  int   i;
-
-  for (p = s, i = 0; i < 16; i++, p += 2)
-    sprintf(p, "%02X", *digest++);
-}
-
 #define BUFSZ 65536
 
-error md5__from_file(const char *file_name, char *digest)
+error md5__from_file(const char    *file_name,
+                     unsigned char  digest[MD5DIGESTSZ])
 {
   error               err;
   unsigned char      *buffer;
@@ -39,7 +31,6 @@ error md5__from_file(const char *file_name, char *digest)
   long                len;
   struct md5_context  md5;
   int                 c;
-  unsigned char       binarydigest[16];
 
   hourglass_on();
 
@@ -69,13 +60,11 @@ error md5__from_file(const char *file_name, char *digest)
     hourglass_percentage((int) (100 * ftell(in) / len));
   }
 
-  md5_final(binarydigest, &md5);
+  md5_final(digest, &md5);
 
   fclose(in);
 
   free(buffer);
-
-  digest_to_string(digest, binarydigest);
 
   hourglass_off();
 

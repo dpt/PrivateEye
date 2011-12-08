@@ -8,7 +8,9 @@
 
 #include "appengine/base/errors.h"
 
-/* 'digest' must have at least 33 characters of storage. */
-error md5__from_file(const char *file_name, char *digest);
+#define MD5DIGESTSZ 16
+
+error md5__from_file(const char    *file_name,
+                     unsigned char  digest[MD5DIGESTSZ]);
 
 #endif /* APPENGINE_MD5_H */

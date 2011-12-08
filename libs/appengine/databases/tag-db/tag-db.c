@@ -28,6 +28,7 @@
 #include "appengine/datastruct/atom.h"
 #include "appengine/datastruct/hash.h"
 #include "appengine/base/strings.h"
+#include "appengine/databases/digest-db.h"
 
 #include "appengine/databases/tag-db.h"
 
@@ -54,13 +55,26 @@ static const char signature[] = "1";
 
 /* ----------------------------------------------------------------------- */
 
+static int tagdb__refcount = 0;
+
 error tagdb__init(void)
 {
+  if (tagdb__refcount++ == 0)
+  {
+    /* dependencies */
+
+    digestdb_init();
+  }
+
   return error_OK;
 }
 
 void tagdb__fin(void)
 {
+  if (--tagdb__refcount == 0)
+  {
+    digestdb_fin();
+  }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -141,7 +155,6 @@ struct tagdb
 {
   char                    *filename;
 
-  atom_set_t              *ids;
   atom_set_t              *tags; /* indexes tag names */
 
   struct tagdb__tag_entry *counts;
@@ -164,11 +177,12 @@ static void destroy_hash_value(void *value)
 
 static error tagdb__parse_line(tagdb *db, char *buf)
 {
-  error       err;
-  char       *p;
-  int         t;
-  const char *tokens[MAXTOKENS];
-  int         i;
+  error          err;
+  char          *p;
+  int            t;
+  const char    *tokens[MAXTOKENS];
+  unsigned char  id[16];
+  int            i;
 
   p = buf;
 
@@ -194,6 +208,9 @@ static error tagdb__parse_line(tagdb *db, char *buf)
   if (t < 1)
     return error_TAGDB_SYNTAX_ERROR; /* no tokens found */
 
+  /* convert ID from ASCII format  hex to binary */
+  digestdb_decode(id, buf);
+
   for (i = 0; i < t; i++)
   {
     tagdb__tag tag;
@@ -202,7 +219,7 @@ static error tagdb__parse_line(tagdb *db, char *buf)
     if (err)
       return err;
 
-    err = tagdb__tagid(db, buf, tag);
+    err = tagdb__tagid(db, (char *) id, tag);
     if (err)
       return err;
   }
@@ -311,7 +328,7 @@ Failure:
   return err;
 }
 
-static void no_destroy(void *string)
+static void no_destroy(void *string) /* FIXME move into hash lib */
 {
   NOT_USED(string);
 }
@@ -320,7 +337,6 @@ error tagdb__open(const char *filename, tagdb **pdb)
 {
   error       err;
   char       *filenamecopy = NULL;
-  atom_set_t *ids          = NULL;
   atom_set_t *tags         = NULL;
   hash_t     *hash         = NULL;
   tagdb      *db           = NULL;
@@ -335,13 +351,6 @@ error tagdb__open(const char *filename, tagdb **pdb)
     goto Failure;
   }
 
-  ids = atom_create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
-  if (ids == NULL)
-  {
-    err = error_OOM;
-    goto Failure;
-  }
-
   tags = atom_create_tuned(1536 / 170, 1536); /* est. 9 chars/entry */
   if (tags == NULL)
   {
@@ -350,8 +359,8 @@ error tagdb__open(const char *filename, tagdb **pdb)
   }
 
   err = hash__create(HASHSIZE,
-                     NULL, /* use default hash function */
-                     NULL, /* use default string compare */
+                     digestdb_hash,
+                     digestdb_compare,
                      no_destroy,
                      destroy_hash_value,
                     &hash);
@@ -366,7 +375,6 @@ error tagdb__open(const char *filename, tagdb **pdb)
   }
 
   db->filename    = filenamecopy;
-  db->ids         = ids;
   db->tags        = tags;
   db->counts      = NULL;
   db->c_used      = 0;
@@ -388,7 +396,6 @@ Failure:
   free(db);
   hash__destroy(hash);
   atom_destroy(tags);
-  atom_destroy(ids);
   free(filenamecopy);
 
   return err;
@@ -404,7 +411,6 @@ void tagdb__close(tagdb *db)
   hash__destroy(db->hash);
   free(db->counts);
   atom_destroy(db->tags);
-  atom_destroy(db->ids);
 
   free(db->filename);
 
@@ -425,8 +431,9 @@ static int commit_cb(const void *key, const void *value, void *arg)
 {
   struct commit_state *state = arg;
   error                err;
-  const char          *k;
+  const unsigned char *k;
   const bitvec_t      *v;
+  char                 ktext[33];
   int                  c;
   int                  ntags;
   int                  index;
@@ -434,7 +441,10 @@ static int commit_cb(const void *key, const void *value, void *arg)
   k = key;
   v = value;
 
-  c = sprintf(state->buf, "%s ", k);
+  digestdb_encode(ktext, k);
+  ktext[32] = '\0';
+
+  c = sprintf(state->buf, "%s ", ktext);
 
   ntags = 0;
   index = -1;
@@ -450,6 +460,8 @@ static int commit_cb(const void *key, const void *value, void *arg)
       return -1;
 
     // should quote any tags containing spaces (or quotes)
+    // better if it prepared a list of quoted tags in advance outsde of
+    // this loop
 
     c += strlen(state->buf + c);
     state->buf[c++] = ' ';
@@ -624,15 +636,15 @@ void tagdb__remove(tagdb *db, tagdb__tag tag)
   cont = 0;
   do
   {
-    char buf[MAXIDLEN];
+    char id[MAXIDLEN];
 
-    err = tagdb__enumerate_ids_by_tag(db, tag, &cont, buf, sizeof(buf));
+    err = tagdb__enumerate_ids_by_tag(db, tag, &cont, id, sizeof(id));
     if (err)
       goto Failure;
 
     if (cont)
     {
-      err = tagdb__untagid(db, buf, tag);
+      err = tagdb__untagid(db, id, tag);
       if (err)
         goto Failure;
     }
@@ -755,16 +767,16 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
   }
   else
   {
-    atom_t index;
+    int                  kindex;
+    const unsigned char *key;
 
     /* create */
 
-    err = atom_new(db->ids, (const unsigned char *) id, strlen(id) + 1,
-                   &index);
-    if (err == error_ATOM_NAME_EXISTS)
-      err = error_OK;
-    else if (err)
+    err = digestdb_add((const unsigned char *) id, &kindex);
+    if (err)
       return err;
+
+    key = digestdb_get(kindex);
 
     val = bitvec__create(1);
     if (val == NULL)
@@ -772,7 +784,7 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
 
     bitvec__set(val, tag);
 
-    hash__insert(db->hash, (char *) atom_get(db->ids, index, NULL), val);
+    hash__insert(db->hash, (char *) key, val);
   }
 
   if (inc)

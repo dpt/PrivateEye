@@ -25,10 +25,9 @@
 #include "appengine/datastruct/atom.h"
 #include "appengine/datastruct/hash.h"
 #include "appengine/base/strings.h"
+#include "appengine/databases/digest-db.h"
 
 #include "appengine/databases/filename-db.h"
-
-static const char signature[] = "1";
 
 /* ----------------------------------------------------------------------- */
 
@@ -43,13 +42,30 @@ static const char signature[] = "1";
 
 /* ----------------------------------------------------------------------- */
 
+static const char signature[] = "1";
+
+/* ----------------------------------------------------------------------- */
+
+static int filenamedb__refcount = 0;
+
 error filenamedb__init(void)
 {
+  if (filenamedb__refcount++ == 0)
+  {
+    /* dependencies */
+
+    digestdb_init();
+  }
+
   return error_OK;
 }
 
 void filenamedb__fin(void)
 {
+  if (--filenamedb__refcount == 0)
+  {
+    digestdb_fin();
+  }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -126,7 +142,6 @@ struct filenamedb_t
 {
   char             *filename;
 
-  atom_set_t       *ids;
   atom_set_t       *filenames;
   hash_t           *hash;
 
@@ -266,7 +281,6 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
 {
   error         err;
   char         *filenamecopy = NULL;
-  atom_set_t   *ids          = NULL;
   atom_set_t   *filenames    = NULL;
   hash_t       *hash         = NULL;
   filenamedb_t *db           = NULL;
@@ -284,13 +298,6 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
    * Perhaps a specialised version of dict with fixed-length entries. So I'm
    * keeping them separate for now. */
 
-  ids = atom_create_tuned(32768 / 33, 32768); /* est. 33 chars/entry */
-  if (ids == NULL)
-  {
-    err = error_OOM;
-    goto Failure;
-  }
-
   filenames = atom_create_tuned(32768 / 80, 32768); /* est. 80 chars/entry */
   if (filenames == NULL)
   {
@@ -299,8 +306,8 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
   }
 
   err = hash__create(HASHSIZE,
-                     NULL, /* use default hash function */
-                     NULL, /* use default string compare */
+                     digestdb_hash,
+                     digestdb_compare,
                      no_destroy,
                      no_destroy,
                      &hash);
@@ -315,7 +322,6 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
   }
 
   db->filename    = filenamecopy;
-  db->ids         = ids;
   db->filenames   = filenames;
   db->hash        = hash;
 
@@ -334,7 +340,6 @@ Failure:
   free(db);
   hash__destroy(hash);
   atom_destroy(filenames);
-  atom_destroy(ids);
   free(filenamecopy);
 
   return err;
@@ -349,7 +354,6 @@ void filenamedb__close(filenamedb_t *db)
 
   hash__destroy(db->hash);
   atom_destroy(db->filenames);
-  atom_destroy(db->ids);
 
   free(db->filename);
 
@@ -369,14 +373,18 @@ struct commit_state
 static int commit_cb(const void *key, const void *value, void *arg)
 {
   struct commit_state *state = arg;
-  const char          *k;
+  const unsigned char *k;
   const char          *v;
+  char                 ktext[33];
   int                  c;
 
   k = key;
   v = value;
 
-  c = sprintf(state->buf, "%s %s\n", k, v);
+  digestdb_encode(ktext, k);
+  ktext[32] = '\0';
+
+  c = sprintf(state->buf, "%s %s\n", ktext, v);
 
   /* 'c' does not include the terminator */
 
@@ -434,20 +442,21 @@ error filenamedb__add(filenamedb_t *db,
                       const char   *id,
                       const char   *filename)
 {
-  error       err;
-  atom_t      kindex;
-  atom_t      vindex;
-  const char *kval;
-  const char *vval;
+  error                err;
+  unsigned char        hash[16];
+  int                  kindex;
+  atom_t               vindex;
+  const unsigned char *key;
+  const char          *value;
 
-  err = atom_new(db->ids, (const unsigned char *) id, strlen(id) + 1,
-                 &kindex);
-  if (err == error_ATOM_NAME_EXISTS)
-    err = error_OK;
-  else if (err)
+  /* convert ID from ASCII hex to binary */
+  digestdb_decode(hash, id);
+
+  err = digestdb_add(hash, &kindex);
+  if (err)
     return err;
 
-  kval = (const char *) atom_get(db->ids, kindex, NULL);
+  key = digestdb_get(kindex);
 
   err = atom_new(db->filenames, (const unsigned char *) filename,
                  strlen(filename) + 1, &vindex);
@@ -456,11 +465,11 @@ error filenamedb__add(filenamedb_t *db,
   else if (err)
     return err;
 
-  vval = (const char *) atom_get(db->filenames, vindex, NULL);
+  value = (const char *) atom_get(db->filenames, vindex, NULL);
 
   /* this will update the value if the key is already present */
 
-  hash__insert(db->hash, (char *) kval, (char *) vval);
+  hash__insert(db->hash, (unsigned char *) key, (char *) value);
 
   return error_OK;
 }

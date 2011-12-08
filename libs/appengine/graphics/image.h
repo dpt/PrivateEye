@@ -20,6 +20,11 @@
 
 /* ----------------------------------------------------------------------- */
 
+/* Size of a digest. */
+#define DIGESTSZ 16
+
+/* ----------------------------------------------------------------------- */
+
 typedef int image_jpeg_cleaning;
 enum
 {
@@ -151,7 +156,7 @@ struct T
   void         *image;
 
   char          file_name[256]; /* careful now */
-  char          digest[33]; /* MD5 digest (hex string) */
+  unsigned char digest[DIGESTSZ];
 
   int           refcount;
 
@@ -265,8 +270,7 @@ void image_destroy_metadata(ntree_t *metadata);
 
 /* ----------------------------------------------------------------------- */
 
-/* 'digest' must have at least 33 characters of storage. */
-error image_get_md5(T *image, char *digest);
+error image_get_digest(T *image, unsigned char digest[DIGESTSZ]);
 
 #undef T
 

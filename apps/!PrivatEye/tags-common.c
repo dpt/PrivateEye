@@ -19,6 +19,7 @@
 #include "appengine/base/errors.h"
 #include "appengine/databases/filename-db.h"
 #include "appengine/databases/tag-db.h"
+#include "appengine/databases/digest-db.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image.h"
 #include "appengine/io/md5.h"
@@ -39,7 +40,7 @@
 
 static struct
 {
-  tagdb        *db;        /* tags' digests */
+  tagdb        *db;        /* maps digests to tags */
   filenamedb_t *fdb;       /* maps digests to filenames */
   int           backed_up; /* have we backed up this session? */
 }
@@ -183,8 +184,6 @@ error tags_common__tag(tag_cloud  *tc,
   if (err)
     return err;
 
-  printf("tag: added %s:%s\n", digest, file_name);
-
   err = tags_common__set_tags(tc);
   if (err)
     return err;
@@ -219,19 +218,19 @@ error tags_common__tagfile(tag_cloud  *tc,
                            int         index,
                            void       *arg)
 {
-  error  err;
-  tagdb *db = arg;
-  char   digest[33];
+  error          err;
+  tagdb         *db = arg;
+  unsigned char  digest[DIGESTSZ];
 
   err = md5__from_file(file_name, digest);
   if (err)
     return err;
 
-  err = tagdb__tagid(db, digest, index);
+  err = tagdb__tagid(db, (char *) digest, index);
   if (err)
     return err;
 
-  err = filenamedb__add(LOCALS.fdb, digest, file_name);
+  err = filenamedb__add(LOCALS.fdb, (char *) digest, file_name);
   if (err)
     return err;
 
@@ -247,15 +246,15 @@ error tags_common__detagfile(tag_cloud  *tc,
                              int         index,
                              void       *arg)
 {
-  error  err;
-  tagdb *db = arg;
-  char   digest[33];
+  error          err;
+  tagdb         *db = arg;
+  unsigned char  digest[DIGESTSZ];
 
   err = md5__from_file(file_name, digest);
   if (err)
     return err;
 
-  err = tagdb__untagid(db, digest, index);
+  err = tagdb__untagid(db, (char *) digest, index);
   if (err)
     return err;
 
@@ -413,20 +412,20 @@ failure:
 
 error tags_common__set_highlights(tag_cloud *tc, image_t *image)
 {
-  error       err;
-  char        digest[33];
-  int        *indices;
-  int         nindices;
-  int         allocated;
-  int         cont;
-  tagdb__tag  tag;
+  error          err;
+  unsigned char  digest[16];
+  int           *indices;
+  int            nindices;
+  int            allocated;
+  int            cont;
+  tagdb__tag     tag;
 
   /* DON'T use LOCALS.image here -- it may not be set up, yet */
 
   if (image == NULL)
     return error_OK;
 
-  err = image_get_md5(image, digest);
+  err = image_get_digest(image, digest);
   if (err)
     goto failure;
 
@@ -438,7 +437,7 @@ error tags_common__set_highlights(tag_cloud *tc, image_t *image)
 
   do
   {
-    err = tagdb__get_tags_for_id(LOCALS.db, digest, &cont, &tag);
+    err = tagdb__get_tags_for_id(LOCALS.db, (char *) digest, &cont, &tag);
     if (err == error_TAGDB_UNKNOWN_ID)
       break;
     else if (err)

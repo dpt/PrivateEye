@@ -20,6 +20,7 @@
 #include "appengine/base/errors.h"
 #include "appengine/base/strings.h"
 #include "appengine/databases/tag-db.h"
+#include "appengine/databases/digest-db.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
@@ -66,17 +67,18 @@ static error tag(tag_cloud *tc,
                  int        index,
                  void      *arg)
 {
-  error err;
-  char  digest[33];
+  error         err;
+  unsigned char digest[16];
 
   if (LOCALS.image == NULL)
     return error_OK;
 
-  err = image_get_md5(LOCALS.image, digest);
+  err = image_get_digest(LOCALS.image, digest);
   if (err)
     return err;
 
-  err = tags_common__tag(tc, index, digest, LOCALS.image->file_name, arg);
+  err = tags_common__tag(tc, index, (char *) digest, LOCALS.image->file_name,
+                         arg);
   if (err)
     return err;
 
@@ -91,17 +93,17 @@ static error detag(tag_cloud *tc,
                    int        index,
                    void      *arg)
 {
-  error err;
-  char  digest[33];
+  error         err;
+  unsigned char digest[16];
 
   if (LOCALS.image == NULL)
     return error_OK;
 
-  err = image_get_md5(LOCALS.image, digest);
+  err = image_get_digest(LOCALS.image, digest);
   if (err)
     return err;
 
-  err = tags_common__detag(tc, index, digest, arg);
+  err = tags_common__detag(tc, index, (char *) digest, arg);
   if (err)
     return err;
 

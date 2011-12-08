@@ -9,8 +9,6 @@
 
 #include "fortify/fortify.h"
 
-#include "md5/md5.h"
-
 #include "oslib/types.h"
 #include "oslib/osfile.h"
 
@@ -249,7 +247,7 @@ void image_destroy_metadata(ntree_t *metadata)
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_md5(image_t *image, char *digest)
+error image_get_digest(image_t *image, unsigned char digest[DIGESTSZ])
 {
   if ((image->flags & image_FLAG_HAS_DIGEST) == 0)
   {
@@ -258,7 +256,7 @@ error image_get_md5(image_t *image, char *digest)
     image->flags |= image_FLAG_HAS_DIGEST;
   }
 
-  strcpy(digest, image->digest);
+  memcpy(digest, image->digest, DIGESTSZ);
 
   return error_OK;
 }
