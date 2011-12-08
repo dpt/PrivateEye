@@ -23,7 +23,7 @@
 
 static struct
 {
-  static atom_set_t *digests;
+  atom_set_t *digests;
 }
 LOCALS;
 
