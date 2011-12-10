@@ -292,12 +292,6 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
     goto Failure;
   }
 
-  /* I could use the same dict for both the IDs and the filenames, but as I'm
-   * writing this I'm noticing that the IDs are presently always of a
-   * constant length. They could therefore live in their own dedicated array.
-   * Perhaps a specialised version of dict with fixed-length entries. So I'm
-   * keeping them separate for now. */
-
   filenames = atom_create_tuned(32768 / 80, 32768); /* est. 80 chars/entry */
   if (filenames == NULL)
   {
