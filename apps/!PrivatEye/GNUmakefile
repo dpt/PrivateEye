@@ -16,7 +16,7 @@ librariesdbg	= $(oslibdbg) $(fortifydbg) $(flexdbg) $(appenginedbg) $(exiftagsdb
 app		= !RunImage,ff8
 appdbg		= !RunImageDF,ff8
 
-objs		= $(patsubst %.c, %.o, $(shell find -name '*.c' -print))
+objs		= $(patsubst %.c, %.o, $(shell find . -name '*.c' -print))
 objsdbg		= $(objs:.o=.odf)
 
 # Targets:

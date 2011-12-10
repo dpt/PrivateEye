@@ -12,7 +12,7 @@ lib		= libmd5.a
 libdbg		= libmd5dbg.a
 md5		= md5,ff8
 
-cobjs		= $(shell find -name 'other' -prune -o -name '*.c' -print)
+cobjs		= $(shell find . -name 'other' -prune -o -name '*.c' -print)
 objs		= $(cobjs:.c=.o)
 objsdbg		= $(objs:.o=.odf)
 

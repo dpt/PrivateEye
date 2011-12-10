@@ -15,7 +15,7 @@ exifcom		= exifcom,ff8
 exiftags	= exiftags,ff8
 exiftime	= exiftime,ff8
 
-objs		= $(patsubst %.c, %.o, $(shell find -name 'other' -prune -o -name '*.c' -print))
+objs		= $(patsubst %.c, %.o, $(shell find . -name 'other' -prune -o -name '*.c' -print))
 objsdbg		= $(objs:.o=.odf)
 
 # Targets:

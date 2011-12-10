@@ -24,12 +24,12 @@ testapp		= aetest,ff8
 # is this getting /all/ source files or just those three levels deep?
 
 # target dirs need to be chosen based on cpu
-cobjs		= $(shell find -name 'test' -prune -o -name 'target' -prune -o -name '*.c' -print)
-aobjs		= $(shell find -name 'test' -prune -o -name 'target' -prune -o -name '*.s' -print)
+cobjs		= $(shell find . -name 'test' -prune -o -name 'target' -prune -o -name '*.c' -print)
+aobjs		= $(shell find . -name 'test' -prune -o -name 'target' -prune -o -name '*.s' -print)
 objs		= $(cobjs:.c=.o) $(aobjs:.s=.o)
 objsdbg		= $(objs:.o=.odf)
 objsmod		= $(objs:.o=.om)
-objstst		= $(patsubst %.c, %.odf, $(shell find -wholename '*/test/*.c' -print))
+objstst		= $(patsubst %.c, %.odf, $(shell find . -wholename '*/test/*.c' -print))
 
 # Targets:
 
