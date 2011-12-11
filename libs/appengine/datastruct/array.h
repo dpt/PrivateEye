@@ -49,4 +49,8 @@ void array_squeeze2(unsigned char *base,
                     size_t         oldwidth,
                     size_t         newwidth);
 
+/* Temporary defines until the above functions are renamed. */
+#define array_stretch array_stretch2
+#define array_squeeze array_squeeze2
+
 #endif /* APPENGINE_ARRAY_H */

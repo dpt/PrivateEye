@@ -14,6 +14,7 @@ extern int bitvec_test(void);
 extern int hash_test(void);
 extern int list_test(void);
 extern int ntree_test(void);
+extern int vector_test(void);
 extern int tagdb_test(void);
 extern int txtfmt_test(void);
 extern int filing_test(void);
@@ -33,13 +34,14 @@ test;
 
 static const test tests[] =
 {
-  { "array",  array_test },
+  { "array",  array_test  },
   { "atom",   atom_test   },
   { "bitarr", bitarr_test },
   { "bitvec", bitvec_test },
   { "hash",   hash_test   },
   { "list",   list_test   },
   { "ntree",  ntree_test  },
+  { "vector", vector_test },
   { "tagdb",  tagdb_test  },
   { "txtfmt", txtfmt_test },
   { "filing", filing_test },
