@@ -7,11 +7,13 @@
 #include "fortify/fortify.h"
 
 #include "oslib/fileswitch.h"
+#include "oslib/osfile.h"
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/strings.h"
 
+#include "appengine/databases/digest-db.h"
 #include "appengine/databases/tag-db.h"
 
 /* ----------------------------------------------------------------------- */
@@ -28,11 +30,11 @@ static const char *tagnames[] =
 
 static const char *ids[] =
 {
-  "martyjen",
-  "doc",
-  "einy",
-  "folks",
-  "all",
+  "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+  "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01",
+  "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02",
+  "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03",
+  "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04",
 };
 
 static const char *renames[] =
@@ -84,6 +86,8 @@ static error test_create(State *state)
   error err;
 
   NOT_USED(state);
+
+  tagdb__delete(FILENAME);
 
   err = tagdb__create(FILENAME);
 
@@ -210,7 +214,7 @@ static error test_tag_id(State *state)
     whichf = taggings[i].id;
     whicht = taggings[i].tag;
 
-    printf("tagging '%s' with %d\n", ids[whichf], state->tags[whicht]);
+    printf("tagging id '%d' with %d\n", whichf, state->tags[whicht]);
 
     err = tagdb__tagid(state->db, ids[whichf], state->tags[whicht]);
     if (err)
@@ -237,7 +241,7 @@ static error test_get_tags_for_id(State *state)
     int        ntags;
     tagdb__tag tag;
 
-    printf("getting tags for '%s'... ", ids[i]);
+    printf("getting tags for id '%d'... ", i);
 
     ntags = 0;
     cont  = 0;
@@ -277,6 +281,14 @@ Failure:
   return err;
 }
 
+static void printdigest(const char *digest)
+{
+  int j;
+
+  for (j = 0; j < DIGESTSZ; j++)
+    printf("%02x", digest[j]);
+}
+
 static error test_enumerate_ids(State *state)
 {
   error err;
@@ -292,7 +304,9 @@ static error test_enumerate_ids(State *state)
 
     if (cont)
     {
-      printf("- %s\n", buf);
+      printf("- ");
+      printdigest(buf);
+      printf("\n");
     }
   }
   while (cont);
@@ -331,7 +345,9 @@ static error test_enumerate_ids_by_tag(State *state)
 
       if (cont)
       {
-        printf("- %s\n", buf);
+        printf("- ");
+        printdigest(buf);
+        printf("\n");
       }
     }
     while (cont);
@@ -367,7 +383,9 @@ static error test_enumerate_ids_by_tags(State *state)
 
       if (cont)
       {
-        printf("- %s\n", buf);
+        printf("- ");
+        printdigest(buf);
+        printf("\n");
       }
     }
     while (cont);
@@ -454,17 +472,12 @@ static const char *randomtagname(void)
 
 static const char *randomid(void)
 {
-  static char buf[10 + 1];
+  static char buf[DIGESTSZ];
 
-  int length;
   int i;
 
-  length = rnd(NELEMS(buf) - 1);
-
-  for (i = 0; i < length; i++)
-    buf[i] = 'A' + rnd(26) - 1;
-
-  buf[i] = '\0';
+  for (i = 0; i < DIGESTSZ; i++)
+    buf[i] = rnd(255);
 
   return buf;
 }
@@ -489,7 +502,9 @@ static error bash_enumerate(State *state)
       int        cont2;
       char       buf2[256];
 
-      printf("getting tags for '%s'... ", buf);
+      printf("getting tags for '");
+      printdigest(buf);
+      printf("' ... ");
 
       ntags = 0;
       cont2 = 0;
@@ -533,11 +548,11 @@ failure:
 
 static error test_bash(State *state)
 {
-  const int ntags       = 97; /* for now */
-  const int nids        = 10; /* for now */
-  const int ntaggings   = ntags * nids / 2; /* number of times to tag */
-  const int nuntaggings = ntags * nids / 4; /* number of times to untag */
-  const int reps        = 10; /* overall number of repetitions */
+  const int ntags       = 100;   /* number of tags to generate */
+  const int nids        = 10;    /* number of IDs to generate */
+  const int ntaggings   = ntags; /* number of times to tag */
+  const int nuntaggings = ntags; /* number of times to untag */
+  const int reps        = 3;     /* overall number of repetitions */
 
   error       err;
   int         i;
@@ -625,19 +640,23 @@ static error test_bash(State *state)
 
         /* ensure that the random name is unique */
         for (k = 0; k < nids; k++)
-          if (idnames[k] && strcmp(idnames[k], id) == 0)
+          if (idnames[k] && memcmp(idnames[k], id, DIGESTSZ) == 0)
             break;
       }
       while (k < nids);
 
-      idnames[i] = str_dup(id);
+      idnames[i] = malloc(DIGESTSZ);
       if (idnames[i] == NULL)
       {
         err = error_OOM;
         goto failure;
       }
 
-      printf("%d is id '%s'\n", i, idnames[i]);
+      memcpy(idnames[i], id, DIGESTSZ);
+
+      printf("%d is id '", i);
+      printdigest(idnames[i]);
+      printf("'\n");
     }
 
     printf("bash: tag random ids with random tags randomly\n");
@@ -655,7 +674,9 @@ static error test_bash(State *state)
         whichtag = rnd(ntags) - 1;
       while (tagnames[whichtag] == NULL);
 
-      printf("tagging '%s' with %d\n", idnames[whichid], tags[whichtag]);
+      printf("tagging '");
+      printdigest(idnames[whichid]);
+      printf("' with %d\n", tags[whichtag]);
 
       err = tagdb__tagid(state->db, idnames[whichid], tags[whichtag]);
       if (err)
@@ -738,7 +759,9 @@ static error test_bash(State *state)
         whichtag = rnd(ntags) - 1;
       while (tagnames[whichtag] == NULL);
 
-      printf("untagging '%s' with %d\n", idnames[whichid], tags[whichtag]);
+      printf("untagging '");
+      printdigest(idnames[whichid]);
+      printf("' with %d\n", tags[whichtag]);
 
       err = tagdb__untagid(state->db, idnames[whichid], tags[whichtag]);
       if (err)
@@ -774,7 +797,9 @@ static error test_bash(State *state)
 
     for (i = 0; i < nids; i += 2)
     {
-      printf("removing id %d '%s'\n", i, idnames[i]);
+      printf("removing id %d '", i);
+      printdigest(idnames[i]);
+      printf("'\n");
 
       tagdb__forget(state->db, idnames[i]);
 
