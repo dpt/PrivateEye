@@ -166,7 +166,7 @@ static error test_random(atom_set_t *d)
 
   printf("test: random\n");
 
-  for (i = 0; i < 1000; i++)
+  for (i = 0; i < 100; i++)
   {
     const char *name;
     atom_t  idx;
