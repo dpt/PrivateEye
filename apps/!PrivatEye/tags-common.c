@@ -29,10 +29,11 @@
 #include "tags-common.h"
 
 #define TAGS_DIR                "<Choices$Write>." APPNAME ".Tags"
-#define TAGDB_FILE              TAGS_DIR ".Tags"
-#define FILENAMEDB_FILE         TAGS_DIR ".Filenames"
+#define TAGS_SECTION            TAGS_DIR ".Default"
+#define TAGDB_FILE              TAGS_SECTION ".Tags"
+#define FILENAMEDB_FILE         TAGS_SECTION ".Filenames"
 
-#define TAGS_BACKUP_DIR         TAGS_DIR ".Backups"
+#define TAGS_BACKUP_DIR         TAGS_SECTION ".Backups"
 #define TAGDB_BACKUP_FILE       TAGS_BACKUP_DIR ".Tags"
 #define FILENAMEDB_BACKUP_FILE  TAGS_BACKUP_DIR ".Filenames"
 
@@ -80,10 +81,6 @@ static void backup(void)
   hourglass_on();
 
   /* backup the databases */
-
-  err = xosfile_create_dir(TAGS_DIR, 0);
-  if (err)
-    goto exit;
 
   err = xosfile_create_dir(TAGS_BACKUP_DIR, 0);
   if (err)
@@ -413,7 +410,7 @@ failure:
 error tags_common__set_highlights(tag_cloud *tc, image_t *image)
 {
   error          err;
-  unsigned char  digest[16];
+  unsigned char  digest[DIGESTSZ];
   int           *indices;
   int            nindices;
   int            allocated;
@@ -564,6 +561,8 @@ error tags_common__properinit(void)
     /* init */
 
     oserr = xosfile_create_dir(TAGS_DIR, 0);
+    if (oserr == NULL)
+      oserr = xosfile_create_dir(TAGS_SECTION, 0);
     if (oserr)
     {
       err = error_OS;
