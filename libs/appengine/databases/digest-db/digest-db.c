@@ -14,7 +14,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-#define DIGESTSZ 16
+#define ATOMBUFSZ 32768
 
 /* ----------------------------------------------------------------------- */
 
@@ -37,7 +37,7 @@ error digestdb_init(void)
   {
     /* init */
 
-    LOCALS.digests = atom_create_tuned(32768 / DIGESTSZ, 32768);
+    LOCALS.digests = atom_create_tuned(ATOMBUFSZ / DIGESTSZ, ATOMBUFSZ);
     if (LOCALS.digests == NULL)
       return error_OOM;
   }
@@ -95,9 +95,9 @@ int digestdb_compare(const void *a, const void *b)
 /* FIXME No input validation. */
 void digestdb_decode(unsigned char *bytes, const char *text)
 {
-#define _ -1
+#define _ 255
 
-  static const char tab[] =
+  static const unsigned char tab[] =
   {
     _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
     _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
@@ -119,7 +119,7 @@ void digestdb_decode(unsigned char *bytes, const char *text)
 
   const char *end;
 
-  for (end = text + 32; text < end; text += 2)
+  for (end = text + DIGESTSZ * 2; text < end; text += 2)
     *bytes++ = (tab[text[0]] << 4) | tab[text[1]];
 
 #undef _
@@ -131,7 +131,7 @@ void digestdb_encode(char *text, const unsigned char *bytes)
 
   const unsigned char *end;
 
-  for (end = bytes + 16; bytes < end; bytes++)
+  for (end = bytes + DIGESTSZ; bytes < end; bytes++)
   {
     unsigned char b;
 
