@@ -1,5 +1,5 @@
 //->ReadMeDDL
-// Produced by OvationPro at 11:31pm 29th January 2010
+// Produced by OvationPro at 11:45pm 13th December 2011
 //
 //
 
@@ -263,6 +263,16 @@ STYLE_20={style "URL"
 {scope 0}
 {underline 1 {type 1} {thickness 1310} {colourvalue COL_03 0x10000 0} {wordunderline 0} {doubleunderline 0}}
 {foreground COL_06 0xcccd 0}
+}
+
+STYLE_21={style "Numbers1"
+{keypress ""}
+{scope 1}
+{leftindent 1 22677}
+{firstindent -11338}
+{bullet 1 {bulletbefore ""} {bulletafter "."} {bulletstyle ""} {bullettab 1} {bulletstart 1}{bulletformat 0}}
+{tabruler {tableader ""} }
+
 }
 
 
@@ -646,6 +656,29 @@ TEXT_137={textframe
 {master TEXT_12d}{local 0}
 }
 
+TEXT_38e={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304724}
+{y 19843}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_38f={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
 PAGE_13a={page}
 
 TEXT_13b={textframe
@@ -782,7 +815,7 @@ PICT_151={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 34015}
-{y 22676}
+{y 68676}
 {w 251343}
 {h 65229}
 }}
@@ -814,7 +847,7 @@ PICT_153={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 68676}
+{y 114676}
 {w 251347}
 {h 155636}
 }}
@@ -1081,6 +1114,29 @@ TEXT_15b={textframe
 {master TEXT_14b}{local 0}
 }
 
+TEXT_3b6={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 296000}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_3b7={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
 PAGE_15e={page}
 
 TEXT_15f={textframe
@@ -1319,6 +1375,29 @@ TEXT_185={textframe
 {master TEXT_177}{local 0}
 }
 
+TEXT_3c4={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304722}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_3c5={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
 CHAP_189={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 5}
@@ -1404,7 +1483,7 @@ PICT_196={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 71476}
+{y 103492}
 {w 251343}
 {h 131452}
 }}
@@ -1543,6 +1622,29 @@ TEXT_19b={textframe
 
 TEXT_19e={textframe
 {master TEXT_191}{local 0}
+}
+
+TEXT_3d1={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304722}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_3d2={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
 }
 
 PAGE_1a1={page}
@@ -1689,7 +1791,7 @@ PICT_1be={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 105476}
+{y 137492}
 {w 251343}
 {h 79244}
 }}
@@ -1784,6 +1886,48 @@ STORY_1c1={story
 "calculated using the Rec. 601 coefficients of Y‘ = 0.299 R‘ + 0.587 G‘ + "
 "0.114 B‘."
 {endoftext}
+}
+
+TEXT_3dd={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304726}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_3de={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
+PAGE_3e7={page}
+
+TEXT_3e8={textframe
+{master TEXT_1ac}{local 0}
+}
+
+TEXT_3eb={textframe
+{master TEXT_1af}{local 0}
+}
+
+TEXT_3ef={textframe
+{master TEXT_1b2}{local 0}
+}
+
+CHAIN_1c1={textchain
+TEXT_1c0
+TEXT_3e8
 }
 
 CHAP_1c4={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
@@ -1903,7 +2047,7 @@ PICT_1d2={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 22676}
+{y 54692}
 {w 251343}
 {h 94446}
 }}
@@ -2427,9 +2571,32 @@ LINE_1ee={line
 {startcaps 1 0x20000 0x40000}
 {join 2}
 {windingrule 2}
-{fcurve {path {move 398201 58592}{curve 238468 58858 374158 222317 196000 222192}{end}}}
+{fcurve {path {move 405401 88992}{curve 245668 89258 374158 222317 196000 222192}{end}}}
 {angle 0x0}
 {skew 0x0}
+}
+
+TEXT_3f7={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304726}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_3f8={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
 }
 
 PAGE_1f0={page}
@@ -2699,6 +2866,29 @@ TEXT_222={textframe
 
 TEXT_225={textframe
 {master TEXT_219}{local 0}
+}
+
+TEXT_426={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304726}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_427={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
 }
 
 CHAP_229={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
@@ -3126,7 +3316,7 @@ STORY_246={story
 "Empty cache"
 {remuserstyle STYLE_1c}
 " on the icon bar menu to discard all cached images."
-{newpara}{adduserstyle STYLE_15}{align}{newpage}
+{newpage}{adduserstyle STYLE_15}{align}
 "Colour Choices"
 {newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_237}{newpara}
 {adduserstyle STYLE_1c}{align}
@@ -3300,6 +3490,29 @@ TEXT_248={textframe
 
 TEXT_24b={textframe
 {master TEXT_231}{local 0}
+}
+
+TEXT_433={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304722}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_434={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
 }
 
 PAGE_24e={page}
@@ -3630,6 +3843,48 @@ TEXT_27e={textframe
 
 TEXT_281={textframe
 {master TEXT_277}{local 0}
+}
+
+TEXT_44c={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304726}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_44d={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
+PAGE_455={page}
+
+TEXT_456={textframe
+{master TEXT_271}{local 0}
+}
+
+TEXT_459={textframe
+{master TEXT_274}{local 0}
+}
+
+TEXT_45d={textframe
+{master TEXT_277}{local 0}
+}
+
+CHAIN_27c={textchain
+TEXT_27b
+TEXT_456
 }
 
 CHAP_285={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
@@ -3975,6 +4230,29 @@ TEXT_297={textframe
 {master TEXT_28d}{local 0}
 }
 
+TEXT_465={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304722}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_466={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
 CHAP_29b={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 12}
@@ -4072,7 +4350,7 @@ STORY_2a8={story
 "Thumbview"
 {newpara}{remuserstyle STYLE_18}
 "Lorem ipsum dolor sit amet."
-{newpara}{adduserstyle STYLE_15}
+{newpara}{adduserstyle STYLE_15}{newpage}
 "Version 2.85 (03 Jun 2008)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Alpha channel transparency support"
@@ -4170,7 +4448,7 @@ STORY_2a8={story
 "gives more accurate errors when required modules are missing."
 {newpara}
 "Fixed a crash when clicking MENU on the Choices window pane workarea."
-{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}
+{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}{newpage}
 "Version 2.75 (14 Jan 2008)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Metadata"
@@ -4208,7 +4486,7 @@ STORY_2a8={story
 "& also..."
 {newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_14}
 "Greyscale PNGs < 8bpp now load correctly."
-{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}
+{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}{newpage}
 "Version 2.51 (17 Jul 2007)"
 {newpara}{remuserstyle STYLE_15}
 "Wimp_AutoScroll was being called even on Wimps earlier than 4.00 causing a "
@@ -4216,7 +4494,7 @@ STORY_2a8={story
 {newpara}
 "Fixed some group title icons that would vanish on RISC OS <= 3.7 in the "
 "choices pane windows."
-{newpara}{adduserstyle STYLE_15}
+{newpara}{adduserstyle STYLE_15}{newpage}
 "Version 2.50 (28 Jun 2007)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Effects"
@@ -4325,7 +4603,7 @@ STORY_2a8={story
 {newpara}
 "Unavailable functions activated by keypress now beep rather than causing a "
 "crash."
-{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}
+{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}{newpage}
 "Version 2.00 (22 Dec 2006)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Viewer windows can now gain the input focus. "
@@ -4445,6 +4723,29 @@ TEXT_2ad={textframe
 {master TEXT_2a3}{local 0}
 }
 
+TEXT_472={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304726}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_473={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
 PAGE_2b0={page}
 
 TEXT_2b1={textframe
@@ -4501,12 +4802,42 @@ TEXT_2cd={textframe
 {master TEXT_2a3}{local 0}
 }
 
+PAGE_49a={page}
+
+TEXT_49b={textframe
+{master TEXT_29d}{local 0}
+}
+
+TEXT_49e={textframe
+{master TEXT_2a0}{local 0}
+}
+
+TEXT_4a2={textframe
+{master TEXT_2a3}{local 0}
+}
+
+PAGE_4a7={page}
+
+TEXT_4a8={textframe
+{master TEXT_29d}{local 0}
+}
+
+TEXT_4ab={textframe
+{master TEXT_2a0}{local 0}
+}
+
+TEXT_4af={textframe
+{master TEXT_2a3}{local 0}
+}
+
 CHAIN_2a8={textchain
 TEXT_2a7
 TEXT_2b1
 TEXT_2b9
 TEXT_2c1
 TEXT_2c9
+TEXT_49b
+TEXT_4a8
 }
 
 CHAP_2d1={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
@@ -4656,15 +4987,33 @@ STORY_2de={story
 "http://tinct.net/tinct.asp"
 {remuserstyle STYLE_20}{leftindent 1 22677}{newpara}{leftindent}
 "My thanks to all of the above."
-{newpara}{adduserstyle STYLE_12}
-"Copyright"
+{newpara}{adduserstyle STYLE_12}{newpage}
+"License"
 {newpara}{remuserstyle STYLE_12}
-"This software (”PrivateEye•) is copyrighted work of David Thomas, it is "
-"supplied to you, the user, ”as is•; you use this application entirely at "
-"your own risk.  The author makes no warranty as to the fitness of this "
-"software for any purpose.  In no circumstances will the author be liable for "
-"any loss arising from the use or inability to use this software."
-{newpara}{adduserstyle STYLE_12}
+"Copyright © 2011, David Thomas. All rights reserved."
+{newpara}
+"Redistribution and use in source and binary forms, with or without "
+"modification, are permitted provided that the following conditions are met:"
+{newpara}{adduserstyle STYLE_21}
+"Redistributions of source code must retain the above copyright notice, this "
+"list of conditions and the following disclaimer. "
+{newpara}
+"Redistributions in binary form must reproduce the above copyright notice, "
+"this list of conditions and the following disclaimer in the documentation "
+"and/or other materials provided with the distribution."
+{newpara}{remuserstyle STYLE_21}
+"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ”AS IS• "
+"AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE "
+"IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE "
+"ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE "
+"LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR "
+"CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF "
+"SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS "
+"INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN "
+"CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) "
+"ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE "
+"POSSIBILITY OF SUCH DAMAGE."
+{newpara}{adduserstyle STYLE_12}{newpage}
 "Contacting the Author"
 {remuserstyle STYLE_12}{newpara}
 "If you have any comments, bug reports or suggestions for future versions "
@@ -4695,5 +5044,62 @@ TEXT_2e0={textframe
 
 TEXT_2e3={textframe
 {master TEXT_2d9}{local 0}
+}
+
+TEXT_47f={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 304726}
+{y 19842}
+{w 270705}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_480={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+{endoftext}
+}
+
+PAGE_489={page}
+
+TEXT_48a={textframe
+{master TEXT_2d3}{local 0}
+}
+
+TEXT_48d={textframe
+{master TEXT_2d6}{local 0}
+}
+
+TEXT_491={textframe
+{master TEXT_2d9}{local 0}
+}
+
+PAGE_4b4={page}
+
+TEXT_4b5={textframe
+{master TEXT_2d3}{local 0}
+}
+
+TEXT_4b8={textframe
+{master TEXT_2d6}{local 0}
+}
+
+TEXT_4bc={textframe
+{master TEXT_2d9}{local 0}
+}
+
+CHAIN_2de={textchain
+TEXT_2dd
+TEXT_48a
+TEXT_4b5
 }
 
