@@ -48,7 +48,7 @@ void array_stretch2(unsigned char *base, int nelems, size_t oldwidth,
 {
   unsigned char *p, *q;
 
-  assert(newwidth > oldwidth);
+  assert(oldwidth < newwidth);
 
   p = base + (nelems - 1) * oldwidth;
   q = base + (nelems - 1) * newwidth;

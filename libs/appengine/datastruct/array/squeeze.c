@@ -20,7 +20,7 @@ void array_squeeze2(unsigned char *base, int nelems, size_t oldwidth, size_t new
   unsigned char *end;
   unsigned char *p, *q;
 
-  assert(newwidth < oldwidth);
+  assert(oldwidth > newwidth);
 
   end = base + nelems * oldwidth;
 
