@@ -38,7 +38,7 @@
 #define HASHSIZE 97
 
 /* Long enough to hold any identifier. */
-#define MAXIDLEN 256
+#define MAXIDLEN 16
 
 /* Maximum number of tokens we expect on a single line. */
 #define MAXTOKENS 64
@@ -146,7 +146,7 @@ void tagdb__delete(const char *filename)
 {
   assert(filename);
 
-  osfile_delete(filename, NULL, NULL, NULL, NULL);
+  xosfile_delete(filename, NULL, NULL, NULL, NULL, NULL);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -181,7 +181,7 @@ static error tagdb__parse_line(tagdb *db, char *buf)
   char          *p;
   int            t;
   const char    *tokens[MAXTOKENS];
-  unsigned char  id[16];
+  unsigned char  id[DIGESTSZ];
   int            i;
 
   p = buf;
@@ -903,7 +903,7 @@ error tagdb__enumerate_ids(tagdb *db,
   {
     size_t l;
 
-    l = strlen(state.found) + 1;
+    l = DIGESTSZ;
 
     if (bufsz < l)
       return error_TAGDB_BUFF_OVERFLOW;
@@ -961,7 +961,7 @@ error tagdb__enumerate_ids_by_tag(tagdb *db, tagdb__tag tag,
   {
     size_t l;
 
-    l = strlen(state.found) + 1;
+    l = DIGESTSZ;
 
     if (bufsz < l)
       return error_TAGDB_BUFF_OVERFLOW;
@@ -1065,7 +1065,7 @@ error tagdb__enumerate_ids_by_tags(tagdb *db,
       goto Failure;
     }
 
-    l = strlen(state.found) + 1;
+    l = DIGESTSZ;
 
     if (bufsz < l)
     {
