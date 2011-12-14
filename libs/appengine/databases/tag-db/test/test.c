@@ -285,7 +285,7 @@ static void printdigest(const char *digest)
 {
   int j;
 
-  for (j = 0; j < DIGESTSZ; j++)
+  for (j = 0; j < digestdb_DIGESTSZ; j++)
     printf("%02x", digest[j]);
 }
 
@@ -472,11 +472,11 @@ static const char *randomtagname(void)
 
 static const char *randomid(void)
 {
-  static char buf[DIGESTSZ];
+  static char buf[digestdb_DIGESTSZ];
 
   int i;
 
-  for (i = 0; i < DIGESTSZ; i++)
+  for (i = 0; i < digestdb_DIGESTSZ; i++)
     buf[i] = rnd(255);
 
   return buf;
@@ -640,19 +640,19 @@ static error test_bash(State *state)
 
         /* ensure that the random name is unique */
         for (k = 0; k < nids; k++)
-          if (idnames[k] && memcmp(idnames[k], id, DIGESTSZ) == 0)
+          if (idnames[k] && memcmp(idnames[k], id, digestdb_DIGESTSZ) == 0)
             break;
       }
       while (k < nids);
 
-      idnames[i] = malloc(DIGESTSZ);
+      idnames[i] = malloc(digestdb_DIGESTSZ);
       if (idnames[i] == NULL)
       {
         err = error_OOM;
         goto failure;
       }
 
-      memcpy(idnames[i], id, DIGESTSZ);
+      memcpy(idnames[i], id, digestdb_DIGESTSZ);
 
       printf("%d is id '", i);
       printdigest(idnames[i]);
