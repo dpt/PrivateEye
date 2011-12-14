@@ -38,7 +38,7 @@ typedef unsigned int bitarr_elem_t;
  *
  * This works out all right, letting us declare bit arrays by specifying the
  * number of bits we require, but we end up needing to cast out declared
- * entries to (bitarr_t *) when calling a 'real' function, e.g. bitarr__count
+ * entries to (bitarr_t *) when calling a 'real' function, e.g. bitarr_count
  * which looks awkward.
  */
 
@@ -53,7 +53,7 @@ struct bitarr_t {
 };
 
 /* Clear all bits in the specified bit array. */
-#define bitarr__wipe(arr, bytelen)      \
+#define bitarr_wipe(arr, bytelen)       \
   do {                                  \
     memset(&(arr).entries, 0, bytelen); \
   } while (0)
@@ -63,22 +63,22 @@ struct bitarr_t {
     ((arr)->entries[(bit) >> BITARR_SHIFT] op (1u << ((bit) & BITARR_MASK)))
 
 /* Set a single bit. */
-#define bitarr__set(arr, bit) \
+#define bitarr_set(arr, bit) \
   do { BITARR_OP(arr, bit, |=); } while (0)
 
 /* Clear a single bit. */
-#define bitarr__clear(arr, bit) \
+#define bitarr_clear(arr, bit) \
   do { BITARR_OP(arr, bit, &= ~); } while (0)
 
 /* Toggle a single bit. */
-#define bitarr__toggle(arr, bit) \
+#define bitarr_toggle(arr, bit) \
   do { BITARR_OP(arr, bit, ^=); } while (0)
 
 /* Retrieve the value of the specified bit. */
-#define bitarr__get(arr, bit) \
+#define bitarr_get(arr, bit) \
   (!!BITARR_OP(arr, bit, &))
 
 /* Returns the number of set bits in the array. */
-int bitarr__count(const struct bitarr_t *arr, size_t bytelen);
+int bitarr_count(const struct bitarr_t *arr, size_t bytelen);
 
 #endif /* APPENGINE_BITARR_H */

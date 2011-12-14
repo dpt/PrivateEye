@@ -21,7 +21,7 @@ static void dumpbits(const TestBits *arr, size_t nbits)
   {
     int b;
 
-    b = bitarr__get(arr, i);
+    b = bitarr_get(arr, i);
     c += b;
     printf("%d", b);
   }
@@ -36,13 +36,13 @@ int bitarr_test(void)
 
   printf("test: create\n");
 
-  bitarr__wipe(arr, sizeof(arr));
+  bitarr_wipe(arr, sizeof(arr));
 
 
   printf("test: set\n");
 
   for (i = 0; i < NBITS; i++)
-    bitarr__set(&arr, i);
+    bitarr_set(&arr, i);
 
   dumpbits(&arr, NBITS);
 
@@ -50,7 +50,7 @@ int bitarr_test(void)
   printf("test: clear\n");
 
   for (i = 0; i < NBITS; i++)
-    bitarr__clear(&arr, i);
+    bitarr_clear(&arr, i);
 
   dumpbits(&arr, NBITS);
 
@@ -58,7 +58,7 @@ int bitarr_test(void)
   printf("test: toggle\n");
 
   for (i = 0; i < NBITS; i++)
-    bitarr__toggle(&arr, i);
+    bitarr_toggle(&arr, i);
 
   dumpbits(&arr, NBITS);
 
@@ -66,7 +66,7 @@ int bitarr_test(void)
   printf("test: count\n");
 
   /* a cast is required :-| */
-  printf("%d bits set\n", bitarr__count((struct bitarr_t *) &arr, sizeof(arr)));
+  printf("%d bits set\n", bitarr_count((struct bitarr_t *) &arr, sizeof(arr)));
 
 
   return 0;
