@@ -8,9 +8,9 @@
 
 #include "appengine/base/errors.h"
 
-#define MD5DIGESTSZ 16
+#define md5_DIGESTSZ 16
 
 error md5__from_file(const char    *file_name,
-                     unsigned char  digest[MD5DIGESTSZ]);
+                     unsigned char  digest[md5_DIGESTSZ]);
 
 #endif /* APPENGINE_MD5_H */

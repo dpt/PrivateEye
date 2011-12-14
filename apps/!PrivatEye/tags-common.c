@@ -5,6 +5,7 @@
 
 #ifdef EYE_TAGS
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -217,7 +218,9 @@ error tags_common__tagfile(tag_cloud  *tc,
 {
   error          err;
   tagdb         *db = arg;
-  unsigned char  digest[DIGESTSZ];
+  unsigned char  digest[md5_DIGESTSZ];
+
+  assert(md5_DIGESTSZ == digestdb_DIGESTSZ);
 
   err = md5__from_file(file_name, digest);
   if (err)
@@ -245,7 +248,9 @@ error tags_common__detagfile(tag_cloud  *tc,
 {
   error          err;
   tagdb         *db = arg;
-  unsigned char  digest[DIGESTSZ];
+  unsigned char  digest[md5_DIGESTSZ];
+
+  assert(md5_DIGESTSZ == digestdb_DIGESTSZ);
 
   err = md5__from_file(file_name, digest);
   if (err)
@@ -410,7 +415,7 @@ failure:
 error tags_common__set_highlights(tag_cloud *tc, image_t *image)
 {
   error          err;
-  unsigned char  digest[DIGESTSZ];
+  unsigned char  digest[image_DIGESTSZ];
   int           *indices;
   int            nindices;
   int            allocated;

@@ -37,7 +37,8 @@ error digestdb_init(void)
   {
     /* init */
 
-    LOCALS.digests = atom_create_tuned(ATOMBUFSZ / DIGESTSZ, ATOMBUFSZ);
+    LOCALS.digests = atom_create_tuned(ATOMBUFSZ / digestdb_DIGESTSZ,
+                                       ATOMBUFSZ);
     if (LOCALS.digests == NULL)
       return error_OOM;
   }
@@ -59,7 +60,7 @@ error digestdb_add(const unsigned char *digest, int *index)
 {
   error err;
 
-  err = atom_new(LOCALS.digests, digest, DIGESTSZ, (atom_t *) index);
+  err = atom_new(LOCALS.digests, digest, digestdb_DIGESTSZ, (atom_t *) index);
   if (err == error_ATOM_NAME_EXISTS)
     err = error_OK;
 
@@ -87,7 +88,7 @@ int digestdb_compare(const void *a, const void *b)
   const unsigned char *ma = a;
   const unsigned char *mb = b;
 
-  return memcmp(ma, mb, DIGESTSZ);
+  return memcmp(ma, mb, digestdb_DIGESTSZ);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -119,7 +120,7 @@ void digestdb_decode(unsigned char *bytes, const char *text)
 
   const char *end;
 
-  for (end = text + DIGESTSZ * 2; text < end; text += 2)
+  for (end = text + digestdb_DIGESTSZ * 2; text < end; text += 2)
     *bytes++ = (tab[text[0]] << 4) | tab[text[1]];
 
 #undef _
@@ -131,7 +132,7 @@ void digestdb_encode(char *text, const unsigned char *bytes)
 
   const unsigned char *end;
 
-  for (end = bytes + DIGESTSZ; bytes < end; bytes++)
+  for (end = bytes + digestdb_DIGESTSZ; bytes < end; bytes++)
   {
     unsigned char b;
 

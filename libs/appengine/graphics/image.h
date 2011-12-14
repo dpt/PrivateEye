@@ -21,7 +21,7 @@
 /* ----------------------------------------------------------------------- */
 
 /* Size of a digest. */
-#define DIGESTSZ 16
+#define image_DIGESTSZ 16
 
 /* ----------------------------------------------------------------------- */
 
@@ -156,7 +156,7 @@ struct T
   void         *image;
 
   char          file_name[256]; /* careful now */
-  unsigned char digest[DIGESTSZ];
+  unsigned char digest[image_DIGESTSZ];
 
   int           refcount;
 
@@ -270,7 +270,7 @@ void image_destroy_metadata(ntree_t *metadata);
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_digest(T *image, unsigned char digest[DIGESTSZ]);
+error image_get_digest(T *image, unsigned char digest[image_DIGESTSZ]);
 
 #undef T
 

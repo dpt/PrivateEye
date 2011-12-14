@@ -181,7 +181,7 @@ static error tagdb__parse_line(tagdb *db, char *buf)
   char          *p;
   int            t;
   const char    *tokens[MAXTOKENS];
-  unsigned char  id[DIGESTSZ];
+  unsigned char  id[digestdb_DIGESTSZ];
   int            i;
 
   p = buf;
@@ -903,7 +903,7 @@ error tagdb__enumerate_ids(tagdb *db,
   {
     size_t l;
 
-    l = DIGESTSZ;
+    l = digestdb_DIGESTSZ;
 
     if (bufsz < l)
       return error_TAGDB_BUFF_OVERFLOW;
@@ -961,7 +961,7 @@ error tagdb__enumerate_ids_by_tag(tagdb *db, tagdb__tag tag,
   {
     size_t l;
 
-    l = DIGESTSZ;
+    l = digestdb_DIGESTSZ;
 
     if (bufsz < l)
       return error_TAGDB_BUFF_OVERFLOW;
@@ -1065,7 +1065,7 @@ error tagdb__enumerate_ids_by_tags(tagdb *db,
       goto Failure;
     }
 
-    l = DIGESTSZ;
+    l = digestdb_DIGESTSZ;
 
     if (bufsz < l)
     {

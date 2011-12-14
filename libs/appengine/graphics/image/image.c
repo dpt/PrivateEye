@@ -247,7 +247,7 @@ void image_destroy_metadata(ntree_t *metadata)
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_digest(image_t *image, unsigned char digest[DIGESTSZ])
+error image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
 {
   if ((image->flags & image_FLAG_HAS_DIGEST) == 0)
   {
@@ -256,7 +256,7 @@ error image_get_digest(image_t *image, unsigned char digest[DIGESTSZ])
     image->flags |= image_FLAG_HAS_DIGEST;
   }
 
-  memcpy(digest, image->digest, DIGESTSZ);
+  memcpy(digest, image->digest, image_DIGESTSZ);
 
   return error_OK;
 }
