@@ -40,6 +40,12 @@
 /* Size of buffer used when writing out the database. */
 #define WRITEBUFSZ 1024
 
+/* Size of pools used for atom storage. */
+#define ATOMBUFSZ 32768
+
+/* Estimated filename length. */
+#define ESTATOMLEN 80
+
 /* ----------------------------------------------------------------------- */
 
 static const char signature[] = "1";
@@ -292,7 +298,7 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
     goto Failure;
   }
 
-  filenames = atom_create_tuned(32768 / 80, 32768); /* est. 80 chars/entry */
+  filenames = atom_create_tuned(ATOMBUFSZ / ESTATOMLEN, ATOMBUFSZ);
   if (filenames == NULL)
   {
     err = error_OOM;
@@ -369,14 +375,14 @@ static int commit_cb(const void *key, const void *value, void *arg)
   struct commit_state *state = arg;
   const unsigned char *k;
   const char          *v;
-  char                 ktext[33];
+  char                 ktext[digestdb_DIGESTSZ * 2 + 1];
   int                  c;
 
   k = key;
   v = value;
 
   digestdb_encode(ktext, k);
-  ktext[32] = '\0';
+  ktext[digestdb_DIGESTSZ * 2] = '\0';
 
   c = sprintf(state->buf, "%s %s\n", ktext, v);
 

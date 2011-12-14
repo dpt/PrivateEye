@@ -282,13 +282,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-0001f8f4: sebastian
-0001f8d0: pris
-0001f8ac: bryant
-0001f888: gaff
-0001f864: rachael
-0001f840: batty
-0001f81c: deckard
+0001f8bc: sebastian
+0001f898: pris
+0001f874: bryant
+0001f850: gaff
+0001f82c: rachael
+0001f808: batty
+0001f7e4: deckard
 
 >> ntree tests
 test: build tree
@@ -4643,7 +4643,7 @@ Tests completed: 17/17 tests passed.
 
 Fortify: Statistics at test.main.c.main.140
          Memory currently allocated: 0 bytes in 0 blocks
-         Maximum memory allocated at one time: 55320 bytes in 164 blocks
-         There have been 996 allocations and 996 deallocations
-         There was a total of 104509 bytes allocated
-         The average allocation was 104 bytes
+         Maximum memory allocated at one time: 56120 bytes in 156 blocks
+         There have been 986 allocations and 986 deallocations
+         There was a total of 107133 bytes allocated
+         The average allocation was 108 bytes

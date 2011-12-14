@@ -49,6 +49,12 @@
 /* Size of buffer used when writing out the database. */
 #define WRITEBUFSZ 1024
 
+/* Size of pools used for atom storage. */
+#define ATOMBUFSZ 1536
+
+/* Estimated tag length. */
+#define ESTATOMLEN 9
+
 /* ----------------------------------------------------------------------- */
 
 static const char signature[] = "1";
@@ -351,7 +357,7 @@ error tagdb__open(const char *filename, tagdb **pdb)
     goto Failure;
   }
 
-  tags = atom_create_tuned(1536 / 170, 1536); /* est. 9 chars/entry */
+  tags = atom_create_tuned(ATOMBUFSZ / ESTATOMLEN, ATOMBUFSZ);
   if (tags == NULL)
   {
     err = error_OOM;
@@ -433,7 +439,7 @@ static int commit_cb(const void *key, const void *value, void *arg)
   error                err;
   const unsigned char *k;
   const bitvec_t      *v;
-  char                 ktext[33];
+  char                 ktext[digestdb_DIGESTSZ * 2 + 1];
   int                  c;
   int                  ntags;
   int                  index;
@@ -442,7 +448,7 @@ static int commit_cb(const void *key, const void *value, void *arg)
   v = value;
 
   digestdb_encode(ktext, k);
-  ktext[32] = '\0';
+  ktext[digestdb_DIGESTSZ * 2] = '\0';
 
   c = sprintf(state->buf, "%s ", ktext);
 
