@@ -35,6 +35,9 @@ static int sort_by_name(const void *va, const void *vb)
   sa = (const char *) atom_get(sort_tc->dict, *a, NULL);
   sb = (const char *) atom_get(sort_tc->dict, *b, NULL);
 
+  if (sa == sb)
+    return 0;
+
   return strcasecmp(sa, sb);
 }
 
