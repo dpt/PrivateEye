@@ -28,7 +28,8 @@ static void wipe_underline(tag_cloud *tc, int index)
 
   b = &tc->layout.boxes.boxes[index];
 
-  wimp_force_redraw(tc->main_w, b->x0, b->y0, b->x1, b->y1);
+  wimp_force_redraw(tc->main_w, b->x0, b->y0, b->x1,
+                    b->y0 + (b->y1 - b->y0) / 4);
 }
 
 void tag_cloud__hover_init(tag_cloud *tc)
