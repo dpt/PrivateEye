@@ -1,0 +1,49 @@
+| >!Run for TagCloud
+| by David Thomas, © 2011
+
+Obey <Obey$Dir>.!Boot
+
+Set Alias$TagCloudRMLoad IfThere %%*0 Then RMLoad %%*0
+
+RMEnsure UtilityModule  3.50 Error TagCloud requires RISC OS 3.5 or later
+
+RMEnsure WindowManager  3.98 Error TagCloud requires WindowManager 3.98 or later ('nested WIMP')
+
+RMEnsure UtilityModule  3.70 RMEnsure CallASWI 0.02 TagCloudRMLoad System:Modules.CallASWI
+RMEnsure UtilityModule  3.70 RMEnsure CallASWI 0.02 Error TagCloud requires CallASWI 0.02 or later
+
+RMEnsure FPEmulator     4.03 TagCloudRMLoad System:Modules.FPEmulator
+RMEnsure FPEmulator     4.03 Error TagCloud requires FPEmulator 4.03 or later
+
+RMEnsure SharedCLibrary 5.17 TagCloudRMLoad System:Modules.CLib
+RMEnsure SharedCLibrary 5.34 Error TagCloud requires SharedCLibrary 5.34 or later
+
+RMEnsure AppEngine      0.16 TagCloudRMLoad <TagCloud$Dir>.AppEngine
+RMEnsure AppEngine      0.16 Error TagCloud requires AppEngine 0.16 or later
+
+Unset Alias$TagCloudRMLoad
+
+| TagCloud by default allocates workspace memory from a dynamic area. If
+| you uncomment the following line it will enable the use of wimp slots
+| larger than 28,640K on suitable systems. This allows for allocations of up
+| to 512M on RISC OS 5.
+|
+| Set TagCloud$Flex WimpSlot
+|
+| However not all of TagCloud's internals can yet cope with the sliding
+| heap. You are advised to also boost the wimp slot so that the malloc pool
+| has a reasonable reserve to itself and never needs to shunt the flex heap
+| forwards.
+
+| When using a dynamic area the following system variable can either be set
+| to zero to use the system default dynamic area limit, or a megabyte value. 
+| 
+Set TagCloud$DALimit 0
+
+WimpSlot -min 8000K -max 8000K
+
+Run <TagCloud$Dir>.Resources.ResFind TagCloud
+
+|InitStore &CCCCCCCC { > null: }
+
+Run <TagCloud$Dir>.!RunImageDF %*0 ><TagCloud$Dir>.stdout 2><TagCloud$Dir>.stderr

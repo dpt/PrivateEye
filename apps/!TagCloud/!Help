@@ -1,0 +1,13 @@
+TagCloud
+========
+
+Test application to prove that tag clouds work outside of PrivateEye.
+
+Notes on this version:
+
+- List mode does not work (not yet implemented)
+- Data is random
+- Dropping files on tags is known about but not hooked up to anything
+- Window doesn't resize when toolbar is toggled on/off
+- Window doesn't resize when the content becomes shorter
+- No font size etc. config is exposed (though PrivateEye has it)

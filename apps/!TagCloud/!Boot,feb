@@ -1,0 +1,6 @@
+| >!Boot for TagCloud
+| by David Thomas, © 2011
+
+IconSprites <Obey$Dir>.!Sprites
+
+Set TagCloud$Dir <Obey$Dir>

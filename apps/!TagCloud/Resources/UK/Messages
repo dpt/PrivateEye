@@ -1,0 +1,44 @@
+# Messages for TagCloud
+# © David Thomas, 2011
+#
+
+version:0.01 (17 Dec 2011)
+
+task:TagCloud
+icon:!tagcloud
+
+# Menus
+
+menu.iconbar:TagCloud,>Info,Quit
+menu.tagcloud:Tag Cloud,Display{Display,List                 F2,Cloud                F3|Sort by name        ‹F2,Sort by count       ‹F3|Selected tags first ^F3},Tag %s‘{Tag,>Rename  ^R,Delete  ^K,>Info    ^I,},>New tag ^N|Commit|Toolbar
+
+# Tag Cloud window
+
+tagcloud.title:Tags of %s
+tagcloud.stats:%d tags applied %d times
+
+warn.drag.to.save:To save, drag the file icon to a directory display.
+
+# Errors (numbered)
+
+error.unknown:Error %d.
+error.no.mem:There is not enough memory to perform the requested operation. Quit any unwanted applications or see the RISC OS User Guide for ways to maximise memory.
+
+# Interactive Help
+
+# \S:Click SELECT to
+# \R:Move the pointer right to
+# \A:Click ADJUST to
+# \T:This is the
+# \G:This option is greyed out because
+# \W:This window is
+# \D:Drag SELECT to
+# \d:Drag ADJUST to
+# \w:window
+# \s:SELECT
+# \a:ADJUST
+
+#  Window help
+
+hm.iconbar.0:\Rsee information about TagCloud.
+hm.iconbar.1:\Sto make TagCloud go away.
