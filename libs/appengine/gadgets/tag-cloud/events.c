@@ -843,7 +843,10 @@ static int tag_cloud__message_font_changed(wimp_message *message, void *handle)
 
   tag_cloud__layout_discard(tc);
 
-  // kick the window for a redraw
+  // not NEW_DISPLAY (config doesn't change)
+  tc->flags |= tag_cloud__FLAG_NEW_DATA;
+
+  tag_cloud__schedule_redraw(tc);
 
   return event_HANDLED;
 }
