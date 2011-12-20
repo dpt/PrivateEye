@@ -41,6 +41,7 @@
 #include "globals.h"
 #include "iconbar.h"
 #include "menunames.h"          /* not generated */
+#include "makecloud.h"
 
 /* ----------------------------------------------------------------------- */
 
@@ -70,7 +71,8 @@ static error initialise_subsystems(void)
   static const initfn initfns[] =
   {
     icon_bar__init,
-    tag_cloud__init
+    tag_cloud__init,
+    makecloud_init
   };
 
   error err;
@@ -92,6 +94,7 @@ static void finalise_subsystems(void)
 
   static const finfn finfns[] =
   {
+    makecloud_fin,
     tag_cloud__fin,
     icon_bar__fin
   };

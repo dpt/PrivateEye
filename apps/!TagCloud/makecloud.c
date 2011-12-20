@@ -260,15 +260,13 @@ static tag_cloud__event keyhandler(wimp_key_no  key_no,
 
 /* ----------------------------------------------------------------------- */
 
-/* The 'proper' init/fin functions provide lazy initialisation. */
+static int makecloud_refcount = 0;
 
-static int tags__properrefcount = 0;
-
-static error tags__properinit(void)
+error makecloud_init(void)
 {
   error err;
 
-  if (tags__properrefcount++ == 0)
+  if (makecloud_refcount++ == 0)
   {
     tag_cloud__config  conf;
     tag_cloud         *tc = NULL;
@@ -308,16 +306,12 @@ Failure:
   return err;
 }
 
-/* This is only ever called with force set true at the moment. */
-static void tags__properfin(int force)
+void makecloud_fin(void)
 {
-  if (tags__properrefcount == 0)
+  if (makecloud_refcount == 0)
     return;
 
-  if (force)
-    tags__properrefcount = 1;
-
-  if (--tags__properrefcount == 0)
+  if (--makecloud_refcount == 0)
   {
     tag_cloud__destroy(LOCALS.tc);
   }
@@ -329,10 +323,6 @@ void make_cloud(void)
 {
   error             err;
   wimp_window_state state;
-
-  err = tags__properinit();
-  if (err)
-    return; // err;
 
   state.w = tag_cloud__get_window_handle(LOCALS.tc);
   wimp_get_window_state(&state);
