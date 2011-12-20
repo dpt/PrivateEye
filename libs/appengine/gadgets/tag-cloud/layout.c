@@ -463,7 +463,7 @@ error tag_cloud__layout_prepare(tag_cloud *tc)
 
   font_p      = default_font;
   bold_font_p = default_bold_font;
-  font_size   = tc->config.size * 16;
+  font_size   = 12 * 16;
 
   /* read the desktop font handle, get its name and use it, if present */
 
@@ -494,7 +494,7 @@ error tag_cloud__layout_prepare(tag_cloud *tc)
 
     bold_font_p = bold_font_id;
 
-    if (tc->config.size < 0)
+    if (tc->config.size <= 0)
     {
       const char *env;
 
@@ -509,6 +509,10 @@ error tag_cloud__layout_prepare(tag_cloud *tc)
         if (efs)
           font_size = efs;
       }
+    }
+    else
+    {
+      font_size = tc->config.size * 16;
     }
   }
 
