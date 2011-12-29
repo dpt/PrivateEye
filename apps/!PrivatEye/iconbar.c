@@ -82,7 +82,7 @@ error eye_icon_bar_init(void)
   if (err)
     return err;
 
-  icon_bar__set_handlers(selectionx, update, NULL);
+  icon_bar__set_handlers(NULL, selectionx, update, NULL);
 
   return error_OK;
 }
