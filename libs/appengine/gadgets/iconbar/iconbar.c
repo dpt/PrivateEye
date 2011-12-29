@@ -22,6 +22,7 @@ static struct
 {
   dialogue_t                 *proginfo;
   wimp_menu                  *iconbar_m;
+  icon_bar__menu_pointerfn   *ptrfn;
   icon_bar__menu_selectionfn *selfn;
   icon_bar__menu_updatefn    *updfn;
   void                       *opaque;
@@ -103,12 +104,14 @@ void icon_bar__fin(void)
   help__fin();
 }
 
-void icon_bar__set_handlers(icon_bar__menu_selectionfn *select,
+void icon_bar__set_handlers(icon_bar__menu_pointerfn   *pointer,
+                            icon_bar__menu_selectionfn *select,
                             icon_bar__menu_updatefn    *update,
                             void                       *opaque)
 {
-  LOCALS.selfn = select;
-  LOCALS.updfn = update;
+  LOCALS.ptrfn  = pointer;
+  LOCALS.selfn  = select;
+  LOCALS.updfn  = update;
   LOCALS.opaque = opaque;
 }
 
@@ -116,7 +119,8 @@ void icon_bar__set_handlers(icon_bar__menu_selectionfn *select,
 
 static void icon_bar__menu_update(void)
 {
-  LOCALS.updfn(LOCALS.iconbar_m, LOCALS.opaque);
+  if (LOCALS.updfn)
+    LOCALS.updfn(LOCALS.iconbar_m, LOCALS.opaque);
 }
 
 static int icon_bar__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
@@ -135,6 +139,11 @@ static int icon_bar__event_mouse_click(wimp_event_no event_no, wimp_block *block
     menu_open(LOCALS.iconbar_m,
               pointer->pos.x - 64,
               96 + wimp_MENU_ITEM_HEIGHT * LOCALS.menu_height);
+  }
+  else
+  {
+    if (LOCALS.ptrfn)
+      LOCALS.ptrfn(&block->pointer, LOCALS.opaque);
   }
 
   return event_HANDLED;
@@ -155,7 +164,8 @@ static int icon_bar__event_menu_selection(wimp_event_no event_no, wimp_block *bl
   if (last != LOCALS.iconbar_m)
     return event_NOT_HANDLED;
 
-  LOCALS.selfn(selection, LOCALS.opaque);
+  if (LOCALS.selfn)
+    LOCALS.selfn(selection, LOCALS.opaque);
 
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
