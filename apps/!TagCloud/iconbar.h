@@ -3,12 +3,12 @@
  * Purpose: Icon bar icon
  * ----------------------------------------------------------------------- */
 
-#ifndef ICONBAR_H
-#define ICONBAR_H
+#ifndef TAG_ICONBAR_H
+#define TAG_ICONBAR_H
 
 #include "appengine/base/errors.h"
 
-error icon_bar__init(void);
-void icon_bar__fin(void);
+error tag_icon_bar_init(void);
+void tag_icon_bar_fin(void);
 
-#endif /* ICONBAR_H */
+#endif /* TAG_ICONBAR_H */

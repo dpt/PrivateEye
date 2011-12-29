@@ -70,7 +70,7 @@ static error initialise_subsystems(void)
 
   static const initfn initfns[] =
   {
-    icon_bar__init,
+    tag_icon_bar_init,
     tag_cloud__init,
     makecloud_init
   };
@@ -96,7 +96,7 @@ static void finalise_subsystems(void)
   {
     makecloud_fin,
     tag_cloud__fin,
-    icon_bar__fin
+    tag_icon_bar_fin
   };
 
   int i;
