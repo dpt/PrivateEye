@@ -3,12 +3,12 @@
  * Purpose: Icon bar icon
  * ----------------------------------------------------------------------- */
 
-#ifndef ICONBAR_H
-#define ICONBAR_H
+#ifndef EYE_ICONBAR_H
+#define EYE_ICONBAR_H
 
 #include "appengine/base/errors.h"
 
-error icon_bar__init(void);
-void icon_bar__fin(void);
+error eye_icon_bar_init(void);
+void eye_icon_bar_fin(void);
 
-#endif /* ICONBAR_H */
+#endif /* EYE_ICONBAR_H */

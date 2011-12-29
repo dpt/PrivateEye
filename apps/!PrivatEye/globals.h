@@ -39,7 +39,6 @@ extern struct PrivateEyeGlobals
 
   wimp_w           current_display_w;
 
-  wimp_menu       *iconbar_m;
   wimp_menu       *image_m;
   wimp_menu       *thumbview_m;
 

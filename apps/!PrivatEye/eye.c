@@ -111,8 +111,8 @@ static error initialise_subsystems(void)
   static const initfn initfns[] =
   {
     dcs_quit__init,  /* in AppEngine */
-    hist__init,
-    icon_bar__init,
+    hist__init,      /* in AppEngine */
+    eye_icon_bar_init,
     rotate__init,
     effects__init,
 #ifdef EYE_TAGS
@@ -156,7 +156,7 @@ static void finalise_subsystems(void)
 #endif
     effects__fin,
     rotate__fin,
-    icon_bar__fin,
+    eye_icon_bar_fin,
     hist__fin,
     dcs_quit__fin,
   };
