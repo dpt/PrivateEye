@@ -56,6 +56,9 @@ void menu_range_tick_exclusive(T   *menu,
                                int  low,
                                int  high);
 
+/* Return the number of entries in the menu. */
+int menu_count(const T *menu);
+
 #undef T
 
 #endif /* APPENGINE_MENU_H */
