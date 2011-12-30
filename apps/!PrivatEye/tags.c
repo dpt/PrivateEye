@@ -343,6 +343,10 @@ static error tags__properinit(void)
 
     tag_cloud__set_key_handler(tc, keyhandler, db);
 
+    tag_cloud__set_display(tc, GLOBALS.choices.tagcloud.display);
+    tag_cloud__set_sort(tc, GLOBALS.choices.tagcloud.sort);
+    tag_cloud__set_order(tc, GLOBALS.choices.tagcloud.selfirst);
+
     LOCALS.tc = tc;
   }
 
