@@ -10,6 +10,7 @@ libfile_		= libfile
 link_			= link
 wipe			= $(suppress) wipe
 suppress		= x
+templheadr_		= templheadr
 
 # Tool flags:
 
@@ -20,6 +21,7 @@ everyflags		= -c
 libfileflags		= -c
 linkflags		= -c++
 wipeflags		= ~CFR~V
+templheadrflags		=
 
 # Combined tools and flags
 
@@ -29,6 +31,7 @@ cc_memcheck		= $(cc_) $(ccflags_memcheck)
 every			= $(every_) $(everyflags)
 libfile			= $(libfile_) $(libfileflags)
 link			= $(link_) $(linkflags)
+templheadr		= $(templheadr_) $(templheadrflags)
 
 # Compiler options
 

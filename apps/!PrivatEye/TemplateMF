@@ -9,6 +9,7 @@ every_			= every.every2
 link_			= link
 wipe			= $(suppress) wipe
 suppress		= x
+templheadr_		= templheadr
 
 # Tool flags:
 
@@ -18,6 +19,7 @@ ccflags_memcheck	= -strict -c99 -fah -Wh -Otime -c $(cpu) $(depend) $(throwback)
 everyflags     	 	= -c
 linkflags		= -c++
 wipeflags		= ~CFR~V
+templheadrflags		=
 
 # Combined tools and flags
 
@@ -26,6 +28,7 @@ cc			= $(cc_) $(ccflags)
 cc_memcheck		= $(cc_) $(ccflags_memcheck)
 every			= $(every_) $(everyflags)
 link			= $(link_) $(linkflags)
+templheadr		= $(templheadr_) $(templheadrflags)
 
 # Tool flags (specific cases)
 
@@ -79,22 +82,26 @@ objs_memcheck = \
 
 # Targets:
 
-!RunImage:		$(objs_normal) $(libraries_normal)
+target   = !RunImage
+targetdf = $(target)DF
+targetmc = $(target)MC
+
+$(target):		$(objs_normal) $(libraries_normal)
 			$(link) -o $@ $(libraries_normal) -via objs-normal
 
-!RunImageDF:		$(objs_debug) $(libraries_debug_fortify)
+$(targetdf):		$(objs_debug) $(libraries_debug_fortify)
 			$(link) -d -o $@ $(libraries_debug_fortify) -via objs-debug
 
-!RunImageMC:		$(objs_memcheck) $(libraries_memcheck)
+$(targetmc):		$(objs_memcheck) $(libraries_memcheck)
 			$(link) -d -o $@ $(libraries_memcheck) -via objs-memcheck
 
-normal:			!RunImage
+normal:			$(target)
 			@echo 'normal' built
 
-debug:			!RunImageDF
+debug:			$(targetdf)
 			@echo 'debug' built
 
-memcheck:		!RunImageMC
+memcheck:		$(targetmc)
 			@echo 'memcheck' built
 
 # deliberately not including memcheck in 'all'
@@ -102,8 +109,13 @@ all:			debug normal
 			@echo 'all' built
 
 clean:;			$(every) "@...o @...odf @...omc" -d "$(wipe) %0 $(wipeflags)"
-                        $(every) "@.!RunImage* @.Makefile @.objs-*" -f "$(wipe) %0 $(wipeflags)"
+                        $(every) "@.!RunImage* @.Makefile @.objs-* @.h.iconnames" -f "$(wipe) %0 $(wipeflags)"
 			@echo Cleaned
+
+iconnames.h: 		Resources.UK.Templates
+			$(templheadr) $< $@
+
+$(objs):                iconnames.h Makefile
 
 # Rule Patterns
 

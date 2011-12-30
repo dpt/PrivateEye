@@ -8,6 +8,7 @@ asm_		= /home/riscos/cross/arm-unknown-riscos/bin/asasm
 cc_		= $(prefix)gcc
 libfile_	= $(prefix)ar
 link_		= $(prefix)gcc
+templheadr_     = ../../utils/templheader/templheadr
 
 # Tool flags:
 
@@ -21,6 +22,8 @@ ccflags		+= -MMD
 libfileflags	= rc
 
 linkflags	= $(throwback) -mlibscl
+
+templheadrflags	=
 
 # C compiler options
 
@@ -76,6 +79,7 @@ cc		= $(cc_) $(ccflags)
 every		= $(every_) $(everyflags)
 libfile		= $(libfile_) $(libfileflags)
 link		= $(link_) $(linkflags)
+templheadr      = $(templheadr_) $(templheadrflags)
 
 # Rule Patterns
 

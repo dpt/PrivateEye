@@ -38,6 +38,11 @@ debug:	$(appdbg)
 all:	normal debug
 	@echo 'all' built
 
+iconnames.h: 	Resources/UK/Templates,fec
+		$(templheadr) $< $@
+
+$(objs):	iconnames.h GNUmakefile
+
 # Dependencies
 
 -include $(objs:.o=.d)
