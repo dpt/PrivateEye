@@ -22,8 +22,6 @@ extern struct AppGlobals
 {
   Flags            flags;
 
-  wimp_menu       *iconbar_m;
-
   wimp_t           task_handle;
 
   wimp_version_no  wimp_version;
