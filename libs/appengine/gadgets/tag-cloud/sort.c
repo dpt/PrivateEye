@@ -27,49 +27,50 @@ static tag_cloud *sort_tc;
 
 static int sort_by_name(const void *va, const void *vb)
 {
-  const int  *a = va;
-  const int  *b = vb;
+  int         a = *((const int *) va);
+  int         b = *((const int *) vb);
   const char *sa;
   const char *sb;
 
-  sa = (const char *) atom_get(sort_tc->dict, *a, NULL);
-  sb = (const char *) atom_get(sort_tc->dict, *b, NULL);
-
-  if (sa == sb)
+  if (a == b)
     return 0;
+
+  sa = (const char *) atom_get(sort_tc->dict, a, NULL);
+  sb = (const char *) atom_get(sort_tc->dict, b, NULL);
 
   return strcasecmp(sa, sb);
 }
 
-/* This sorts high counts first. */
 static int sort_by_count(const void *va, const void *vb)
 {
-  const int *a      = va;
-  const int *b      = vb;
-  int        counta = sort_tc->entries[*a].count;
-  int        countb = sort_tc->entries[*b].count;
+  int a      = *((const int *) va);
+  int b      = *((const int *) vb);
+  int counta = sort_tc->entries[a].count;
+  int countb = sort_tc->entries[b].count;
 
+  if (a == b)
+    return 0;
+
+  /* This sorts high counts first. */
        if (counta > countb) return -1;
   else if (counta < countb) return  1;
 
-  return *a - *b; /* compare indices to keep sort stable */
+  return a - b; /* compare indices to keep sort stable */
 }
 
 /* sort_by_name with highlights first */
 static int sort_by_name_hi(const void *va, const void *vb)
 {
-  const int *a = va;
-  const int *b = vb;
-  int        ia;
-  int        ib;
-  int        ha;
-  int        hb;
+  int a = *((const int *) va);
+  int b = *((const int *) vb);
+  int ha;
+  int hb;
 
-  ia = *a;
-  ib = *b;
+  if (a == b)
+    return 0;
 
-  ha = tag_cloud__is_highlighted(sort_tc, ia);
-  hb = tag_cloud__is_highlighted(sort_tc, ib);
+  ha = tag_cloud__is_highlighted(sort_tc, a);
+  hb = tag_cloud__is_highlighted(sort_tc, b);
 
   /* we want highlights to sort sooner, so if it's highlighted then return a
    * _lower_ value */
@@ -85,18 +86,16 @@ static int sort_by_name_hi(const void *va, const void *vb)
 /* sort_by_count with highlights first */
 static int sort_by_count_hi(const void *va, const void *vb)
 {
-  const int *a = va;
-  const int *b = vb;
-  int        ia;
-  int        ib;
-  int        ha;
-  int        hb;
+  int a = *((const int *) va);
+  int b = *((const int *) vb);
+  int ha;
+  int hb;
 
-  ia = *a;
-  ib = *b;
+  if (a == b)
+    return 0;
 
-  ha = tag_cloud__is_highlighted(sort_tc, ia);
-  hb = tag_cloud__is_highlighted(sort_tc, ib);
+  ha = tag_cloud__is_highlighted(sort_tc, a);
+  hb = tag_cloud__is_highlighted(sort_tc, b);
 
   /* we want highlights to sort sooner, so if it's highlighted then return a
    * _lower_ value */
