@@ -119,7 +119,7 @@ error tagdb__create(const char *filename)
 
   assert(filename);
 
-  /* write out an empty db, if it doesn't already exit */
+  /* write out an empty db, if it doesn't already exist */
 
   object_type = osfile_read_no_path(filename, NULL, NULL, NULL, NULL);
   if (object_type == fileswitch_NOT_FOUND)

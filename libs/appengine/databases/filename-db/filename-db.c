@@ -108,7 +108,7 @@ error filenamedb__create(const char *filename)
   error                  err;
   fileswitch_object_type object_type;
 
-  /* write out an empty db, if it doesn't already exit */
+  /* write out an empty db, if it doesn't already exist */
 
   object_type = osfile_read_no_path(filename, NULL, NULL, NULL, NULL);
   if (object_type == fileswitch_NOT_FOUND)
