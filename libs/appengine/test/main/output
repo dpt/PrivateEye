@@ -269,6 +269,20 @@ walk 'batty':'roy'...
 walk 'gaff':'n/a'...
 walk 'sebastian':'jf'...
 walk 'pris':'n/a'...
+test: iterate by continuation
+cont = 0
+walk 'bryant':'n/a'...
+cont = 140000
+walk 'tyrell':'rachael'...
+cont = 220000
+walk 'deckard':'rick'...
+cont = 230000
+walk 'batty':'roy'...
+cont = 270000
+walk 'gaff':'n/a'...
+cont = 330000
+walk 'sebastian':'jf'...
+cont = 5e0000
 test: remove
 test: destroy
 
@@ -282,13 +296,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-0001f8bc: sebastian
-0001f898: pris
-0001f874: bryant
-0001f850: gaff
-0001f82c: rachael
-0001f808: batty
-0001f7e4: deckard
+0001fae4: sebastian
+0001fac0: pris
+0001fa9c: bryant
+0001fa78: gaff
+0001fa54: rachael
+0001fa30: batty
+0001fa0c: deckard
 
 >> ntree tests
 test: build tree
@@ -2392,7 +2406,6 @@ test: filing: dirscan
 @.graphics
 @.h
 @.io
-@.latestdiff/diff
 @.Makefile
 @.MakeMake
 @.MakeMakeG
@@ -2404,11 +2417,10 @@ test: filing: dirscan
 @.objs-normal
 @.odf
 @.om
-@.output
-@.tagoutput
 @.TemplateMF
 @.TemplateMFG
 @.test
+@.test/main/output
 @.text
 @.thumbnail-diff
 @.vdu
@@ -4644,6 +4656,6 @@ Tests completed: 17/17 tests passed.
 Fortify: Statistics at test.main.c.main.140
          Memory currently allocated: 0 bytes in 0 blocks
          Maximum memory allocated at one time: 56120 bytes in 156 blocks
-         There have been 986 allocations and 986 deallocations
-         There was a total of 107133 bytes allocated
+         There have been 987 allocations and 987 deallocations
+         There was a total of 107152 bytes allocated
          The average allocation was 108 bytes

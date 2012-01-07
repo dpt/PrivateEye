@@ -36,6 +36,15 @@ typedef int (hash__walk_callback)(const void *key, const void *value,
 
 int hash__walk(T *h, hash__walk_callback *cb, void *cbarg);
 
+/* Walk a hash by continuation value.
+ * Zero should be the initial continuation value. Return value is the next
+ * continuation value.
+ * Returns: -1 if invalid continuation given, 0 if no more elements */
+int hash__walk_continuation(T           *h,
+                            int          continuation,
+                            const void **key,
+                            const void **value);
+
 #undef T
 
 #endif /* APPENGINE_HASH_H */

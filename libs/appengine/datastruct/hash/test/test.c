@@ -89,6 +89,26 @@ int hash_test(void)
 
   hash__walk(d, my_walk_fn, NULL);
 
+  printf("test: iterate by continuation\n");
+
+  {
+    int cont = 0;
+
+    for (;;)
+    {
+      const void *key;
+      const void *value;
+
+      printf("cont = %x\n", cont);
+
+      cont = hash__walk_continuation(d, cont, &key, &value);
+      if (cont <= 0)
+        break;
+
+      printf("walk '%s':'%s'...\n", key, value);
+    }
+  }
+
   printf("test: remove\n");
 
   for (i = 0; i < NELEMS(data); i++)
