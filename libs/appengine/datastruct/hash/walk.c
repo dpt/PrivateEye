@@ -32,7 +32,7 @@ int hash__walk(hash_t *h, hash__walk_callback *cb, void *cbarg)
 
       r = cb(n->key, n->value, cbarg);
       if (r < 0)
-        return -1;
+        return r;
     }
   }
 
