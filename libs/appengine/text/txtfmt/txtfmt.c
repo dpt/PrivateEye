@@ -3,8 +3,8 @@
  * Purpose: Text formatting
  * ----------------------------------------------------------------------- */
 
-/* Text formatting library. Wraps to character widths, not measured widths,
- * so works best for monospace text.
+/* Text formatting library. Wraps at character widths, not measured widths,
+ * so works best for monospaced text.
  *
  * - Breaks at spaces.
  * - Forces a newline at \n.
@@ -36,7 +36,7 @@
 
 #include "appengine/text/txtfmt.h"
 
-/* height of a line of text */
+/* Default height of a line of text */
 #define DEFAULT_LINE_HEIGHT 44
 
 /* ----------------------------------------------------------------------- */
@@ -99,7 +99,7 @@ error txtfmt__create(const char *s, txtfmt_t **tx)
   newtx->nspans          = 1;
   newtx->allocated       = StartAt;
 
-  /* initally the string is unwrapped */
+  /* initially the string is unwrapped */
   newtx->spans[0].start  = 0;
   newtx->spans[0].length = length;
 

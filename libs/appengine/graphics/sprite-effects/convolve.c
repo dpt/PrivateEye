@@ -151,7 +151,7 @@ static error convolve_8(const convolve_lut *lut,
   case 1: /* 5-pt kernel */
     lut0 = lut->lut[0];
 
-    ip += 2; /* ip[0] is center pixel */
+    ip += 2; /* ip[0] is centre pixel */
 
     fwd0 = (lut0[ip[-2]] >> 10) + lut0[ip[-1]];
     rev0 = (lut0[ip[ 0]] << 10) + lut0[ip[ 1]];
@@ -208,7 +208,7 @@ static void convolve_888_1stage(const convolve_lut *lut,
 
   lut0 = lut->lut[0];
 
-  ip += 2; /* ip[0] is center pixel */
+  ip += 2; /* ip[0] is centre pixel */
 
   /* See the g8 version of the code for a simpler equivalent */
 
@@ -268,7 +268,7 @@ static void convolve_888_2stage(const convolve_lut *lut,
   lut0 = lut->lut[0];
   lut1 = lut->lut[1];
 
-  ip += 5; /* ip[0] is center pixel */
+  ip += 5; /* ip[0] is centre pixel */
 
   fwd0_r = (lut0[RED  (ip[-2])] >> 10) + lut0[RED  (ip[-1])];
   fwd0_g = (lut0[GREEN(ip[-2])] >> 10) + lut0[GREEN(ip[-1])];
@@ -347,7 +347,7 @@ static void convolve_888_3stage(const convolve_lut *lut,
   lut1 = lut->lut[1];
   lut2 = lut->lut[2];
 
-  ip += 8; /* ip[0] is center pixel */
+  ip += 8; /* ip[0] is centre pixel */
 
   fwd0_r = (lut0[RED  (ip[-2])] >> 10) + lut0[RED  (ip[-1])];
   fwd0_g = (lut0[GREEN(ip[-2])] >> 10) + lut0[GREEN(ip[-1])];
@@ -446,7 +446,7 @@ static void convolve_888_Nstage(const convolve_lut *lut,
   for (i = 0; i < stages; i++)
     lutN[i] = lut->lut[i];
 
-  ip += 3 * stages - 1; /* ip[0] is center pixel */
+  ip += 3 * stages - 1; /* ip[0] is centre pixel */
 
   for (i = 0; i < stages; i++)
   {

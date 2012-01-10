@@ -18,7 +18,7 @@ void scroll_list__delete_rows(scroll_list *sl, int min, int max)
   if (max == -1)
     return; /* no rows */
 
-  /* refresh all subequent rows
+  /* refresh all subsequent rows
    * do this now before we start moving things around */
   refresh_rows(sl, min, sl->rows - 1 /* NOT max! */);
 

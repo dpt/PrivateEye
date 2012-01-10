@@ -150,7 +150,7 @@ static void open_at_cb(CallbackArgs *args, void *arg)
   /* Other positions */
   switch (where)
   {
-    /* Open centered on the pointer taking care to not obscure the icon bar */
+    /* Open centred on the pointer taking care to not obscure the icon bar */
 
     case AT_BOTTOMPOINTER:
       {
@@ -173,7 +173,7 @@ static void open_at_cb(CallbackArgs *args, void *arg)
       {
         static int lastopen_x = -1, lastopen_y = -1;
 
-        /* open centered, then offset subsequently */
+        /* open centred, then offset subsequently */
         if (lastopen_x == -1 && lastopen_y == -1)
         {
           /* new stagger, centre initially */

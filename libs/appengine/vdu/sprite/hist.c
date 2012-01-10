@@ -26,7 +26,7 @@ static void histogram_8(osspriteop_header *header,
 
   pixels = sprite_data(header);
 
-  /* account for wastage, need to align each scaline */
+  /* account for wastage, need to align each scanline */
 
   rowbytes = (width + 3) & ~3;
   rowskip  = rowbytes - width;

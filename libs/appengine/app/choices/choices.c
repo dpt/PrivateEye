@@ -6,15 +6,17 @@
 /*
  * Design ideas:
  *
- * 1) keep all the data static
- * 2) keep all the actual choices elsewhere, the static array only has
- *    offsets/locations it knows about
+ * 1) Keep all the data static.
+ * 2) Keep all the actual choices elsewhere, the static array only has
+ *    offsets/locations it knows about.
  *
  * Icon numbers are constant, so they can go in static data, but window
- * handles aren't. But i suppose an *address of* a window handle would be.
+ * handles aren't. But I suppose an *address of* a window handle would be.
  *
  * Create menus on the fly.
  *
+ *
+ * Notes:
  *
  * Any place where VALINT is written through there should be an update
  * callback.
@@ -52,7 +54,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-/* macros for acessing chosen values */
+/* macros for accessing chosen values */
 
 #define VALADDR(o)  ((char *) cs->valbuf + (o)) /* uses 'cs' */
 #define VAL(T,o)    (*((T *) VALADDR(o)))
@@ -646,8 +648,8 @@ static error redraw_window_callback(const choices      *cs,
   }
   else
   {
-    /* this probably won't get used, but at least stops the app locking up
-     * when it does */
+    /* This might not get used in the common case, but will at least stop the
+     * application locking up if a required redraw handler is omitted. */
     for (more = wimp_redraw_window(redraw);
          more;
          more = wimp_get_rectangle(redraw))
@@ -690,9 +692,6 @@ int choices_event_open_window_request(wimp_event_no  event_no,
 
 /* ----------------------------------------------------------------------- */
 
-/* opening choiceset for the first time */
-/* - ie. 'Choices...' selected from icon bar menu */
-
 static error attach_child(const choices *cs, wimp_w w)
 {
   wimp_window_state         state;
@@ -723,6 +722,8 @@ static error attach_child(const choices *cs, wimp_w w)
   return error_OK;
 }
 
+/* Opening a choiceset for the first time. */
+/* i.e. 'Choices...' selected from icon bar menu. */
 error choices_open(const choices *cs)
 {
   wimp_w            w;

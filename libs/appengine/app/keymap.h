@@ -33,7 +33,7 @@ keymap_section;
 typedef struct T T;
 
 /* Uses the specified mapping to parse the keymap <filename> creating a
- * maping between key numbers and operation codes. */
+ * mapping between key numbers and operation codes. */
 error keymap__create(const char           *filename,
                      const keymap_section *sections,
                      int                   nsections,

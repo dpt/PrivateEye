@@ -50,7 +50,7 @@ void tag_cloud__attach_toolbar(tag_cloud *tc)
   tag_cloud__internal_set_handlers(1, tc);
 
   // reset the buttons - also grisly, copied from display.c etc.
-  // have seperate calls for these too? e.g. tag_cloud__set_display_sync_toolbar?
+  // have separate calls for these too? e.g. tag_cloud__set_display_sync_toolbar?
 
   /* toolbar icons need to match the order of display_type */
   icon_set_radio(tc->toolbar_w, TAG_CLOUD_T_B_DISPLIST + tc->display_type);

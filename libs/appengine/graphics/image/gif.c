@@ -94,7 +94,7 @@ typedef struct
   int top_slot;                /* Highest code for current size */
   int slot;                    /* Last read code */
 
-  /* The following static variables are used for seperating out codes */
+  /* The following static variables are used for separating out codes */
   int bytes_left;                  /* # bytes left in block */
   int bits_left;               /* # bits left in current byte */
 
@@ -687,7 +687,7 @@ static unsigned int giflzw_getnextcode(State *S)
  * will generate a call to giflzw_doneline(), which is a user specific
  * function to display a line of pixels.  The function gets it's codes from
  * giflzw_getnextcode() which is responsible for reading blocks of data and
- * seperating them into the proper size codes.  Finally,
+ * separating them into the proper size codes.  Finally,
  * giflzw_buffer_getbyte() is the global routine to read the next byte from
  * the GIF file.
  *

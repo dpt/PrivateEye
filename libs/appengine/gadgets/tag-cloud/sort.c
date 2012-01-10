@@ -124,7 +124,7 @@ static void sort(tag_cloud *tc)
   sort_type  = tag_cloud__get_sort(tc);
   order_type = tag_cloud__get_order(tc);
 
-  /* avoid sorting whereever possible */
+  /* avoid sorting wherever possible */
 
   if (sort_type  == tc->sort.last_sort_type &&
       order_type == tc->sort.last_order_type &&

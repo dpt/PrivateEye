@@ -466,7 +466,7 @@ static int commit_cb(const void *key, const void *value, void *arg)
       return -1;
 
     // should quote any tags containing spaces (or quotes)
-    // better if it prepared a list of quoted tags in advance outsde of
+    // better if it prepared a list of quoted tags in advance outside of
     // this loop
 
     c += strlen(state->buf + c);
