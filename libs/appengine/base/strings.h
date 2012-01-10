@@ -10,48 +10,48 @@
 /*
  * Returns a pointer to whatever precedes the last ':' or '.' in the input.
  */
-extern const char *str_branch(const char *string);
+const char *str_branch(const char *string);
 
 /*
  * Copies a control-terminated string, terminating new string with NUL.
  */
-extern void str_cpy(char *to, const char *from);
+void str_cpy(char *to, const char *from);
 
 /*
  * Duplicates a control-terminated string.
  */
-extern char *str_dup(const char *string);
+char *str_dup(const char *string);
 
 /*
  * Get a pointer to whatever follows the last ':' or '.' in the input.
  */
-extern const char *str_leaf(const char *string);
+const char *str_leaf(const char *string);
 
 /*
  * Get length of control-terminated string, excluding terminator.
  */
-extern int str_len(const char *string);
+int str_len(const char *string);
 
 /*
  * Returns a pointer to the given int as a string.
  */
-extern const char *str_num(int number);
+const char *str_num(int number);
 
 /*
  * Copies up to <size> characters of a control-terminated string, terminating
  * the new string with NUL.
  */
-extern void str_n_cpy(char *to, const char *from, int size);
+void str_n_cpy(char *to, const char *from, int size);
 
 /*
  * Duplicates up to <size> characters of a control-terminated string.
  */
-extern char *str_n_dup(const char *string, int size);
+char *str_n_dup(const char *string, int size);
 
 /*
  * Make the given control-terminated string NUL terminated.
  */
-extern void str_term(char *string);
+void str_term(char *string);
 
 /* Case insensitive strcmp. */
 int strcasecmp(const char *s1, const char *s2);
