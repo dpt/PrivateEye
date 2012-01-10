@@ -1,4 +1,4 @@
-PHONY: normal debug all utils clean
+.PHONY: normal debug all utils clean
 
 normal:	utils
 	make -C libs/appengine $@
