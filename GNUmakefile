@@ -1,4 +1,4 @@
-.PHONY: normal debug all utils clean
+PHONY: normal debug all utils clean
 
 normal:	utils
 	make -C libs/appengine $@
@@ -29,7 +29,8 @@ all:	normal debug
 utils:
 	make -C utils/templheader normal
 
-clean:	utils
+clean:
+	make -C utils/templheader $@
 	make -C libs/appengine $@
 	make -C libs/exiftags $@
 	make -C libs/flex $@

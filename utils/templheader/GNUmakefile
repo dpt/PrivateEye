@@ -16,3 +16,6 @@ normal:	templheadr
 
 all:	normal
 	@echo 'all' built
+
+clean:
+	rm templheadr.o
