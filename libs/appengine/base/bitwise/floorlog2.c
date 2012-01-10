@@ -9,6 +9,6 @@
 
 unsigned int floorlog2(unsigned int x)
 {
-    SPREADMSB(x);
-    return countbits(x >> 1);
+  SPREADMSB(x);
+  return countbits(x >> 1);
 }

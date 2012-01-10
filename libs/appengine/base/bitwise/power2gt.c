@@ -9,6 +9,6 @@
 
 unsigned int power2gt(unsigned int x)
 {
-    SPREADMSB(x);
-    return x + 1;
+  SPREADMSB(x);
+  return x + 1;
 }

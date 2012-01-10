@@ -9,6 +9,6 @@
 
 unsigned int power2le(unsigned int x)
 {
-    SPREADMSB(x);
-    return (x >> 1) + 1;
+  SPREADMSB(x);
+  return (x >> 1) + 1;
 }

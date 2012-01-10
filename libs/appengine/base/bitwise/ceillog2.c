@@ -9,11 +9,11 @@
 
 unsigned int ceillog2(unsigned int x)
 {
-    unsigned int y;
+  unsigned int y;
 
-    y = !ispower2(x); /* 1 if x is not a power of two, 0 otherwise */
-    SPREADMSB(x);
+  y = !ispower2(x); /* 1 if x is not a power of two, 0 otherwise */
+  SPREADMSB(x);
 
-    return countbits(x >> 1) + y;
+  return countbits(x >> 1) + y;
 }
 

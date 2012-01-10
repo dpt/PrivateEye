@@ -9,6 +9,6 @@
 
 unsigned int msb(unsigned int x)
 {
-    SPREADMSB(x);
-    return x & ~(x >> 1);
+  SPREADMSB(x);
+  return x & ~(x >> 1);
 }
