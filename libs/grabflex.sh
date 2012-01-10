@@ -10,7 +10,7 @@ cd flex
 
 # Fetch
 
-CVSROOT=:pserver:anonymous@riscosopen.org:/home/rool/cvsroot
+export CVSROOT=:pserver:anonymous@riscosopen.org:/home/rool/cvsroot
 
 cvs login
 # Would prefer to have: "for file in [flex, opts, swiextra]: download"
