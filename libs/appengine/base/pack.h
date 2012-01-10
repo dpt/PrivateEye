@@ -3,6 +3,16 @@
  * Purpose: Structure packing and unpacking
  * ----------------------------------------------------------------------- */
 
+/**
+ * \file Pack (interface).
+ *
+ * Structure packing and unpacking routines.
+ *
+ * Inspired by printf, scanf and the Python 'struct' module these use a
+ * format string composed of single character specifiers to specify how data
+ * should be arranged in memory.
+ */
+
 #ifndef APPENGINE_PACK_H
 #define APPENGINE_PACK_H
 
@@ -18,7 +28,7 @@
  *  - 's' to pack into 16 bits (notional short)
  *  - 'i' to pack into 32 bits (notional int)
  *
- * Each specifer may be preceded by a count.
+ * Each specifier may be preceded by a count.
  *
  * Examples:
  *
@@ -34,10 +44,10 @@
  *
  * Writes out five shorts from shortarray to outbuf.
  *
- * @param[in] outbuf Output buffer to receive packed values.
- * @param[in] fmt    Format string specifiying what to pack.
+ * \param outbuf Output buffer to receive packed values.
+ * \param fmt    Format string specifying what to pack.
  *
- * @return Number of bytes used in output buffer.
+ * \return Number of bytes used in output buffer.
  */
 int pack(unsigned char *outbuf, const char *fmt, ...);
 
@@ -47,7 +57,7 @@ int pack(unsigned char *outbuf, const char *fmt, ...);
  * The arguments are unpacked from 'buf' according to the format string
  * 'fmt' using little-endian byte order.
  *
- * @see pack for a description of the format string.
+ * \see pack for a description of the format string.
  *
  * Example:
  *
@@ -62,10 +72,10 @@ int pack(unsigned char *outbuf, const char *fmt, ...);
  *
  * Writes out five shorts from inbuf to shortarray.
  *
- * @param[in] inbuf Input buffer of packed values.
- * @param[in] fmt   Format string specifiying what to unpack.
+ * \param inbuf Input buffer of packed values.
+ * \param fmt   Format string specifying what to unpack.
  *
- * @return Number of bytes used from input buffer.
+ * \return Number of bytes used from input buffer.
  */
 int unpack(const unsigned char *inbuf, const char *fmt, ...);
 

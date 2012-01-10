@@ -1,10 +1,20 @@
 /* --------------------------------------------------------------------------
  *    Name: bitvec.h
- * Purpose: Bit vectors
+ * Purpose: Vector of bits
  * ----------------------------------------------------------------------- */
 
-/* Bit vectors can be any size.
- * The unallocated bits are treated as zero. */
+/**
+ * \file Bit Vector (interface).
+ *
+ * Vectors of bits.
+ *
+ * Bit vectors are an array of bits. They are of variable length and are
+ * allocated dynamically.
+ *
+ * Unallocated bits are notionally always present and read as zero.
+ *
+ * \see Bit Array for manipulating a pre-allocated bit array.
+ */
 
 #ifndef APPENGINE_BITVEC_H
 #define APPENGINE_BITVEC_H

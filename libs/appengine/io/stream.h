@@ -3,6 +3,12 @@
  * Purpose: Stream interface
  * ----------------------------------------------------------------------- */
 
+/**
+ * \file Stream (interface).
+ *
+ * Data source.
+ */
+
 #ifndef APPENGINE_STREAM_H
 #define APPENGINE_STREAM_H
 

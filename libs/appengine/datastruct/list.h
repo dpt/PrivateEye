@@ -1,7 +1,13 @@
 /* --------------------------------------------------------------------------
  *    Name: list.h
- * Purpose: Linked list abstraction
+ * Purpose: Linked list library
  * ----------------------------------------------------------------------- */
+
+/**
+ * \file Linked list (interface).
+ *
+ * List is a linked list.
+ */
 
 #ifndef APPENGINE_LIST_H
 #define APPENGINE_LIST_H
@@ -27,7 +33,7 @@ void list__remove(T *anchor, T *doomed);
 
 typedef int (list__walk_callback)(T *, void *);
 
-void list__walk(T *anchor, list__walk_callback *cb, void *cbarg);
+void list__walk(T *anchor, list__walk_callback *cb, void *opaque);
 
 /* Searches the linked list looking for a key. The key is specified as an
  * offset from the start of the linked list element. It is an int-sized unit.

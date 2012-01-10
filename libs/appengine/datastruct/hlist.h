@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: hlist.h
- * Purpose: "Hanson" linked lists
+ * Purpose: "Hanson" linked list library
  * ----------------------------------------------------------------------- */
 
 /* See chapter 5 of C Interfaces and Implementations. */

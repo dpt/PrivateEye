@@ -66,7 +66,7 @@ int bitarr_test(void)
   printf("test: count\n");
 
   /* a cast is required :-| */
-  printf("%d bits set\n", bitarr_count((struct bitarr_t *) &arr, sizeof(arr)));
+  printf("%d bits set\n", bitarr_count((bitarr_t *) &arr, sizeof(arr)));
 
 
   return 0;

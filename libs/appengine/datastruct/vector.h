@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------
  *    Name: vector.h
- * Purpose: Vector - flexible array
+ * Purpose: Flexible array library
  * ----------------------------------------------------------------------- */
 
 /**
@@ -12,8 +12,8 @@
  * Elements are of a fixed size, stored contiguously and are addressed by
  * index.
  *
- * If the vector is altered then pointers into the vector may be invalidated
- * (should the block move when reallocated).
+ * \warning If the vector is altered then pointers into the vector may be
+ * invalidated (should the block move when reallocated).
  */
 
 #ifndef APPENGINE_VECTOR_H

@@ -1,7 +1,13 @@
 /* --------------------------------------------------------------------------
  *    Name: ntree.h
- * Purpose: N-ary tree
+ * Purpose: N-ary tree library
  * ----------------------------------------------------------------------- */
+
+/**
+ * \file NTree (interface).
+ *
+ * NTree is an N-ary tree.
+ */
 
 #ifndef APPENGINE_NTREE_H
 #define APPENGINE_NTREE_H
@@ -66,17 +72,17 @@ typedef unsigned int ntree__walk_flags;
 #define ntree__WALK_BRANCHES   (1u << 3)
 #define ntree__WALK_ALL        (ntree__WALK_LEAVES | ntree__WALK_BRANCHES)
 
-typedef error (ntree__walk_fn)(T *t, void *arg);
+typedef error (ntree__walk_fn)(T *t, void *opaque);
 
 /* max_depth of 0 means 'walk all', 1..N just walk level 1..N */
 error ntree__walk(T *t, ntree__walk_flags flags, int max_depth,
-                  ntree__walk_fn *fn, void *arg);
+                  ntree__walk_fn *fn, void *opaque);
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (ntree__copy_fn)(void *data, void *arg, void **newdata);
+typedef error (ntree__copy_fn)(void *data, void *opaque, void **newdata);
 
-error ntree__copy(T *t, ntree__copy_fn *fn, void *arg, T **new_t);
+error ntree__copy(T *t, ntree__copy_fn *fn, void *opaque, T **new_t);
 
 #undef T
 

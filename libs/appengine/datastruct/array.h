@@ -1,7 +1,13 @@
 /* --------------------------------------------------------------------------
  *    Name: array.h
- * Purpose: Array
+ * Purpose: Array utilities
  * ----------------------------------------------------------------------- */
+
+/**
+ * \file Array (interface).
+ *
+ * Utilities for operating on arrays.
+ */
 
 #ifndef APPENGINE_ARRAY_H
 #define APPENGINE_ARRAY_H
