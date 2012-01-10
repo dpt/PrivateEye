@@ -4,7 +4,7 @@
  * ----------------------------------------------------------------------- */
 
 #if !defined(TYPE) || !defined(NAME)
-#error TYPE or NAME must be defined.
+#error TYPE and NAME must be defined.
 #endif
 
 #include <assert.h>
