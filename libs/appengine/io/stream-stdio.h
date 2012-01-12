@@ -13,6 +13,6 @@
 
 /* use 0 for a sensible default buffer size */
 
-error stream_file__create(FILE *f, int bufsz, stream **s);
+error stream_stdio_create(FILE *f, int bufsz, stream **s);
 
 #endif /* APPENGINE_STREAM_STDIO_H */

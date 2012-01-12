@@ -12,31 +12,31 @@
 /* FIXME: Unsure if specifying '1' as the error block's error number is the
  * correct thing to do. */
 
-void error__fatal(const char *token)
+void error_fatal(const char *token)
 {
   os_error e;
 
   e.errnum = 1;
   strncpy(e.errmess, message(token), sizeof(e.errmess));
 
-  oserror__report_block(&e);
+  oserror_report_block(&e);
 
   exit(EXIT_FAILURE);
 }
 
-void error__fatal1(const char *token, const char *parameter1)
+void error_fatal1(const char *token, const char *parameter1)
 {
   os_error e;
 
   e.errnum = 1;
   strncpy(e.errmess, message1(token, parameter1), sizeof(e.errmess));
 
-  oserror__report_block(&e);
+  oserror_report_block(&e);
 
   exit(EXIT_FAILURE);
 }
 
-void error__fatal_oom(void)
+void error_fatal_oom(void)
 {
-  error__fatal("NoMem"); /* uses the global messages */
+  error_fatal("NoMem"); /* uses the global messages */
 }

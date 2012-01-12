@@ -8,7 +8,7 @@
 
 /* #include "MemCheck:MemCheck.h" */
 
-os_error *oserror__check(os_error *e, const char *file, int line)
+os_error *oserror_check(os_error *e, const char *file, int line)
 {
   /* MemCheck_RegisterMiscBlock(e, 256); */
 

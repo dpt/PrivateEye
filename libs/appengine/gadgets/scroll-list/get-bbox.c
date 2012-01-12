@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-void scroll_list__get_bbox(scroll_list *sl, int row, os_box *box)
+void scroll_list_get_bbox(scroll_list *sl, int row, os_box *box)
 {
   int y1;
 

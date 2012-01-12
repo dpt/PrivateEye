@@ -54,15 +54,15 @@ static void calc_scales(tag_cloud *tc)
   tc->scale.scale = scale;
 }
 
-error tag_cloud__set_tags(tag_cloud            *tc,
-                          const tag_cloud__tag *tags,
+error tag_cloud_set_tags(tag_cloud            *tc,
+                          const tag_cloud_tag *tags,
                           int                   ntags)
 {
   error                 err;
   atom_set_t           *dict        = NULL;
   int                   totalcount;
-  const tag_cloud__tag *t;
-  tag_cloud__entry     *entries     = NULL;
+  const tag_cloud_tag *t;
+  tag_cloud_entry     *entries     = NULL;
   int                   e_used      = 0;
   int                   e_allocated = 0;
   void                 *newarr;
@@ -170,17 +170,17 @@ error tag_cloud__set_tags(tag_cloud            *tc,
 
   calc_scales(tc);
 
-  tc->flags |= tag_cloud__FLAG_NEW_DATA;
+  tc->flags |= tag_cloud_FLAG_NEW_DATA;
 
 
-  tag_cloud__set_sort(tc, tc->sort_type); /* kick */
+  tag_cloud_set_sort(tc, tc->sort_type); /* kick */
 
-  tag_cloud__schedule_redraw(tc);
+  tag_cloud_schedule_redraw(tc);
 
   tc->menued_tag_index = -1; // not pleasant doing this here
 
 
-  if (tc->flags & tag_cloud__FLAG_TOOLBAR)
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR)
   {
     /* set up the stats icon */
 

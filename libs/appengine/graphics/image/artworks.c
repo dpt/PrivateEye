@@ -41,7 +41,7 @@ static int artworks_load(image_choices *choices, image_t *image)
     /* Check the ArtWorks renderer is present. */
     if (xos_cli("LoadArtWorksModules")) /* no _kernel_system in GCC */
     {
-      oserror__report(1, "error.no.artworks");
+      oserror_report(1, "error.no.artworks");
       return TRUE; /* failure */
     }
     else
@@ -60,13 +60,13 @@ static int artworks_load(image_choices *choices, image_t *image)
 
   if (flex_alloc((flex_ptr) &image->image, file_size) == 0)
   {
-    oserror__report(1, "error.no.mem");
+    oserror_report(1, "error.no.mem");
     return TRUE; /* failure */
   }
 
   if (flex_alloc((flex_ptr) &image->details.artworks.workspace, awrender_DefaultWorkSpace) == 0)
   {
-    oserror__report(1, "error.no.mem");
+    oserror_report(1, "error.no.mem");
     flex_free((flex_ptr) &image->image);
     return TRUE; /* failure */
   }
@@ -90,7 +90,7 @@ static int artworks_load(image_choices *choices, image_t *image)
   {
     flex_free((flex_ptr) &image->details.artworks.workspace);
     flex_free((flex_ptr) &image->image);
-    oserror__report_block(e);
+    oserror_report_block(e);
     return TRUE; /* failure */
   }
 

@@ -72,7 +72,7 @@ error imagecache_get(const char *file_name,
   {
     /* yes, it's in the cache */
 
-    array__delete_element(cache.entries,
+    array_delete_element(cache.entries,
                           sizeof(cache.entries[0]),
                           cache.nentries,
                           i);
@@ -104,7 +104,7 @@ static int evict_one_image(void)
 
   image_destroy(cache.entries[i].image);
 
-  array__delete_element(cache.entries,
+  array_delete_element(cache.entries,
                         sizeof(cache.entries[0]),
                         cache.nentries,
                         i);
@@ -143,7 +143,7 @@ static int evict_nbytes(int need)
   for (j = 0; j < i; j++)
     image_destroy(cache.entries[j].image);
 
-  array__delete_elements(cache.entries,
+  array_delete_elements(cache.entries,
                          sizeof(cache.entries[0]),
                          cache.nentries,
                          0,

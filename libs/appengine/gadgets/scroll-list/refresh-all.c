@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-void scroll_list__refresh_all_rows(scroll_list *sl)
+void scroll_list_refresh_all_rows(scroll_list *sl)
 {
   refresh_rows(sl, 0, sl->rows);
 }

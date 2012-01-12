@@ -34,51 +34,51 @@
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler    tag_cloud__event_null_reason_code,
-                             tag_cloud__event_redraw_window_request,
-                             tag_cloud__event_open_window_request,
-                             tag_cloud__event_pointer_leaving_window,
-                             tag_cloud__event_pointer_entering_window,
-                             tag_cloud__event_mouse_click,
-                             tag_cloud__event_mouse_click_toolbar,
-                             tag_cloud__event_key_pressed,
-                             tag_cloud__event_menu_selection;
+static event_wimp_handler    tag_cloud_event_null_reason_code,
+                             tag_cloud_event_redraw_window_request,
+                             tag_cloud_event_open_window_request,
+                             tag_cloud_event_pointer_leaving_window,
+                             tag_cloud_event_pointer_entering_window,
+                             tag_cloud_event_mouse_click,
+                             tag_cloud_event_mouse_click_toolbar,
+                             tag_cloud_event_key_pressed,
+                             tag_cloud_event_menu_selection;
 
-static event_message_handler tag_cloud__message_data_load,
-                             tag_cloud__message_mode_change,
-                             tag_cloud__message_menus_deleted,
-                             tag_cloud__message_font_changed;
+static event_message_handler tag_cloud_message_data_load,
+                             tag_cloud_message_mode_change,
+                             tag_cloud_message_menus_deleted,
+                             tag_cloud_message_font_changed;
 
 /* ----------------------------------------------------------------------- */
 
-void tag_cloud__internal_set_handlers(int reg, tag_cloud *tc)
+void tag_cloud_internal_set_handlers(int reg, tag_cloud *tc)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_REDRAW_WINDOW_REQUEST,   tag_cloud__event_redraw_window_request   },
-    { wimp_OPEN_WINDOW_REQUEST,     tag_cloud__event_open_window_request     },
-    { wimp_POINTER_LEAVING_WINDOW,  tag_cloud__event_pointer_leaving_window  },
-    { wimp_POINTER_ENTERING_WINDOW, tag_cloud__event_pointer_entering_window },
-    { wimp_MOUSE_CLICK,             tag_cloud__event_mouse_click             },
-    { wimp_KEY_PRESSED,             tag_cloud__event_key_pressed             },
-    { wimp_MENU_SELECTION,          tag_cloud__event_menu_selection          },
+    { wimp_REDRAW_WINDOW_REQUEST,   tag_cloud_event_redraw_window_request   },
+    { wimp_OPEN_WINDOW_REQUEST,     tag_cloud_event_open_window_request     },
+    { wimp_POINTER_LEAVING_WINDOW,  tag_cloud_event_pointer_leaving_window  },
+    { wimp_POINTER_ENTERING_WINDOW, tag_cloud_event_pointer_entering_window },
+    { wimp_MOUSE_CLICK,             tag_cloud_event_mouse_click             },
+    { wimp_KEY_PRESSED,             tag_cloud_event_key_pressed             },
+    { wimp_MENU_SELECTION,          tag_cloud_event_menu_selection          },
   };
 
   static const event_wimp_handler_spec wimp_handlers_toolbar[] =
   {
-    { wimp_MOUSE_CLICK,             tag_cloud__event_mouse_click_toolbar     },
+    { wimp_MOUSE_CLICK,             tag_cloud_event_mouse_click_toolbar     },
   };
 
   static const event_message_handler_spec message_handlers_main[] =
   {
-    { message_DATA_LOAD,            tag_cloud__message_data_load             },
+    { message_DATA_LOAD,            tag_cloud_message_data_load             },
   };
 
   static const event_message_handler_spec message_handlers[] =
   {
-    { message_MODE_CHANGE,          tag_cloud__message_mode_change           },
-    { message_MENUS_DELETED,        tag_cloud__message_menus_deleted         },
-    { message_FONT_CHANGED,         tag_cloud__message_font_changed          },
+    { message_MODE_CHANGE,          tag_cloud_message_mode_change           },
+    { message_MENUS_DELETED,        tag_cloud_message_menus_deleted         },
+    { message_FONT_CHANGED,         tag_cloud_message_font_changed          },
   };
 
   event_register_wimp_group(reg,
@@ -86,7 +86,7 @@ void tag_cloud__internal_set_handlers(int reg, tag_cloud *tc)
                             tc->main_w, event_ANY_ICON,
                             tc);
 
-  if (tc->flags & tag_cloud__FLAG_TOOLBAR)
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR)
   {
     event_register_wimp_group(reg,
                               wimp_handlers_toolbar, NELEMS(wimp_handlers_toolbar),
@@ -109,7 +109,7 @@ static void claim_nulls(int reg, tag_cloud *tc)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_NULL_REASON_CODE, tag_cloud__event_null_reason_code },
+    { wimp_NULL_REASON_CODE, tag_cloud_event_null_reason_code },
   };
 
   event_register_wimp_group(reg,
@@ -168,7 +168,7 @@ static void rename_fillout(dialogue_t *d, void *arg)
   if (tc->menued_tag_index < 0)
     return;
 
-  name__set(d, (const char *) atom_get(tc->dict, tc->menued_tag_index, NULL));
+  name_set(d, (const char *) atom_get(tc->dict, tc->menued_tag_index, NULL));
 }
 
 static void tag_info_fillout(dialogue_t *d, void *arg)
@@ -185,14 +185,14 @@ static void tag_info_fillout(dialogue_t *d, void *arg)
   specs[0].value = (const char *) atom_get(tc->dict, tc->menued_tag_index, NULL);
   specs[1].value = buf;
 
-  info__set_info(d, specs, 2);
+  info_set_info(d, specs, 2);
 
-  info__layout(d);
+  info_layout(d);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static int tag_cloud__event_null_reason_code(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_null_reason_code(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   static os_coord    last_pos = { -1, -1 };
 
@@ -224,12 +224,12 @@ static int tag_cloud__event_null_reason_code(wimp_event_no event_no, wimp_block 
   x = pointer.pos.x + (state.xscroll - state.visible.x0);
   y = pointer.pos.y + (state.yscroll - state.visible.y1);
 
-  tag_cloud__hover(tc, x, y);
+  tag_cloud_hover(tc, x, y);
 
   return event_HANDLED;
 }
 
-static int tag_cloud__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_draw *redraw;
   tag_cloud *tc;
@@ -290,7 +290,7 @@ static int tag_cloud__event_redraw_window_request(wimp_event_no event_no, wimp_b
   return event_HANDLED;
 }
 
-static int tag_cloud__event_open_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_open_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   tag_cloud *tc;
   wimp_open *open;
@@ -306,12 +306,12 @@ static int tag_cloud__event_open_window_request(wimp_event_no event_no, wimp_blo
 
   // open is now the actual window dimensions
 
-  tag_cloud__post_reopen(tc, open);
+  tag_cloud_post_reopen(tc, open);
 
   return event_HANDLED;
 }
 
-static int tag_cloud__event_pointer_leaving_window(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_pointer_leaving_window(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   tag_cloud    *tc;
   wimp_leaving *leaving;
@@ -323,12 +323,12 @@ static int tag_cloud__event_pointer_leaving_window(wimp_event_no event_no, wimp_
 
   claim_nulls(0, tc);
 
-  tag_cloud__restore_pointer_shape(tc);
+  tag_cloud_restore_pointer_shape(tc);
 
   return event_HANDLED;
 }
 
-static int tag_cloud__event_pointer_entering_window(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_pointer_entering_window(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   tag_cloud     *tc;
   wimp_entering *entering;
@@ -345,7 +345,7 @@ static int tag_cloud__event_pointer_entering_window(wimp_event_no event_no, wimp
   return event_HANDLED;
 }
 
-static void tag_cloud__menu_update(tag_cloud *tc)
+static void tag_cloud_menu_update(tag_cloud *tc)
 {
   wimp_menu *m;
 
@@ -355,7 +355,7 @@ static void tag_cloud__menu_update(tag_cloud *tc)
 
   /* Toolbar entry */
 
-  if (tc->flags & tag_cloud__FLAG_TOOLBAR_NOT_EVER)
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR_NOT_EVER)
   {
     /* remove the dotted separator and terminate the menu before the Toolbar
      * entry */
@@ -366,7 +366,7 @@ static void tag_cloud__menu_update(tag_cloud *tc)
   else
   {
     /* apply the dotted separator and (possibly unlikely but...) if a
-     * previous call to tag_cloud__menu_update terminated the menu early then
+     * previous call to tag_cloud_menu_update terminated the menu early then
      * ensure that its un-terminated */
     menu_set_menu_flags(m, MAIN_TOOLBAR - 1,
                         wimp_MENU_SEPARATE,
@@ -374,7 +374,7 @@ static void tag_cloud__menu_update(tag_cloud *tc)
 
     /* tick the Toolbar entry as required */
     menu_set_menu_flags(m, MAIN_TOOLBAR,
-                       (tc->flags & tag_cloud__FLAG_TOOLBAR) ? wimp_MENU_TICKED : 0,
+                       (tc->flags & tag_cloud_FLAG_TOOLBAR) ? wimp_MENU_TICKED : 0,
                         wimp_MENU_TICKED);
 
   }
@@ -384,19 +384,19 @@ static void tag_cloud__menu_update(tag_cloud *tc)
   m = m->entries[MAIN_DISPLAY].sub_menu;
 
   menu_range_tick_exclusive(m,
-                            DISPLAY_LIST + tag_cloud__get_display(tc),
+                            DISPLAY_LIST + tag_cloud_get_display(tc),
                             DISPLAY_LIST,
                             DISPLAY_CLOUD);
 
   menu_range_tick_exclusive(m,
-                            DISPLAY_SORT_NAME + tag_cloud__get_sort(tc),
+                            DISPLAY_SORT_NAME + tag_cloud_get_sort(tc),
                             DISPLAY_SORT_NAME,
                             DISPLAY_SORT_COUNT);
 
   /* using menu_range_tick_exclusive here even though we're only setting a
    * single item. we map 0..1 to -1..0. */
   menu_range_tick_exclusive(m,
-                      DISPLAY_SELECTED_FIRST + tag_cloud__get_order(tc) - 1,
+                      DISPLAY_SELECTED_FIRST + tag_cloud_get_order(tc) - 1,
                       DISPLAY_SELECTED_FIRST,
                       DISPLAY_SELECTED_FIRST);
 }
@@ -411,10 +411,10 @@ static int tag_from_screen_pos(tag_cloud *tc, int x, int y)
   x = x + (state.xscroll - state.visible.x0);
   y = y + (state.yscroll - state.visible.y1);
 
-  return tag_cloud__hit(tc, x, y);
+  return tag_cloud_hit(tc, x, y);
 }
 
-static int tag_cloud__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   error         err;
   tag_cloud    *tc;
@@ -433,11 +433,11 @@ static int tag_cloud__event_mouse_click(wimp_event_no event_no, wimp_block *bloc
   case wimp_CLICK_SELECT:
   case wimp_CLICK_ADJUST:
     /* clicks are disabled when we're shaded */
-    if ((tc->flags & tag_cloud__FLAG_SHADED) == 0 && i >= 0)
+    if ((tc->flags & tag_cloud_FLAG_SHADED) == 0 && i >= 0)
     {
-      tag_cloud__tagfn *tagfn;
+      tag_cloud_tagfn *tagfn;
 
-      tagfn = tag_cloud__is_highlighted(tc, i) ? tc->detag : tc->tag;
+      tagfn = tag_cloud_is_highlighted(tc, i) ? tc->detag : tc->tag;
 
       if (tagfn)
       {
@@ -449,7 +449,7 @@ static int tag_cloud__event_mouse_click(wimp_event_no event_no, wimp_block *bloc
          * won't cope if the layout changes. (and it assumes that the state
          * toggles.) */
 
-        tag_cloud__hover_toggle(tc);
+        tag_cloud_hover_toggle(tc);
       }
     }
     break;
@@ -466,11 +466,11 @@ static int tag_cloud__event_mouse_click(wimp_event_no event_no, wimp_block *bloc
 
     tc->main_m = menu_create_from_desc(message0("menu.tagcloud"),
                                        name,
-                  dialogue__get_window(tag_cloud__get_renametag_dialogue()),
-                  dialogue__get_window(tag_cloud__get_taginfo_dialogue()),
-                  dialogue__get_window(tag_cloud__get_newtag_dialogue()));
+                  dialogue_get_window(tag_cloud_get_renametag_dialogue()),
+                  dialogue_get_window(tag_cloud_get_taginfo_dialogue()),
+                  dialogue_get_window(tag_cloud_get_newtag_dialogue()));
 
-    err = help__add_menu(tc->main_m, "tagcloud");
+    err = help_add_menu(tc->main_m, "tagcloud");
     if (err)
       return event_NOT_HANDLED; // handle error
 
@@ -493,23 +493,23 @@ static int tag_cloud__event_mouse_click(wimp_event_no event_no, wimp_block *bloc
       menu_shade_all(entry->sub_menu);
     }
 
-    tag_cloud__menu_update(tc);
+    tag_cloud_menu_update(tc);
 
     /* set handlers in case they're used from the menu */
 
-    name__set_ok_handler(tag_cloud__get_newtag_dialogue(),
+    name_set_ok_handler(tag_cloud_get_newtag_dialogue(),
                          add_new_tag,
                          tc);
 
-    name__set_ok_handler(tag_cloud__get_renametag_dialogue(),
+    name_set_ok_handler(tag_cloud_get_renametag_dialogue(),
                          rename_tag,
                          tc);
 
-    dialogue__set_fillout_handler(tag_cloud__get_renametag_dialogue(),
+    dialogue_set_fillout_handler(tag_cloud_get_renametag_dialogue(),
                                   rename_fillout,
                                   tc);
 
-    dialogue__set_fillout_handler(tag_cloud__get_taginfo_dialogue(),
+    dialogue_set_fillout_handler(tag_cloud_get_taginfo_dialogue(),
                                   tag_info_fillout,
                                   tc);
 
@@ -524,11 +524,11 @@ static int tag_cloud__event_mouse_click(wimp_event_no event_no, wimp_block *bloc
 
 static void show_newtag(tag_cloud *tc)
 {
-  name__set_ok_handler(tag_cloud__get_newtag_dialogue(),
+  name_set_ok_handler(tag_cloud_get_newtag_dialogue(),
                        add_new_tag,
                        tc);
 
-  dialogue__show(tag_cloud__get_newtag_dialogue());
+  dialogue_show(tag_cloud_get_newtag_dialogue());
 }
 
 static void show_renametag(tag_cloud *tc)
@@ -541,15 +541,15 @@ static void show_renametag(tag_cloud *tc)
     return;
   }
 
-  name__set_ok_handler(tag_cloud__get_renametag_dialogue(),
+  name_set_ok_handler(tag_cloud_get_renametag_dialogue(),
                        rename_tag,
                        tc);
 
-  dialogue__set_fillout_handler(tag_cloud__get_renametag_dialogue(),
+  dialogue_set_fillout_handler(tag_cloud_get_renametag_dialogue(),
                                 rename_fillout,
                                 tc);
 
-  dialogue__show(tag_cloud__get_renametag_dialogue());
+  dialogue_show(tag_cloud_get_renametag_dialogue());
 }
 
 static void show_taginfo(tag_cloud *tc)
@@ -562,20 +562,20 @@ static void show_taginfo(tag_cloud *tc)
     return;
   }
 
-  dialogue__set_fillout_handler(tag_cloud__get_taginfo_dialogue(),
+  dialogue_set_fillout_handler(tag_cloud_get_taginfo_dialogue(),
                                 tag_info_fillout,
                                 tc);
 
-  dialogue__show(tag_cloud__get_taginfo_dialogue());
+  dialogue_show(tag_cloud_get_taginfo_dialogue());
 }
 
 static void send_commit(tag_cloud *tc)
 {
   if (tc->event)
-    tc->event(tc, tag_cloud__EVENT_COMMIT, tc->arg);
+    tc->event(tc, tag_cloud_EVENT_COMMIT, tc->arg);
 }
 
-static int tag_cloud__event_mouse_click_toolbar(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_mouse_click_toolbar(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   tag_cloud    *tc;
   wimp_pointer *pointer;
@@ -596,20 +596,20 @@ static int tag_cloud__event_mouse_click_toolbar(wimp_event_no event_no, wimp_blo
 
     case TAG_CLOUD_T_B_DISPLIST:
     case TAG_CLOUD_T_B_DISPCLOUD:
-      tag_cloud__set_display(tc, (pointer->i == TAG_CLOUD_T_B_DISPLIST) ?
-                                  tag_cloud__DISPLAY_TYPE_LIST :
-                                  tag_cloud__DISPLAY_TYPE_CLOUD);
+      tag_cloud_set_display(tc, (pointer->i == TAG_CLOUD_T_B_DISPLIST) ?
+                                  tag_cloud_DISPLAY_TYPE_LIST :
+                                  tag_cloud_DISPLAY_TYPE_CLOUD);
       break;
 
     case TAG_CLOUD_T_B_SORTPOP:   /* sort by count */
     case TAG_CLOUD_T_B_SORTALPHA: /* sort by name  */
-      tag_cloud__set_sort(tc, (pointer->i == TAG_CLOUD_T_B_SORTPOP) ?
-                               tag_cloud__SORT_TYPE_COUNT :
-                               tag_cloud__SORT_TYPE_NAME);
+      tag_cloud_set_sort(tc, (pointer->i == TAG_CLOUD_T_B_SORTPOP) ?
+                               tag_cloud_SORT_TYPE_COUNT :
+                               tag_cloud_SORT_TYPE_NAME);
       break;
 
     case TAG_CLOUD_T_O_SELFIRST:
-      tag_cloud__toggle_order(tc);
+      tag_cloud_toggle_order(tc);
       break;
     }
   }
@@ -617,11 +617,11 @@ static int tag_cloud__event_mouse_click_toolbar(wimp_event_no event_no, wimp_blo
   return event_HANDLED;
 }
 
-static int tag_cloud__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   tag_cloud        *tc;
   wimp_key         *key;
-  tag_cloud__event  event;
+  tag_cloud_event  event;
 
   NOT_USED(event_no);
 
@@ -638,33 +638,33 @@ static int tag_cloud__event_key_pressed(wimp_event_no event_no, wimp_block *bloc
 
   switch (event)
   {
-  case tag_cloud__EVENT_CLOSE:
+  case tag_cloud_EVENT_CLOSE:
     wimp_close_window(tc->main_w);
     break;
 
-  case tag_cloud__EVENT_DISPLAY_LIST:
-  case tag_cloud__EVENT_DISPLAY_CLOUD:
-    tag_cloud__set_display(tc, (event == tag_cloud__EVENT_DISPLAY_LIST) ?
-                                tag_cloud__DISPLAY_TYPE_LIST :
-                                tag_cloud__DISPLAY_TYPE_CLOUD);
+  case tag_cloud_EVENT_DISPLAY_LIST:
+  case tag_cloud_EVENT_DISPLAY_CLOUD:
+    tag_cloud_set_display(tc, (event == tag_cloud_EVENT_DISPLAY_LIST) ?
+                                tag_cloud_DISPLAY_TYPE_LIST :
+                                tag_cloud_DISPLAY_TYPE_CLOUD);
     break;
 
-  case tag_cloud__EVENT_SORT_BY_NAME:
-  case tag_cloud__EVENT_SORT_BY_COUNT:
-    tag_cloud__set_sort(tc, (event == tag_cloud__EVENT_SORT_BY_NAME) ?
-                             tag_cloud__SORT_TYPE_NAME :
-                             tag_cloud__SORT_TYPE_COUNT);
+  case tag_cloud_EVENT_SORT_BY_NAME:
+  case tag_cloud_EVENT_SORT_BY_COUNT:
+    tag_cloud_set_sort(tc, (event == tag_cloud_EVENT_SORT_BY_NAME) ?
+                             tag_cloud_SORT_TYPE_NAME :
+                             tag_cloud_SORT_TYPE_COUNT);
     break;
 
-  case tag_cloud__EVENT_SORT_SELECTED_FIRST:
-    tag_cloud__toggle_order(tc);
+  case tag_cloud_EVENT_SORT_SELECTED_FIRST:
+    tag_cloud_toggle_order(tc);
     break;
 
-  case tag_cloud__EVENT_RENAME:
+  case tag_cloud_EVENT_RENAME:
     show_renametag(tc);
     break;
 
-  case tag_cloud__EVENT_KILL:
+  case tag_cloud_EVENT_KILL:
     // this operates on the last MENU-clicked-on tag
     if (tc->menued_tag_index < 0)
       beep();
@@ -672,15 +672,15 @@ static int tag_cloud__event_key_pressed(wimp_event_no event_no, wimp_block *bloc
       delete_tag(tc, tc->menued_tag_index);
     break;
 
-  case tag_cloud__EVENT_INFO:
+  case tag_cloud_EVENT_INFO:
     show_taginfo(tc);
     break;
 
-  case tag_cloud__EVENT_NEW:
+  case tag_cloud_EVENT_NEW:
     show_newtag(tc);
     break;
 
-  case tag_cloud__EVENT_COMMIT:
+  case tag_cloud_EVENT_COMMIT:
     send_commit(tc);
     break;
 
@@ -692,7 +692,7 @@ static int tag_cloud__event_key_pressed(wimp_event_no event_no, wimp_block *bloc
   return event_HANDLED;
 }
 
-static int tag_cloud__event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tag_cloud_event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   tag_cloud      *tc;
   wimp_selection *selection;
@@ -715,16 +715,16 @@ static int tag_cloud__event_menu_selection(wimp_event_no event_no, wimp_block *b
     {
       case DISPLAY_LIST:
       case DISPLAY_CLOUD:
-      tag_cloud__set_display(tc, tag_cloud__DISPLAY_TYPE_LIST + (selection->items[1] - DISPLAY_LIST));
+      tag_cloud_set_display(tc, tag_cloud_DISPLAY_TYPE_LIST + (selection->items[1] - DISPLAY_LIST));
       break;
 
       case DISPLAY_SORT_NAME:
       case DISPLAY_SORT_COUNT:
-      tag_cloud__set_sort(tc, tag_cloud__SORT_TYPE_NAME + (selection->items[1] - DISPLAY_SORT_NAME));
+      tag_cloud_set_sort(tc, tag_cloud_SORT_TYPE_NAME + (selection->items[1] - DISPLAY_SORT_NAME));
       break;
 
       case DISPLAY_SELECTED_FIRST:
-      tag_cloud__toggle_order(tc);
+      tag_cloud_toggle_order(tc);
       break;
     }
     break;
@@ -739,13 +739,13 @@ static int tag_cloud__event_menu_selection(wimp_event_no event_no, wimp_block *b
     break;
 
   case MAIN_TOOLBAR:
-    tag_cloud__toggle_toolbar(tc);
+    tag_cloud_toggle_toolbar(tc);
   }
 
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
   {
-    tag_cloud__menu_update(tc);
+    tag_cloud_menu_update(tc);
     menu_reopen();
   }
   else
@@ -757,7 +757,7 @@ static int tag_cloud__event_menu_selection(wimp_event_no event_no, wimp_block *b
   return event_HANDLED;
 }
 
-static int tag_cloud__message_data_load(wimp_message *message, void *handle)
+static int tag_cloud_message_data_load(wimp_message *message, void *handle)
 {
   error                   err;
   wimp_message_data_xfer *xfer;
@@ -780,7 +780,7 @@ static int tag_cloud__message_data_load(wimp_message *message, void *handle)
     return event_NOT_HANDLED; // handle error
 
   {
-    tag_cloud__tagfilefn *tagfilefn;
+    tag_cloud_tagfilefn *tagfilefn;
 
     tagfilefn = inkey(INKEY_SHIFT) ? tc->detagfile : tc->tagfile;
 
@@ -799,7 +799,7 @@ static int tag_cloud__message_data_load(wimp_message *message, void *handle)
   return event_HANDLED;
 }
 
-static int tag_cloud__message_mode_change(wimp_message *message, void *handle)
+static int tag_cloud_message_mode_change(wimp_message *message, void *handle)
 {
   tag_cloud *tc;
 
@@ -808,15 +808,15 @@ static int tag_cloud__message_mode_change(wimp_message *message, void *handle)
   tc = handle;
 
   /* font handles must be closed and re-opened */
-  tag_cloud__layout_discard(tc);
+  tag_cloud_layout_discard(tc);
 
   // not NEW_DISPLAY (config doesn't change)
-  tc->flags |= tag_cloud__FLAG_NEW_DATA;
+  tc->flags |= tag_cloud_FLAG_NEW_DATA;
 
   return event_HANDLED;
 }
 
-static int tag_cloud__message_menus_deleted(wimp_message *message, void *handle)
+static int tag_cloud_message_menus_deleted(wimp_message *message, void *handle)
 {
   wimp_message_menus_deleted *deleted;
   tag_cloud                  *tc;
@@ -833,7 +833,7 @@ static int tag_cloud__message_menus_deleted(wimp_message *message, void *handle)
   return event_HANDLED;
 }
 
-static int tag_cloud__message_font_changed(wimp_message *message, void *handle)
+static int tag_cloud_message_font_changed(wimp_message *message, void *handle)
 {
   tag_cloud *tc;
 
@@ -841,12 +841,12 @@ static int tag_cloud__message_font_changed(wimp_message *message, void *handle)
 
   tc = handle;
 
-  tag_cloud__layout_discard(tc);
+  tag_cloud_layout_discard(tc);
 
   // not NEW_DISPLAY (config doesn't change)
-  tc->flags |= tag_cloud__FLAG_NEW_DATA;
+  tc->flags |= tag_cloud_FLAG_NEW_DATA;
 
-  tag_cloud__schedule_redraw(tc);
+  tag_cloud_schedule_redraw(tc);
 
   return event_HANDLED;
 }

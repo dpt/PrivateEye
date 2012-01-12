@@ -77,7 +77,7 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-void card__prepare(int item_w, int item_h)
+void card_prepare(int item_w, int item_h)
 {
   osspriteop_area *area;
   int              i;
@@ -160,9 +160,9 @@ static void plot_edge(wimp_draw *redraw, int index, int x, int y)
   clip.x1 = x1;
   clip.y1 = y1;
 
-  box__intersection(&clip, &redraw->clip, &clip);
+  box_intersection(&clip, &redraw->clip, &clip);
 
-  if (box__is_empty(&clip))
+  if (box_is_empty(&clip))
     return;
 
   (void) screen_clip(&clip);
@@ -209,12 +209,12 @@ static void plot_edge(wimp_draw *redraw, int index, int x, int y)
   (void) screen_clip(&redraw->clip);
 }
 
-void card__draw(wimp_draw *redraw, int x, int y, card__draw_flags flags)
+void card_draw(wimp_draw *redraw, int x, int y, card_draw_flags flags)
 {
   int i;
   int o;
 
-  if (flags & card__draw_flag_INVERT)
+  if (flags & card_draw_flag_INVERT)
     o = 8;
   else
     o = 0;

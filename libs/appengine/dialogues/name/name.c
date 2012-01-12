@@ -28,20 +28,20 @@
 typedef struct name_t
 {
   dialogue_t             dialogue; /* base class */
-  name__ok_handler      *ok_handler;
+  name_ok_handler      *ok_handler;
   void                  *ok_arg;
 }
 name_t;
 
 /* ----------------------------------------------------------------------- */
 
-static dialogue__fillout  name__default_fillout;
+static dialogue_fillout  name_default_fillout;
 
-static event_wimp_handler name__event_mouse_click;
+static event_wimp_handler name_event_mouse_click;
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *name__create(const char *template)
+dialogue_t *name_create(const char *template)
 {
   name_t *n;
 
@@ -49,49 +49,49 @@ dialogue_t *name__create(const char *template)
   if (n == NULL)
     return NULL;
 
-  dialogue__construct(&n->dialogue, template, ICON_B_ADD, ICON_B_CANCEL);
+  dialogue_construct(&n->dialogue, template, ICON_B_ADD, ICON_B_CANCEL);
 
-  dialogue__set_fillout_handler(&n->dialogue,
-                                name__default_fillout,
+  dialogue_set_fillout_handler(&n->dialogue,
+                                name_default_fillout,
                                 n);
 
-  dialogue__set_handlers(&n->dialogue,
-                         name__event_mouse_click,
+  dialogue_set_handlers(&n->dialogue,
+                         name_event_mouse_click,
                          NULL,
                          NULL);
 
   return &n->dialogue;
 }
 
-void name__destroy(dialogue_t *d)
+void name_destroy(dialogue_t *d)
 {
   name_t *n;
 
   n = (name_t *) d;
 
-  dialogue__destruct(&n->dialogue);
+  dialogue_destruct(&n->dialogue);
 
   free(n);
 }
 
-void name__set(dialogue_t *d, const char *name)
+void name_set(dialogue_t *d, const char *name)
 {
-  icon_set_text(dialogue__get_window(d), ICON_W_NAME, name);
+  icon_set_text(dialogue_get_window(d), ICON_W_NAME, name);
 }
 
 /* ----------------------------------------------------------------------- */
 
 /* Default fillout handler. Can be overridden by the client registering their
- * own using dialogue__set_fillout_handler.
+ * own using dialogue_set_fillout_handler.
  */
-static void name__default_fillout(dialogue_t *d, void *arg)
+static void name_default_fillout(dialogue_t *d, void *arg)
 {
   NOT_USED(arg);
 
-  name__set(d, "");
+  name_set(d, "");
 }
 
-static int name__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int name_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
   name_t       *d;
@@ -111,7 +111,7 @@ static int name__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
     {
       char buf[64]; /* Careful Now */
 
-      icon_get_text(dialogue__get_window(&d->dialogue), ICON_W_NAME, buf);
+      icon_get_text(dialogue_get_window(&d->dialogue), ICON_W_NAME, buf);
 
       if (buf[0] != '\0')
       {
@@ -120,7 +120,7 @@ static int name__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
       }
       else
       {
-        oserror__report(0, "error.name.missing");
+        oserror_report(0, "error.name.missing");
         close_dialogue = FALSE;
       }
     }
@@ -134,7 +134,7 @@ static int name__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
     if (close_dialogue)
       if ((pointer->buttons & wimp_CLICK_SELECT) &&
           (pointer->i == ICON_B_ADD || pointer->i == ICON_B_CANCEL))
-        dialogue__hide(&d->dialogue);
+        dialogue_hide(&d->dialogue);
   }
 
   return event_HANDLED;
@@ -142,8 +142,8 @@ static int name__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
 
 /* ----------------------------------------------------------------------- */
 
-void name__set_ok_handler(dialogue_t       *d,
-                          name__ok_handler *handler,
+void name_set_ok_handler(dialogue_t       *d,
+                          name_ok_handler *handler,
                           void             *arg)
 {
   name_t *n = (name_t *) d;

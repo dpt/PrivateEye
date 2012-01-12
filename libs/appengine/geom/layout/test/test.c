@@ -30,17 +30,17 @@ int layout_test(void)
   os_box       used;
   txtscr_t    *scr;
 
-  packer = packer__create(&dims);
+  packer = packer_create(&dims);
   if (packer == NULL)
     goto failure;
 
   spec.packer  = packer;
-  spec.loc     = packer__LOC_TOP_LEFT;
-  spec.clear   = packer__CLEAR_LEFT;
+  spec.loc     = packer_LOC_TOP_LEFT;
+  spec.clear   = packer_CLEAR_LEFT;
   spec.spacing = 2;
   spec.leading = 2;
 
-  err = layout__place(&spec,
+  err = layout_place(&spec,
                        elements,
                        NELEMS(elements),
                        boxes,
@@ -48,11 +48,11 @@ int layout_test(void)
   if (err)
     goto failure;
 
-  used = *packer__get_consumed_area(packer);
+  used = *packer_get_consumed_area(packer);
 
   printf("consumed: %d %d %d %d\n", used.x0, used.y0, used.x1, used.y1);
 
-  packer__destroy(packer);
+  packer_destroy(packer);
 
   scr = txtscr_create(8, 8);
   if (scr == NULL)

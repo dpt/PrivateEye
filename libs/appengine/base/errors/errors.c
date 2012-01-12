@@ -7,7 +7,7 @@
 
 #include "appengine/base/errors.h"
 
-void error__report(error err)
+void error_report(error err)
 {
   static const struct
   {
@@ -40,5 +40,5 @@ void error__report(error err)
     }
   }
 
-  oserror__report(1, token, err);
+  oserror_report(1, token, err);
 }

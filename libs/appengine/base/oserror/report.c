@@ -15,13 +15,13 @@
 #include "appengine/base/oserror.h"
 
 /*
- * oserror__report
+ * oserror_report
  *
  * Open an error box with an 'OK' (or 'Continue') button.
  *
  */
 
-void oserror__report(int errnum, const char *format_token, ...)
+void oserror_report(int errnum, const char *format_token, ...)
 {
   os_error e;
   va_list  argp;

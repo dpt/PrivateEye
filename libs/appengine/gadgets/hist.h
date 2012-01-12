@@ -9,9 +9,9 @@
 #include "appengine/base/errors.h"
 #include "appengine/graphics/image.h"
 
-error hist__init(void);
-void hist__fin(void);
-int hist__available(const image_t *image);
-void hist__open(image_t *image, int nbars);
+error hist_init(void);
+void hist_fin(void);
+int hist_available(const image_t *image);
+void hist_open(image_t *image, int nbars);
 
 #endif /* HIST_H */

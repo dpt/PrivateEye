@@ -61,11 +61,11 @@ static void string_destroy(void *string)
 
 /* ----------------------------------------------------------------------- */
 
-error hash__create(int                  nbins,
-                   hash__fn            *fn,
-                   hash__compare       *compare,
-                   hash__destroy_key   *destroy_key,
-                   hash__destroy_value *destroy_value,
+error hash_create(int                  nbins,
+                   hash_fn            *fn,
+                   hash_compare       *compare,
+                   hash_destroy_key   *destroy_key,
+                   hash_destroy_value *destroy_value,
                    hash_t             **ph)
 {
   hash_t *h;

@@ -22,7 +22,7 @@
 
 #define BUFSZ 65536
 
-error md5__from_file(const char    *file_name,
+error md5_from_file(const char    *file_name,
                      unsigned char  digest[md5_DIGESTSZ])
 {
   error               err;

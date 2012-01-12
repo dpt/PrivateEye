@@ -31,11 +31,11 @@
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler info__event_mouse_click;
+static event_wimp_handler info_event_mouse_click;
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *info__create(const char *template)
+dialogue_t *info_create(const char *template)
 {
   info_t *s;
 
@@ -43,25 +43,25 @@ dialogue_t *info__create(const char *template)
   if (s == NULL)
     return NULL;
 
-  info__construct(s, template);
+  info_construct(s, template);
 
   return &s->dialogue;
 }
 
-void info__destroy(dialogue_t *d)
+void info_destroy(dialogue_t *d)
 {
   info_t *s;
 
   s = (info_t *) d;
 
-  info__destruct(s);
+  info_destruct(s);
 
   free(s);
 }
 
 /* ----------------------------------------------------------------------- */
 
-void info__construct(info_t *s, const char *template)
+void info_construct(info_t *s, const char *template)
 {
   wimp_w          w;
   wimp_icon_flags flags;
@@ -69,14 +69,14 @@ void info__construct(info_t *s, const char *template)
   int             i;
   int             j;
 
-  dialogue__construct(&s->dialogue, template, -1, -1);
+  dialogue_construct(&s->dialogue, template, -1, -1);
 
-  dialogue__set_handlers(&s->dialogue,
-                         info__event_mouse_click,
+  dialogue_set_handlers(&s->dialogue,
+                         info_event_mouse_click,
                          NULL,
                          NULL);
 
-  w = dialogue__get_window(&s->dialogue);
+  w = dialogue_get_window(&s->dialogue);
 
   /* discover the handle of the file type icon */
 
@@ -108,15 +108,15 @@ void info__construct(info_t *s, const char *template)
   s->padding = 0;
 }
 
-void info__destruct(info_t *s)
+void info_destruct(info_t *s)
 {
-  dialogue__destruct(&s->dialogue);
+  dialogue_destruct(&s->dialogue);
 }
 
 /* ----------------------------------------------------------------------- */
 
 /* This isn't really used yet. */
-static int info__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int info_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
   info_t       *s;
@@ -157,7 +157,7 @@ static void file_type_to_sprite_name(bits file_type, char name[12])
   }
 }
 
-void info__set_file_type(dialogue_t *d, bits file_type)
+void info_set_file_type(dialogue_t *d, bits file_type)
 {
   info_t *s;
   wimp_w  w;
@@ -168,7 +168,7 @@ void info__set_file_type(dialogue_t *d, bits file_type)
   if (s->file_type_icon < 0)
     return;
 
-  w = dialogue__get_window(d);
+  w = dialogue_get_window(d);
 
   file_type_to_sprite_name(file_type, name);
 
@@ -180,7 +180,7 @@ void info__set_file_type(dialogue_t *d, bits file_type)
   icon_printf(w, s->displays[0], "%s (%03x)", name, file_type);
 }
 
-void info__set_info(dialogue_t *d, info_spec_t *specs, int nspecs)
+void info_set_info(dialogue_t *d, info_spec_t *specs, int nspecs)
 {
   info_t *s;
   wimp_w  w;
@@ -189,7 +189,7 @@ void info__set_info(dialogue_t *d, info_spec_t *specs, int nspecs)
 
   s = (info_t *) d;
 
-  w = dialogue__get_window(d);
+  w = dialogue_get_window(d);
 
   displays = s->displays;
 
@@ -239,7 +239,7 @@ static int get_sprite_width(const char *validation)
   return width << xeig;
 }
 
-void info__layout(dialogue_t *d)
+void info_layout(dialogue_t *d)
 {
 #define LABELGAP         8 /* gap between labels */
 #define SPRITEICONBORDER 22
@@ -256,7 +256,7 @@ void info__layout(dialogue_t *d)
 
   s = (info_t *) d;
 
-  w = dialogue__get_window(d);
+  w = dialogue_get_window(d);
 
   istate.w = w;
 
@@ -338,7 +338,7 @@ void info__layout(dialogue_t *d)
   window_set_submenu_extent(w, 5 /* flags */, &box);
 }
 
-void info__set_padding(dialogue_t *d, int padding)
+void info_set_padding(dialogue_t *d, int padding)
 {
   info_t *s;
 

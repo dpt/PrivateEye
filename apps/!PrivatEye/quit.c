@@ -17,5 +17,5 @@ int can_quit(void)
   if (count == 0)
     return 1;
 
-  return dcs_quit__quit_query("quit.modified", count) == dcs_quit_DISCARD;
+  return dcs_quit_quit_query("quit.modified", count) == dcs_quit_DISCARD;
 }

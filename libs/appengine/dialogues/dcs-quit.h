@@ -15,9 +15,9 @@ enum
   dcs_quit_SAVE
 };
 
-error dcs_quit__init(void);
-void dcs_quit__fin(void);
-int dcs_quit__dcs_query(const char *message);
-int dcs_quit__quit_query(const char *message, int count);
+error dcs_quit_init(void);
+void dcs_quit_fin(void);
+int dcs_quit_dcs_query(const char *message);
+int dcs_quit_quit_query(const char *message, int count);
 
 #endif /* APPENGINE_DIALOGUE_DCS_QUIT_H */

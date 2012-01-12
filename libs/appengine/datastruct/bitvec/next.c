@@ -8,7 +8,7 @@
 
 #include "impl.h"
 
-int bitvec__next(const bitvec_t *v, int n)
+int bitvec_next(const bitvec_t *v, int n)
 {
   int hi,lo;
 

@@ -11,25 +11,25 @@
 
 /* ----------------------------------------------------------------------- */
 
-os_error *oserror__check(os_error   *e,
+os_error *oserror_check(os_error   *e,
                          const char *file,
                          int         line);
 
 #ifndef NDEBUG
-#define EC(_e) oserror__check((os_error *) _e, __FILE__, __LINE__)
+#define EC(_e) oserror_check((os_error *) _e, __FILE__, __LINE__)
 #else
 #define EC(_e) ((os_error *) _e)
 #endif
 
 /* ----------------------------------------------------------------------- */
 
-void oserror__report(int, const char *, ...);
-void oserror__report_block(os_error *error);
+void oserror_report(int, const char *, ...);
+void oserror_report_block(os_error *error);
 
 /* ----------------------------------------------------------------------- */
 
 /* Plots the error message using Wimp_TextOp */
-void oserror__plot(os_error *e, int x, int y);
+void oserror_plot(os_error *e, int x, int y);
 
 /* ----------------------------------------------------------------------- */
 

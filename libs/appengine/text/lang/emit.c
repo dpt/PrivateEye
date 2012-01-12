@@ -15,7 +15,7 @@ void emit(sym *sy, Token t, int val)
   switch (t)
   {
   case IDENT:
-    printf("ident: %s\n", sym__get(sy, val));
+    printf("ident: %s\n", sym_get(sy, val));
     break;
 
   case NUMBER:

@@ -61,7 +61,7 @@ int hash_test(void)
   printf("test: create\n");
 
   /* use default string handling */
-  err = hash__create(20, NULL, NULL, NULL, NULL, &d);
+  err = hash_create(20, NULL, NULL, NULL, NULL, &d);
   if (err)
     return 1;
 
@@ -80,14 +80,14 @@ int hash_test(void)
     if (!s || !v)
       return 1;
 
-    err = hash__insert(d, s, v);
+    err = hash_insert(d, s, v);
     if (err)
       return 1;
   }
 
   printf("test: iterate\n");
 
-  hash__walk(d, my_walk_fn, NULL);
+  hash_walk(d, my_walk_fn, NULL);
 
   printf("test: iterate by continuation\n");
 
@@ -101,7 +101,7 @@ int hash_test(void)
 
       printf("cont = %x\n", cont);
 
-      cont = hash__walk_continuation(d, cont, &key, &value);
+      cont = hash_walk_continuation(d, cont, &key, &value);
       if (cont <= 0)
         break;
 
@@ -112,11 +112,11 @@ int hash_test(void)
   printf("test: remove\n");
 
   for (i = 0; i < NELEMS(data); i++)
-    hash__remove(d, data[i].name);
+    hash_remove(d, data[i].name);
 
   printf("test: destroy\n");
 
-  hash__destroy(d);
+  hash_destroy(d);
 
   return 0;
 }

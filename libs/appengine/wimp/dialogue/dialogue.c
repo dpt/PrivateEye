@@ -22,26 +22,26 @@
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler    dialogue__event_mouse_click,
-                             dialogue__event_key_pressed;
+static event_wimp_handler    dialogue_event_mouse_click,
+                             dialogue_event_key_pressed;
 
-static event_message_handler dialogue__message_menus_deleted,
-                             dialogue__message_menu_warning;
+static event_message_handler dialogue_message_menus_deleted,
+                             dialogue_message_menu_warning;
 
 /* ----------------------------------------------------------------------- */
 
-static void dialogue__register_handlers(int reg, dialogue_t *d)
+static void dialogue_register_handlers(int reg, dialogue_t *d)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_MOUSE_CLICK,      dialogue__event_mouse_click     },
-    { wimp_KEY_PRESSED,      dialogue__event_key_pressed     },
+    { wimp_MOUSE_CLICK,      dialogue_event_mouse_click     },
+    { wimp_KEY_PRESSED,      dialogue_event_key_pressed     },
   };
 
   static const event_message_handler_spec message_handlers[] =
   {
-    { message_MENU_WARNING,  dialogue__message_menu_warning  },
-    { message_MENUS_DELETED, dialogue__message_menus_deleted },
+    { message_MENU_WARNING,  dialogue_message_menu_warning  },
+    { message_MENUS_DELETED, dialogue_message_menus_deleted },
   };
 
   event_register_wimp_group(reg,
@@ -57,7 +57,7 @@ static void dialogue__register_handlers(int reg, dialogue_t *d)
 
 /* ----------------------------------------------------------------------- */
 
-static int dialogue__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int dialogue_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
   dialogue_t   *d;
@@ -87,15 +87,15 @@ static int dialogue__event_mouse_click(wimp_event_no event_no, wimp_block *block
       return rc;
   }
 
-  if (d->flags & dialogue__FLAG_KEEP_OPEN)
+  if (d->flags & dialogue_FLAG_KEEP_OPEN)
   {
-    d->flags &= ~dialogue__FLAG_KEEP_OPEN;
+    d->flags &= ~dialogue_FLAG_KEEP_OPEN;
   }
   else
   {
     if ((pointer->buttons & wimp_CLICK_SELECT) &&
         (pointer->i == d->ok || pointer->i == d->cancel))
-      dialogue__hide(d);
+      dialogue_hide(d);
   }
 
   return event_HANDLED;
@@ -115,10 +115,10 @@ static void fake_click(wimp_w w, wimp_i i, void *handle)
   fake.pointer.buttons = shift ? wimp_CLICK_ADJUST : wimp_CLICK_SELECT;
   fake.pointer.w       = w;
   fake.pointer.i       = i;
-  dialogue__event_mouse_click(wimp_MOUSE_CLICK, &fake, handle);
+  dialogue_event_mouse_click(wimp_MOUSE_CLICK, &fake, handle);
 }
 
-static int dialogue__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int dialogue_event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_key   *key;
   dialogue_t *d;
@@ -154,7 +154,7 @@ static int dialogue__event_key_pressed(wimp_event_no event_no, wimp_block *block
   return event_HANDLED;
 }
 
-static int dialogue__message_menus_deleted(wimp_message *message, void *handle)
+static int dialogue_message_menus_deleted(wimp_message *message, void *handle)
 {
   dialogue_t *d;
 
@@ -167,12 +167,12 @@ static int dialogue__message_menus_deleted(wimp_message *message, void *handle)
   if (d->menus_deleted)
     d->menus_deleted(message, handle);
 
-  d->flags &= ~dialogue__FLAG_OPEN;
+  d->flags &= ~dialogue_FLAG_OPEN;
 
   return event_HANDLED;
 }
 
-static int dialogue__message_menu_warning(wimp_message *message, void *handle)
+static int dialogue_message_menu_warning(wimp_message *message, void *handle)
 {
   wimp_message_menu_warning *warning;
   dialogue_t                *d;
@@ -180,14 +180,14 @@ static int dialogue__message_menu_warning(wimp_message *message, void *handle)
   warning = (wimp_message_menu_warning *) &message->data;
   d       = handle;
 
-  /* This code is similar to that in dialogue__show. */
+  /* This code is similar to that in dialogue_show. */
 
   if (d->fillout)
     d->fillout(d, d->arg); /* get the dialogue filled out */
 
   wimp_create_sub_menu(warning->sub_menu, warning->pos.x, warning->pos.y);
 
-  d->flags |= dialogue__FLAG_OPEN;
+  d->flags |= dialogue_FLAG_OPEN;
 
   return event_HANDLED;
 }
@@ -304,7 +304,7 @@ static void assign_key_actions(dialogue_t *d)
   add_action(d, d->cancel, wimp_KEY_ESCAPE);
 }
 
-error dialogue__construct(dialogue_t *d,
+error dialogue_construct(dialogue_t *d,
                           const char *name,
                           wimp_i      ok,
                           wimp_i      cancel)
@@ -313,7 +313,7 @@ error dialogue__construct(dialogue_t *d,
 
   d->w = window_create(name);
 
-  err = help__add_window(d->w, name);
+  err = help_add_window(d->w, name);
   if (err)
     return err;
 
@@ -322,31 +322,31 @@ error dialogue__construct(dialogue_t *d,
 
   assign_key_actions(d);
 
-  dialogue__register_handlers(1, d);
+  dialogue_register_handlers(1, d);
 
   d->flags = 0;
 
   return error_OK;
 }
 
-void dialogue__destruct(dialogue_t *d)
+void dialogue_destruct(dialogue_t *d)
 {
-  dialogue__register_handlers(0, d);
+  dialogue_register_handlers(0, d);
 
-  help__remove_window(d->w);
+  help_remove_window(d->w);
 }
 
 /* ----------------------------------------------------------------------- */
 
-void dialogue__set_fillout_handler(dialogue_t        *d,
-                                   dialogue__fillout *fillout,
+void dialogue_set_fillout_handler(dialogue_t        *d,
+                                   dialogue_fillout *fillout,
                                    void              *arg)
 {
   d->fillout = fillout;
   d->arg     = arg;
 }
 
-void dialogue__set_handlers(dialogue_t            *d,
+void dialogue_set_handlers(dialogue_t            *d,
                             event_wimp_handler    *mouse_click,
                             event_wimp_handler    *key_pressed,
                             event_message_handler *menus_deleted)
@@ -358,43 +358,43 @@ void dialogue__set_handlers(dialogue_t            *d,
 
 /* ----------------------------------------------------------------------- */
 
-void dialogue__show(dialogue_t *d)
+void dialogue_show(dialogue_t *d)
 {
   if (d->fillout)
     d->fillout(d, d->arg); /* get the dialogue filled out */
 
   window_open_as_menu(d->w);
 
-  d->flags |= dialogue__FLAG_OPEN;
+  d->flags |= dialogue_FLAG_OPEN;
 }
 
-void dialogue__show_here(dialogue_t *d, int x, int y)
+void dialogue_show_here(dialogue_t *d, int x, int y)
 {
   if (d->fillout)
     d->fillout(d, d->arg); /* get the dialogue filled out */
 
   window_open_as_menu_here(d->w, x, y);
 
-  d->flags |= dialogue__FLAG_OPEN;
+  d->flags |= dialogue_FLAG_OPEN;
 }
 
-void dialogue__hide(dialogue_t *d)
+void dialogue_hide(dialogue_t *d)
 {
-  if (d->flags & dialogue__FLAG_OPEN)
+  if (d->flags & dialogue_FLAG_OPEN)
   {
     wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
-    d->flags &= ~dialogue__FLAG_OPEN;
+    d->flags &= ~dialogue_FLAG_OPEN;
   }
 }
 
 /* ----------------------------------------------------------------------- */
 
-wimp_w dialogue__get_window(const dialogue_t *d)
+wimp_w dialogue_get_window(const dialogue_t *d)
 {
   return d->w;
 }
 
-void dialogue__keep_open(dialogue_t *d)
+void dialogue_keep_open(dialogue_t *d)
 {
-  d->flags |= dialogue__FLAG_KEEP_OPEN;
+  d->flags |= dialogue_FLAG_KEEP_OPEN;
 }

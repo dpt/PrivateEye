@@ -114,7 +114,7 @@ error viewer_keymap_init(void)
 
   if (viewer_keymap__refcount++ == 0)
   {
-    err = keymap__create("Choices:" APPNAME ".Keys",
+    err = keymap_create("Choices:" APPNAME ".Keys",
                          sections, NELEMS(sections),
                         &keymap);
 
@@ -128,7 +128,7 @@ void viewer_keymap_fin(void)
 {
   if (--viewer_keymap__refcount == 0)
   {
-    keymap__destroy(keymap);
+    keymap_destroy(keymap);
   }
 }
 
@@ -136,7 +136,7 @@ int viewer_keymap_op(viewer_keymap_section section, wimp_key_no key_no)
 {
   keymap_action a;
 
-  a = keymap__action(keymap, section, key_no);
+  a = keymap_get_action(keymap, section, key_no);
   if (a >= 0 || section == viewer_keymap_SECTION_COMMON)
     return a;
 

@@ -118,7 +118,7 @@ error tags_common__add_tag(tag_cloud  *tc,
 
   NOT_USED(length);
 
-  tagdb__add(db, name, NULL);
+  tagdb_add(db, name, NULL);
 
   err = tags_common__set_tags(tc);
   if (err)
@@ -134,7 +134,7 @@ error tags_common__delete_tag(tag_cloud *tc,
   error  err;
   tagdb *db = arg;
 
-  tagdb__remove(db, index);
+  tagdb_remove(db, index);
 
   err = tags_common__set_tags(tc);
   if (err)
@@ -154,7 +154,7 @@ error tags_common__rename_tag(tag_cloud  *tc,
 
   NOT_USED(length);
 
-  err = tagdb__rename(db, index, name);
+  err = tagdb_rename(db, index, name);
   if (err)
     return err;
 
@@ -174,11 +174,11 @@ error tags_common__tag(tag_cloud  *tc,
   error  err;
   tagdb *db = arg;
 
-  err = tagdb__tagid(db, digest, index);
+  err = tagdb_tagid(db, digest, index);
   if (err)
     return err;
 
-  err = filenamedb__add(LOCALS.fdb, digest, file_name);
+  err = filenamedb_add(LOCALS.fdb, digest, file_name);
   if (err)
     return err;
 
@@ -197,7 +197,7 @@ error tags_common__detag(tag_cloud  *tc,
   error  err;
   tagdb *db = arg;
 
-  err = tagdb__untagid(db, digest, index);
+  err = tagdb_untagid(db, digest, index);
   if (err)
     return err;
 
@@ -222,15 +222,15 @@ error tags_common__tagfile(tag_cloud  *tc,
 
   assert(md5_DIGESTSZ == digestdb_DIGESTSZ);
 
-  err = md5__from_file(file_name, digest);
+  err = md5_from_file(file_name, digest);
   if (err)
     return err;
 
-  err = tagdb__tagid(db, (char *) digest, index);
+  err = tagdb_tagid(db, (char *) digest, index);
   if (err)
     return err;
 
-  err = filenamedb__add(LOCALS.fdb, (char *) digest, file_name);
+  err = filenamedb_add(LOCALS.fdb, (char *) digest, file_name);
   if (err)
     return err;
 
@@ -252,11 +252,11 @@ error tags_common__detagfile(tag_cloud  *tc,
 
   assert(md5_DIGESTSZ == digestdb_DIGESTSZ);
 
-  err = md5__from_file(file_name, digest);
+  err = md5_from_file(file_name, digest);
   if (err)
     return err;
 
-  err = tagdb__untagid(db, (char *) digest, index);
+  err = tagdb_untagid(db, (char *) digest, index);
   if (err)
     return err;
 
@@ -268,7 +268,7 @@ error tags_common__detagfile(tag_cloud  *tc,
 }
 
 error tags_common__event(tag_cloud        *tc,
-                         tag_cloud__event  event,
+                         tag_cloud_event  event,
                          void             *arg)
 {
   NOT_USED(tc);
@@ -276,14 +276,14 @@ error tags_common__event(tag_cloud        *tc,
 
   switch (event)
   {
-  case tag_cloud__EVENT_COMMIT:
+  case tag_cloud_EVENT_COMMIT:
 
     /* Backup before we write out the databases. */
     backup();
 
-    filenamedb__commit(LOCALS.fdb);
+    filenamedb_commit(LOCALS.fdb);
 
-    tagdb__commit(LOCALS.db);
+    tagdb_commit(LOCALS.db);
 
     break;
   }
@@ -297,16 +297,16 @@ error tags_common__set_tags(tag_cloud *tc)
 {
   error           err;
   int             tagsallocated;
-  tag_cloud__tag *tags;
+  tag_cloud_tag *tags;
   int             bufallocated;
   char           *buf;
   char           *bufp;
   char           *bufend;
   int             cont;
   int             ntags;
-  tagdb__tag      tag;
+  tagdb_tag      tag;
   int             count;
-  tag_cloud__tag *t;
+  tag_cloud_tag *t;
 
   tagsallocated = 0; /* allocated */
   tags          = NULL;
@@ -320,7 +320,7 @@ error tags_common__set_tags(tag_cloud *tc)
   ntags = 0;
   for (;;)
   {
-    err = tagdb__enumerate_tags(LOCALS.db, &cont, &tag, &count);
+    err = tagdb_enumerate_tags(LOCALS.db, &cont, &tag, &count);
     if (err)
       goto failure;
 
@@ -329,7 +329,7 @@ error tags_common__set_tags(tag_cloud *tc)
 
     do
     {
-      err = tagdb__tagtoname(LOCALS.db, tag, bufp, bufend - bufp);
+      err = tagdb_tagtoname(LOCALS.db, tag, bufp, bufend - bufp);
       if (err == error_TAGDB_BUFF_OVERFLOW)
       {
         int   n;
@@ -363,7 +363,7 @@ error tags_common__set_tags(tag_cloud *tc)
     if (ntags >= tagsallocated)
     {
       int             n;
-      tag_cloud__tag *newtags;
+      tag_cloud_tag *newtags;
 
       n = tagsallocated * 2;
       if (n < 8)
@@ -394,7 +394,7 @@ error tags_common__set_tags(tag_cloud *tc)
   for (t = tags; t < tags + ntags; t++)
     t->name = buf + (int) t->name;
 
-  err = tag_cloud__set_tags(tc, tags, ntags);
+  err = tag_cloud_set_tags(tc, tags, ntags);
   if (err)
     goto failure;
 
@@ -420,7 +420,7 @@ error tags_common__set_highlights(tag_cloud *tc, image_t *image)
   int            nindices;
   int            allocated;
   int            cont;
-  tagdb__tag     tag;
+  tagdb_tag     tag;
 
   /* DON'T use LOCALS.image here -- it may not be set up, yet */
 
@@ -439,7 +439,7 @@ error tags_common__set_highlights(tag_cloud *tc, image_t *image)
 
   do
   {
-    err = tagdb__get_tags_for_id(LOCALS.db, (char *) digest, &cont, &tag);
+    err = tagdb_get_tags_for_id(LOCALS.db, (char *) digest, &cont, &tag);
     if (err == error_TAGDB_UNKNOWN_ID)
       break;
     else if (err)
@@ -472,7 +472,7 @@ error tags_common__set_highlights(tag_cloud *tc, image_t *image)
   }
   while (cont);
 
-  err = tag_cloud__highlight(tc, indices, nindices);
+  err = tag_cloud_highlight(tc, indices, nindices);
   if (err)
     goto failure;
 
@@ -488,7 +488,7 @@ failure:
 
 error tags_common__clear_highlights(tag_cloud *tc)
 {
-  return tag_cloud__highlight(tc, NULL, 0);
+  return tag_cloud_highlight(tc, NULL, 0);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -503,22 +503,22 @@ error tags_common__init(void)
   {
     /* dependencies */
 
-    err = tagdb__init();
+    err = tagdb_init();
     if (err)
       goto failure;
 
-    err = filenamedb__init();
+    err = filenamedb_init();
     if (err)
     {
-      tagdb__fin();
+      tagdb_fin();
       goto failure;
     }
 
-    err = tag_cloud__init();
+    err = tag_cloud_init();
     if (err)
     {
-      filenamedb__fin();
-      tagdb__fin();
+      filenamedb_fin();
+      tagdb_fin();
       goto failure;
     }
   }
@@ -537,11 +537,11 @@ void tags_common__fin(void)
   {
     tags_common__properfin(1); /* force shutdown */
 
-    tag_cloud__fin();
+    tag_cloud_fin();
 
-    filenamedb__fin();
+    filenamedb_fin();
 
-    tagdb__fin();
+    tagdb_fin();
   }
 }
 
@@ -574,19 +574,19 @@ error tags_common__properinit(void)
       goto failure;
     }
 
-    err = tagdb__create(TAGDB_FILE);
+    err = tagdb_create(TAGDB_FILE);
     if (err)
       goto failure;
 
-    err = tagdb__open(TAGDB_FILE, &db);
+    err = tagdb_open(TAGDB_FILE, &db);
     if (err)
       goto failure;
 
-    err = filenamedb__create(FILENAMEDB_FILE);
+    err = filenamedb_create(FILENAMEDB_FILE);
     if (err)
       goto failure;
 
-    err = filenamedb__open(FILENAMEDB_FILE, &fdb);
+    err = filenamedb_open(FILENAMEDB_FILE, &fdb);
     if (err)
       goto failure;
 
@@ -623,9 +623,9 @@ void tags_common__properfin(int force)
     /* backup before we write out the databases */
     backup();
 
-    filenamedb__close(LOCALS.fdb);
+    filenamedb_close(LOCALS.fdb);
 
-    tagdb__close(LOCALS.db);
+    tagdb_close(LOCALS.db);
   }
 }
 

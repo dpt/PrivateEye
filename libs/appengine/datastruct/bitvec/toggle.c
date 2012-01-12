@@ -9,14 +9,14 @@
 
 #include "impl.h"
 
-error bitvec__toggle(bitvec_t *v, int bit)
+error bitvec_toggle(bitvec_t *v, int bit)
 {
   error err;
   int   word;
 
   word = bit >> 5;
 
-  err = bitvec__ensure(v, word + 1);
+  err = bitvec_ensure(v, word + 1);
   if (err)
     return err;
 

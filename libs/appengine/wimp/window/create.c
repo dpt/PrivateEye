@@ -62,7 +62,7 @@ notfound:
   free(window_block);
   free(indirected_block);
 
-  error__fatal1("NoAny", template_name); /* fatal error: <name> not found */
+  error_fatal1("NoAny", template_name); /* fatal error: <name> not found */
 
   return 0;
 
@@ -72,7 +72,7 @@ oom:
   free(window_block);
   free(indirected_block);
 
-  error__fatal_oom(); /* fatal error */
+  error_fatal_oom(); /* fatal error */
 
   return 0;
 }

@@ -14,12 +14,12 @@
 
 #include "appengine/base/errors.h"
 
-typedef enum stream__opcode
+typedef enum stream_opcode
 {
-  stream__IN_MEMORY /* query whether stream is contained in memory,
+  stream_IN_MEMORY /* query whether stream is contained in memory,
                      * returns an int */
 }
-stream__opcode;
+stream_opcode;
 
 #define T stream
 
@@ -32,33 +32,33 @@ struct T
 
   error  last; /* last error. set when we return EOF? */
 
-  error (*op)(T *s, stream__opcode opcode, void *arg);
+  error (*op)(T *s, stream_opcode opcode, void *arg);
   error (*seek)(T *s, int pos);
   int   (*get)(T *s); /* uses standard EOF constant from stdio */
   int   (*length)(T *s);
   void  (*destroy)(T *doomed);
 };
 
-error stream__op(T *s, stream__opcode opcode, void *arg);
-error stream__seek(T *s, int pos);
-int   stream__fill(T *s);
-int   stream__length(T *s);
-void  stream__destroy(T *doomed);
+error stream_op(T *s, stream_opcode opcode, void *arg);
+error stream_seek(T *s, int pos);
+int   stream_fill(T *s);
+int   stream_length(T *s);
+void  stream_destroy(T *doomed);
 
 /* Get a byte from a stream. */
-#define stream__getc(s) (((s)->buf != (s)->end) ? *(s)->buf++ : (s)->get(s))
+#define stream_getc(s) (((s)->buf != (s)->end) ? *(s)->buf++ : (s)->get(s))
 
 /* Put back the last byte gotten. */
-#define stream__ungetc(s) --(s)->buf;
+#define stream_ungetc(s) --(s)->buf;
 
 /* Returns the number of bytes remaining in the current buffer. */
-#define stream__remaining(s) ((s)->end - (s)->buf)
+#define stream_remaining(s) ((s)->end - (s)->buf)
 
 /* Returns the number of bytes remaining in the current buffer.
  * Will attempt to fill the buffer if it's found to be empty. */
-#define stream__remaining_and_fill(s) (stream__remaining(s) != 0 ? \
-                                       stream__remaining(s) : \
-                                       stream__fill(s))
+#define stream_remaining_and_fill(s) (stream_remaining(s) != 0 ? \
+                                       stream_remaining(s) : \
+                                       stream_fill(s))
 
 #undef T
 

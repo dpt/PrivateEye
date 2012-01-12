@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-wimp_w tag_cloud__get_window_handle(tag_cloud *tc)
+wimp_w tag_cloud_get_window_handle(tag_cloud *tc)
 {
   return tc->main_w;
 }

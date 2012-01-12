@@ -43,16 +43,16 @@ error tag_icon_bar_init(void)
 {
   error err;
 
-  err = icon_bar__init();
+  err = icon_bar_init();
   if (err)
     return err;
 
-  icon_bar__set_handlers(pointerx, selectionx, NULL, NULL);
+  icon_bar_set_handlers(pointerx, selectionx, NULL, NULL);
 
   return error_OK;
 }
 
 void tag_icon_bar_fin(void)
 {
-  icon_bar__fin();
+  icon_bar_fin();
 }

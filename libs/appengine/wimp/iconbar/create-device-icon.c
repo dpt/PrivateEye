@@ -73,7 +73,7 @@ wimp_i iconbar_create_device_icon(const char    *sprite,
 
 oom:
 
-  error__fatal_oom();
+  error_fatal_oom();
 
   return 0; /* never reached */
 }

@@ -5,7 +5,7 @@
 
 /* increases the size of box "box" by "change" */
 
-void box__grow(os_box *box, int change)
+void box_grow(os_box *box, int change)
 {
   box->x0 -= change;
   box->y0 -= change;

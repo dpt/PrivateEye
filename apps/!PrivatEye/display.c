@@ -108,14 +108,14 @@ error display__set_handlers(viewer_t *viewer)
 
   display__reg(1, viewer);
 
-  err = help__add_window(viewer->main_w, "display");
+  err = help_add_window(viewer->main_w, "display");
 
   return err;
 }
 
 void display__release_handlers(viewer_t *viewer)
 {
-  help__remove_window(viewer->main_w);
+  help_remove_window(viewer->main_w);
 
   display__reg(0, viewer);
 }
@@ -142,16 +142,16 @@ error display__init(void)
 
   /* dependencies */
 
-  err = help__init();
+  err = help_init();
   if (err)
     return err;
 
-  err = dcs_quit__init();
+  err = dcs_quit_init();
   if (err)
     return err;
 
 #ifdef EYE_META
-  err = metadata__init();
+  err = metadata_init();
   if (err)
     return err;
 #endif
@@ -180,12 +180,12 @@ error display__init(void)
 
   GLOBALS.image_m = menu_create_from_desc(
                                       message0("menu.image"),
-                                      dialogue__get_window(viewer_infodlg),
-                                      dialogue__get_window(viewer_srcinfodlg),
-                                      dialogue__get_window(viewer_savedlg),
-                                      dialogue__get_window(viewer_scaledlg));
+                                      dialogue_get_window(viewer_infodlg),
+                                      dialogue_get_window(viewer_srcinfodlg),
+                                      dialogue_get_window(viewer_savedlg),
+                                      dialogue_get_window(viewer_scaledlg));
 
-  err = help__add_menu(GLOBALS.image_m, "image");
+  err = help_add_menu(GLOBALS.image_m, "image");
   if (err)
     return err;
 
@@ -200,7 +200,7 @@ error display__init(void)
 
 void display__fin(void)
 {
-  help__remove_menu(GLOBALS.image_m);
+  help_remove_menu(GLOBALS.image_m);
 
   menu_destroy(GLOBALS.image_m);
 
@@ -215,10 +215,10 @@ void display__fin(void)
   tags__fin();
 #endif
 #ifdef EYE_META
-  metadata__fin();
+  metadata_fin();
 #endif
-  dcs_quit__fin();
-  help__fin();
+  dcs_quit_fin();
+  help_fin();
 }
 
 /* ----------------------------------------------------------------------- */
@@ -1051,8 +1051,8 @@ menutest_menu;
 static
 menutest_entry misc_entries[] = { NULL,
                                   NULL,
-                                  metadata__available,
-                                  hist__available,
+                                  metadata_available,
+                                  hist_available,
                                   NULL };
 
 static
@@ -1103,11 +1103,11 @@ static void display__menu_update(void)
   m = entries[IMAGE_FILE].sub_menu;
 
   /* Shade the "Histogram" entry if we don't have that method */
-  disable(m, FILE_HIST, hist__available(image));
+  disable(m, FILE_HIST, hist_available(image));
 
 #ifdef EYE_META
   /* Shade the "Metadata" entry if we don't have that method */
-  disable(m, FILE_METADATA, metadata__available(image));
+  disable(m, FILE_METADATA, metadata_available(image));
 #endif
 
   /* Edit menu */
@@ -1333,7 +1333,7 @@ static void action_kill(viewer_t *viewer)
 
 failure:
 
-  oserror__report_block(e);
+  oserror_report_block(e);
 }
 
 static void action(viewer_t *viewer, int op)
@@ -1371,23 +1371,23 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Close:
-    error__report(action_close_window(viewer->main_w));
+    error_report(action_close_window(viewer->main_w));
     break;
 
   case Save:
-    dialogue__show(viewer_savedlg);
+    dialogue_show(viewer_savedlg);
     break;
 
   case Info:
-    dialogue__show(viewer_infodlg);
+    dialogue_show(viewer_infodlg);
     break;
 
   case SourceInfo:
-    dialogue__show(viewer_srcinfodlg);
+    dialogue_show(viewer_srcinfodlg);
     break;
 
   case Hist:
-    hist__open(viewer->drawable->image, GLOBALS.choices.hist.bars);
+    hist_open(viewer->drawable->image, GLOBALS.choices.hist.bars);
     break;
 
   case Rotate:
@@ -1395,12 +1395,12 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Scale:
-    dialogue__show(viewer_scaledlg);
+    dialogue_show(viewer_scaledlg);
     break;
 
 #ifdef EYE_TAGS
   case Tags:
-    error__report(tags__open(viewer->drawable->image));
+    error_report(tags__open(viewer->drawable->image));
     break;
 #endif
 
@@ -1409,7 +1409,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Help:
-    error__report(action_help());
+    error_report(action_help());
     break;
 
   case Kill:
@@ -1430,7 +1430,7 @@ static void action(viewer_t *viewer, int op)
 
   case MetaData:
 #ifdef EYE_META
-    metadata__open(viewer->drawable->image,
+    metadata_open(viewer->drawable->image,
                    GLOBALS.choices.metadata.bgcolour,
                    GLOBALS.choices.metadata.wrapwidth,
                    GLOBALS.choices.metadata.line_height);

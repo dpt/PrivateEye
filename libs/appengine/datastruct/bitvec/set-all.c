@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-void bitvec__set_all(bitvec_t *v)
+void bitvec_set_all(bitvec_t *v)
 {
   // this is probably doing the wrong thing by setting all 'known' bits.
   // what you'd expect is that every single bit (including those unallocated)

@@ -17,7 +17,7 @@ typedef struct proginfo_t
 }
 proginfo_t;
 
-dialogue_t *proginfo__create(void)
+dialogue_t *proginfo_create(void)
 {
   proginfo_t *s;
   dialogue_t *d;
@@ -29,24 +29,24 @@ dialogue_t *proginfo__create(void)
 
   d = &s->info.dialogue;
 
-  info__construct(&s->info, "prog_info");
+  info_construct(&s->info, "prog_info");
 
-  w = dialogue__get_window(d);
+  w = dialogue_get_window(d);
 
-  icon_set_text(w, proginfo__VERSION_ICON, message0("version"));
+  icon_set_text(w, proginfo_VERSION_ICON, message0("version"));
 
-  info__layout(d);
+  info_layout(d);
 
   return d;
 }
 
-void proginfo__destroy(dialogue_t *d)
+void proginfo_destroy(dialogue_t *d)
 {
   proginfo_t *s;
 
   s = (proginfo_t *) d;
 
-  info__destruct(&s->info);
+  info_destruct(&s->info);
 
   free(d);
 }

@@ -10,7 +10,7 @@
 
 #include "impl.h"
 
-void ntree__unlink(ntree_t *t)
+void ntree_unlink(ntree_t *t)
 {
   assert(t);
 

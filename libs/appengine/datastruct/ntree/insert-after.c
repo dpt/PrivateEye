@@ -13,7 +13,7 @@
 
 #include "impl.h"
 
-error ntree__insert_after(ntree_t *parent, ntree_t *sibling, ntree_t *node)
+error ntree_insert_after(ntree_t *parent, ntree_t *sibling, ntree_t *node)
 {
   NOT_USED(parent);
   NOT_USED(sibling);

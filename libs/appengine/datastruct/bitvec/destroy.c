@@ -11,7 +11,7 @@
 
 #include "impl.h"
 
-void bitvec__destroy(bitvec_t *v)
+void bitvec_destroy(bitvec_t *v)
 {
   if (v == NULL)
     return;

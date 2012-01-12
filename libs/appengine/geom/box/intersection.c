@@ -7,7 +7,7 @@
 
 /* return the box "c" as the intersection of boxes "a" and "b" */
 
-void box__intersection(const os_box *a, const os_box *b, os_box *c)
+void box_intersection(const os_box *a, const os_box *b, os_box *c)
 {
   c->x0 = MAX(a->x0, b->x0);
   c->y0 = MAX(a->y0, b->y0);

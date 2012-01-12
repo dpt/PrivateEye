@@ -25,14 +25,14 @@
 
 /* ----------------------------------------------------------------------- */
 
-static imageobwin_alloc   metadata__alloc;
-static imageobwin_dealloc metadata__dealloc;
-static imageobwin_compute metadata__compute;
-static imageobwin_refresh metadata__refresh;
+static imageobwin_alloc   metadata_alloc;
+static imageobwin_dealloc metadata_dealloc;
+static imageobwin_compute metadata_compute;
+static imageobwin_refresh metadata_refresh;
 
-static event_wimp_handler metadata__event_redraw_window_request,
-                          metadata__event_mouse_click,
-                          metadata__event_menu_selection;
+static event_wimp_handler metadata_event_redraw_window_request,
+                          metadata_event_mouse_click,
+                          metadata_event_menu_selection;
 
 /* ----------------------------------------------------------------------- */
 
@@ -74,7 +74,7 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-error metadata__init(void)
+error metadata_init(void)
 {
   error err;
 
@@ -83,24 +83,24 @@ error metadata__init(void)
 
   /* dependencies */
 
-  err = treeview__init();
+  err = treeview_init();
   if (err)
     return err;
 
-  err = imageobwin__construct(&LOCALS.factory,
+  err = imageobwin_construct(&LOCALS.factory,
                               "metadata",
                               AT_DEFAULT,
-                              metadata__available,
-                              metadata__alloc,
-                              metadata__dealloc,
-                              metadata__compute,
-                              metadata__refresh,
-                              metadata__event_redraw_window_request,
-                              metadata__event_mouse_click,
-                              metadata__event_menu_selection);
+                              metadata_available,
+                              metadata_alloc,
+                              metadata_dealloc,
+                              metadata_compute,
+                              metadata_refresh,
+                              metadata_event_redraw_window_request,
+                              metadata_event_mouse_click,
+                              metadata_event_menu_selection);
   if (err)
   {
-    treeview__fin();
+    treeview_fin();
     return err;
   }
 
@@ -109,21 +109,21 @@ error metadata__init(void)
   return error_OK;
 }
 
-void metadata__fin(void)
+void metadata_fin(void)
 {
   if (LOCALS.refcount == 0)
     return;
 
-  imageobwin__destruct(&LOCALS.factory);
+  imageobwin_destruct(&LOCALS.factory);
 
-  treeview__fin();
+  treeview_fin();
 
   LOCALS.refcount--;
 }
 
 /* ----------------------------------------------------------------------- */
 
-void metadata__open(image_t *image,
+void metadata_open(image_t *image,
                     os_colour bgcolour, int wrapwidth, int lineheight)
 {
   metadata_config config;
@@ -132,10 +132,10 @@ void metadata__open(image_t *image,
   config.wrapwidth  = wrapwidth;
   config.lineheight = lineheight;
 
-  imageobwin__open(&LOCALS.factory, image, &config);
+  imageobwin_open(&LOCALS.factory, image, &config);
 }
 
-int metadata__available(const image_t *image)
+int metadata_available(const image_t *image)
 {
   return image &&
          image->flags & image_FLAG_HAS_META;
@@ -143,7 +143,7 @@ int metadata__available(const image_t *image)
 
 /* ----------------------------------------------------------------------- */
 
-static error metadata__alloc(const void    *opaque_config,
+static error metadata_alloc(const void    *opaque_config,
                              imageobwin_t **obwin)
 {
   metadata_window       *self;
@@ -164,16 +164,16 @@ static error metadata__alloc(const void    *opaque_config,
   return error_OK;
 }
 
-static void metadata__dealloc(imageobwin_t *doomed)
+static void metadata_dealloc(imageobwin_t *doomed)
 {
   metadata_window *self = (metadata_window *) doomed;
 
-  treeview__destroy(self->tr);
+  treeview_destroy(self->tr);
 
   free(self);
 }
 
-static error metadata__compute(imageobwin_t *obwin)
+static error metadata_compute(imageobwin_t *obwin)
 {
   error            err;
   metadata_window *self;
@@ -192,21 +192,21 @@ static error metadata__compute(imageobwin_t *obwin)
 
   hourglass_off();
 
-  err = treeview__create(&self->tr);
+  err = treeview_create(&self->tr);
   if (err)
     goto Failure;
 
-  treeview__set_text_width(self->tr, self->config.wrapwidth);
-  treeview__set_line_height(self->tr, self->config.lineheight);
-  treeview__set_highlight_background(self->tr, self->config.bgcolour);
+  treeview_set_text_width(self->tr, self->config.wrapwidth);
+  treeview_set_line_height(self->tr, self->config.lineheight);
+  treeview_set_highlight_background(self->tr, self->config.bgcolour);
 
-  treeview__set_tree(self->tr, tree);
+  treeview_set_tree(self->tr, tree);
 
   image_destroy_metadata(tree);
 
-  treeview__make_collapsible(self->tr);
+  treeview_make_collapsible(self->tr);
 
-  err = treeview__get_dimensions(self->tr, &w, &h);
+  err = treeview_get_dimensions(self->tr, &w, &h);
   if (err)
     goto Failure;
 
@@ -224,7 +224,7 @@ Failure:
   return err;
 }
 
-static void metadata__refresh(imageobwin_t *obwin)
+static void metadata_refresh(imageobwin_t *obwin)
 {
   metadata_window *self = (metadata_window *) obwin;
 
@@ -233,7 +233,7 @@ static void metadata__refresh(imageobwin_t *obwin)
 
 /* ----------------------------------------------------------------------- */
 
-static int metadata__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int metadata_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   metadata_window *self;
   wimp_draw       *draw;
@@ -245,12 +245,12 @@ static int metadata__event_redraw_window_request(wimp_event_no event_no, wimp_bl
   draw = &block->redraw;
 
   for (more = wimp_redraw_window(draw); more; more = wimp_get_rectangle(draw))
-    treeview__draw(self->tr);
+    treeview_draw(self->tr);
 
   return event_HANDLED;
 }
 
-static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int metadata_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   metadata_window *self;
   wimp_pointer    *pointer;
@@ -278,7 +278,7 @@ static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block
         x = pointer->pos.x + (state.xscroll - state.visible.x0);
         y = pointer->pos.y + (state.yscroll - state.visible.y1);
 
-        (void) treeview__click(self->tr, x, y, &redraw_y);
+        (void) treeview_click(self->tr, x, y, &redraw_y);
 
         if (redraw_y <= 0)
           wimp_force_redraw(pointer->w, 0, -32768, 32767, redraw_y);
@@ -294,12 +294,12 @@ static int metadata__event_mouse_click(wimp_event_no event_no, wimp_block *block
   return event_HANDLED;
 }
 
-static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int metadata_event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   metadata_window *self;
   wimp_selection  *selection;
   wimp_menu       *last;
-  treeview__mark   mark;
+  treeview_mark   mark;
   wimp_pointer     p;
 
   NOT_USED(event_no);
@@ -315,14 +315,14 @@ static int metadata__event_menu_selection(wimp_event_no event_no, wimp_block *bl
   {
   default:
   case METADATA_EXPAND_ALL:
-    mark = treeview__mark_EXPAND;
+    mark = treeview_mark_EXPAND;
     break;
   case METADATA_COLLAPSE_ALL:
-    mark = treeview__mark_COLLAPSE;
+    mark = treeview_mark_COLLAPSE;
     break;
   }
 
-  treeview__mark_all(self->tr, mark);
+  treeview_mark_all(self->tr, mark);
 
   wimp_force_redraw(self->base.w, 0, -32768, 32767, 0);
 

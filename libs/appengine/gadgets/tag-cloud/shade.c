@@ -7,10 +7,10 @@
 
 #include "impl.h"
 
-void tag_cloud__shade(tag_cloud *tc, int shade)
+void tag_cloud_shade(tag_cloud *tc, int shade)
 {
   if (shade)
-    tc->flags |= tag_cloud__FLAG_SHADED;
+    tc->flags |= tag_cloud_FLAG_SHADED;
   else
-    tc->flags &= ~tag_cloud__FLAG_SHADED;
+    tc->flags &= ~tag_cloud_FLAG_SHADED;
 }

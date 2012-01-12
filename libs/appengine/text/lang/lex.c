@@ -26,7 +26,7 @@ struct lex
   int         val;
 };
 
-lex *lex__create(const char *input)
+lex *lex_create(const char *input)
 {
   lex *c;
 
@@ -36,7 +36,7 @@ lex *lex__create(const char *input)
 
   c->peek = ' ';
 
-  c->sym = sym__create();
+  c->sym = sym_create();
   if (c->sym == NULL)
     goto oom;
 
@@ -52,24 +52,24 @@ lex *lex__create(const char *input)
 
 oom:
 
-  sym__destroy(c->sym);
+  sym_destroy(c->sym);
   free(c->lexbuf);
   free(c);
 
   return NULL;
 }
 
-void lex__destroy(lex *doomed)
+void lex_destroy(lex *doomed)
 {
   if (doomed == NULL)
     return;
 
-  sym__destroy(doomed->sym);
+  sym_destroy(doomed->sym);
   free(doomed->lexbuf);
   free(doomed);
 }
 
-static int lex__getc(lex *lex)
+static int lex_getc(lex *lex)
 {
   int c;
 
@@ -82,20 +82,20 @@ static int lex__getc(lex *lex)
 
 // ungetc, but only if we're backing up rather than trying to insert an
 // arbitrary char into the stream
-static void lex__ungetc(lex *lex, int c)
+static void lex_ungetc(lex *lex, int c)
 {
   lex->input--;
 
   assert(*lex->input == c);
 }
 
-Token lex__scan(lex *l)
+Token lex_scan(lex *l)
 {
   int t;
 
   for (;;)
   {
-    t = lex__getc(l);
+    t = lex_getc(l);
 
     if (t == ' ' || t == '\t')
     {
@@ -113,12 +113,12 @@ Token lex__scan(lex *l)
       do
       {
         v = 10 * v + (t - '0');
-        t = lex__getc(l);
+        t = lex_getc(l);
       }
       while (isdigit(t));
 
       if (t != EOF)
-        lex__ungetc(l, t);
+        lex_ungetc(l, t);
 
       l->val = v;
 
@@ -135,17 +135,17 @@ Token lex__scan(lex *l)
       do
       {
         *p++ = t;
-        t = lex__getc(l);
+        t = lex_getc(l);
       }
       while (p < end && isalnum(t));
       *p++ = '\0';
 
       if (t != EOF)
-        lex__ungetc(l, t);
+        lex_ungetc(l, t);
 
-      sym = sym__lookup(l->sym, l->lexbuf);
+      sym = sym_lookup(l->sym, l->lexbuf);
       if (!sym)
-        sym = sym__insert(l->sym, l->lexbuf, IDENT);
+        sym = sym_insert(l->sym, l->lexbuf, IDENT);
 
       l->val = sym;
 
@@ -163,17 +163,17 @@ Token lex__scan(lex *l)
   }
 }
 
-int lex__get_val(lex *lex)
+int lex_get_val(lex *lex)
 {
   return lex->val;
 }
 
-sym *lex__get_sym(lex *lex)
+sym *lex_get_sym(lex *lex)
 {
   return lex->sym;
 }
 
-void lex__dump(lex *lex)
+void lex_dump(lex *lex)
 {
-  sym__dump(lex->sym);
+  sym_dump(lex->sym);
 }

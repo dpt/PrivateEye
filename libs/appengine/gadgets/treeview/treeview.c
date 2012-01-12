@@ -50,7 +50,7 @@ typedef unsigned int connector_flags;
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (treeview__callback)(treeview_t      *tr,
+typedef error (treeview_callback)(treeview_t      *tr,
                                    int              depth,
                                    int              x,
                                    int              y,
@@ -80,7 +80,7 @@ struct treeview_t
     int                 x,y;
     int                 index;
     ntree_t            *next;
-    treeview__callback *cb;
+    treeview_callback *cb;
     void               *cbarg;
   }
   walk;
@@ -88,19 +88,19 @@ struct treeview_t
 
 /* ----------------------------------------------------------------------- */
 
-static int treeview__refcount = 0;
+static int treeview_refcount = 0;
 
-error treeview__init(void)
+error treeview_init(void)
 {
-  if (treeview__refcount++ == 0)
+  if (treeview_refcount++ == 0)
     ;
 
   return error_OK;
 }
 
-void treeview__fin(void)
+void treeview_fin(void)
 {
-  if (--treeview__refcount == 0)
+  if (--treeview_refcount == 0)
     ;
 }
 
@@ -110,7 +110,7 @@ static error discard_tree_callback(ntree_t *t, void *arg)
 {
   NOT_USED(arg);
 
-  txtfmt__destroy(ntree__get_data(t));
+  txtfmt_destroy(ntree_get_data(t));
 
   return error_OK;
 }
@@ -122,20 +122,20 @@ static error discard_tree(ntree_t *t)
   if (!t)
     return error_OK;
 
-  err = ntree__walk(t,
-                    ntree__WALK_POST_ORDER | ntree__WALK_ALL,
+  err = ntree_walk(t,
+                    ntree_WALK_POST_ORDER | ntree_WALK_ALL,
                     0,
                     discard_tree_callback,
                     NULL);
 
-  ntree__delete(t);
+  ntree_delete(t);
 
   return error_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error treeview__create(treeview_t **tr)
+error treeview_create(treeview_t **tr)
 {
   treeview_t *newtr;
 
@@ -143,9 +143,9 @@ error treeview__create(treeview_t **tr)
   if (newtr == NULL)
     return error_OOM;
 
-  newtr->openable  = bitvec__create(NNODES_ESTIMATE);
-  newtr->open      = bitvec__create(NNODES_ESTIMATE);
-  newtr->multiline = bitvec__create(NNODES_ESTIMATE);
+  newtr->openable  = bitvec_create(NNODES_ESTIMATE);
+  newtr->open      = bitvec_create(NNODES_ESTIMATE);
+  newtr->multiline = bitvec_create(NNODES_ESTIMATE);
   if (newtr->openable  == NULL ||
       newtr->open      == NULL ||
       newtr->multiline == NULL)
@@ -162,16 +162,16 @@ error treeview__create(treeview_t **tr)
 
 OOM:
 
-  treeview__destroy(newtr);
+  treeview_destroy(newtr);
 
   return error_OOM;
 }
 
-void treeview__destroy(treeview_t *tr)
+void treeview_destroy(treeview_t *tr)
 {
-  bitvec__destroy(tr->multiline);
-  bitvec__destroy(tr->open);
-  bitvec__destroy(tr->openable);
+  bitvec_destroy(tr->multiline);
+  bitvec_destroy(tr->open);
+  bitvec_destroy(tr->openable);
 
   discard_tree(tr->tree);
 
@@ -180,7 +180,7 @@ void treeview__destroy(treeview_t *tr)
 
 /* ----------------------------------------------------------------------- */
 
-static error treeview__walk_node(ntree_t *t, void *arg)
+static error treeview_walk_node(ntree_t *t, void *arg)
 {
   error            err;
   treeview_t      *tr = arg;
@@ -200,10 +200,10 @@ static error treeview__walk_node(ntree_t *t, void *arg)
 
   flags = 0;
 
-  if (bitvec__get(tr->openable, tr->walk.index))
+  if (bitvec_get(tr->openable, tr->walk.index))
   {
     flags |= OPENABLE;
-    if (bitvec__get(tr->open, tr->walk.index))
+    if (bitvec_get(tr->open, tr->walk.index))
       flags |= OPEN;
   }
 
@@ -226,7 +226,7 @@ static error treeview__walk_node(ntree_t *t, void *arg)
     /* we want to process /this/ node and then skip all intermediate ones
      * until the next sibling (if any) */
 
-    next = ntree__next_sibling(t);
+    next = ntree_next_sibling(t);
 
     /* if there's no next sibling, then we need to look further up/ahead in
      * the tree */
@@ -240,14 +240,14 @@ static error treeview__walk_node(ntree_t *t, void *arg)
       {
         /* fetch the parent (which we've already seen) */
 
-        par = ntree__parent(cur);
+        par = ntree_parent(cur);
         if (par == NULL)
         {
           stop = 1;
           break; /* no parent? must be at the root, so give up */
         }
 
-        next = ntree__next_sibling(par);
+        next = ntree_next_sibling(par);
         if (next)
           break;
       }
@@ -256,10 +256,10 @@ static error treeview__walk_node(ntree_t *t, void *arg)
     tr->walk.next = next;
   }
 
-  /* it might be cheaper for ntree__walk to pass the depth into us than to
+  /* it might be cheaper for ntree_walk to pass the depth into us than to
    * have to find it ourselves here */
 
-  depth = ntree__depth(t) - 1;
+  depth = ntree_depth(t) - 1;
 
 #if SKIP_ROOT
   if (depth == 0)
@@ -268,11 +268,11 @@ static error treeview__walk_node(ntree_t *t, void *arg)
   depth--;
 #endif
 
-  tx = ntree__get_data(t);
+  tx = ntree_get_data(t);
 
   /* need to know how high the text will be */
 
-  height = txtfmt__get_height(tx);
+  height = txtfmt_get_height(tx);
 
   /* call the callback */
 
@@ -286,20 +286,20 @@ static error treeview__walk_node(ntree_t *t, void *arg)
 
   /* calculate new y */
 
-  if (bitvec__get(tr->multiline, tr->walk.index))
+  if (bitvec_get(tr->multiline, tr->walk.index))
     y -= tr->line_height * (height - 1); /* -1 to adjust for initial step */
 
   tr->walk.x = x;
   tr->walk.y = y;
 
   /* if the walk needs to stop now, then we raise a non-terminal error to
-   * make ntree__walk stop */
+   * make ntree_walk stop */
 
   return (stop) ? error_TREEVIEW_STOP_WALK : error_OK;
 }
 
-static error treeview__walk(treeview_t         *tr,
-                            treeview__callback *cb,
+static error treeview_walk(treeview_t         *tr,
+                            treeview_callback *cb,
                             void               *cbarg)
 {
   error err;
@@ -311,10 +311,10 @@ static error treeview__walk(treeview_t         *tr,
   tr->walk.cb    = cb;
   tr->walk.cbarg = cbarg;
 
-  err = ntree__walk(tr->tree,
-                    ntree__WALK_PRE_ORDER | ntree__WALK_ALL,
+  err = ntree_walk(tr->tree,
+                    ntree_WALK_PRE_ORDER | ntree_WALK_ALL,
                     0,
-                    treeview__walk_node,
+                    treeview_walk_node,
                     tr);
 
   if (err == error_TREEVIEW_STOP_WALK)
@@ -385,14 +385,14 @@ static error plot_connector(int index, int x, int y, int line_height)
 
 /* ----------------------------------------------------------------------- */
 
-typedef struct treeview__draw_data
+typedef struct treeview_draw_data
 {
   unsigned int stack; /* 32-deep stack of bits for drawing connectors */
 }
-treeview__draw_data;
+treeview_draw_data;
 
 static error draw_connectors(treeview_t *tr,
-                             ntree_t *t, treeview__draw_data *draw,
+                             ntree_t *t, treeview_draw_data *draw,
                              int depth, int x, int y, connector_flags flags,
                              int index)
 {
@@ -424,10 +424,10 @@ static error draw_connectors(treeview_t *tr,
 #if SKIP_ROOT
   if (index != 1)
 #endif
-    if (ntree__prev_sibling(t) || ntree__parent(t))
+    if (ntree_prev_sibling(t) || ntree_parent(t))
       flags |= ABOVE;
 
-  if (ntree__next_sibling(t))
+  if (ntree_next_sibling(t))
     flags |= BELOW;
 
   /* anything with a child or data must have a right connection */
@@ -461,7 +461,7 @@ static error draw_walk(treeview_t      *tr,
                        void            *arg)
 {
   error                err;
-  treeview__draw_data *draw = arg;
+  treeview_draw_data *draw = arg;
   int                  line_height;
   wimp_colour          bgcolour;
   int                  x0;
@@ -474,7 +474,7 @@ static error draw_walk(treeview_t      *tr,
 
   line_height = tr->line_height;
 
-  if (bitvec__get(tr->multiline, index))
+  if (bitvec_get(tr->multiline, index))
   {
     int i;
     int hy;
@@ -489,13 +489,13 @@ static error draw_walk(treeview_t      *tr,
 
   /* select background colour */
 
-  bgcolour = ntree__first_child(t) ? wimp_COLOUR_TRANSPARENT :
+  bgcolour = ntree_first_child(t) ? wimp_COLOUR_TRANSPARENT :
                                      tr->bgcolour;
 
   /* plot text */
 
   x0 = x + (depth + 1) * line_height;
-  err = txtfmt__paint(tx, x0, y, bgcolour);
+  err = txtfmt_paint(tx, x0, y, bgcolour);
   if (err)
     goto Failure;
 
@@ -507,25 +507,25 @@ Failure:
   return err;
 }
 
-error treeview__draw(treeview_t *tr)
+error treeview_draw(treeview_t *tr)
 {
   error               err;
-  treeview__draw_data data;
+  treeview_draw_data data;
 
   data.stack = 0;
 
-  err = treeview__walk(tr, draw_walk, &data);
+  err = treeview_walk(tr, draw_walk, &data);
 
   return err;
 }
 
 /* ----------------------------------------------------------------------- */
 
-typedef struct treeview__click_data
+typedef struct treeview_click_data
 {
   int x,y;
 }
-treeview__click_data;
+treeview_click_data;
 
 static error click_walk(treeview_t     *tr,
                        int              depth,
@@ -538,7 +538,7 @@ static error click_walk(treeview_t     *tr,
                        int              height,
                        void            *arg)
 {
-  treeview__click_data *data = arg;
+  treeview_click_data *data = arg;
   os_box                box;
 
   NOT_USED(tr);
@@ -555,22 +555,22 @@ static error click_walk(treeview_t     *tr,
   box.x1 = box.x0 + tr->line_height;
   box.y1 = box.y0 + tr->line_height;
 
-  if (box__contains_point(&box, data->x, data->y))
+  if (box_contains_point(&box, data->x, data->y))
     /* exiting here means that tr->walk.x and y are valid */
     return error_TREEVIEW_FOUND;
   else
     return error_OK;
 }
 
-error treeview__click(treeview_t *tr, int x, int y, int *redraw_y)
+error treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
 {
   error                err;
-  treeview__click_data click;
+  treeview_click_data click;
 
   click.x = x;
   click.y = y;
 
-  err = treeview__walk(tr, click_walk, &click);
+  err = treeview_walk(tr, click_walk, &click);
 
   if (err == error_TREEVIEW_FOUND) /* found it */
   {
@@ -579,9 +579,9 @@ error treeview__click(treeview_t *tr, int x, int y, int *redraw_y)
     /* the user may have clicked in the position of a collapse control,
      * even if one was not present, so check */
 
-    if (bitvec__get(tr->openable, tr->walk.index))
+    if (bitvec_get(tr->openable, tr->walk.index))
     {
-      bitvec__toggle(tr->open, tr->walk.index);
+      bitvec_toggle(tr->open, tr->walk.index);
 
       *redraw_y = tr->walk.y;
     }
@@ -608,18 +608,18 @@ static error string_to_txtfmt(void *data, void *arg, void **newdata)
   treeview_t *tr = arg;
   txtfmt_t   *tx;
 
-  err = txtfmt__create(data, &tx);
+  err = txtfmt_create(data, &tx);
   if (err)
     return err;
 
-  txtfmt__set_line_height(tx, tr->line_height);
+  txtfmt_set_line_height(tx, tr->line_height);
 
   *newdata = tx;
 
   return err;
 }
 
-error treeview__set_tree(treeview_t *tr, ntree_t *tree)
+error treeview_set_tree(treeview_t *tr, ntree_t *tree)
 {
   error err;
 
@@ -631,7 +631,7 @@ error treeview__set_tree(treeview_t *tr, ntree_t *tree)
 
   /* clone the tree, converting its strings into txtfmts */
 
-  err = ntree__copy(tree, string_to_txtfmt, tr, &tr->tree);
+  err = ntree_copy(tree, string_to_txtfmt, tr, &tr->tree);
   if (err)
     return err;
 
@@ -649,29 +649,29 @@ static error make_collapsible_walk(ntree_t *t, void *arg)
 
   i = tr->walk.index + 1; /* index of node (0..N-1) */
 
-  if (ntree__first_child(t))
+  if (ntree_first_child(t))
   {
-    err = bitvec__set(tr->openable, i);
+    err = bitvec_set(tr->openable, i);
     if (err)
       return err;
 
-    err = bitvec__set(tr->open, i);
+    err = bitvec_set(tr->open, i);
     if (err)
       return err;
   }
 
   // this bit might be temporary
 
-  tx = ntree__get_data(t);
+  tx = ntree_get_data(t);
 
   // always wrap to ensure that \ns in the input are handled
-  err = txtfmt__wrap(tx, tr->text_width);
+  err = txtfmt_wrap(tx, tr->text_width);
   if (err)
     return err;
 
-  if (txtfmt__get_height(tx) > 1)
+  if (txtfmt_get_height(tx) > 1)
   {
-    err = bitvec__set(tr->multiline, i);
+    err = bitvec_set(tr->multiline, i);
     if (err)
       return err;
   }
@@ -682,14 +682,14 @@ static error make_collapsible_walk(ntree_t *t, void *arg)
 }
 
 // i get the feeling that this might need to be generalised into a 'format the tree' call
-error treeview__make_collapsible(treeview_t *tr)
+error treeview_make_collapsible(treeview_t *tr)
 {
   error err;
 
   tr->walk.index = -1;
 
-  err = ntree__walk(tr->tree,
-                    ntree__WALK_PRE_ORDER | ntree__WALK_ALL,
+  err = ntree_walk(tr->tree,
+                    ntree_WALK_PRE_ORDER | ntree_WALK_ALL,
                     0,
                     make_collapsible_walk,
                     tr);
@@ -699,23 +699,23 @@ error treeview__make_collapsible(treeview_t *tr)
 
 /* ----------------------------------------------------------------------- */
 
-void treeview__set_text_width(treeview_t *tr, int width)
+void treeview_set_text_width(treeview_t *tr, int width)
 {
   tr->text_width = width;
 }
 
-void treeview__set_line_height(treeview_t *tr, int line_height)
+void treeview_set_line_height(treeview_t *tr, int line_height)
 {
   tr->line_height = line_height;
 }
 
 /* ----------------------------------------------------------------------- */
 
-typedef struct treeview__get_dimensions_data
+typedef struct treeview_get_dimensions_data
 {
   int width;
 }
-treeview__get_dimensions_data;
+treeview_get_dimensions_data;
 
 static error get_dimensions_walk(treeview_t      *tr,
                                  int              depth,
@@ -728,7 +728,7 @@ static error get_dimensions_walk(treeview_t      *tr,
                                  int              height,
                                  void            *arg)
 {
-  treeview__get_dimensions_data *data = arg;
+  treeview_get_dimensions_data *data = arg;
   int                            width;
 
   NOT_USED(tr);
@@ -740,7 +740,7 @@ static error get_dimensions_walk(treeview_t      *tr,
 
   width = x;
   width += (depth + 1) * tr->line_height;
-  width += 16 * txtfmt__get_wrapped_width(tx);
+  width += 16 * txtfmt_get_wrapped_width(tx);
   width += 16; /* add another character's worth of space to allow for Wimp
                   text padding */
   if (width > data->width)
@@ -749,14 +749,14 @@ static error get_dimensions_walk(treeview_t      *tr,
   return error_OK;
 }
 
-error treeview__get_dimensions(treeview_t *tr, int *width, int *height)
+error treeview_get_dimensions(treeview_t *tr, int *width, int *height)
 {
   error                         err;
-  treeview__get_dimensions_data data;
+  treeview_get_dimensions_data data;
 
   data.width = 0;
 
-  err = treeview__walk(tr, get_dimensions_walk, &data);
+  err = treeview_walk(tr, get_dimensions_walk, &data);
   if (err)
     return err;
 
@@ -768,7 +768,7 @@ error treeview__get_dimensions(treeview_t *tr, int *width, int *height)
 
 /* ----------------------------------------------------------------------- */
 
-void treeview__set_highlight_background(treeview_t *tr,
+void treeview_set_highlight_background(treeview_t *tr,
                                         wimp_colour bgcolour)
 {
   tr->bgcolour = bgcolour;
@@ -776,16 +776,16 @@ void treeview__set_highlight_background(treeview_t *tr,
 
 /* ----------------------------------------------------------------------- */
 
-void treeview__mark_all(treeview_t *tr, treeview__mark mark)
+void treeview_mark_all(treeview_t *tr, treeview_mark mark)
 {
   switch (mark)
   {
-  case treeview__mark_COLLAPSE:
-    bitvec__clear_all(tr->open);
+  case treeview_mark_COLLAPSE:
+    bitvec_clear_all(tr->open);
     break;
 
-  case treeview__mark_EXPAND:
-    bitvec__set_all(tr->open);
+  case treeview_mark_EXPAND:
+    bitvec_set_all(tr->open);
     break;
   }
 }

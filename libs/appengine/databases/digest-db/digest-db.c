@@ -30,11 +30,11 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static int digestdb__refcount = 0;
+static int digestdb_refcount = 0;
 
 error digestdb_init(void)
 {
-  if (digestdb__refcount++ == 0)
+  if (digestdb_refcount++ == 0)
   {
     /* init */
 
@@ -49,7 +49,7 @@ error digestdb_init(void)
 
 void digestdb_fin(void)
 {
-  if (--digestdb__refcount == 0)
+  if (--digestdb_refcount == 0)
   {
     atom_destroy(LOCALS.digests);
   }

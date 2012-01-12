@@ -15,22 +15,22 @@
 
 #include "impl.h"
 
-void tag_cloud__destroy(tag_cloud *doomed)
+void tag_cloud_destroy(tag_cloud *doomed)
 {
   if (doomed == NULL)
     return;
 
-  bitvec__destroy(doomed->highlight);
+  bitvec_destroy(doomed->highlight);
 
-  tag_cloud__layout_discard(doomed);
+  tag_cloud_layout_discard(doomed);
 
   free(doomed->sorted);
   free(doomed->entries);
   atom_destroy(doomed->dict);
 
-  tag_cloud__internal_set_handlers(0, doomed);
+  tag_cloud_internal_set_handlers(0, doomed);
 
-  tag_cloud__detach_toolbar(doomed);
+  tag_cloud_detach_toolbar(doomed);
 
   window_delete_cloned(doomed->main_w);
 

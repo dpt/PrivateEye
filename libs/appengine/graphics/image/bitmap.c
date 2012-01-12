@@ -38,7 +38,7 @@ int bitmap_save(image_choices *choices, image_t *image, const char *file_name)
   e = EC(xosspriteop_save_sprite_file(osspriteop_PTR, area, file_name));
   if (e)
   {
-    oserror__report_block(e);
+    oserror_report_block(e);
     return TRUE; /* failure */
   }
 
@@ -239,7 +239,7 @@ static int rotate_hard(image_t *image, int angle)
 
 NoMem:
 
-  oserror__report(0, "error.no.mem");
+  oserror_report(0, "error.no.mem");
   return TRUE; /* failure */
 }
 

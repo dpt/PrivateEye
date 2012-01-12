@@ -61,11 +61,11 @@ static const char signature[] = "1";
 
 /* ----------------------------------------------------------------------- */
 
-static int tagdb__refcount = 0;
+static int tagdb_refcount = 0;
 
-error tagdb__init(void)
+error tagdb_init(void)
 {
-  if (tagdb__refcount++ == 0)
+  if (tagdb_refcount++ == 0)
   {
     /* dependencies */
 
@@ -75,9 +75,9 @@ error tagdb__init(void)
   return error_OK;
 }
 
-void tagdb__fin(void)
+void tagdb_fin(void)
 {
-  if (--tagdb__refcount == 0)
+  if (--tagdb_refcount == 0)
   {
     digestdb_fin();
   }
@@ -86,7 +86,7 @@ void tagdb__fin(void)
 /* ----------------------------------------------------------------------- */
 
 /* write out a version numbered header */
-static error tagdb__write_header(os_fw f)
+static error tagdb_write_header(os_fw f)
 {
   static const char comments[] = "# Tags";
 
@@ -112,7 +112,7 @@ static error tagdb__write_header(os_fw f)
   return error_OK;
 }
 
-error tagdb__create(const char *filename)
+error tagdb_create(const char *filename)
 {
   error                  err;
   fileswitch_object_type object_type;
@@ -130,7 +130,7 @@ error tagdb__create(const char *filename)
     if (f == 0)
       return error_TAGDB_COULDNT_OPEN_FILE;
 
-    err = tagdb__write_header(f);
+    err = tagdb_write_header(f);
 
     osfind_close(f);
 
@@ -148,7 +148,7 @@ Failure:
   return err;
 }
 
-void tagdb__delete(const char *filename)
+void tagdb_delete(const char *filename)
 {
   assert(filename);
 
@@ -163,7 +163,7 @@ struct tagdb
 
   atom_set_t              *tags; /* indexes tag names */
 
-  struct tagdb__tag_entry *counts;
+  struct tagdb_tag_entry *counts;
   int                      c_used;
   int                      c_allocated;
 
@@ -178,10 +178,10 @@ struct tagdb
 
 static void destroy_hash_value(void *value)
 {
-  bitvec__destroy(value);
+  bitvec_destroy(value);
 }
 
-static error tagdb__parse_line(tagdb *db, char *buf)
+static error tagdb_parse_line(tagdb *db, char *buf)
 {
   error          err;
   char          *p;
@@ -219,13 +219,13 @@ static error tagdb__parse_line(tagdb *db, char *buf)
 
   for (i = 0; i < t; i++)
   {
-    tagdb__tag tag;
+    tagdb_tag tag;
 
-    err = tagdb__add(db, tokens[i], &tag);
+    err = tagdb_add(db, tokens[i], &tag);
     if (err)
       return err;
 
-    err = tagdb__tagid(db, (char *) id, tag);
+    err = tagdb_tagid(db, (char *) id, tag);
     if (err)
       return err;
   }
@@ -233,19 +233,19 @@ static error tagdb__parse_line(tagdb *db, char *buf)
   return error_OK;
 }
 
-static error tagdb__parse_first_line(tagdb *db, char *buf)
+static error tagdb_parse_first_line(tagdb *db, char *buf)
 {
   /* validate the db signature */
 
   if (strcmp(buf, signature) != 0)
     return error_TAGDB_INCOMPATIBLE;
 
-  db->parse.fn = tagdb__parse_line;
+  db->parse.fn = tagdb_parse_line;
 
   return error_OK;
 }
 
-static error tagdb__read_db(tagdb *db)
+static error tagdb_read_db(tagdb *db)
 {
   error   err;
   size_t  bufsz;
@@ -263,7 +263,7 @@ static error tagdb__read_db(tagdb *db)
   if (f == 0)
     return error_TAGDB_COULDNT_OPEN_FILE;
 
-  db->parse.fn = tagdb__parse_first_line;
+  db->parse.fn = tagdb_parse_first_line;
 
   occupied = 0;
   used     = 0;
@@ -339,7 +339,7 @@ static void no_destroy(void *string) /* FIXME move into hash lib */
   NOT_USED(string);
 }
 
-error tagdb__open(const char *filename, tagdb **pdb)
+error tagdb_open(const char *filename, tagdb **pdb)
 {
   error       err;
   char       *filenamecopy = NULL;
@@ -364,7 +364,7 @@ error tagdb__open(const char *filename, tagdb **pdb)
     goto Failure;
   }
 
-  err = hash__create(HASHSIZE,
+  err = hash_create(HASHSIZE,
                      digestdb_hash,
                      digestdb_compare,
                      no_destroy,
@@ -388,7 +388,7 @@ error tagdb__open(const char *filename, tagdb **pdb)
   db->hash        = hash;
 
   /* read the database in */
-  err = tagdb__read_db(db);
+  err = tagdb_read_db(db);
   if (err)
     goto Failure;
 
@@ -400,21 +400,21 @@ error tagdb__open(const char *filename, tagdb **pdb)
 Failure:
 
   free(db);
-  hash__destroy(hash);
+  hash_destroy(hash);
   atom_destroy(tags);
   free(filenamecopy);
 
   return err;
 }
 
-void tagdb__close(tagdb *db)
+void tagdb_close(tagdb *db)
 {
   if (db == NULL)
     return;
 
-  tagdb__commit(db);
+  tagdb_commit(db);
 
-  hash__destroy(db->hash);
+  hash_destroy(db->hash);
   free(db->counts);
   atom_destroy(db->tags);
 
@@ -456,11 +456,11 @@ static int commit_cb(const void *key, const void *value, void *arg)
   index = -1;
   for (;;)
   {
-    index = bitvec__next(v, index);
+    index = bitvec_next(v, index);
     if (index < 0)
       break;
 
-    err = tagdb__tagtoname(state->db, index,
+    err = tagdb_tagtoname(state->db, index,
                            state->buf + c, state->bufsz - c);
     if (err)
       return -1;
@@ -484,7 +484,7 @@ static int commit_cb(const void *key, const void *value, void *arg)
   return 0;
 }
 
-error tagdb__commit(tagdb *db)
+error tagdb_commit(tagdb *db)
 {
   error               err;
   struct commit_state state;
@@ -509,11 +509,11 @@ error tagdb__commit(tagdb *db)
     goto Failure;
   }
 
-  err = tagdb__write_header(state.f);
+  err = tagdb_write_header(state.f);
   if (err)
     goto Failure;
 
-  hash__walk(db->hash, commit_cb, &state);
+  hash_walk(db->hash, commit_cb, &state);
 
   err = error_OK;
 
@@ -533,18 +533,18 @@ Failure:
 
 /* ----------------------------------------------------------------------- */
 
-typedef struct tagdb__tag_entry
+typedef struct tagdb_tag_entry
 {
   atom_t index;
   int    count;
 }
-tagdb__tag_entry;
+tagdb_tag_entry;
 
-error tagdb__add(tagdb *db, const char *name, tagdb__tag *ptag)
+error tagdb_add(tagdb *db, const char *name, tagdb_tag *ptag)
 {
   error      err;
   atom_t     index;
-  tagdb__tag i;
+  tagdb_tag i;
 
   assert(db);
   assert(name);
@@ -629,7 +629,7 @@ Failure:
   return err;
 }
 
-void tagdb__remove(tagdb *db, tagdb__tag tag)
+void tagdb_remove(tagdb *db, tagdb_tag tag)
 {
   error err;
   int   cont;
@@ -644,13 +644,13 @@ void tagdb__remove(tagdb *db, tagdb__tag tag)
   {
     char id[MAXIDLEN];
 
-    err = tagdb__enumerate_ids_by_tag(db, tag, &cont, id, sizeof(id));
+    err = tagdb_enumerate_ids_by_tag(db, tag, &cont, id, sizeof(id));
     if (err)
       goto Failure;
 
     if (cont)
     {
-      err = tagdb__untagid(db, id, tag);
+      err = tagdb_untagid(db, id, tag);
       if (err)
         goto Failure;
     }
@@ -676,7 +676,7 @@ Failure:
   return;
 }
 
-error tagdb__rename(tagdb *db, tagdb__tag tag, const char *name)
+error tagdb_rename(tagdb *db, tagdb_tag tag, const char *name)
 {
   assert(db);
   assert(tag < db->c_used && db->counts[tag].index != -1);
@@ -686,8 +686,8 @@ error tagdb__rename(tagdb *db, tagdb__tag tag, const char *name)
                   (const unsigned char *) name, strlen(name) + 1);
 }
 
-error tagdb__enumerate_tags(tagdb *db, int *continuation,
-                            tagdb__tag *tag, int *count)
+error tagdb_enumerate_tags(tagdb *db, int *continuation,
+                            tagdb_tag *tag, int *count)
 {
   int index;
 
@@ -722,7 +722,7 @@ error tagdb__enumerate_tags(tagdb *db, int *continuation,
   return error_OK;
 }
 
-error tagdb__tagtoname(tagdb *db, tagdb__tag tag, char *buf, size_t bufsz)
+error tagdb_tagtoname(tagdb *db, tagdb_tag tag, char *buf, size_t bufsz)
 {
   const char *s;
   size_t      l;
@@ -747,7 +747,7 @@ error tagdb__tagtoname(tagdb *db, tagdb__tag tag, char *buf, size_t bufsz)
 
 /* ----------------------------------------------------------------------- */
 
-error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
+error tagdb_tagid(tagdb *db, const char *id, tagdb_tag tag)
 {
   error     err;
   bitvec_t *val;
@@ -761,15 +761,15 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
 
   inc = 1; /* set this if it's a new tagging */
 
-  val = hash__lookup(db->hash, id);
+  val = hash_lookup(db->hash, id);
   if (val)
   {
     /* update */
 
-    if (bitvec__get(val, tag)) /* if already set, don't increment counter */
+    if (bitvec_get(val, tag)) /* if already set, don't increment counter */
       inc = 0;
     else
-      bitvec__set(val, tag);
+      bitvec_set(val, tag);
   }
   else
   {
@@ -784,13 +784,13 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
 
     key = digestdb_get(kindex);
 
-    val = bitvec__create(1);
+    val = bitvec_create(1);
     if (val == NULL)
       return error_OOM;
 
-    bitvec__set(val, tag);
+    bitvec_set(val, tag);
 
-    hash__insert(db->hash, (char *) key, val);
+    hash_insert(db->hash, (char *) key, val);
   }
 
   if (inc)
@@ -799,7 +799,7 @@ error tagdb__tagid(tagdb *db, const char *id, tagdb__tag tag)
   return error_OK;
 }
 
-error tagdb__untagid(tagdb *db, const char *id, tagdb__tag tag)
+error tagdb_untagid(tagdb *db, const char *id, tagdb_tag tag)
 {
   bitvec_t *val;
 
@@ -809,11 +809,11 @@ error tagdb__untagid(tagdb *db, const char *id, tagdb__tag tag)
   if (tag >= db->c_used || db->counts[tag].index == -1)
     return error_TAGDB_UNKNOWN_TAG;
 
-  val = hash__lookup(db->hash, id);
+  val = hash_lookup(db->hash, id);
   if (!val)
     return error_TAGDB_UNKNOWN_ID;
 
-  bitvec__clear(val, tag);
+  bitvec_clear(val, tag);
 
   db->counts[tag].count--;
 
@@ -822,8 +822,8 @@ error tagdb__untagid(tagdb *db, const char *id, tagdb__tag tag)
 
 /* ----------------------------------------------------------------------- */
 
-error tagdb__get_tags_for_id(tagdb *db, const char *id,
-                             int *continuation, tagdb__tag *tag)
+error tagdb_get_tags_for_id(tagdb *db, const char *id,
+                             int *continuation, tagdb_tag *tag)
 {
   bitvec_t *v;
   int       index;
@@ -833,15 +833,15 @@ error tagdb__get_tags_for_id(tagdb *db, const char *id,
   assert(continuation);
   assert(tag);
 
-  v = hash__lookup(db->hash, id);
+  v = hash_lookup(db->hash, id);
   if (!v)
     return error_TAGDB_UNKNOWN_ID;
 
   /* To behave like a standard continuation I have to start with zero, but
-   * the first value bitvec__next needs to take is -1, so we have to subtract
+   * the first value bitvec_next needs to take is -1, so we have to subtract
    * one on entry and add it back on (successful) exit. */
 
-  index = bitvec__next(v, *continuation - 1);
+  index = bitvec_next(v, *continuation - 1);
 
   if (index >= 0)
   {
@@ -871,7 +871,7 @@ struct enumerate_state
   int         start;
   int         count;
   const char *found;
-  tagdb__tag  tag; /* the tag we want */
+  tagdb_tag  tag; /* the tag we want */
   bitvec_t   *want;
   error       err;
 };
@@ -890,7 +890,7 @@ static int getid_cb(const void *key, const void *value, void *arg)
   return -1; /* stop the walk now */
 }
 
-error tagdb__enumerate_ids(tagdb *db,
+error tagdb_enumerate_ids(tagdb *db,
                            int *continuation,
                            char *buf, size_t bufsz)
 {
@@ -905,7 +905,7 @@ error tagdb__enumerate_ids(tagdb *db,
   state.count = 0;
   state.found = NULL;
 
-  if (hash__walk(db->hash, getid_cb, &state) < 0)
+  if (hash_walk(db->hash, getid_cb, &state) < 0)
   {
     size_t l;
 
@@ -939,14 +939,14 @@ static int getidbytag_cb(const void *key, const void *value, void *arg)
 
   v = value;
 
-  if (!bitvec__get(v, state->tag))
+  if (!bitvec_get(v, state->tag))
     return 0; /* keep going */
 
   state->found = key;
   return -1; /* stop the walk now */
 }
 
-error tagdb__enumerate_ids_by_tag(tagdb *db, tagdb__tag tag,
+error tagdb_enumerate_ids_by_tag(tagdb *db, tagdb_tag tag,
                                   int *continuation,
                                   char *buf, size_t bufsz)
 {
@@ -963,7 +963,7 @@ error tagdb__enumerate_ids_by_tag(tagdb *db, tagdb__tag tag,
   state.found = NULL;
   state.tag   = tag;
 
-  if (hash__walk(db->hash, getidbytag_cb, &state) < 0)
+  if (hash_walk(db->hash, getidbytag_cb, &state) < 0)
   {
     size_t l;
 
@@ -1002,16 +1002,16 @@ static int getidbytags_cb(const void *key, const void *value, void *arg)
 
   v = value;
 
-  err = bitvec__and(state->want, v, &have);
+  err = bitvec_and(state->want, v, &have);
   if (err)
   {
     state->err = err;
     return -1; /* stop the walk now */
   }
 
-  eq = bitvec__eq(have, state->want);
+  eq = bitvec_eq(have, state->want);
 
-  bitvec__destroy(have);
+  bitvec_destroy(have);
 
   if (!eq)
     return 0; /* keep going */
@@ -1020,8 +1020,8 @@ static int getidbytags_cb(const void *key, const void *value, void *arg)
   return -1; /* stop the walk now */
 }
 
-error tagdb__enumerate_ids_by_tags(tagdb *db,
-                                   const tagdb__tag *tags, int ntags,
+error tagdb_enumerate_ids_by_tags(tagdb *db,
+                                   const tagdb_tag *tags, int ntags,
                                    int *continuation,
                                    char *buf, size_t bufsz)
 {
@@ -1039,7 +1039,7 @@ error tagdb__enumerate_ids_by_tags(tagdb *db,
 
   /* form a bitvec of the required tags */
 
-  want = bitvec__create(ntags);
+  want = bitvec_create(ntags);
   if (want == NULL)
   {
     err = error_OOM;
@@ -1048,7 +1048,7 @@ error tagdb__enumerate_ids_by_tags(tagdb *db,
 
   for (i = 0; i < ntags; i++)
   {
-    err = bitvec__set(want, tags[i]);
+    err = bitvec_set(want, tags[i]);
     if (err)
     {
       goto Failure;
@@ -1061,7 +1061,7 @@ error tagdb__enumerate_ids_by_tags(tagdb *db,
   state.want  = want;
   state.err   = error_OK;
 
-  if (hash__walk(db->hash, getidbytags_cb, &state) < 0)
+  if (hash_walk(db->hash, getidbytags_cb, &state) < 0)
   {
     size_t l;
 
@@ -1094,17 +1094,17 @@ error tagdb__enumerate_ids_by_tags(tagdb *db,
 
 Failure:
 
-  bitvec__destroy(want);
+  bitvec_destroy(want);
 
   return err;
 }
 
 /* ----------------------------------------------------------------------- */
 
-void tagdb__forget(tagdb *db, const char *id)
+void tagdb_forget(tagdb *db, const char *id)
 {
   assert(db);
   assert(id);
 
-  hash__remove(db->hash, id);
+  hash_remove(db->hash, id);
 }

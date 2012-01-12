@@ -14,7 +14,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-error layout__place(const layout_spec     *spec,
+error layout_place(const layout_spec     *spec,
                     const layout_element  *elements,
                           int              nelements,
                           os_box          *boxes,
@@ -34,7 +34,7 @@ error layout__place(const layout_spec     *spec,
     int clear;
     int k;
 
-    nextw = packer__next_width(spec->packer, spec->loc);
+    nextw = packer_next_width(spec->packer, spec->loc);
 
     first = i; /* upper bound 'i' is exclusive */
 
@@ -77,7 +77,7 @@ error layout__place(const layout_spec     *spec,
       if (first > 0 || /* don't pad at the top */
           elements[0].type == layout_NEWLINE /* unless explicit */)
       {
-        err = packer__place_by(spec->packer,
+        err = packer_place_by(spec->packer,
                                spec->loc,
                                nextw, spec->leading,
                                NULL);
@@ -98,7 +98,7 @@ error layout__place(const layout_spec     *spec,
         {
           /* place horizontal padding */
 
-          err = packer__place_by(spec->packer,
+          err = packer_place_by(spec->packer,
                                  spec->loc,
                                  spec->spacing, elements[k].data.box.height,
                                  NULL);
@@ -110,7 +110,7 @@ error layout__place(const layout_spec     *spec,
 
         /* place element */
 
-        err = packer__place_by(spec->packer,
+        err = packer_place_by(spec->packer,
                                spec->loc,
                                chosen_width[k], elements[k].data.box.height,
                               &placed);
@@ -147,7 +147,7 @@ error layout__place(const layout_spec     *spec,
       /* there's space, but it's not enough for the next element - start a
        * new line */
 
-      err = packer__clear(spec->packer, spec->clear);
+      err = packer_clear(spec->packer, spec->clear);
       if (err)
         goto failure;
     }

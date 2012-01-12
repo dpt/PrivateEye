@@ -52,11 +52,11 @@ static const char signature[] = "1";
 
 /* ----------------------------------------------------------------------- */
 
-static int filenamedb__refcount = 0;
+static int filenamedb_refcount = 0;
 
-error filenamedb__init(void)
+error filenamedb_init(void)
 {
-  if (filenamedb__refcount++ == 0)
+  if (filenamedb_refcount++ == 0)
   {
     /* dependencies */
 
@@ -66,9 +66,9 @@ error filenamedb__init(void)
   return error_OK;
 }
 
-void filenamedb__fin(void)
+void filenamedb_fin(void)
 {
-  if (--filenamedb__refcount == 0)
+  if (--filenamedb_refcount == 0)
   {
     digestdb_fin();
   }
@@ -77,7 +77,7 @@ void filenamedb__fin(void)
 /* ----------------------------------------------------------------------- */
 
 /* write out a version numbered header */
-static error filenamedb__write_header(os_fw f)
+static error filenamedb_write_header(os_fw f)
 {
   static const char comments[] = "# Filenames";
 
@@ -103,7 +103,7 @@ static error filenamedb__write_header(os_fw f)
   return error_OK;
 }
 
-error filenamedb__create(const char *filename)
+error filenamedb_create(const char *filename)
 {
   error                  err;
   fileswitch_object_type object_type;
@@ -119,7 +119,7 @@ error filenamedb__create(const char *filename)
     if (f == 0)
       return error_FILENAMEDB_COULDNT_OPEN_FILE;
 
-    err = filenamedb__write_header(f);
+    err = filenamedb_write_header(f);
 
     osfind_close(f);
 
@@ -137,7 +137,7 @@ Failure:
   return err;
 }
 
-void filenamedb__delete(const char *filename)
+void filenamedb_delete(const char *filename)
 {
   osfile_delete(filename, NULL, NULL, NULL, NULL);
 }
@@ -158,7 +158,7 @@ struct filenamedb_t
   parse;
 };
 
-static error filenamedb__parse_line(filenamedb_t *db, char *buf)
+static error filenamedb_parse_line(filenamedb_t *db, char *buf)
 {
   error  err;
   char  *sp;
@@ -169,27 +169,27 @@ static error filenamedb__parse_line(filenamedb_t *db, char *buf)
 
   *sp++ = '\0'; /* skip space */
 
-  err = filenamedb__add(db, buf, sp);
+  err = filenamedb_add(db, buf, sp);
   if (err)
     return err;
 
   return error_OK;
 }
 
-static error filenamedb__parse_first_line(filenamedb_t *db, char *buf)
+static error filenamedb_parse_first_line(filenamedb_t *db, char *buf)
 {
   /* validate the db signature */
 
   if (strcmp(buf, signature) != 0)
     return error_FILENAMEDB_INCOMPATIBLE;
 
-  db->parse.fn = filenamedb__parse_line;
+  db->parse.fn = filenamedb_parse_line;
 
   return error_OK;
 }
 
 // exactly the same as in tagdb
-static error filenamedb__read_db(filenamedb_t *db)
+static error filenamedb_read_db(filenamedb_t *db)
 {
   error   err;
   size_t  bufsz;
@@ -207,7 +207,7 @@ static error filenamedb__read_db(filenamedb_t *db)
   if (f == 0)
     return error_FILENAMEDB_COULDNT_OPEN_FILE;
 
-  db->parse.fn = filenamedb__parse_first_line;
+  db->parse.fn = filenamedb_parse_first_line;
 
   occupied = 0;
   used     = 0;
@@ -283,7 +283,7 @@ static void no_destroy(void *string)
   NOT_USED(string);
 }
 
-error filenamedb__open(const char *filename, filenamedb_t **pdb)
+error filenamedb_open(const char *filename, filenamedb_t **pdb)
 {
   error         err;
   char         *filenamecopy = NULL;
@@ -305,7 +305,7 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
     goto Failure;
   }
 
-  err = hash__create(HASHSIZE,
+  err = hash_create(HASHSIZE,
                      digestdb_hash,
                      digestdb_compare,
                      no_destroy,
@@ -326,7 +326,7 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
   db->hash        = hash;
 
   /* read the database in */
-  err = filenamedb__read_db(db);
+  err = filenamedb_read_db(db);
   if (err)
     goto Failure;
 
@@ -338,21 +338,21 @@ error filenamedb__open(const char *filename, filenamedb_t **pdb)
 Failure:
 
   free(db);
-  hash__destroy(hash);
+  hash_destroy(hash);
   atom_destroy(filenames);
   free(filenamecopy);
 
   return err;
 }
 
-void filenamedb__close(filenamedb_t *db)
+void filenamedb_close(filenamedb_t *db)
 {
   if (db == NULL)
     return;
 
-  filenamedb__commit(db);
+  filenamedb_commit(db);
 
-  hash__destroy(db->hash);
+  hash_destroy(db->hash);
   atom_destroy(db->filenames);
 
   free(db->filename);
@@ -393,7 +393,7 @@ static int commit_cb(const void *key, const void *value, void *arg)
   return 0;
 }
 
-error filenamedb__commit(filenamedb_t *db)
+error filenamedb_commit(filenamedb_t *db)
 {
   error               err;
   struct commit_state state;
@@ -414,11 +414,11 @@ error filenamedb__commit(filenamedb_t *db)
   if (state.f == 0)
     return error_FILENAMEDB_COULDNT_OPEN_FILE;
 
-  err = filenamedb__write_header(state.f);
+  err = filenamedb_write_header(state.f);
   if (err)
     goto Failure;
 
-  hash__walk(db->hash, commit_cb, &state);
+  hash_walk(db->hash, commit_cb, &state);
 
   err = error_OK;
 
@@ -438,7 +438,7 @@ Failure:
 
 /* ----------------------------------------------------------------------- */
 
-error filenamedb__add(filenamedb_t *db,
+error filenamedb_add(filenamedb_t *db,
                       const char   *id,
                       const char   *filename)
 {
@@ -469,17 +469,17 @@ error filenamedb__add(filenamedb_t *db,
 
   /* this will update the value if the key is already present */
 
-  hash__insert(db->hash, (unsigned char *) key, (char *) value);
+  hash_insert(db->hash, (unsigned char *) key, (char *) value);
 
   return error_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-const char *filenamedb__get(filenamedb_t *db,
+const char *filenamedb_get(filenamedb_t *db,
                             const char   *id)
 {
-  return hash__lookup(db->hash, id);
+  return hash_lookup(db->hash, id);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -494,15 +494,15 @@ static int prune_cb(const void *key, const void *value, void *arg)
   if (object_type == fileswitch_NOT_FOUND)
   {
     /* if not, delete it */
-    hash__remove(db->hash, key);
+    hash_remove(db->hash, key);
   }
 
   return 0;
 }
 
-error filenamedb__prune(filenamedb_t *db)
+error filenamedb_prune(filenamedb_t *db)
 {
-  hash__walk(db->hash, prune_cb, db);
+  hash_walk(db->hash, prune_cb, db);
 
   return error_OK;
 }

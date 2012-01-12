@@ -14,76 +14,76 @@
 
 #include "impl.h"
 
-static void tag_cloud__kick_highlight(tag_cloud *tc)
+static void tag_cloud_kick_highlight(tag_cloud *tc)
 {
-  tc->flags |= tag_cloud__FLAG_NEW_HIGHLIGHTS;
+  tc->flags |= tag_cloud_FLAG_NEW_HIGHLIGHTS;
 
-  if (tc->flags & tag_cloud__FLAG_SORT_SEL_FIRST)
-    tag_cloud__set_sort(tc, tc->sort_type); /* kick the sorter */
+  if (tc->flags & tag_cloud_FLAG_SORT_SEL_FIRST)
+    tag_cloud_set_sort(tc, tc->sort_type); /* kick the sorter */
 
-  tag_cloud__schedule_redraw(tc);
+  tag_cloud_schedule_redraw(tc);
 }
 
-static error tag_cloud__add_highlights(tag_cloud *tc, const int *indices, int nindices)
+static error tag_cloud_add_highlights(tag_cloud *tc, const int *indices, int nindices)
 {
   error err;
   int   i;
 
   if (tc->highlight == NULL)
   {
-    tc->highlight = bitvec__create(32); /* 32 is a guess */
+    tc->highlight = bitvec_create(32); /* 32 is a guess */
     if (tc->highlight == NULL)
       return error_OOM;
   }
 
   for (i = 0; i < nindices; i++)
   {
-    err = bitvec__set(tc->highlight, indices[i]);
+    err = bitvec_set(tc->highlight, indices[i]);
     if (err)
       return err;
   }
 
-  tag_cloud__kick_highlight(tc);
+  tag_cloud_kick_highlight(tc);
 
   return error_OK;
 }
 
-error tag_cloud__highlight(tag_cloud *tc, const int *indices, int nindices)
+error tag_cloud_highlight(tag_cloud *tc, const int *indices, int nindices)
 {
   error err;
 
   if (tc->highlight)
-    bitvec__clear_all(tc->highlight);
+    bitvec_clear_all(tc->highlight);
 
-  err = tag_cloud__add_highlights(tc, indices, nindices);
+  err = tag_cloud_add_highlights(tc, indices, nindices);
   if (err)
     return err;
 
   return error_OK;
 }
 
-error tag_cloud__add_highlight(tag_cloud *tc, int index)
+error tag_cloud_add_highlight(tag_cloud *tc, int index)
 {
   error err;
 
-  err = tag_cloud__add_highlights(tc, &index, 1);
+  err = tag_cloud_add_highlights(tc, &index, 1);
   if (err)
     return err;
 
   return error_OK;
 }
 
-void tag_cloud__remove_highlight(tag_cloud *tc, int index)
+void tag_cloud_remove_highlight(tag_cloud *tc, int index)
 {
-  bitvec__clear(tc->highlight, index);
+  bitvec_clear(tc->highlight, index);
 
-  tag_cloud__kick_highlight(tc);
+  tag_cloud_kick_highlight(tc);
 }
 
-int tag_cloud__is_highlighted(tag_cloud *tc, int index)
+int tag_cloud_is_highlighted(tag_cloud *tc, int index)
 {
   if (tc->highlight == NULL)
     return 0;
 
-  return bitvec__get(tc->highlight, index);
+  return bitvec_get(tc->highlight, index);
 }

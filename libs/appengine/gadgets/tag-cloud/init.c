@@ -31,30 +31,30 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static int tag_cloud__refcount = 0;
+static int tag_cloud_refcount = 0;
 
-error tag_cloud__init(void)
+error tag_cloud_init(void)
 {
-  if (tag_cloud__refcount++ == 0)
+  if (tag_cloud_refcount++ == 0)
   {
     LOCALS.main_w      = window_create("tag_cloud");
     LOCALS.toolbar_w   = window_create("tag_cloud_t");
-    LOCALS.newtag_d    = name__create("tag_new");
-    LOCALS.renametag_d = name__create("tag_rename");
-    LOCALS.taginfo_d   = info__create("tag_info");
-    info__set_padding(LOCALS.taginfo_d, 128); /* 64 on either side */
+    LOCALS.newtag_d    = name_create("tag_new");
+    LOCALS.renametag_d = name_create("tag_rename");
+    LOCALS.taginfo_d   = info_create("tag_info");
+    info_set_padding(LOCALS.taginfo_d, 128); /* 64 on either side */
   }
 
   return error_OK;
 }
 
-void tag_cloud__fin(void)
+void tag_cloud_fin(void)
 {
-  if (--tag_cloud__refcount == 0)
+  if (--tag_cloud_refcount == 0)
   {
-    info__destroy(LOCALS.taginfo_d);
-    name__destroy(LOCALS.renametag_d);
-    name__destroy(LOCALS.newtag_d);
+    info_destroy(LOCALS.taginfo_d);
+    name_destroy(LOCALS.renametag_d);
+    name_destroy(LOCALS.newtag_d);
     wimp_delete_window(LOCALS.toolbar_w);
     wimp_delete_window(LOCALS.main_w);
   }
@@ -62,27 +62,27 @@ void tag_cloud__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-wimp_w tag_cloud__get_main_window(void)
+wimp_w tag_cloud_get_main_window(void)
 {
   return LOCALS.main_w;
 }
 
-wimp_w tag_cloud__get_toolbar_window(void)
+wimp_w tag_cloud_get_toolbar_window(void)
 {
   return LOCALS.toolbar_w;
 }
 
-dialogue_t *tag_cloud__get_newtag_dialogue(void)
+dialogue_t *tag_cloud_get_newtag_dialogue(void)
 {
   return LOCALS.newtag_d;
 }
 
-dialogue_t *tag_cloud__get_renametag_dialogue(void)
+dialogue_t *tag_cloud_get_renametag_dialogue(void)
 {
   return LOCALS.renametag_d;
 }
 
-dialogue_t *tag_cloud__get_taginfo_dialogue(void)
+dialogue_t *tag_cloud_get_taginfo_dialogue(void)
 {
   return LOCALS.taginfo_d;
 }

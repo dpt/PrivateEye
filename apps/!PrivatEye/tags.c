@@ -116,7 +116,7 @@ static error detag(tag_cloud *tc,
 
 /* ----------------------------------------------------------------------- */
 
-static tag_cloud__event keyhandler(wimp_key_no  key_no,
+static tag_cloud_event keyhandler(wimp_key_no  key_no,
                                    void        *arg)
 {
   int op;
@@ -127,29 +127,29 @@ static tag_cloud__event keyhandler(wimp_key_no  key_no,
 
   switch (op)
   {
-    case TagCloud_List:         return tag_cloud__EVENT_DISPLAY_LIST;
-    case TagCloud_Cloud:        return tag_cloud__EVENT_DISPLAY_CLOUD;
+    case TagCloud_List:         return tag_cloud_EVENT_DISPLAY_LIST;
+    case TagCloud_Cloud:        return tag_cloud_EVENT_DISPLAY_CLOUD;
 
-    case TagCloud_SortByName:   return tag_cloud__EVENT_SORT_BY_NAME;
-    case TagCloud_SortByCount:  return tag_cloud__EVENT_SORT_BY_COUNT;
+    case TagCloud_SortByName:   return tag_cloud_EVENT_SORT_BY_NAME;
+    case TagCloud_SortByCount:  return tag_cloud_EVENT_SORT_BY_COUNT;
 
-    case TagCloud_SortSelFirst: return tag_cloud__EVENT_SORT_SELECTED_FIRST;
+    case TagCloud_SortSelFirst: return tag_cloud_EVENT_SORT_SELECTED_FIRST;
 
-    case TagCloud_Rename:       return tag_cloud__EVENT_RENAME;
-    case TagCloud_Kill:         return tag_cloud__EVENT_KILL;
-    case TagCloud_New:          return tag_cloud__EVENT_NEW;
-    case TagCloud_Info:         return tag_cloud__EVENT_INFO;
+    case TagCloud_Rename:       return tag_cloud_EVENT_RENAME;
+    case TagCloud_Kill:         return tag_cloud_EVENT_KILL;
+    case TagCloud_New:          return tag_cloud_EVENT_NEW;
+    case TagCloud_Info:         return tag_cloud_EVENT_INFO;
 
-    case TagCloud_Commit:       return tag_cloud__EVENT_COMMIT;
+    case TagCloud_Commit:       return tag_cloud_EVENT_COMMIT;
 
-    case Close:                 return tag_cloud__EVENT_CLOSE;
+    case Close:                 return tag_cloud_EVENT_CLOSE;
 
     case Help:
       action_help();
       break;
   }
 
-  return tag_cloud__EVENT_UNKNOWN;
+  return tag_cloud_EVENT_UNKNOWN;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -180,9 +180,9 @@ static void tags__image_changed_callback(image_t              *image,
       sprintf(scratch, "tagcloud.title");
       leaf = str_leaf(image->file_name);
       sprintf(title, message0(scratch), leaf);
-      window_set_title_text(tag_cloud__get_window_handle(LOCALS.tc), title);
+      window_set_title_text(tag_cloud_get_window_handle(LOCALS.tc), title);
 
-      tag_cloud__shade(LOCALS.tc, 0);
+      tag_cloud_shade(LOCALS.tc, 0);
 
       err = tags_common__set_highlights(LOCALS.tc, image);
       if (err)
@@ -212,13 +212,13 @@ static void tags__image_changed_callback(image_t              *image,
       sprintf(scratch, "tagcloud.title");
       leaf = "(none)";
       sprintf(title, message0(scratch), leaf);
-      window_set_title_text(tag_cloud__get_window_handle(LOCALS.tc), title);
+      window_set_title_text(tag_cloud_get_window_handle(LOCALS.tc), title);
 
       LOCALS.image = NULL;
 
       tags_common__clear_highlights(LOCALS.tc);
 
-      tag_cloud__shade(LOCALS.tc, 1);
+      tag_cloud_shade(LOCALS.tc, 1);
     }
     break;
   }
@@ -228,7 +228,7 @@ static void tags__image_changed_callback(image_t              *image,
 
 failure:
 
-  error__report(err);
+  error_report(err);
 
   return;
 }
@@ -237,7 +237,7 @@ failure:
 
 error tags__choices_updated(const choices_group *g)
 {
-  tag_cloud__config c;
+  tag_cloud_config c;
 
   NOT_USED(g);
 
@@ -249,7 +249,7 @@ error tags__choices_updated(const choices_group *g)
   c.padding = GLOBALS.choices.tagcloud.padding;
   c.scale   = GLOBALS.choices.tagcloud.scale;
 
-  tag_cloud__set_config(LOCALS.tc, &c);
+  tag_cloud_set_config(LOCALS.tc, &c);
 
   return error_OK;
 }
@@ -306,7 +306,7 @@ static error tags__properinit(void)
 
   if (tags__properrefcount++ == 0)
   {
-    tag_cloud__config  conf;
+    tag_cloud_config  conf;
     tag_cloud         *tc = NULL;
     tagdb             *db = NULL;
 
@@ -319,7 +319,7 @@ static error tags__properinit(void)
     conf.padding = GLOBALS.choices.tagcloud.padding;
     conf.scale   = GLOBALS.choices.tagcloud.scale;
 
-    tc = tag_cloud__create(0 /* flags */, &conf);
+    tc = tag_cloud_create(0 /* flags */, &conf);
     if (tc == NULL)
     {
       err = error_OOM;
@@ -330,7 +330,7 @@ static error tags__properinit(void)
 
     db = tags_common__get_db(); /* FIXME: Feels a bit grotty. */
 
-    tag_cloud__set_handlers(tc,
+    tag_cloud_set_handlers(tc,
                             tags_common__add_tag,
                             deletetag,
                             tags_common__rename_tag,
@@ -341,11 +341,11 @@ static error tags__properinit(void)
                             tags_common__event,
                             db);
 
-    tag_cloud__set_key_handler(tc, keyhandler, db);
+    tag_cloud_set_key_handler(tc, keyhandler, db);
 
-    tag_cloud__set_display(tc, GLOBALS.choices.tagcloud.display);
-    tag_cloud__set_sort(tc, GLOBALS.choices.tagcloud.sort);
-    tag_cloud__set_order(tc, GLOBALS.choices.tagcloud.selfirst);
+    tag_cloud_set_display(tc, GLOBALS.choices.tagcloud.display);
+    tag_cloud_set_sort(tc, GLOBALS.choices.tagcloud.sort);
+    tag_cloud_set_order(tc, GLOBALS.choices.tagcloud.selfirst);
 
     LOCALS.tc = tc;
   }
@@ -370,7 +370,7 @@ static void tags__properfin(int force)
   {
     imageobserver_deregister_greedy(tags__image_changed_callback, NULL);
 
-    tag_cloud__destroy(LOCALS.tc);
+    tag_cloud_destroy(LOCALS.tc);
 
     tags_common__properfin(0); /* don't pass 'force' in */
   }
@@ -389,7 +389,7 @@ error tags__open(image_t *image)
   if (err)
     return err;
 
-  state.w = tag_cloud__get_window_handle(LOCALS.tc);
+  state.w = tag_cloud_get_window_handle(LOCALS.tc);
   wimp_get_window_state(&state);
 
   if (state.flags & wimp_WINDOW_OPEN)
@@ -410,7 +410,7 @@ error tags__open(image_t *image)
     sprintf(scratch, "tagcloud.title");
     leaf = str_leaf(image->file_name);
     sprintf(title, message0(scratch), leaf);
-    window_set_title_text(tag_cloud__get_window_handle(LOCALS.tc), title);
+    window_set_title_text(tag_cloud_get_window_handle(LOCALS.tc), title);
 
     /* opening for the first(?) time */
 
@@ -425,7 +425,7 @@ error tags__open(image_t *image)
 
     LOCALS.image = image;
 
-    tag_cloud__open(LOCALS.tc);
+    tag_cloud_open(LOCALS.tc);
   }
 
   /* FIXME: This doesn't work - needs investigation. */

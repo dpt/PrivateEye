@@ -178,16 +178,16 @@ static int redraw(tonemap *map, wimp_w w, wimp_i i, wimp_draw *draw, osbool (*dr
   int    more;
 
   icon_get_screen_bbox(w, i, &screenbox);
-  box__grow(&screenbox, -Border); /* compensate the bbox for size of border */
+  box_grow(&screenbox, -Border); /* compensate the bbox for size of border */
 
   for (more = draw_fn(draw); more; more = wimp_get_rectangle(draw))
   {
     os_box clippedbox;
 
-    if (!box__intersects(&screenbox, &draw->clip))
+    if (!box_intersects(&screenbox, &draw->clip))
       continue;
 
-    box__intersection(&draw->clip, &screenbox, &clippedbox);
+    box_intersection(&draw->clip, &screenbox, &clippedbox);
 
     /* set our clip rectangle */
     screen_clip(&clippedbox);
@@ -219,7 +219,7 @@ int tonemapgadget_update(tonemap *map, wimp_w w, wimp_i i)
   icon_get_bbox(w, i, &u.update.box);
 
   /* compensate the bbox for size of border */
-  box__grow(&u.update.box, -Border);
+  box_grow(&u.update.box, -Border);
 
   u.update.clip = u.update.box;
 

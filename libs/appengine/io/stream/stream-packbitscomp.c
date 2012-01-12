@@ -44,7 +44,7 @@ typedef struct stream_packbitscomp
 }
 stream_packbitscomp;
 
-static error stream_packbitscomp__op(stream *s, stream__opcode op, void *arg)
+static error stream_packbitscomp_op(stream *s, stream_opcode op, void *arg)
 {
   NOT_USED(s);
   NOT_USED(op);
@@ -53,14 +53,14 @@ static error stream_packbitscomp__op(stream *s, stream__opcode op, void *arg)
   return error_STREAM_UNKNOWN_OP;
 }
 
-static void stream_packbitscomp__reset(stream_packbitscomp *c)
+static void stream_packbitscomp_reset(stream_packbitscomp *c)
 {
   c->state       = Initial;
   c->lastliteral = NULL;
   c->resume      = FALSE;
 }
 
-static int stream_packbitscomp__get(stream *s)
+static int stream_packbitscomp_get(stream *s)
 {
   stream_packbitscomp *sm = (stream_packbitscomp *) s;
   unsigned char      *p;
@@ -92,22 +92,22 @@ static int stream_packbitscomp__get(stream *s)
     /* find the longest string of identical input bytes */
 
     n = 1;
-    first = stream__getc(sm->input);
+    first = stream_getc(sm->input);
     if (first == EOF)
       break;
 
-    second = stream__getc(sm->input);
+    second = stream_getc(sm->input);
     while (second == first) /* terminates if EOF */
     {
       n++;
-      second = stream__getc(sm->input);
+      second = stream_getc(sm->input);
     }
     /* if we didn't hit EOF, we will have read one byte too many, so put one
      * back */
     if (second != EOF)
-      stream__ungetc(sm->input);
+      stream_ungetc(sm->input);
 
-    DBUG(("stream_packbitscomp__get: n=%d\n", n));
+    DBUG(("stream_packbitscomp_get: n=%d\n", n));
 
 again: /* more of the current run left to pack */
 
@@ -125,7 +125,7 @@ again: /* more of the current run left to pack */
     switch (sm->state)
     {
     case Initial: /* Initial state: Set state to 'Run' or 'Literal'. */
-       DBUG(("stream_packbitscomp__get: Initial"));
+       DBUG(("stream_packbitscomp_get: Initial"));
        if (n > 1)
        {
          DBUG((" -> Run of %d\n", MIN(n, 128)));
@@ -154,7 +154,7 @@ again: /* more of the current run left to pack */
        break;
 
      case Literal: /* Last object was a literal. */
-       DBUG(("stream_packbitscomp__get: Literal"));
+       DBUG(("stream_packbitscomp_get: Literal"));
        if (n > 1)
        {
          DBUG((" -> Run of %d\n", MIN(n, 128)));
@@ -186,7 +186,7 @@ again: /* more of the current run left to pack */
        break;
 
      case Run: /* Last object was a run. */
-       DBUG(("stream_packbitscomp__get: Run"));
+       DBUG(("stream_packbitscomp_get: Run"));
        if (n > 1)
        {
          DBUG((" -> Run\n"));
@@ -213,7 +213,7 @@ again: /* more of the current run left to pack */
        {
        int ll;
 
-       DBUG(("stream_packbitscomp__get: LiteralRun"));
+       DBUG(("stream_packbitscomp_get: LiteralRun"));
 
        assert(sm->lastliteral);
 
@@ -242,7 +242,7 @@ again: /* more of the current run left to pack */
 
   if (p == sm->buffer)
   {
-    DBUG(("stream_packbitscomp__get: no bytes generated in decomp\n"));
+    DBUG(("stream_packbitscomp_get: no bytes generated in decomp\n"));
     return EOF; /* EOF at start */
   }
 
@@ -252,7 +252,7 @@ again: /* more of the current run left to pack */
   return *sm->base.buf++;
 }
 
-error stream_packbitscomp__create(stream *input, int bufsz, stream **s)
+error stream_packbitscomp_create(stream *input, int bufsz, stream **s)
 {
   stream_packbitscomp *sp;
 
@@ -274,16 +274,16 @@ error stream_packbitscomp__create(stream *input, int bufsz, stream **s)
 
   sp->base.last    = error_OK;
 
-  sp->base.op      = stream_packbitscomp__op;
+  sp->base.op      = stream_packbitscomp_op;
   sp->base.seek    = NULL; /* can't seek */
-  sp->base.get     = stream_packbitscomp__get;
+  sp->base.get     = stream_packbitscomp_get;
   sp->base.length  = NULL; /* unknown length */
   sp->base.destroy = NULL;
 
   sp->input = input;
   sp->bufsz = bufsz;
 
-  stream_packbitscomp__reset(sp);
+  stream_packbitscomp_reset(sp);
 
   *s = &sp->base;
 

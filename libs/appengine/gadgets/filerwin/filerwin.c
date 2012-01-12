@@ -30,17 +30,17 @@
 struct filerwin
 {
   wimp_w               w;
-  filerwin__redrawfn  *redraw;
-  filerwin__closefn   *close;
-  filerwin__pointerfn *pointer;
+  filerwin_redrawfn  *redraw;
+  filerwin_closefn   *close;
+  filerwin_pointerfn *pointer;
   char                *title_text;
 
   // told
   int                  object_width, object_height;
   int                  hpad, vpad;
   int                  nobjects;
-  filerwin__mode       mode;
-  filerwin__sort       sort;
+  filerwin_mode       mode;
+  filerwin_sort       sort;
 
   void                *arg;
 
@@ -56,26 +56,26 @@ struct filerwin
 
 /* ---------------------------------------------------------------------- */
 
-static event_wimp_handler filerwin__event_redraw_window_request,
-                          filerwin__event_open_window_request,
-                          filerwin__event_close_window_request,
-                          filerwin__event_mouse_click,
-                          filerwin__event_user_drag_box,
-                          filerwin__event_key_pressed;
+static event_wimp_handler filerwin_event_redraw_window_request,
+                          filerwin_event_open_window_request,
+                          filerwin_event_close_window_request,
+                          filerwin_event_mouse_click,
+                          filerwin_event_user_drag_box,
+                          filerwin_event_key_pressed;
 
 /* ---------------------------------------------------------------------- */
 
 static
-void filerwin__internal_set_handlers(int reg, filerwin *fw)
+void filerwin_internal_set_handlers(int reg, filerwin *fw)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_REDRAW_WINDOW_REQUEST, filerwin__event_redraw_window_request },
-    { wimp_OPEN_WINDOW_REQUEST,   filerwin__event_open_window_request   },
-    { wimp_CLOSE_WINDOW_REQUEST,  filerwin__event_close_window_request  },
-    { wimp_MOUSE_CLICK,           filerwin__event_mouse_click           },
-    { wimp_USER_DRAG_BOX,         filerwin__event_user_drag_box         },
-    { wimp_KEY_PRESSED,           filerwin__event_key_pressed           },
+    { wimp_REDRAW_WINDOW_REQUEST, filerwin_event_redraw_window_request },
+    { wimp_OPEN_WINDOW_REQUEST,   filerwin_event_open_window_request   },
+    { wimp_CLOSE_WINDOW_REQUEST,  filerwin_event_close_window_request  },
+    { wimp_MOUSE_CLICK,           filerwin_event_mouse_click           },
+    { wimp_USER_DRAG_BOX,         filerwin_event_user_drag_box         },
+    { wimp_KEY_PRESSED,           filerwin_event_key_pressed           },
   };
 
   event_register_wimp_group(reg,
@@ -145,9 +145,9 @@ static error map(filerwin *fw, mapfn *fn, int x, int y,
       box.x1 = box.x0 + fw->object_width;
       box.y1 = box.y0 + fw->object_height;
 
-      if (!test || (test && box__intersects(&box, test)))
+      if (!test || (test && box_intersects(&box, test)))
       {
-        err = fn(fw, xr, yr, c, bitvec__get(fw->selection, c), arg);
+        err = fn(fw, xr, yr, c, bitvec_get(fw->selection, c), arg);
         if (err)
           return err;
       }
@@ -174,7 +174,7 @@ static error redraw_bobs(filerwin *fw, int x, int y, int c, unsigned int flags, 
   return error_OK;
 }
 
-static int filerwin__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   error      err;
   wimp_draw *redraw;
@@ -247,7 +247,7 @@ static int layout(filerwin *fw, int width, int height)
   return 0;
 }
 
-static int filerwin__event_open_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_open_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_open *open;
   filerwin  *fw;
@@ -277,7 +277,7 @@ static int filerwin__event_open_window_request(wimp_event_no event_no, wimp_bloc
   return event_HANDLED;
 }
 
-static int filerwin__event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_close  *close;
   filerwin    *fw;
@@ -318,7 +318,7 @@ static int filerwin__event_close_window_request(wimp_event_no event_no, wimp_blo
   return event_HANDLED;
 }
 
-static int filerwin__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
   filerwin     *fw;
@@ -443,7 +443,7 @@ static error select_bobs(filerwin *fw, int x, int y, int c, unsigned int flags, 
   NOT_USED(flags);
   NOT_USED(arg);
 
-  bitvec__set(fw->selection, c);
+  bitvec_set(fw->selection, c);
 
   index_to_area(fw, c, &b);
   wimp_force_redraw(fw->w, b.x0, b.y0, b.x1, b.y1);
@@ -460,7 +460,7 @@ static error adjust_bobs(filerwin *fw, int x, int y, int c, unsigned int flags, 
   NOT_USED(flags);
   NOT_USED(arg);
 
-  bitvec__toggle(fw->selection, c);
+  bitvec_toggle(fw->selection, c);
 
   index_to_area(fw, c, &b);
   wimp_force_redraw(fw->w, b.x0, b.y0, b.x1, b.y1);
@@ -486,7 +486,7 @@ static void screen_box_to_workarea(os_box *b, const wimp_window_state *state)
   if (b->y0 > b->y1) { temp = b->y1; b->y1 = b->y0; b->y0 = temp; }
 }
 
-static int filerwin__event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_dragged *dragged;
   filerwin     *fw;
@@ -520,7 +520,7 @@ static int filerwin__event_user_drag_box(wimp_event_no event_no, wimp_block *blo
 
     if (fw->drag_type == drag_type_SELECTION_SELECT)
     {
-      bitvec__clear_all(fw->selection);
+      bitvec_clear_all(fw->selection);
       selector = select_bobs;
     }
     else
@@ -537,7 +537,7 @@ static int filerwin__event_user_drag_box(wimp_event_no event_no, wimp_block *blo
   return event_HANDLED;
 }
 
-static int filerwin__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_key *key;
   filerwin *fw;
@@ -552,7 +552,7 @@ static int filerwin__event_key_pressed(wimp_event_no event_no, wimp_block *block
 
 /* ----------------------------------------------------------------------- */
 
-filerwin *filerwin__create(void)
+filerwin *filerwin_create(void)
 {
   char        *title_text;
   wimp_window  def;
@@ -584,8 +584,8 @@ filerwin *filerwin__create(void)
   fw->hpad          = 20;
   fw->vpad          = 60;
   fw->nobjects      = 0;
-  fw->mode          = filerwin__mode_LARGE_ICONS;
-  fw->sort          = filerwin__sort_NAME;
+  fw->mode          = filerwin_mode_LARGE_ICONS;
+  fw->sort          = filerwin_sort_NAME;
 
   fw->last_width    = 0;
   fw->last_height   = 0;
@@ -594,25 +594,25 @@ filerwin *filerwin__create(void)
 
   fw->drag_type     = -1;
 
-  fw->selection     = bitvec__create(0);
+  fw->selection     = bitvec_create(0);
   if (fw->selection == NULL)
   {
     // deal
   }
 
-  filerwin__internal_set_handlers(1, fw);
+  filerwin_internal_set_handlers(1, fw);
 
   return fw;
 }
 
-void filerwin__destroy(filerwin *doomed)
+void filerwin_destroy(filerwin *doomed)
 {
   if (doomed == NULL)
     return;
 
-  filerwin__internal_set_handlers(0, doomed);
+  filerwin_internal_set_handlers(0, doomed);
 
-  bitvec__destroy(doomed->selection);
+  bitvec_destroy(doomed->selection);
 
   free(doomed->title_text);
 
@@ -621,88 +621,88 @@ void filerwin__destroy(filerwin *doomed)
   free(doomed);
 }
 
-wimp_w filerwin__get_window_handle(filerwin *fw)
+wimp_w filerwin_get_window_handle(filerwin *fw)
 {
   return fw->w;
 }
 
-void filerwin__set_handlers(filerwin            *fw,
-                            filerwin__redrawfn  *redraw,
-                            filerwin__closefn   *close,
-                            filerwin__pointerfn *pointer)
+void filerwin_set_handlers(filerwin            *fw,
+                            filerwin_redrawfn  *redraw,
+                            filerwin_closefn   *close,
+                            filerwin_pointerfn *pointer)
 {
   fw->redraw  = redraw;
   fw->close   = close;
   fw->pointer = pointer;
 }
 
-void filerwin__set_arg(filerwin *fw, void *arg)
+void filerwin_set_arg(filerwin *fw, void *arg)
 {
   fw->arg = arg;
 }
 
-void filerwin__set_padding(filerwin *fw, int hpad, int vpad)
+void filerwin_set_padding(filerwin *fw, int hpad, int vpad)
 {
   fw->hpad = hpad;
   fw->vpad = vpad;
 }
 
-void filerwin__set_nobjects(filerwin *fw, int nobjects)
+void filerwin_set_nobjects(filerwin *fw, int nobjects)
 {
   fw->nobjects = nobjects;
 }
 
-void filerwin__set_dimensions(filerwin *fw, int width, int height)
+void filerwin_set_dimensions(filerwin *fw, int width, int height)
 {
   fw->object_width  = width;
   fw->object_height = height;
 }
 
-void filerwin__set_mode(filerwin *fw, filerwin__mode mode)
+void filerwin_set_mode(filerwin *fw, filerwin_mode mode)
 {
   fw->mode = mode;
 }
 
-void filerwin__set_sort(filerwin *fw, filerwin__sort sort)
+void filerwin_set_sort(filerwin *fw, filerwin_sort sort)
 {
   fw->sort = sort;
 }
 
-void filerwin__set_window_title(filerwin *fw, const char *title)
+void filerwin_set_window_title(filerwin *fw, const char *title)
 {
   window_set_title_text(fw->w, title);
 }
 
-void filerwin__select(filerwin *fw, int i)
+void filerwin_select(filerwin *fw, int i)
 {
   if (i < 0)
   {
     /* set the highest index, this forces the bitvec to its correct size.
-     * this is needed as bitvec__set_all will only set up to the highest bit
+     * this is needed as bitvec_set_all will only set up to the highest bit
      * index it's seen. */
 
-    bitvec__set(fw->selection, fw->nobjects - 1);
-    bitvec__set_all(fw->selection);
+    bitvec_set(fw->selection, fw->nobjects - 1);
+    bitvec_set_all(fw->selection);
   }
   else
   {
-    bitvec__set(fw->selection, i);
+    bitvec_set(fw->selection, i);
   }
 
   // selection changed partial redraw here
 }
 
-void filerwin__deselect(filerwin *fw, int i)
+void filerwin_deselect(filerwin *fw, int i)
 {
   if (i < 0)
-    bitvec__clear_all(fw->selection);
+    bitvec_clear_all(fw->selection);
   else
-    bitvec__clear(fw->selection, i);
+    bitvec_clear(fw->selection, i);
 
   // selection changed partial redraw here
 }
 
-void filerwin__open(filerwin *fw)
+void filerwin_open(filerwin *fw)
 {
   wimp_window_state state;
 

@@ -53,13 +53,13 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler    dcs__event_mouse_click;
+static event_wimp_handler    dcs_event_mouse_click;
 
-static event_message_handler dcs__message_menus_deleted;
+static event_message_handler dcs_message_menus_deleted;
 
 /* ----------------------------------------------------------------------- */
 
-static error dcs__create(const char *name, dialogue_t **new_d)
+static error dcs_create(const char *name, dialogue_t **new_d)
 {
   error  err;
   dcs_t *s;
@@ -70,14 +70,14 @@ static error dcs__create(const char *name, dialogue_t **new_d)
   if (s == NULL)
     return error_OOM;
 
-  err = dialogue__construct(&s->dialogue, name, -1, -1);
+  err = dialogue_construct(&s->dialogue, name, -1, -1);
   if (err)
     goto failure;
 
-  dialogue__set_handlers(&s->dialogue,
-                         dcs__event_mouse_click,
+  dialogue_set_handlers(&s->dialogue,
+                         dcs_event_mouse_click,
                          NULL,
-                         dcs__message_menus_deleted);
+                         dcs_message_menus_deleted);
 
   *new_d = &s->dialogue;
 
@@ -90,7 +90,7 @@ failure:
   return err;
 }
 
-static void dcs__destroy(dialogue_t *d)
+static void dcs_destroy(dialogue_t *d)
 {
   dcs_t *s;
 
@@ -99,34 +99,34 @@ static void dcs__destroy(dialogue_t *d)
 
   s = (dcs_t *) d;
 
-  dialogue__destruct(&s->dialogue);
+  dialogue_destruct(&s->dialogue);
 
   free(s);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static int dcs_quit__refcount = 0;
+static int dcs_quit_refcount = 0;
 
-error dcs_quit__init(void)
+error dcs_quit_init(void)
 {
   error err;
 
-  if (dcs_quit__refcount++ == 0)
+  if (dcs_quit_refcount++ == 0)
   {
     /* dependencies */
 
-    err = help__init();
+    err = help_init();
     if (err)
       goto failure;
 
     /* init */
 
-    err = dcs__create("dcs",  &LOCALS.dcs_w);
+    err = dcs_create("dcs",  &LOCALS.dcs_w);
     if (err)
       goto failure;
 
-    err = dcs__create("quit", &LOCALS.quit_w);
+    err = dcs_create("quit", &LOCALS.quit_w);
     if (err)
       goto failure;
   }
@@ -135,24 +135,24 @@ error dcs_quit__init(void)
 
 failure:
 
-  dcs_quit__fin();
+  dcs_quit_fin();
 
   return err;
 }
 
-void dcs_quit__fin(void)
+void dcs_quit_fin(void)
 {
-  if (--dcs_quit__refcount == 0)
+  if (--dcs_quit_refcount == 0)
   {
-    dcs__destroy(LOCALS.quit_w);
-    dcs__destroy(LOCALS.dcs_w);
+    dcs_destroy(LOCALS.quit_w);
+    dcs_destroy(LOCALS.dcs_w);
 
     /* reset handles in case we're reinitialised */
 
     LOCALS.dcs_w  = NULL;
     LOCALS.quit_w = NULL;
 
-    help__fin();
+    help_fin();
   }
 }
 
@@ -167,13 +167,13 @@ static int query(const char *message, int count, dialogue_t *d)
   wimp_w w;
   char   formatted[256];
 
-  w = dialogue__get_window(d);
+  w = dialogue_get_window(d);
 
   sprintf(formatted, message0(message), count);
 
   icon_set_text(w, DCS_D_QUERY, formatted);
 
-  dialogue__show(d);
+  dialogue_show(d);
 
   wimp_set_caret_position(w, wimp_ICON_WINDOW, 0, 0, -1, -1);
 
@@ -187,24 +187,24 @@ static int query(const char *message, int count, dialogue_t *d)
   }
   while (dcs_command == -1);
 
-  dialogue__hide(d);
+  dialogue_hide(d);
 
   return dcs_command;
 }
 
-int dcs_quit__dcs_query(const char *message)
+int dcs_quit_dcs_query(const char *message)
 {
   return query(message, 0, LOCALS.dcs_w);
 }
 
-int dcs_quit__quit_query(const char *message, int count)
+int dcs_quit_quit_query(const char *message, int count)
 {
   return query(message, count, LOCALS.quit_w);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static int dcs__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int dcs_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
 
@@ -234,7 +234,7 @@ static int dcs__event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
   return event_HANDLED;
 }
 
-static int dcs__message_menus_deleted(wimp_message *message, void *handle)
+static int dcs_message_menus_deleted(wimp_message *message, void *handle)
 {
   wimp_message_menus_deleted *menus_deleted;
 

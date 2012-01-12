@@ -3,7 +3,7 @@
 
 #include "appengine/geom/box.h"
 
-void box__round4(os_box *a)
+void box_round4(os_box *a)
 {
   os_box b = *a;
 

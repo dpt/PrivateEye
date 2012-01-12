@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-ntree_t *ntree__next_sibling(ntree_t *t)
+ntree_t *ntree_next_sibling(ntree_t *t)
 {
   return t ? t->next : NULL;
 }

@@ -95,7 +95,7 @@ static int message_data_save(wimp_message *message, void *handle)
 
   if (e != NULL && e->errnum == error_VAR_CANT_FIND)
   {
-    oserror__report(0, "error.no.scrap");
+    oserror_report(0, "error.no.scrap");
     return event_HANDLED;
   }
 
@@ -140,7 +140,7 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
   wimp_send_message(wimp_USER_MESSAGE_RECORDED, message, message->sender);
 
-  if (save__should_close_menu())
+  if (save_should_close_menu())
     wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
 
   return event_HANDLED;

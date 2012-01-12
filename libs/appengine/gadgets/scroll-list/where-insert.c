@@ -10,7 +10,7 @@
 #include "impl.h"
 
 /* This returns an insertion point, as opposed to a row. */
-int scroll_list__where_to_insert(scroll_list *sl, wimp_pointer *pointer)
+int scroll_list_where_to_insert(scroll_list *sl, wimp_pointer *pointer)
 {
   wimp_window_state state;
   int               y;

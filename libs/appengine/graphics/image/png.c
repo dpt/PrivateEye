@@ -49,14 +49,14 @@ static void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
 {
   NOT_USED(png_ptr);
 
-  oserror__report(0, "error.png.error", error_msg);
+  oserror_report(0, "error.png.error", error_msg);
 }
 
 static void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
 {
   NOT_USED(png_ptr);
 
-  oserror__report(0, "error.png.warning", warning_msg);
+  oserror_report(0, "error.png.warning", warning_msg);
 }
 
 static int png_load(image_choices *choices, image_t *image)
@@ -105,7 +105,7 @@ static int png_load(image_choices *choices, image_t *image)
   fp = fopen(image->file_name, "rb");
   if (fp == NULL)
   {
-    oserror__report(0, "error.fopen");
+    oserror_report(0, "error.fopen");
     goto CleanUp; /* failure */
   }
 
@@ -115,14 +115,14 @@ static int png_load(image_choices *choices, image_t *image)
                    (png_error_ptr) user_warning_fn);
   if (png_ptr == NULL)
   {
-    oserror__report(0, "error.png.create");
+    oserror_report(0, "error.png.create");
     goto CleanUp; /* failure */
   }
 
   info_ptr = png_create_info_struct(png_ptr);
   if (info_ptr == NULL)
   {
-    oserror__report(0, "error.png.info");
+    oserror_report(0, "error.png.info");
     goto CleanUp; /* failure */
   }
 
@@ -223,7 +223,7 @@ static int png_load(image_choices *choices, image_t *image)
 
     default:
       /* unknown colour type */
-      oserror__report(0, "error.png.colour");
+      oserror_report(0, "error.png.colour");
       goto CleanUp; /* failure */
   }
 
@@ -513,7 +513,7 @@ static int png_load(image_choices *choices, image_t *image)
 
  NoMem:
 
-  oserror__report(0, "error.no.mem");
+  oserror_report(0, "error.no.mem");
 
   goto CleanUp;
 }

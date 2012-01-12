@@ -130,7 +130,7 @@ error viewer_create(viewer_t **new_viewer)
   if (err)
     goto Failure;
 
-  list__add_to_head(&list_anchor, &v->list);
+  list_add_to_head(&list_anchor, &v->list);
 
   *new_viewer = v;
 
@@ -151,7 +151,7 @@ Failure:
 
   free(v);
 
-  error__report(err);
+  error_report(err);
 
   return err;
 }
@@ -184,7 +184,7 @@ void viewer_destroy(viewer_t *doomed)
 
   display__release_handlers(doomed);
 
-  list__remove(&list_anchor, &doomed->list);
+  list_remove(&list_anchor, &doomed->list);
 
   /* Delete the window */
   window_delete_cloned(doomed->main_w);
@@ -202,7 +202,7 @@ void viewer_destroy(viewer_t *doomed)
 
 viewer_t *viewer_find(wimp_w w)
 {
-  return (viewer_t *) list__find(&list_anchor,
+  return (viewer_t *) list_find(&list_anchor,
                                  offsetof(viewer_t, main_w),
                            (int) w);
 }
@@ -250,7 +250,7 @@ viewer_t *viewer_find_by_attrs(const char *file_name, bits load, bits exec)
   args.exec      = exec;
   args.result    = NULL;
 
-  list__walk(&list_anchor, find_by_attrs_callback, &args);
+  list_walk(&list_anchor, find_by_attrs_callback, &args);
 
   return args.result;
 }
@@ -283,7 +283,7 @@ void viewer_map(viewer_map_callback *fn, void *arg)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list__walk(&list_anchor, (list__walk_callback *) fn, arg);
+  list_walk(&list_anchor, (list_walk_callback *) fn, arg);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -364,8 +364,8 @@ static void draw_edge(wimp_draw *draw,
 {
   os_box clip;
 
-  box__intersection(&draw->clip, box, &clip);
-  if (box__is_empty(&clip))
+  box_intersection(&draw->clip, box, &clip);
+  if (box_is_empty(&clip))
     return;
 
   screen_clip(&clip);
@@ -731,7 +731,7 @@ void viewer_clone(viewer_t *source)
 
 Failure:
   /* This is the highest level so tell the user of the failure and return. */
-  error__report(err);
+  error_report(err);
 
   return;
 }
@@ -920,7 +920,7 @@ int viewer_query_unload(viewer_t *viewer)
   if (viewer->image->flags & image_FLAG_MODIFIED &&
       viewer_count_clones(viewer) == 1)
   {
-    switch (dcs_quit__dcs_query("dcs.modified"))
+    switch (dcs_quit_dcs_query("dcs.modified"))
     {
     case dcs_quit_DISCARD:
       return 1;
@@ -929,7 +929,7 @@ int viewer_query_unload(viewer_t *viewer)
       return 0;
 
     case dcs_quit_SAVE:
-      dialogue__show(viewer_savedlg);
+      dialogue_show(viewer_savedlg);
       return 0;
     }
   }

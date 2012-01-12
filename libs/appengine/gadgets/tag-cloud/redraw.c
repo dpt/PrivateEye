@@ -18,7 +18,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler tag_cloud__redraw_event_null_reason_code;
+static event_wimp_handler tag_cloud_redraw_event_null_reason_code;
 
 /* ----------------------------------------------------------------------- */
 
@@ -26,7 +26,7 @@ static void claim_nulls(int reg, tag_cloud *tc)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_NULL_REASON_CODE, tag_cloud__redraw_event_null_reason_code },
+    { wimp_NULL_REASON_CODE, tag_cloud_redraw_event_null_reason_code },
   };
 
   event_register_wimp_group(reg,
@@ -35,7 +35,7 @@ static void claim_nulls(int reg, tag_cloud *tc)
                             tc);
 }
 
-static int tag_cloud__redraw_event_null_reason_code(wimp_event_no  event_no,
+static int tag_cloud_redraw_event_null_reason_code(wimp_event_no  event_no,
                                                     wimp_block    *block,
                                                     void          *handle)
 {
@@ -52,7 +52,7 @@ static int tag_cloud__redraw_event_null_reason_code(wimp_event_no  event_no,
 
   if (state.flags & wimp_WINDOW_OPEN)
   {
-    tag_cloud__layout(tc, tc->layout.width /* no change */);
+    tag_cloud_layout(tc, tc->layout.width /* no change */);
     wimp_force_redraw(tc->main_w, 0, -16384, 16384, 0);
   }
 
@@ -61,7 +61,7 @@ static int tag_cloud__redraw_event_null_reason_code(wimp_event_no  event_no,
   return event_HANDLED;
 }
 
-void tag_cloud__schedule_redraw(tag_cloud *tc)
+void tag_cloud_schedule_redraw(tag_cloud *tc)
 {
   /* This will ignore already-registered handlers. */
   claim_nulls(1, tc);

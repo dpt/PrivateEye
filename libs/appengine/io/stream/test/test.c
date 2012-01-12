@@ -65,35 +65,35 @@ int stream_test(void)
 #endif
 
 #if USEFILE
-  err = stream_file__create(in, BUFSZ, &stream[Source]);
+  err = stream_stdio_create(in, BUFSZ, &stream[Source]);
 #else
-  err = stream_mem__create(input, NELEMS(input), &stream[Source]);
+  err = stream_mem_create(input, NELEMS(input), &stream[Source]);
 #endif
   if (err)
     goto Failure;
 
   /* source -> mtfcomp -> mtfdecomp -> packbitscomp -> packbitsdecomp */
 
-  err = stream_mtfcomp__create(stream[Source], BUFSZ, &stream[MTFComp]);
+  err = stream_mtfcomp_create(stream[Source], BUFSZ, &stream[MTFComp]);
   if (err)
     goto Failure;
 
-  err = stream_mtfdecomp__create(stream[MTFComp], BUFSZ, &stream[MTFDecomp]);
+  err = stream_mtfdecomp_create(stream[MTFComp], BUFSZ, &stream[MTFDecomp]);
   if (err)
     goto Failure;
 
-  err = stream_packbitscomp__create(stream[MTFDecomp], BUFSZ, &stream[PackBitsComp]);
+  err = stream_packbitscomp_create(stream[MTFDecomp], BUFSZ, &stream[PackBitsComp]);
   if (err)
     goto Failure;
 
-  err = stream_packbitsdecomp__create(stream[PackBitsComp], BUFSZ, &stream[PackBitsDecomp]);
+  err = stream_packbitsdecomp_create(stream[PackBitsComp], BUFSZ, &stream[PackBitsDecomp]);
   if (err)
     goto Failure;
 
 #if USEFILE
   for (;;)
   {
-    c = stream__getc(stream[PackBitsDecomp]);
+    c = stream_getc(stream[PackBitsDecomp]);
     if (c == EOF)
       break;
 
@@ -102,7 +102,7 @@ int stream_test(void)
 #else
   for (p = input; ; p++)
   {
-    c = stream__getc(stream[PackBitsDecomp]);
+    c = stream_getc(stream[PackBitsDecomp]);
     if (c == EOF)
       break;
 
@@ -114,7 +114,7 @@ int stream_test(void)
 #endif
 
   for (i = 0; i < MaxStreams; i++)
-    stream__destroy(stream[i]);
+    stream_destroy(stream[i]);
 
 #if USEFILE
   fclose(out);

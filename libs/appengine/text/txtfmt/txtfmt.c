@@ -72,7 +72,7 @@ enum
 
 /* ----------------------------------------------------------------------- */
 
-error txtfmt__create(const char *s, txtfmt_t **tx)
+error txtfmt_create(const char *s, txtfmt_t **tx)
 {
   error     err;
   txtfmt_t *newtx;
@@ -118,12 +118,12 @@ OOM:
 
   err = error_OOM;
 
-  txtfmt__destroy(newtx);
+  txtfmt_destroy(newtx);
 
   return err;
 }
 
-void txtfmt__destroy(txtfmt_t *tx)
+void txtfmt_destroy(txtfmt_t *tx)
 {
   if (tx)
   {
@@ -172,7 +172,7 @@ static error emit_line(txtfmt_t *tx, int start, int length)
 }
 
 /* wrap to a character width */
-error txtfmt__wrap(txtfmt_t *tx, int width)
+error txtfmt_wrap(txtfmt_t *tx, int width)
 {
   error       err;
   const char *startofline;
@@ -271,7 +271,7 @@ error txtfmt__wrap(txtfmt_t *tx, int width)
 
 /* ----------------------------------------------------------------------- */
 
-static error txtfmt__plot_text(const txtfmt_t *tx,
+static error txtfmt_plot_text(const txtfmt_t *tx,
                                const char     *s,
                                int             length,
                                int             x0,
@@ -310,7 +310,7 @@ static error txtfmt__plot_text(const txtfmt_t *tx,
   return error_OK;
 }
 
-error txtfmt__paint(const txtfmt_t *tx, int x, int y, wimp_colour bgcolour)
+error txtfmt_paint(const txtfmt_t *tx, int x, int y, wimp_colour bgcolour)
 {
   error       err;
   int         i;
@@ -331,7 +331,7 @@ error txtfmt__paint(const txtfmt_t *tx, int x, int y, wimp_colour bgcolour)
     /* we have to plot even if the length is zero, so we can fill in the
      * background */
 
-    err = txtfmt__plot_text(tx, s, length, x, x + 16834, y, bgcolour);
+    err = txtfmt_plot_text(tx, s, length, x, x + 16834, y, bgcolour);
     if (err)
       goto Failure;
 
@@ -346,14 +346,14 @@ Failure:
   return err;
 }
 
-void txtfmt__set_line_height(txtfmt_t *tx, int line_height)
+void txtfmt_set_line_height(txtfmt_t *tx, int line_height)
 {
   tx->line_height = line_height;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error txtfmt__print(const txtfmt_t *tx)
+error txtfmt_print(const txtfmt_t *tx)
 {
   int i;
 
@@ -381,17 +381,17 @@ error txtfmt__print(const txtfmt_t *tx)
 
 /* ----------------------------------------------------------------------- */
 
-int txtfmt__get_height(const txtfmt_t *tx)
+int txtfmt_get_height(const txtfmt_t *tx)
 {
   return tx->nspans;
 }
 
-int txtfmt__get_length(const txtfmt_t *tx)
+int txtfmt_get_length(const txtfmt_t *tx)
 {
   return tx->length;
 }
 
-int txtfmt__get_wrapped_width(const txtfmt_t *tx)
+int txtfmt_get_wrapped_width(const txtfmt_t *tx)
 {
   return tx->wrapped_width;
 }

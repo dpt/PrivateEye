@@ -79,7 +79,7 @@ wimp_menu *menu_create(const char *title_token)
 
 oom:
 
-  error__fatal_oom();
+  error_fatal_oom();
 
   return NULL; /* never reached */
 }
@@ -127,7 +127,7 @@ void menu_title(wimp_menu **block, const char *token)
 
 oom:
 
-  error__fatal_oom();
+  error_fatal_oom();
 }
 
 void menu_entry(wimp_menu **block, const char *token)
@@ -178,5 +178,5 @@ void menu_entry(wimp_menu **block, const char *token)
 
 oom:
 
-  error__fatal_oom();
+  error_fatal_oom();
 }

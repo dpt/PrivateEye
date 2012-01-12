@@ -16,60 +16,60 @@
 
 #include "appengine/gadgets/tag-cloud.h"
 
-typedef struct tag_cloud__entry
+typedef struct tag_cloud_entry
 {
   int              count;
 }
-tag_cloud__entry;
+tag_cloud_entry;
 
-typedef struct tag_cloud__scale_data
+typedef struct tag_cloud_scale_data
 {
   int              min;
   int              scale;
 }
-tag_cloud__scale_data;
+tag_cloud_scale_data;
 
-typedef struct tag_cloud__boxes
+typedef struct tag_cloud_boxes
 {
   os_box          *boxes; /* array of boxes, one per tag */
   int              allocated;
 }
-tag_cloud__boxes;
+tag_cloud_boxes;
 
-typedef struct tag_cloud__dim
+typedef struct tag_cloud_dim
 {
   int              length[2]; /* length for regular, bold */
   int              scale;
 }
-tag_cloud__dim;
+tag_cloud_dim;
 
-typedef struct tag_cloud__dims
+typedef struct tag_cloud_dims
 {
   int              gaplength; /* length of the gap string in font units */
 
-  tag_cloud__dim  *dims;
+  tag_cloud_dim  *dims;
   int              allocated;
 }
-tag_cloud__dims;
+tag_cloud_dims;
 
 /* Cached lengths of highlighted tags. */
-typedef struct tag_cloud__lengths
+typedef struct tag_cloud_lengths
 {
   int              widest;
   int             *length;
   int              allocated;
 }
-tag_cloud__lengths;
+tag_cloud_lengths;
 
-typedef struct tag_cloud__paintstring
+typedef struct tag_cloud_paintstring
 {
   char            *string;
   int              allocated;
   int              used;
 }
-tag_cloud__paintstring;
+tag_cloud_paintstring;
 
-typedef struct tag_cloud__layout_data
+typedef struct tag_cloud_layout_data
 {
   int              width;     /* OS units */
   int              height;    /* OS units */
@@ -83,66 +83,66 @@ typedef struct tag_cloud__layout_data
   font_f           font;      /* regular font */
   font_f           bold_font; /* bold font */
 
-  tag_cloud__paintstring paintstring;
-  tag_cloud__dims        dims;
-  tag_cloud__lengths     lengths;
-  tag_cloud__boxes       boxes;
+  tag_cloud_paintstring paintstring;
+  tag_cloud_dims        dims;
+  tag_cloud_lengths     lengths;
+  tag_cloud_boxes       boxes;
 }
-tag_cloud__layout_data;
+tag_cloud_layout_data;
 
-typedef bitvec_t *tag_cloud__highlight_data;
+typedef bitvec_t *tag_cloud_highlight_data;
 
-typedef struct tag_cloud__hover_data
+typedef struct tag_cloud_hover_data
 {
   atom_t           index; /* tag to underline */
   int              last_index;
   const char      *pointer_shape_name; /* or NULL if none */
 }
-tag_cloud__hover_data;
+tag_cloud_hover_data;
 
 enum
 {
-  tag_cloud__FLAG_NEW_DATA       = (1 << 0),
-  tag_cloud__FLAG_NEW_HIGHLIGHTS = (1 << 1),
-  tag_cloud__FLAG_NEW_HOVER      = (1 << 2),
-  tag_cloud__FLAG_NEW_SORT       = (1 << 3),
-  tag_cloud__FLAG_NEW_DISPLAY    = (1 << 4),
-  tag_cloud__FLAG_NEW_ALL        = 0x1f,
-  tag_cloud__FLAG_SHADED         = (1 << 5),
-  tag_cloud__FLAG_SORT_SEL_FIRST = (1 << 6),
-  tag_cloud__FLAG_TOOLBAR        = (1 << 7),
-  tag_cloud__FLAG_TOOLBAR_NOT_EVER = (1 << 8),
-  tag_cloud__FLAG_LAYOUT_PREPED  = (1 << 9),
+  tag_cloud_FLAG_NEW_DATA       = (1 << 0),
+  tag_cloud_FLAG_NEW_HIGHLIGHTS = (1 << 1),
+  tag_cloud_FLAG_NEW_HOVER      = (1 << 2),
+  tag_cloud_FLAG_NEW_SORT       = (1 << 3),
+  tag_cloud_FLAG_NEW_DISPLAY    = (1 << 4),
+  tag_cloud_FLAG_NEW_ALL        = 0x1f,
+  tag_cloud_FLAG_SHADED         = (1 << 5),
+  tag_cloud_FLAG_SORT_SEL_FIRST = (1 << 6),
+  tag_cloud_FLAG_TOOLBAR        = (1 << 7),
+  tag_cloud_FLAG_TOOLBAR_NOT_EVER = (1 << 8),
+  tag_cloud_FLAG_LAYOUT_PREPED  = (1 << 9),
 };
 
-typedef unsigned int tag_cloud__flags;
+typedef unsigned int tag_cloud_flags;
 
 struct tag_cloud
 {
-  tag_cloud__config         config;
+  tag_cloud_config         config;
 
-  tag_cloud__flags          flags;
+  tag_cloud_flags          flags;
 
   wimp_w                    main_w; /* cloned per instance */
   wimp_w                    toolbar_w;
   wimp_menu                *main_m; // should not need to be per-instance
 
-  tag_cloud__newtagfn      *newtag;
-  tag_cloud__deletetagfn   *deletetag;
-  tag_cloud__renametagfn   *renametag;
-  tag_cloud__tagfn         *tag;
-  tag_cloud__tagfn         *detag;
-  tag_cloud__tagfilefn     *tagfile;
-  tag_cloud__tagfilefn     *detagfile;
-  tag_cloud__eventfn       *event;
+  tag_cloud_newtagfn      *newtag;
+  tag_cloud_deletetagfn   *deletetag;
+  tag_cloud_renametagfn   *renametag;
+  tag_cloud_tagfn         *tag;
+  tag_cloud_tagfn         *detag;
+  tag_cloud_tagfilefn     *tagfile;
+  tag_cloud_tagfilefn     *detagfile;
+  tag_cloud_eventfn       *event;
   void                     *arg;
 
-  tag_cloud__key_handler_fn *key_handler;
+  tag_cloud_key_handler_fn *key_handler;
   void                     *key_handler_arg;
 
   atom_set_t               *dict;
 
-  tag_cloud__entry         *entries;
+  tag_cloud_entry         *entries;
   int                       e_used;
   int                       e_allocated;
 
@@ -153,13 +153,13 @@ struct tag_cloud
   int                       scaletab[5];
   int                       display_type;
 
-  tag_cloud__scale_data     scale;
+  tag_cloud_scale_data     scale;
 
-  tag_cloud__layout_data    layout;
+  tag_cloud_layout_data    layout;
 
-  tag_cloud__highlight_data highlight;
+  tag_cloud_highlight_data highlight;
 
-  tag_cloud__hover_data     hover;
+  tag_cloud_hover_data     hover;
 
   int                       menued_tag_index;
 
@@ -171,42 +171,42 @@ struct tag_cloud
   sort;
 };
 
-void tag_cloud__internal_set_handlers(int reg, tag_cloud *tc);
+void tag_cloud_internal_set_handlers(int reg, tag_cloud *tc);
 
 /* layout.c */
-error tag_cloud__layout_prepare(tag_cloud *tc);
-error tag_cloud__layout(tag_cloud *tc, int width);
-void tag_cloud__layout_reset(tag_cloud *tc);
+error tag_cloud_layout_prepare(tag_cloud *tc);
+error tag_cloud_layout(tag_cloud *tc, int width);
+void tag_cloud_layout_reset(tag_cloud *tc);
 /* Discard cached metrics. */
-void tag_cloud__layout_discard(tag_cloud *tc);
-int tag_cloud__hit(tag_cloud *tc, int x, int y);
+void tag_cloud_layout_discard(tag_cloud *tc);
+int tag_cloud_hit(tag_cloud *tc, int x, int y);
 
 /* init.c */
-wimp_w tag_cloud__get_main_window(void);
-wimp_w tag_cloud__get_toolbar_window(void);
-dialogue_t *tag_cloud__get_newtag_dialogue(void);
-dialogue_t *tag_cloud__get_renametag_dialogue(void);
-dialogue_t *tag_cloud__get_taginfo_dialogue(void);
+wimp_w tag_cloud_get_main_window(void);
+wimp_w tag_cloud_get_toolbar_window(void);
+dialogue_t *tag_cloud_get_newtag_dialogue(void);
+dialogue_t *tag_cloud_get_renametag_dialogue(void);
+dialogue_t *tag_cloud_get_taginfo_dialogue(void);
 
 /* hover.c */
-void tag_cloud__hover_init(tag_cloud *tc);
-void tag_cloud__hover(tag_cloud *tc, int x, int y);
-void tag_cloud__restore_pointer_shape(tag_cloud *tc);
-void tag_cloud__hover_toggle(tag_cloud *tc);
+void tag_cloud_hover_init(tag_cloud *tc);
+void tag_cloud_hover(tag_cloud *tc, int x, int y);
+void tag_cloud_restore_pointer_shape(tag_cloud *tc);
+void tag_cloud_hover_toggle(tag_cloud *tc);
 
 /* redraw.c */
-void tag_cloud__schedule_redraw(tag_cloud *tc);
+void tag_cloud_schedule_redraw(tag_cloud *tc);
 
 /* open.c */
-void tag_cloud__post_open(tag_cloud *tc, wimp_open *open);
-void tag_cloud__post_reopen(tag_cloud *tc, wimp_open *open);
+void tag_cloud_post_open(tag_cloud *tc, wimp_open *open);
+void tag_cloud_post_reopen(tag_cloud *tc, wimp_open *open);
 
 /* highlight.c */
-int tag_cloud__is_highlighted(tag_cloud *tc, int index);
+int tag_cloud_is_highlighted(tag_cloud *tc, int index);
 
 /* toolbar.c */
-void tag_cloud__attach_toolbar(tag_cloud *tc);
-void tag_cloud__detach_toolbar(tag_cloud *tc);
-void tag_cloud__toggle_toolbar(tag_cloud *tc);
+void tag_cloud_attach_toolbar(tag_cloud *tc);
+void tag_cloud_detach_toolbar(tag_cloud *tc);
+void tag_cloud_toggle_toolbar(tag_cloud *tc);
 
 #endif /* TAG_CLOUD_IMPL_H */

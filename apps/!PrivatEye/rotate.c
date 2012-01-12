@@ -136,7 +136,7 @@ error rotate__init(void)
 
   /* dependencies */
 
-  err = help__init();
+  err = help_init();
   if (err)
     return err;
 
@@ -144,7 +144,7 @@ error rotate__init(void)
 
   rotate__set_handlers(1);
 
-  err = help__add_window(LOCALS.rotate_w, "rotate");
+  err = help_add_window(LOCALS.rotate_w, "rotate");
   if (err)
     return err;
 
@@ -153,11 +153,11 @@ error rotate__init(void)
 
 void rotate__fin(void)
 {
-  help__remove_window(LOCALS.rotate_w);
+  help_remove_window(LOCALS.rotate_w);
 
   rotate__set_handlers(0);
 
-  help__fin();
+  help_fin();
 }
 
 static void rotate__set_drag_handlers(int reg)
@@ -616,7 +616,7 @@ static void rotate_internal(image_t *image, int angle, int hflip)
     rc = image->methods.rotate(&GLOBALS.choices.image, image, angle);
 
     if (rc)
-      oserror__report(0, "error.jpeg.rotate");
+      oserror_report(0, "error.jpeg.rotate");
   }
 }
 

@@ -8,12 +8,12 @@
 
 typedef struct T T;
 
-T *sym__create(void);
-void sym__destroy(T *sy);
-int sym__lookup(T *sy, const char *s);
-int sym__insert(T *sy, const char *s, Token tok);
-const char *sym__get(sym *sy, int index);
-void sym__dump(sym *sy);
+T *sym_create(void);
+void sym_destroy(T *sy);
+int sym_lookup(T *sy, const char *s);
+int sym_insert(T *sy, const char *s, Token tok);
+const char *sym_get(sym *sy, int index);
+void sym_dump(sym *sy);
 
 #undef T
 

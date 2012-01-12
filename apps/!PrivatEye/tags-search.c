@@ -107,7 +107,7 @@ static error tag(tag_cloud *tc,
 
   ind->nindices++;
 
-  err = tag_cloud__highlight(tc, ind->indices, ind->nindices);
+  err = tag_cloud_highlight(tc, ind->indices, ind->nindices);
   if (err)
     return err;
 
@@ -139,7 +139,7 @@ static error detag(tag_cloud *tc,
 
   ind->nindices--;
 
-  err = tag_cloud__highlight(tc, ind->indices, ind->nindices);
+  err = tag_cloud_highlight(tc, ind->indices, ind->nindices);
   if (err)
     return err;
 
@@ -148,15 +148,15 @@ static error detag(tag_cloud *tc,
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler tags_search__event_mouse_click;
+static event_wimp_handler tags_search_event_mouse_click;
 
 /* ----------------------------------------------------------------------- */
 
-static void tags_search__set_handlers(int reg)
+static void tags_search_set_handlers(int reg)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_MOUSE_CLICK, tags_search__event_mouse_click },
+    { wimp_MOUSE_CLICK, tags_search_event_mouse_click },
   };
 
   event_register_wimp_group(reg,
@@ -167,21 +167,21 @@ static void tags_search__set_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-static void tags_search__properfin(int force);
+static void tags_search_properfin(int force);
 
 /* ----------------------------------------------------------------------- */
 
-static int tags_search__refcount = 0;
+static int tags_search_refcount = 0;
 
-error tags_search__init(void)
+error tags_search_init(void)
 {
-  if (tags_search__refcount++ == 0)
+  if (tags_search_refcount++ == 0)
   {
     error err;
 
     /* dependencies */
 
-    err = help__init();
+    err = help_init();
     if (err)
       return err;
 
@@ -191,9 +191,9 @@ error tags_search__init(void)
 
     LOCALS.tags_search_w = window_create("tags_search");
 
-    tags_search__set_handlers(1);
+    tags_search_set_handlers(1);
 
-    err = help__add_window(LOCALS.tags_search_w, "tags_search");
+    err = help_add_window(LOCALS.tags_search_w, "tags_search");
     if (err)
       return err;
   }
@@ -201,21 +201,21 @@ error tags_search__init(void)
   return error_OK;
 }
 
-void tags_search__fin(void)
+void tags_search_fin(void)
 {
-  if (--tags_search__refcount == 0)
+  if (--tags_search_refcount == 0)
   {
     free(LOCALS.indices.indices);
 
-    tags_search__properfin(1); /* force shutdown */
+    tags_search_properfin(1); /* force shutdown */
 
-    help__remove_window(LOCALS.tags_search_w);
+    help_remove_window(LOCALS.tags_search_w);
 
-    tags_search__set_handlers(0);
+    tags_search_set_handlers(0);
 
     tags_common__fin();
 
-    help__fin();
+    help_fin();
   }
 }
 
@@ -223,15 +223,15 @@ void tags_search__fin(void)
 
 /* The 'proper' init/fin functions provide lazy initialisation. */
 
-static int tags_search__properrefcount = 0;
+static int tags_search_properrefcount = 0;
 
-static error tags_search__properinit(void)
+static error tags_search_properinit(void)
 {
   error err;
 
-  if (tags_search__properrefcount++ == 0)
+  if (tags_search_properrefcount++ == 0)
   {
-    tag_cloud__config  conf;
+    tag_cloud_config  conf;
     tag_cloud         *tc = NULL;
 
     err = tags_common__properinit();
@@ -243,14 +243,14 @@ static error tags_search__properinit(void)
     conf.padding = GLOBALS.choices.tagcloud.padding;
     conf.scale   = GLOBALS.choices.tagcloud.scale;
 
-    tc = tag_cloud__create(tag_cloud__CREATE_FLAG_TOOLBAR_DISABLED, &conf);
+    tc = tag_cloud_create(tag_cloud_CREATE_FLAG_TOOLBAR_DISABLED, &conf);
     if (tc == NULL)
     {
       err = error_OOM;
       goto Failure;
     }
 
-    tag_cloud__set_handlers(tc,
+    tag_cloud_set_handlers(tc,
                             tags_common__add_tag,
                             tags_common__delete_tag,
                             tags_common__rename_tag,
@@ -261,7 +261,7 @@ static error tags_search__properinit(void)
                             tags_common__event,
                             tags_common__get_db());
 
-    /* tag_cloud__set_key_handler(tc, keyhandler, db); */
+    /* tag_cloud_set_key_handler(tc, keyhandler, db); */
 
     err = tags_common__set_tags(tc);
     if (err)
@@ -278,17 +278,17 @@ Failure:
   return err;
 }
 
-static void tags_search__properfin(int force)
+static void tags_search_properfin(int force)
 {
-  if (tags_search__properrefcount == 0)
+  if (tags_search_properrefcount == 0)
     return;
 
   if (force)
-    tags_search__properrefcount = 1;
+    tags_search_properrefcount = 1;
 
-  if (--tags_search__properrefcount == 0)
+  if (--tags_search_properrefcount == 0)
   {
-    tag_cloud__destroy(LOCALS.tc);
+    tag_cloud_destroy(LOCALS.tc);
 
     tags_common__properfin(0); /* don't pass 'force' in */
   }
@@ -297,7 +297,7 @@ static void tags_search__properfin(int force)
 /* ----------------------------------------------------------------------- */
 
 /* This is very rough at the moment. */
-static error tags_search__search(void)
+static error tags_search_search(void)
 {
   error         err;
   int           cont;
@@ -312,8 +312,8 @@ static error tags_search__search(void)
   do
   {
     /* this function matches all tags */
-    err = tagdb__enumerate_ids_by_tags(tags_common__get_db(),
-                        (tagdb__tag *) LOCALS.indices.indices,
+    err = tagdb_enumerate_ids_by_tags(tags_common__get_db(),
+                        (tagdb_tag *) LOCALS.indices.indices,
                                        LOCALS.indices.nindices,
                                       &cont,
                                        buf,
@@ -326,7 +326,7 @@ static error tags_search__search(void)
       os_error   *oserr;
       const char *filename;
 
-      filename = filenamedb__get(fdb, buf);
+      filename = filenamedb_get(fdb, buf);
       if (filename)
       {
         fileswitch_object_type type;
@@ -353,7 +353,7 @@ static error tags_search__search(void)
 
 /* ----------------------------------------------------------------------- */
 
-static int tags_search__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tags_search_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
 
@@ -367,7 +367,7 @@ static int tags_search__event_mouse_click(wimp_event_no event_no, wimp_block *bl
     switch (pointer->i)
     {
       case TAGS_SEARCH_B_SEARCH:
-        tags_search__search();
+        tags_search_search();
         break;
 
       case TAGS_SEARCH_B_CANCEL:
@@ -378,9 +378,9 @@ static int tags_search__event_mouse_click(wimp_event_no event_no, wimp_block *bl
     {
 #if 0
       if (pointer->buttons & wimp_CLICK_SELECT)
-        tags_search__close_dialogue();
+        tags_search_close_dialogue();
       else
-        tags_search__update_dialogue();
+        tags_search_update_dialogue();
 #endif
     }
   }
@@ -452,7 +452,7 @@ static error search_attach_child(wimp_w parent, wimp_w child, wimp_i icon)
   return error_OK;
 }
 
-error tags_search__open(void)
+error tags_search_open(void)
 {
   error             err;
   wimp_w            w;
@@ -460,7 +460,7 @@ error tags_search__open(void)
 
   /* load the databases, create tag cloud, etc. */
 
-  err = tags_search__properinit();
+  err = tags_search_properinit();
   if (err)
     return err;
 
@@ -479,11 +479,11 @@ error tags_search__open(void)
   {
     /* opening for the first(?) time */
 
-    /* tags_search__update_dialogue(); */
+    /* tags_search_update_dialogue(); */
 
     window_open_at(w, AT_BOTTOMPOINTER);
 
-    search_attach_child(w, tag_cloud__get_window_handle(LOCALS.tc), 2);
+    search_attach_child(w, tag_cloud_get_window_handle(LOCALS.tc), 2);
   }
 
   return error_OK;

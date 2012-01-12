@@ -40,7 +40,7 @@ static void selectionx(const wimp_selection *selection, void *opaque)
 
   case ICONBAR_SEARCHTAGS:
 #ifdef EYE_TAGS
-    tags_search__open();
+    tags_search_open();
 #endif
     break;
 
@@ -78,16 +78,16 @@ error eye_icon_bar_init(void)
 {
   error err;
 
-  err = icon_bar__init();
+  err = icon_bar_init();
   if (err)
     return err;
 
-  icon_bar__set_handlers(NULL, selectionx, update, NULL);
+  icon_bar_set_handlers(NULL, selectionx, update, NULL);
 
   return error_OK;
 }
 
 void eye_icon_bar_fin(void)
 {
-  icon_bar__fin();
+  icon_bar_fin();
 }

@@ -280,7 +280,7 @@ static int key_to_action_compare(const void *a, const void *b)
   return 0;
 }
 
-error keymap__create(const char           *filename,
+error keymap_create(const char           *filename,
                      const keymap_section *sections,
                      int                   nsections,
                      keymap_t            **keymap_out)
@@ -425,7 +425,7 @@ Failure:
   return err;
 }
 
-int keymap__action(keymap_t *keymap, int section, wimp_key_no key_no)
+int keymap_get_action(keymap_t *keymap, int section, wimp_key_no key_no)
 {
   int              i;
   keymap_section2 *s;
@@ -442,7 +442,7 @@ int keymap__action(keymap_t *keymap, int section, wimp_key_no key_no)
   return (i >= 0) ? s->map[i].action : -1; /* known : unknown */
 }
 
-void keymap__destroy(keymap_t *keymap)
+void keymap_destroy(keymap_t *keymap)
 {
   keymap_section2 *s;
 

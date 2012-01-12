@@ -42,7 +42,7 @@ help_array;
 
 /* ----------------------------------------------------------------------- */
 
-static event_message_handler help__message_help_request;
+static event_message_handler help_message_help_request;
 
 /* ----------------------------------------------------------------------- */
 
@@ -55,7 +55,7 @@ static void register_event_handlers(int reg)
 {
   static const event_message_handler_spec message_handlers[] =
   {
-    { message_HELP_REQUEST, help__message_help_request },
+    { message_HELP_REQUEST, help_message_help_request },
   };
 
   event_register_message_group(reg,
@@ -66,13 +66,13 @@ static void register_event_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-static int help__refcount = 0;
+static int help_refcount = 0;
 
-error help__init(void)
+error help_init(void)
 {
   error err;
 
-  if (help__refcount++ == 0)
+  if (help_refcount++ == 0)
   {
     register_event_handlers(1);
 
@@ -98,9 +98,9 @@ failure:
   return err;
 }
 
-void help__fin(void)
+void help_fin(void)
 {
-  if (--help__refcount == 0)
+  if (--help_refcount == 0)
   {
     free(windows.entries);
     atom_destroy(windows.atoms);
@@ -192,31 +192,31 @@ static const char *get(help_array *arr, unsigned int obj)
 
 /* ----------------------------------------------------------------------- */
 
-error help__add_window(wimp_w w, const char *name)
+error help_add_window(wimp_w w, const char *name)
 {
   return add_element(&windows, (unsigned int) w, name);
 }
 
-void help__remove_window(wimp_w w)
+void help_remove_window(wimp_w w)
 {
   remove_element(&windows, (unsigned int) w);
 }
 
 /* ----------------------------------------------------------------------- */
 
-error help__add_menu(wimp_menu *m, const char *name)
+error help_add_menu(wimp_menu *m, const char *name)
 {
   return add_element(&menus, (unsigned int) m, name);
 }
 
-void help__remove_menu(wimp_menu *m)
+void help_remove_menu(wimp_menu *m)
 {
   remove_element(&menus, (unsigned int) m);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static int help__message_help_request(wimp_message *message, void *handle)
+static int help_message_help_request(wimp_message *message, void *handle)
 {
   help_message_request *request;
   const char           *partial_token;

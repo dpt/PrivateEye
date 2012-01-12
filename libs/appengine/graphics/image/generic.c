@@ -23,7 +23,7 @@ int generic_save(image_choices *choices, image_t *image, const char *file_name)
                      (byte *) image->image + image->display.file_size));
   if (e)
   {
-    oserror__report_block(e);
+    oserror_report_block(e);
     return TRUE; /* failure */
   }
 

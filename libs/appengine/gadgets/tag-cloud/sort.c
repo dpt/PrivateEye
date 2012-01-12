@@ -69,8 +69,8 @@ static int sort_by_name_hi(const void *va, const void *vb)
   if (a == b)
     return 0;
 
-  ha = tag_cloud__is_highlighted(sort_tc, a);
-  hb = tag_cloud__is_highlighted(sort_tc, b);
+  ha = tag_cloud_is_highlighted(sort_tc, a);
+  hb = tag_cloud_is_highlighted(sort_tc, b);
 
   /* we want highlights to sort sooner, so if it's highlighted then return a
    * _lower_ value */
@@ -94,8 +94,8 @@ static int sort_by_count_hi(const void *va, const void *vb)
   if (a == b)
     return 0;
 
-  ha = tag_cloud__is_highlighted(sort_tc, a);
-  hb = tag_cloud__is_highlighted(sort_tc, b);
+  ha = tag_cloud_is_highlighted(sort_tc, a);
+  hb = tag_cloud_is_highlighted(sort_tc, b);
 
   /* we want highlights to sort sooner, so if it's highlighted then return a
    * _lower_ value */
@@ -121,15 +121,15 @@ static void sort(tag_cloud *tc)
   int sort_type;
   int order_type;
 
-  sort_type  = tag_cloud__get_sort(tc);
-  order_type = tag_cloud__get_order(tc);
+  sort_type  = tag_cloud_get_sort(tc);
+  order_type = tag_cloud_get_order(tc);
 
   /* avoid sorting wherever possible */
 
   if (sort_type  == tc->sort.last_sort_type &&
       order_type == tc->sort.last_order_type &&
-      (tc->flags & tag_cloud__FLAG_NEW_DATA) == 0 &&
-      (tc->flags & tag_cloud__FLAG_NEW_HIGHLIGHTS) == 0)
+      (tc->flags & tag_cloud_FLAG_NEW_DATA) == 0 &&
+      (tc->flags & tag_cloud_FLAG_NEW_HIGHLIGHTS) == 0)
     return; /* already sorted ### check */
 
   /* qsort doesn't have any way to pass an arg through to the compare
@@ -140,77 +140,77 @@ static void sort(tag_cloud *tc)
   qsort(tc->sorted, tc->e_used, sizeof(*tc->sorted),
         fn[order_type][sort_type]);
 
-  tc->flags |= tag_cloud__FLAG_NEW_SORT;
+  tc->flags |= tag_cloud_FLAG_NEW_SORT;
 
   tc->sort.last_sort_type  = sort_type;
   tc->sort.last_order_type = order_type;
 
-  tag_cloud__schedule_redraw(tc);
+  tag_cloud_schedule_redraw(tc);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void tag_cloud__kick_sort_icon(tag_cloud *tc)
+static void tag_cloud_kick_sort_icon(tag_cloud *tc)
 {
-  if (tc->flags & tag_cloud__FLAG_TOOLBAR)
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR)
     /* toolbar icons must match the order of sort_type */
     icon_set_radio(tc->toolbar_w, TAG_CLOUD_T_B_SORTALPHA + tc->sort_type);
 }
 
-void tag_cloud__set_sort(tag_cloud *tc, int sort_type)
+void tag_cloud_set_sort(tag_cloud *tc, int sort_type)
 {
-  if ((unsigned int) sort_type >= tag_cloud__SORT_TYPE__LIMIT)
+  if ((unsigned int) sort_type >= tag_cloud_SORT_TYPE__LIMIT)
     sort_type = 0;
 
   tc->sort_type = sort_type;
 
   sort(tc);
 
-  tag_cloud__kick_sort_icon(tc);
+  tag_cloud_kick_sort_icon(tc);
 }
 
-int tag_cloud__get_sort(tag_cloud *tc)
+int tag_cloud_get_sort(tag_cloud *tc)
 {
   return tc->sort_type;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void tag_cloud__kick_order_icon(tag_cloud *tc)
+static void tag_cloud_kick_order_icon(tag_cloud *tc)
 {
-  if (tc->flags & tag_cloud__FLAG_TOOLBAR)
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR)
     icon_set_selected(tc->toolbar_w, TAG_CLOUD_T_O_SELFIRST,
-                      tc->flags & tag_cloud__FLAG_SORT_SEL_FIRST);
+                      tc->flags & tag_cloud_FLAG_SORT_SEL_FIRST);
 }
 
-void tag_cloud__set_order(tag_cloud *tc, int order_type)
+void tag_cloud_set_order(tag_cloud *tc, int order_type)
 {
-  if ((unsigned int) order_type >= tag_cloud__ORDER__LIMIT)
+  if ((unsigned int) order_type >= tag_cloud_ORDER__LIMIT)
     order_type = 0;
 
-  if (order_type == tag_cloud__ORDER_SELECTED_FIRST)
-    tc->flags |= tag_cloud__FLAG_SORT_SEL_FIRST;
+  if (order_type == tag_cloud_ORDER_SELECTED_FIRST)
+    tc->flags |= tag_cloud_FLAG_SORT_SEL_FIRST;
   else
-    tc->flags &= ~tag_cloud__FLAG_SORT_SEL_FIRST;
+    tc->flags &= ~tag_cloud_FLAG_SORT_SEL_FIRST;
 
   sort(tc);
 
-  tag_cloud__kick_order_icon(tc);
+  tag_cloud_kick_order_icon(tc);
 }
 
-void tag_cloud__toggle_order(tag_cloud *tc)
+void tag_cloud_toggle_order(tag_cloud *tc)
 {
-  tc->flags ^= tag_cloud__FLAG_SORT_SEL_FIRST;
+  tc->flags ^= tag_cloud_FLAG_SORT_SEL_FIRST;
 
   sort(tc);
 
-  tag_cloud__kick_order_icon(tc);
+  tag_cloud_kick_order_icon(tc);
 }
 
-int tag_cloud__get_order(tag_cloud *tc)
+int tag_cloud_get_order(tag_cloud *tc)
 {
-  if (tc->flags & tag_cloud__FLAG_SORT_SEL_FIRST)
-    return tag_cloud__ORDER_SELECTED_FIRST;
+  if (tc->flags & tag_cloud_FLAG_SORT_SEL_FIRST)
+    return tag_cloud_ORDER_SELECTED_FIRST;
   else
     return 0;
 }

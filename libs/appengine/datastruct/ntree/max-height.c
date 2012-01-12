@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-int ntree__max_height(ntree_t *t)
+int ntree_max_height(ntree_t *t)
 {
   int      max;
   ntree_t *child;
@@ -21,7 +21,7 @@ int ntree__max_height(ntree_t *t)
   {
     int h;
 
-    h = ntree__max_height(child);
+    h = ntree_max_height(child);
     if (h > max)
       max = h;
   }

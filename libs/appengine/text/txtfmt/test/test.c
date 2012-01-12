@@ -29,7 +29,7 @@ int txtfmt_test(void)
 
   for (i = 0; i < ndata; i++)
   {
-    err = txtfmt__create(data[i], &tx[i]);
+    err = txtfmt_create(data[i], &tx[i]);
     if (err)
       return 1;
   }
@@ -46,13 +46,13 @@ int txtfmt_test(void)
 
       printf("test string %d, wrapping to %d:\n", i, w);
 
-      err = txtfmt__wrap(tx[i], w);
+      err = txtfmt_wrap(tx[i], w);
       if (err)
         return 1;
 
-      printf("height=%d\n", txtfmt__get_height(tx[i]));
+      printf("height=%d\n", txtfmt_get_height(tx[i]));
 
-      err = txtfmt__print(tx[i]);
+      err = txtfmt_print(tx[i]);
       if (err)
         return 1;
     }
@@ -62,7 +62,7 @@ int txtfmt_test(void)
 
   for (i = 0; i < ndata; i++)
   {
-    txtfmt__destroy(tx[i]);
+    txtfmt_destroy(tx[i]);
   }
 
   return 0;

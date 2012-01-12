@@ -11,7 +11,7 @@
 
 /* use 0 for a sensible default buffer size */
 
-error stream_packbitscomp__create(stream *input, int bufsz, stream **s);
-error stream_packbitsdecomp__create(stream *input, int bufsz, stream **s);
+error stream_packbitscomp_create(stream *input, int bufsz, stream **s);
+error stream_packbitsdecomp_create(stream *input, int bufsz, stream **s);
 
 #endif /* APPENGINE_STREAM_PACKBITS_H */

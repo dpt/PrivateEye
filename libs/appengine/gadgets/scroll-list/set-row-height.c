@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-void scroll_list__set_row_height(scroll_list *sl, int height, int leading)
+void scroll_list_set_row_height(scroll_list *sl, int height, int leading)
 {
   sl->height  = height;
   sl->leading = leading;

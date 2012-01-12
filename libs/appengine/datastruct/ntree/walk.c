@@ -13,8 +13,8 @@
 
 #include "impl.h"
 
-static error walk_in_order(ntree_t *t, ntree__walk_flags flags, int depth,
-                           ntree__walk_fn *fn, void *arg)
+static error walk_in_order(ntree_t *t, ntree_walk_flags flags, int depth,
+                           ntree_walk_fn *fn, void *arg)
 {
   error err;
 
@@ -34,7 +34,7 @@ static error walk_in_order(ntree_t *t, ntree__walk_flags flags, int depth,
     }
 
     /* then next process the node itself */
-    if (flags & ntree__WALK_BRANCHES)
+    if (flags & ntree_WALK_BRANCHES)
     {
       err = fn(t, arg);
       if (err)
@@ -55,7 +55,7 @@ static error walk_in_order(ntree_t *t, ntree__walk_flags flags, int depth,
   }
   else
   {
-    if (flags & ntree__WALK_LEAVES)
+    if (flags & ntree_WALK_LEAVES)
     {
       err = fn(t, arg);
       if (err)
@@ -66,15 +66,15 @@ static error walk_in_order(ntree_t *t, ntree__walk_flags flags, int depth,
   return error_OK;
 }
 
-static error walk_pre_order(ntree_t *t, ntree__walk_flags flags, int depth,
-                            ntree__walk_fn *fn, void *arg)
+static error walk_pre_order(ntree_t *t, ntree_walk_flags flags, int depth,
+                            ntree_walk_fn *fn, void *arg)
 {
   error err;
 
   if (t->children)
   {
     /* process the node itself */
-    if (flags & ntree__WALK_BRANCHES)
+    if (flags & ntree_WALK_BRANCHES)
     {
       err = fn(t, arg);
       if (err)
@@ -98,7 +98,7 @@ static error walk_pre_order(ntree_t *t, ntree__walk_flags flags, int depth,
   }
   else
   {
-    if (flags & ntree__WALK_LEAVES)
+    if (flags & ntree_WALK_LEAVES)
     {
       err = fn(t, arg);
       if (err)
@@ -109,8 +109,8 @@ static error walk_pre_order(ntree_t *t, ntree__walk_flags flags, int depth,
   return error_OK;
 }
 
-static error walk_post_order(ntree_t *t, ntree__walk_flags flags, int depth,
-                             ntree__walk_fn *fn, void *arg)
+static error walk_post_order(ntree_t *t, ntree_walk_flags flags, int depth,
+                             ntree_walk_fn *fn, void *arg)
 {
   error err;
 
@@ -132,7 +132,7 @@ static error walk_post_order(ntree_t *t, ntree__walk_flags flags, int depth,
     }
 
     /* finally process the node itself */
-    if (flags & ntree__WALK_BRANCHES)
+    if (flags & ntree_WALK_BRANCHES)
     {
       err = fn(t, arg);
       if (err)
@@ -141,7 +141,7 @@ static error walk_post_order(ntree_t *t, ntree__walk_flags flags, int depth,
   }
   else
   {
-    if (flags & ntree__WALK_LEAVES)
+    if (flags & ntree_WALK_LEAVES)
     {
       err = fn(t, arg);
       if (err)
@@ -152,22 +152,22 @@ static error walk_post_order(ntree_t *t, ntree__walk_flags flags, int depth,
   return error_OK;
 }
 
-error ntree__walk(ntree_t *t, ntree__walk_flags flags, int max_depth,
-                  ntree__walk_fn *fn, void *arg)
+error ntree_walk(ntree_t *t, ntree_walk_flags flags, int max_depth,
+                  ntree_walk_fn *fn, void *arg)
 {
-  error (*walker)(ntree_t *, ntree__walk_flags, int,
-                  ntree__walk_fn *, void *);
+  error (*walker)(ntree_t *, ntree_walk_flags, int,
+                  ntree_walk_fn *, void *);
 
-  switch (flags & ntree__WALK_ORDER_MASK)
+  switch (flags & ntree_WALK_ORDER_MASK)
   {
   default:
-  case ntree__WALK_IN_ORDER:
+  case ntree_WALK_IN_ORDER:
     walker = walk_in_order;
     break;
-  case ntree__WALK_PRE_ORDER:
+  case ntree_WALK_PRE_ORDER:
     walker = walk_pre_order;
     break;
-  case ntree__WALK_POST_ORDER:
+  case ntree_WALK_POST_ORDER:
     walker = walk_post_order;
     break;
   }

@@ -10,36 +10,36 @@
 
 #include "appengine/geom/packer.h"
 
-typedef enum packer_sort
+typedef enum packer_sortdir
 {
-  packer__SORT_TOP_LEFT,
-  packer__SORT_TOP_RIGHT,
-  packer__SORT_BOTTOM_LEFT,
-  packer__SORT_BOTTOM_RIGHT,
-  packer__SORT__LIMIT,
+  packer_SORT_TOP_LEFT,
+  packer_SORT_TOP_RIGHT,
+  packer_SORT_BOTTOM_LEFT,
+  packer_SORT_BOTTOM_RIGHT,
+  packer_SORT__LIMIT,
 }
-packer_sort;
+packer_sortdir;
 
 struct packer_t
 {
-  os_box       *areas;
-  int           allocedareas;
-  int           usedareas;
+  os_box        *areas;
+  int            allocedareas;
+  int            usedareas;
 
-  os_box        dims;          /* page size */
+  os_box         dims;          /* page size */
 
-  os_box        margins;       /* page size minus margins (but not the
-                                  margins themselves) */
+  os_box         margins;       /* page size minus margins (but not the
+                                   margins themselves) */
 
-  int           nextindex;
-  os_box        nextarea;      /* area returned by packer__next */
+  int            nextindex;
+  os_box         nextarea;      /* area returned by packer_next */
 
-  os_box        placed_area;   /* last packer__place_by result */
+  os_box         placed_area;   /* last packer_place_by result */
 
-  packer_sort   order;         /* order to which we have sorted */
-  int           sorted;        // bool
+  packer_sortdir order;         /* order to which we have sorted */
+  int            sorted;        // bool
 
-  os_box        consumed_area; /* total consumed area */
+  os_box         consumed_area; /* total consumed area */
 };
 
 #endif /* IMPL_H */

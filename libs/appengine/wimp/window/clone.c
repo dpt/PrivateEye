@@ -44,7 +44,7 @@ static void clone_icon(wimp_icon_data *data)
 
 oom:
 
-  error__fatal_oom();
+  error_fatal_oom();
 }
 
 wimp_w window_clone(wimp_w w)
@@ -62,7 +62,7 @@ wimp_w window_clone(wimp_w w)
   /* this is one icon larger than it strictly needs to be */
   defn = malloc(sizeof(*defn) + info.icon_count * sizeof(wimp_icon));
   if (defn == NULL)
-    error__fatal_oom();
+    error_fatal_oom();
 
   /* clone the window */
 
@@ -132,7 +132,7 @@ void window_delete_cloned(wimp_w w)
   /* this is one icon larger than it strictly needs to be */
   defn = malloc(sizeof(*defn) + info.icon_count * sizeof(wimp_icon));
   if (defn == NULL)
-    error__fatal_oom();
+    error_fatal_oom();
 
   defn->w = w;
   wimp_get_window_info(defn);

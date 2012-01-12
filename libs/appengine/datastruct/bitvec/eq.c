@@ -30,7 +30,7 @@
  * So they're not the same length, but do have the same bits set.
  */
 
-int bitvec__eq(const bitvec_t *a, const bitvec_t *b)
+int bitvec_eq(const bitvec_t *a, const bitvec_t *b)
 {
   unsigned int    al;
   unsigned int    bl;

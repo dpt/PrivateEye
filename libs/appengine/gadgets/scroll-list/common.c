@@ -67,12 +67,12 @@ void resize_pane(scroll_list *sl)
 /* ----------------------------------------------------------------------- */
 
 /* This is only going to cope with selection-based events. */
-void send_event(scroll_list *sl, scroll_list__event_type type)
+void send_event(scroll_list *sl, scroll_list_event_type type)
 {
-  scroll_list__event event;
+  scroll_list_event event;
 
   event.type  = type;
-  event.index = scroll_list__get_selection(sl);
+  event.index = scroll_list_get_selection(sl);
 
   sl->event(&event);
 }

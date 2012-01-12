@@ -12,7 +12,7 @@
 
 #include "impl.h"
 
-void ntree__free(ntree_t *t)
+void ntree_free(ntree_t *t)
 {
   ntree_t *next;
 
@@ -23,7 +23,7 @@ void ntree__free(ntree_t *t)
     next = t->next;
 
     if (t->children)
-      ntree__free(t->children);
+      ntree_free(t->children);
 
     free(t);
   }

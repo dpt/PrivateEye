@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-ntree_t *ntree__last_child(ntree_t *t)
+ntree_t *ntree_last_child(ntree_t *t)
 {
   t = t->children;
   if (t)

@@ -57,7 +57,7 @@ static error jpeg_meta_jfif(const unsigned char *buf,
 
   /* create a new node to hold the comment data */
 
-  err = ntree__new(&tree);
+  err = ntree_new(&tree);
   if (err)
     goto Failure;
 
@@ -68,11 +68,11 @@ static error jpeg_meta_jfif(const unsigned char *buf,
   memcpy(com, buf, len);
   com[len] = '\0'; /* ensure termination */
 
-  ntree__set_data(tree, com);
+  ntree_set_data(tree, com);
 
   /* insert the node into the tree */
 
-  err = ntree__insert(root, ntree__INSERT_AT_END, tree);
+  err = ntree_insert(root, ntree_INSERT_AT_END, tree);
   if (err)
     goto Failure;
 
@@ -94,7 +94,7 @@ static error str_to_node(const char *str, size_t length, ntree_t **newnode)
   ntree_t *node;
   char    *s;
 
-  err = ntree__new(&node);
+  err = ntree_new(&node);
   if (err)
     goto Failure;
 
@@ -108,7 +108,7 @@ static error str_to_node(const char *str, size_t length, ntree_t **newnode)
   memcpy(s, str, length);
   s[length] = '\0';
 
-  ntree__set_data(node, s);
+  ntree_set_data(node, s);
 
   *newnode = node;
 
@@ -159,7 +159,7 @@ static error jpeg_meta_exif_prop(struct exifprop *list, int lvl, ntree_t *root)
     if (err)
       goto Failure;
 
-    err = ntree__insert(root, ntree__INSERT_AT_END, parent);
+    err = ntree_insert(root, ntree_INSERT_AT_END, parent);
     if (err)
       goto Failure;
 
@@ -180,7 +180,7 @@ static error jpeg_meta_exif_prop(struct exifprop *list, int lvl, ntree_t *root)
     if (err)
       goto Failure;
 
-    err = ntree__insert(parent, ntree__INSERT_AT_END, child);
+    err = ntree_insert(parent, ntree_INSERT_AT_END, child);
     if (err)
       goto Failure;
   }
@@ -229,7 +229,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
 
     /* construct a subtree */
 
-    err = ntree__new(&subtree);
+    err = ntree_new(&subtree);
     if (err)
       goto Failure;
 
@@ -243,7 +243,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
 
       /* insert on success */
 
-      err = ntree__insert(root, ntree__INSERT_AT_END, subtree);
+      err = ntree_insert(root, ntree_INSERT_AT_END, subtree);
       if (err)
         goto Failure;
 
@@ -254,7 +254,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
         goto Failure;
       }
 
-      ntree__set_data(subtree, s);
+      ntree_set_data(subtree, s);
 
       emitted = 1;
     }
@@ -262,7 +262,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
     {
       /* discard on failure */
 
-      ntree__delete(subtree);
+      ntree_delete(subtree);
     }
     else
     {
@@ -394,7 +394,7 @@ static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf, size_t le
     if (err)
       goto Failure;
 
-    err = ntree__insert(root, ntree__INSERT_AT_END, parent);
+    err = ntree_insert(root, ntree_INSERT_AT_END, parent);
     if (err)
       goto Failure;
 
@@ -407,7 +407,7 @@ static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf, size_t le
     if (err)
       goto Failure;
 
-    err = ntree__insert(parent, ntree__INSERT_AT_END, child);
+    err = ntree_insert(parent, ntree_INSERT_AT_END, child);
     if (err)
       goto Failure;
   }
@@ -473,7 +473,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
 
   idlen = strlen((const char *) buf) + 1; /* include terminator */
 
-  err = ntree__new(&root);
+  err = ntree_new(&root);
   if (err)
     goto Failure;
 
@@ -486,7 +486,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
 
   memcpy(s, buf, idlen);
 
-  ntree__set_data(root, s);
+  ntree_set_data(root, s);
 
   /* "8BIM" blocks */
 
@@ -522,7 +522,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
 
     /* create a sub-tree for each metadata group */
 
-    err = ntree__new(&subtree);
+    err = ntree_new(&subtree);
     if (err)
       goto Failure;
 
@@ -542,7 +542,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
 
       /* insert on success */
 
-      err = ntree__insert(root, ntree__INSERT_AT_END, subtree);
+      err = ntree_insert(root, ntree_INSERT_AT_END, subtree);
       if (err)
         goto Failure;
 
@@ -573,13 +573,13 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
 
       memcpy(s, heading, used + 1);
 
-      ntree__set_data(subtree, s);
+      ntree_set_data(subtree, s);
     }
     else if (err == error_IMAGE_JPEG_NO_METADATA)
     {
       /* discard on failure */
 
-      ntree__delete(subtree);
+      ntree_delete(subtree);
     }
     else
     {
@@ -612,7 +612,7 @@ static error jpeg_meta_adobe(const unsigned char *buf,
 
   /* insert on success */
 
-  err = ntree__insert(root, ntree__INSERT_AT_END, subtree);
+  err = ntree_insert(root, ntree_INSERT_AT_END, subtree);
   if (err)
     goto Failure;
 
@@ -650,7 +650,7 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
 
   /* create our tree's root */
 
-  err = ntree__new(&tree);
+  err = ntree_new(&tree);
   if (err)
     goto Failure;
 
@@ -661,7 +661,7 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
     goto Failure;
   }
 
-  ntree__set_data(tree, s);
+  ntree_set_data(tree, s);
 
   for (i = 0; i < NELEMS(jpeg_marker_map); i++)
   {
@@ -689,7 +689,7 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
 
       /* create a sub-tree for each metadata group */
 
-      err = ntree__new(&subtree);
+      err = ntree_new(&subtree);
       if (err)
         goto Failure;
 
@@ -699,7 +699,7 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
       {
         /* insert on success */
 
-        err = ntree__insert(tree, ntree__INSERT_AT_END, subtree);
+        err = ntree_insert(tree, ntree_INSERT_AT_END, subtree);
         if (err)
           goto Failure;
 
@@ -710,13 +710,13 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
           goto Failure;
         }
 
-        ntree__set_data(subtree, s);
+        ntree_set_data(subtree, s);
       }
       else if (err == error_IMAGE_JPEG_NO_METADATA)
       {
         /* discard on failure */
 
-        ntree__delete(subtree);
+        ntree_delete(subtree);
       }
       else
       {

@@ -8,7 +8,7 @@
 
 #include "impl.h"
 
-int bitvec__count(const bitvec_t *v)
+int bitvec_count(const bitvec_t *v)
 {
   int c;
   int i;

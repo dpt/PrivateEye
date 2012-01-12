@@ -5,7 +5,7 @@
 
 #include "appengine/geom/box.h"
 
-int box__could_hold(const os_box *b, int w, int h)
+int box_could_hold(const os_box *b, int w, int h)
 {
   return (b->x1 - b->x0) >= w &&
          (b->y1 - b->y0) >= h;

@@ -110,13 +110,13 @@ static error initialise_subsystems(void)
 
   static const initfn initfns[] =
   {
-    dcs_quit__init,  /* in AppEngine */
-    hist__init,      /* in AppEngine */
+    dcs_quit_init,  /* in AppEngine */
+    hist_init,      /* in AppEngine */
     eye_icon_bar_init,
     rotate__init,
     effects__init,
 #ifdef EYE_TAGS
-    tags_search__init,
+    tags_search_init,
 #endif
     display__init,   /* careful: this one depends on the earlier init calls */
 #ifdef EYE_THUMBVIEW
@@ -152,13 +152,13 @@ static void finalise_subsystems(void)
 #endif
     display__fin,
 #ifdef EYE_TAGS
-    tags_search__fin,
+    tags_search_fin,
 #endif
     effects__fin,
     rotate__fin,
     eye_icon_bar_fin,
-    hist__fin,
-    dcs_quit__fin,
+    hist_fin,
+    dcs_quit_fin,
   };
 
   int i;
@@ -374,7 +374,7 @@ int main(int argc, char *argv[])
                                 NULL));
     if (e)
     {
-      oserror__report_block(e);
+      oserror_report_block(e);
       continue;
     }
 
@@ -451,7 +451,7 @@ int main(int argc, char *argv[])
 Failure:
 
   if (err)
-    error__report(err);
+    error_report(err);
 
   exit(EXIT_FAILURE);
 }

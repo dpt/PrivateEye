@@ -71,7 +71,7 @@ static error initialise_subsystems(void)
   static const initfn initfns[] =
   {
     tag_icon_bar_init,
-    tag_cloud__init,
+    tag_cloud_init,
     makecloud_init
   };
 
@@ -95,7 +95,7 @@ static void finalise_subsystems(void)
   static const finfn finfns[] =
   {
     makecloud_fin,
-    tag_cloud__fin,
+    tag_cloud_fin,
     tag_icon_bar_fin
   };
 
@@ -230,7 +230,7 @@ int main(void)
 Failure:
 
   if (err)
-    error__report(err);
+    error_report(err);
 
   exit(EXIT_FAILURE);
 }

@@ -14,7 +14,7 @@
 
 #include "impl.h"
 
-bitvec_t *bitvec__create(int length)
+bitvec_t *bitvec_create(int length)
 {
   error     err;
   bitvec_t *v;
@@ -26,7 +26,7 @@ bitvec_t *bitvec__create(int length)
   v->length = 0;
   v->vec    = NULL;
 
-  err = bitvec__ensure(v, length >> 5);
+  err = bitvec_ensure(v, length >> 5);
   if (err)
   {
     assert(err == error_OOM);

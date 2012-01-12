@@ -31,7 +31,7 @@ static error dumppacker(packer_t *packer, txtscr_t *scr)
 
   txtscr_clear(scr);
 
-  err = packer__map(packer, drawbox, scr);
+  err = packer_map(packer, drawbox, scr);
   if (err)
     return err;
 
@@ -77,7 +77,7 @@ static error subtest1(packer_t *packer, txtscr_t *scr)
 
   for (i = 0; i < NELEMS(areas); i++)
   {
-    err = packer__place_at(packer, &areas[i]);
+    err = packer_place_at(packer, &areas[i]);
     if (err)
       goto failure;
   }
@@ -90,7 +90,7 @@ static error subtest1(packer_t *packer, txtscr_t *scr)
 
     dumppacker(packer, scr);
 
-    err = packer__place_by(packer, packer__LOC_TOP_LEFT, 3,3, &placed);
+    err = packer_place_by(packer, packer_LOC_TOP_LEFT, 3,3, &placed);
     if (err == error_PACKER_DIDNT_FIT)
     {
       printf("could not place\n");
@@ -103,7 +103,7 @@ static error subtest1(packer_t *packer, txtscr_t *scr)
 
   dumppacker(packer, scr);
 
-  packer__clear(packer, packer__CLEAR_LEFT);
+  packer_clear(packer, packer_CLEAR_LEFT);
 
   dumppacker(packer, scr);
 
@@ -133,7 +133,7 @@ static error test1(void)
     goto failure;
   }
 
-  packer = packer__create(&pagedims);
+  packer = packer_create(&pagedims);
   if (packer == NULL)
   {
     err = error_OOM;
@@ -144,11 +144,11 @@ static error test1(void)
   if (err)
     goto failure;
 
-  packer__destroy(packer);
+  packer_destroy(packer);
 
   printf("\n\nwith margins\n\n\n");
 
-  packer = packer__create(&pagedims);
+  packer = packer_create(&pagedims);
   if (packer == NULL)
   {
     err = error_OOM;
@@ -159,7 +159,7 @@ static error test1(void)
   margins.y0 = 3;
   margins.x1 = 5;
   margins.y1 = 3;
-  packer__set_margins(packer, &margins);
+  packer_set_margins(packer, &margins);
 
   err = subtest1(packer, scr);
   if (err)
@@ -169,11 +169,11 @@ static error test1(void)
   margins.y0 = 0;
   margins.x1 = 0;
   margins.y1 = 0;
-  packer__set_margins(packer, &margins);
+  packer_set_margins(packer, &margins);
 
   dumppacker(packer, scr);
 
-  packer__destroy(packer);
+  packer_destroy(packer);
 
   txtscr_destroy(scr);
 
@@ -189,7 +189,7 @@ failure:
 #define MAXHEIGHT 36
 #define PADDING   2
 
-static error subtest2(packer_loc loc, packer_clear clear)
+static error subtest2(packer_loc loc, packer_cleardir clear)
 {
   static const os_box pagedims = {       0,       0, MAXWIDTH, MAXHEIGHT };
   static const os_box margins  = { PADDING, PADDING,  PADDING,   PADDING };
@@ -228,14 +228,14 @@ static error subtest2(packer_loc loc, packer_clear clear)
     goto failure;
   }
 
-  packer = packer__create(&pagedims);
+  packer = packer_create(&pagedims);
   if (packer == NULL)
   {
     err = error_OOM;
     goto failure;
   }
 
-  packer__set_margins(packer, &margins);
+  packer_set_margins(packer, &margins);
 
   dumppacker(packer, scr);
 
@@ -251,7 +251,7 @@ static error subtest2(packer_loc loc, packer_clear clear)
 
     printf("loop: i=%d\n", i);
 
-    remaining = packer__next_width(packer, loc);
+    remaining = packer_next_width(packer, loc);
     printf("remaining = %d\n", remaining);
 
     first = last = i; /* upper bound 'last' is exclusive */
@@ -284,7 +284,7 @@ static error subtest2(packer_loc loc, packer_clear clear)
     {
       printf("place vertical padding\n");
 
-      err = packer__place_by(packer,
+      err = packer_place_by(packer,
                              loc,
                              MAXWIDTH - 2 * PADDING, PADDING,
                              NULL);
@@ -303,7 +303,7 @@ static error subtest2(packer_loc loc, packer_clear clear)
 
         printf("place horizontal padding\n");
 
-        err = packer__place_by(packer,
+        err = packer_place_by(packer,
                                loc,
                                PADDING, elements[k].h,
                                NULL);
@@ -318,7 +318,7 @@ static error subtest2(packer_loc loc, packer_clear clear)
 
       printf("place element\n");
 
-      err = packer__place_by(packer,
+      err = packer_place_by(packer,
                              loc,
                              elements[k].chosenw, elements[k].h,
                             &placed);
@@ -341,7 +341,7 @@ static error subtest2(packer_loc loc, packer_clear clear)
       printf("*** won't fit on this line (only %d left, but need %d)\n",
              remaining, need);
 
-      err = packer__clear(packer, clear);
+      err = packer_clear(packer, clear);
       if (err)
         goto failure;
     }
@@ -352,7 +352,7 @@ static error subtest2(packer_loc loc, packer_clear clear)
 
   dumpboxlist(list, j, scr);
 
-  packer__destroy(packer);
+  packer_destroy(packer);
 
   txtscr_destroy(scr);
 
@@ -368,13 +368,13 @@ static int test2(void)
 {
   static const struct
   {
-    packer_loc   loc;
-    packer_clear clear;
+    packer_loc      loc;
+    packer_cleardir clear;
   }
   tests[] =
   {
-    { packer__LOC_TOP_LEFT,     packer__CLEAR_LEFT  },
-    { packer__LOC_TOP_RIGHT,    packer__CLEAR_RIGHT },
+    { packer_LOC_TOP_LEFT,     packer_CLEAR_LEFT  },
+    { packer_LOC_TOP_RIGHT,    packer_CLEAR_RIGHT },
   };
 
   error err;

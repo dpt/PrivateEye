@@ -12,7 +12,7 @@
 
 #include "impl.h"
 
-error ntree__copy(ntree_t *t, ntree__copy_fn *fn, void *arg, ntree_t **new_t)
+error ntree_copy(ntree_t *t, ntree_copy_fn *fn, void *arg, ntree_t **new_t)
 {
   error    err;
   void    *data;
@@ -26,24 +26,24 @@ error ntree__copy(ntree_t *t, ntree__copy_fn *fn, void *arg, ntree_t **new_t)
   if (err)
     return err;
 
-  err = ntree__new(&new_node);
+  err = ntree_new(&new_node);
   if (err)
     return err;
 
-  ntree__set_data(new_node, data);
+  ntree_set_data(new_node, data);
 
   /* we walk the list of children backwards
    * so we can prepend, which takes constant time */
 
-  for (child = ntree__last_child(t); child; child = child->prev)
+  for (child = ntree_last_child(t); child; child = child->prev)
   {
     ntree_t *new_child;
 
-    err = ntree__copy(child, fn, arg, &new_child);
+    err = ntree_copy(child, fn, arg, &new_child);
     if (err)
       return err;
 
-    err = ntree__prepend(new_node, new_child);
+    err = ntree_prepend(new_node, new_child);
     if (err)
       return err;
   }

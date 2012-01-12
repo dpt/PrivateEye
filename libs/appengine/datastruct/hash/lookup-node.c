@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-node **hash__lookup_node(hash_t *h, const void *key)
+node **hash_lookup_node(hash_t *h, const void *key)
 {
   int    hash;
   node **n;

@@ -81,7 +81,7 @@ static int jpeg_load(image_choices *choices, image_t *image)
       if (jpegtran_clean(data, file_size, &newdata, &newlength))
       {
         flex_free((flex_ptr) &data);
-        oserror__report(0, "error.jpeg.transcode", jpegtran_get_messages());
+        oserror_report(0, "error.jpeg.transcode", jpegtran_get_messages());
         jpegtran_discard_messages();
         return TRUE; /* failure */
       }
@@ -105,7 +105,7 @@ static int jpeg_load(image_choices *choices, image_t *image)
   if (e)
   {
     flex_free((flex_ptr) &data);
-    oserror__report_block(e);
+    oserror_report_block(e);
     return TRUE; /* failure */
   }
 
@@ -157,7 +157,7 @@ static int jpeg_load(image_choices *choices, image_t *image)
 
 NoMem:
 
-  oserror__report(0, "error.no.mem");
+  oserror_report(0, "error.no.mem");
 
   return TRUE; /* failure */
 }
@@ -350,7 +350,7 @@ static int jpeg_to_spr_common(image_t *image)
                         0);
 
   if (e)
-    oserror__plot(e, 0, 0);
+    oserror_plot(e, 0, 0);
 
   osspriteop_unswitch_output(c0, c1, c2, c3);
 
@@ -381,7 +381,7 @@ NoMem:
 
   hourglass_off();
 
-  oserror__report(0, "error.no.mem");
+  oserror_report(0, "error.no.mem");
 
   return TRUE; /* failure */
 }

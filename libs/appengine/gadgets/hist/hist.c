@@ -26,14 +26,14 @@
 
 /* ----------------------------------------------------------------------- */
 
-static imageobwin_alloc   hist__alloc;
-static imageobwin_dealloc hist__dealloc;
-static imageobwin_compute hist__compute;
-static imageobwin_refresh hist__refresh;
+static imageobwin_alloc   hist_alloc;
+static imageobwin_dealloc hist_dealloc;
+static imageobwin_compute hist_compute;
+static imageobwin_refresh hist_refresh;
 
-static event_wimp_handler hist__event_redraw_window_request,
-                          hist__event_mouse_click,
-                          hist__event_menu_selection;
+static event_wimp_handler hist_event_redraw_window_request,
+                          hist_event_mouse_click,
+                          hist_event_menu_selection;
 
 /* ----------------------------------------------------------------------- */
 
@@ -108,7 +108,7 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-error hist__init(void)
+error hist_init(void)
 {
   error err;
 
@@ -117,17 +117,17 @@ error hist__init(void)
 
   /* dependencies */
 
-  err = imageobwin__construct(&LOCALS.factory,
+  err = imageobwin_construct(&LOCALS.factory,
                               "histogram",
                               AT_BOTTOMPOINTER,
-                              hist__available,
-                              hist__alloc,
-                              hist__dealloc,
-                              hist__compute,
-                              hist__refresh,
-                              hist__event_redraw_window_request,
-                              hist__event_mouse_click,
-                              hist__event_menu_selection);
+                              hist_available,
+                              hist_alloc,
+                              hist_dealloc,
+                              hist_compute,
+                              hist_refresh,
+                              hist_event_redraw_window_request,
+                              hist_event_mouse_click,
+                              hist_event_menu_selection);
   if (err)
     return err;
 
@@ -136,28 +136,28 @@ error hist__init(void)
   return error_OK;
 }
 
-void hist__fin(void)
+void hist_fin(void)
 {
   if (LOCALS.refcount == 0)
     return;
 
-  imageobwin__destruct(&LOCALS.factory);
+  imageobwin_destruct(&LOCALS.factory);
 
   LOCALS.refcount--;
 }
 
 /* ----------------------------------------------------------------------- */
 
-void hist__open(image_t *image, int nbars)
+void hist_open(image_t *image, int nbars)
 {
   hist_config config;
 
   config.nbars = nbars;
 
-  imageobwin__open(&LOCALS.factory, image, &config);
+  imageobwin_open(&LOCALS.factory, image, &config);
 }
 
-int hist__available(const image_t *image)
+int hist_available(const image_t *image)
 {
   return image &&
          image->flags & image_FLAG_CAN_HIST;
@@ -165,7 +165,7 @@ int hist__available(const image_t *image)
 
 /* ----------------------------------------------------------------------- */
 
-static error hist__alloc(const void    *opaque_config,
+static error hist_alloc(const void    *opaque_config,
                          imageobwin_t **obwin)
 {
   hist_window       *self;
@@ -188,7 +188,7 @@ static error hist__alloc(const void    *opaque_config,
   return error_OK;
 }
 
-static void hist__dealloc(imageobwin_t *doomed)
+static void hist_dealloc(imageobwin_t *doomed)
 {
   hist_window *self = (hist_window *) doomed;
 
@@ -197,7 +197,7 @@ static void hist__dealloc(imageobwin_t *doomed)
   free(self);
 }
 
-static error hist__compute(imageobwin_t *obwin)
+static error hist_compute(imageobwin_t *obwin)
 {
   hist_window       *self;
   image_t           *image;
@@ -313,7 +313,7 @@ static error hist__compute(imageobwin_t *obwin)
   return error_OK;
 }
 
-static void hist__refresh(imageobwin_t *obwin)
+static void hist_refresh(imageobwin_t *obwin)
 {
   hist_window *self = (hist_window *) obwin;
 
@@ -322,7 +322,7 @@ static void hist__refresh(imageobwin_t *obwin)
 
 /* ----------------------------------------------------------------------- */
 
-static int hist__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int hist_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   hist_window  *self;
   wimp_draw    *draw;
@@ -386,9 +386,9 @@ static int hist__event_redraw_window_request(wimp_event_no event_no, wimp_block 
   return event_HANDLED;
 }
 
-static void hist__menu_update(hist_window *self);
+static void hist_menu_update(hist_window *self);
 
-static int hist__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int hist_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   hist_window  *self;
   wimp_pointer *pointer;
@@ -404,7 +404,7 @@ static int hist__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
     {
     case HISTOGRAM_O_CUMULATIVE:
       self->flags ^= flag_CUMULATIVE;
-      imageobwin__kick(&self->base);
+      imageobwin_kick(&self->base);
       break;
     }
   }
@@ -414,7 +414,7 @@ static int hist__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
     switch (pointer->i)
     {
     case HISTOGRAM_P_COMPS:
-      hist__menu_update(self);
+      hist_menu_update(self);
       menu_popup(pointer->w, pointer->i, self->base.factory->menu);
       break;
     }
@@ -423,7 +423,7 @@ static int hist__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
   return event_HANDLED;
 }
 
-static void hist__menu_update(hist_window *self)
+static void hist_menu_update(hist_window *self)
 {
   menu_set_icon_flags(LOCALS.factory.menu,
                       HIST_ALPHA,
@@ -435,7 +435,7 @@ static void hist__menu_update(hist_window *self)
   menu_tick_exclusive(LOCALS.factory.menu, self->flags & flag_COMPS);
 }
 
-static int hist__event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int hist_event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   hist_window    *self;
   wimp_selection *selection;
@@ -465,13 +465,13 @@ static int hist__event_menu_selection(wimp_event_no event_no, wimp_block *block,
   if (new_flags != self->flags)
   {
     self->flags = (self->flags & ~flag_COMPS) | new_flags;
-    imageobwin__kick(&self->base);
+    imageobwin_kick(&self->base);
   }
 
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
   {
-    hist__menu_update(self);
+    hist_menu_update(self);
     menu_reopen();
   }
 

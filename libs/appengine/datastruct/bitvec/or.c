@@ -11,7 +11,7 @@
 
 #include "impl.h"
 
-error bitvec__or(const bitvec_t *a, const bitvec_t *b, bitvec_t **c)
+error bitvec_or(const bitvec_t *a, const bitvec_t *b, bitvec_t **c)
 {
   int             min, max;
   bitvec_t       *v;
@@ -24,7 +24,7 @@ error bitvec__or(const bitvec_t *a, const bitvec_t *b, bitvec_t **c)
   max = MAX(a->length, b->length);
 
   /* create vec, ensuring that enough space is allocated to perform the op */
-  v = bitvec__create(max << 5);
+  v = bitvec_create(max << 5);
   if (v == NULL)
     return error_OOM;
 

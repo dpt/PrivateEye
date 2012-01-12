@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-void scroll_list__make_visible(scroll_list *sl, int row)
+void scroll_list_make_visible(scroll_list *sl, int row)
 {
   wimp_window_state state;
 

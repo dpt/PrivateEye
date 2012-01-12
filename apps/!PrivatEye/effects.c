@@ -480,7 +480,7 @@ static int insert_effect(effect_effect effect, int where)
 
   v->nentries++;
 
-  scroll_list__add_row(sl);
+  scroll_list_add_row(sl);
 
   apply_effects();
 
@@ -544,7 +544,7 @@ static int move_effect(int from, int to)
     }
 
     for (i = min; i <= max; i++)
-      scroll_list__refresh_row(sl, i);
+      scroll_list_refresh_row(sl, i);
   }
 
   apply_effects();
@@ -567,7 +567,7 @@ static void new_selection(void)
   edit = wimp_ICON_SHADED;
   del  = wimp_ICON_SHADED;
 
-  sel = scroll_list__get_selection(sl);
+  sel = scroll_list_get_selection(sl);
 
   if (sel >= 0)
   {
@@ -636,7 +636,7 @@ static void effect_edited(effect_element *e)
 
   i = e - v->entries;
 
-  scroll_list__refresh_row(sl, i);
+  scroll_list_refresh_row(sl, i);
 
   apply_effects();
 }
@@ -657,7 +657,7 @@ static void remove_effect(int index)
 
   v->nentries--;
 
-  scroll_list__delete_rows(sl, index, index);
+  scroll_list_delete_rows(sl, index, index);
 
   new_selection();
   new_effects();
@@ -675,7 +675,7 @@ static void remove_all_effects(void)
 
   v->nentries = 0;
 
-  scroll_list__delete_rows(sl, 0, INT_MAX); /* all */
+  scroll_list_delete_rows(sl, 0, INT_MAX); /* all */
 
   // call new_selection()?
 
@@ -699,7 +699,7 @@ static event_message_handler clear_message_colour_picker_colour_choice;
 
 static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel);
 static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel);
-static void scroll_list_event(scroll_list__event *event);
+static void scroll_list_event_callback(scroll_list_event *event);
 
 static error init_main(void)
 {
@@ -712,7 +712,7 @@ static error init_main(void)
 
   GLOBALS.effects_w = window_create("effects");
 
-  err = help__add_window(GLOBALS.effects_w, "effects");
+  err = help_add_window(GLOBALS.effects_w, "effects");
   if (err)
     return err;
 
@@ -721,14 +721,14 @@ static error init_main(void)
                             GLOBALS.effects_w, event_ANY_ICON,
                             NULL);
 
-  sl = scroll_list__create(GLOBALS.effects_w, EFFECTS_I_PANE_PLACEHOLDER);
+  sl = scroll_list_create(GLOBALS.effects_w, EFFECTS_I_PANE_PLACEHOLDER);
   if (sl == NULL)
     return error_OOM; // potentially inaccurate
 
-  scroll_list__set_row_height(sl, HEIGHT, 4);
-  scroll_list__set_handlers(sl, redraw_element, redraw_leader, scroll_list_event);
+  scroll_list_set_row_height(sl, HEIGHT, 4);
+  scroll_list_set_handlers(sl, redraw_element, redraw_leader, scroll_list_event_callback);
 
-  err = help__add_window(scroll_list__get_window_handle(sl), "effects_list");
+  err = help_add_window(scroll_list_get_window_handle(sl), "effects_list");
   if (err)
     return err;
 
@@ -737,11 +737,11 @@ static error init_main(void)
 
 static void fin_main(void)
 {
-  help__remove_window(scroll_list__get_window_handle(sl));
+  help_remove_window(scroll_list_get_window_handle(sl));
 
-  scroll_list__destroy(sl);
+  scroll_list_destroy(sl);
 
-  help__remove_window(GLOBALS.effects_w);
+  help_remove_window(GLOBALS.effects_w);
 }
 
 static error init_add(void)
@@ -755,7 +755,7 @@ static error init_add(void)
 
   GLOBALS.effects_add_w = window_create("effects_add");
 
-  err = help__add_window(GLOBALS.effects_add_w, "effects_add");
+  err = help_add_window(GLOBALS.effects_add_w, "effects_add");
   if (err)
     return err;
 
@@ -769,7 +769,7 @@ static error init_add(void)
 
 static void fin_add(void)
 {
-  help__remove_window(GLOBALS.effects_add_w);
+  help_remove_window(GLOBALS.effects_add_w);
 }
 
 #define MAGIC_PICKER ((wimp_w) 0x1)
@@ -787,12 +787,12 @@ static error init_blur(void)
 {
   error err;
 
-  err = dialogue__construct(&GLOBALS.effects_blr_d, "effects_blr",
+  err = dialogue_construct(&GLOBALS.effects_blr_d, "effects_blr",
                             EFFECTS_BLR_B_APPLY, EFFECTS_BLR_B_CANCEL);
   if (err)
     return err;
 
-  dialogue__set_handlers(&GLOBALS.effects_blr_d,
+  dialogue_set_handlers(&GLOBALS.effects_blr_d,
                           blur_event_mouse_click,
                           NULL,
                           NULL);
@@ -802,7 +802,7 @@ static error init_blur(void)
 
 static void fin_blur(void)
 {
-  dialogue__destruct(&GLOBALS.effects_blr_d);
+  dialogue_destruct(&GLOBALS.effects_blr_d);
 }
 
 static error init_tone(void)
@@ -817,7 +817,7 @@ static error init_tone(void)
 
   GLOBALS.effects_crv_w  = window_create("effects_crv");
 
-  err = help__add_window(GLOBALS.effects_crv_w, "effects_crv");
+  err = help_add_window(GLOBALS.effects_crv_w, "effects_crv");
   if (err)
     return err;
 
@@ -831,7 +831,7 @@ static error init_tone(void)
 
 static void fin_tone(void)
 {
-  help__remove_window(GLOBALS.effects_crv_w);
+  help_remove_window(GLOBALS.effects_crv_w);
 }
 
 error effects__init(void)
@@ -840,7 +840,7 @@ error effects__init(void)
 
   /* dependencies */
 
-  err = help__init();
+  err = help_init();
   if (err)
     return err;
 
@@ -867,7 +867,7 @@ void effects__fin(void)
 
   /* dependencies */
 
-  help__fin();
+  help_fin();
 }
 
 /* ----------------------------------------------------------------------- */
@@ -923,7 +923,7 @@ static int main_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
       wimp_window_state state;
       int               x,y;
 
-      state.w = scroll_list__get_window_handle(sl);
+      state.w = scroll_list_get_window_handle(sl);
       wimp_get_window_state(&state);
 
       x = state.visible.x0;
@@ -936,11 +936,11 @@ static int main_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
       break;
 
     case EFFECTS_B_EDIT:
-      edit_effect(scroll_list__get_selection(sl));
+      edit_effect(scroll_list_get_selection(sl));
       break;
 
     case EFFECTS_B_DELETE:
-      remove_effect(scroll_list__get_selection(sl));
+      remove_effect(scroll_list_get_selection(sl));
       break;
 
     case EFFECTS_S_BLEND_FOREGROUND:
@@ -1057,7 +1057,7 @@ static void drageffect_set_handlers(int reg)
                             event_ANY_WINDOW, event_ANY_ICON,
                             NULL);
 
-  scroll_list__autoscroll(sl, reg);
+  scroll_list_autoscroll(sl, reg);
 }
 
 static void drageffect_renderer(void *args)
@@ -1084,14 +1084,14 @@ static int drageffect_event_null_reason_code(wimp_event_no event_no,
 
   wimp_get_pointer_info(&pointer);
 
-  if (pointer.w != scroll_list__get_window_handle(sl))
+  if (pointer.w != scroll_list_get_window_handle(sl))
     return event_HANDLED;
 
   if (pointer.pos.x == lastx &&
       pointer.pos.y == lasty)
     return event_HANDLED;
 
-  index = scroll_list__where_to_insert(sl, &pointer);
+  index = scroll_list_where_to_insert(sl, &pointer);
 
   /* If you try to move an effect next to itself, that has no effect, so
    * if we're moving (not adding) then don't draw the marker if we're either
@@ -1102,16 +1102,16 @@ static int drageffect_event_null_reason_code(wimp_event_no event_no,
     if (index == drageffect_state.effect ||
         index == drageffect_state.effect + 1)
     {
-      scroll_list__clear_marker(sl);
+      scroll_list_clear_marker(sl);
     }
     else
     {
-      scroll_list__set_marker(sl, index);
+      scroll_list_set_marker(sl, index);
     }
   }
   else
   {
-    scroll_list__set_marker(sl, index);
+    scroll_list_set_marker(sl, index);
   }
 
   lastx = pointer.pos.x;
@@ -1135,18 +1135,18 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
 
   drageffect_set_handlers(0);
 
-  scroll_list__clear_marker(sl);
+  scroll_list_clear_marker(sl);
 
   wimp_get_pointer_info(&pointer);
 
-  if (pointer.w != scroll_list__get_window_handle(sl))
+  if (pointer.w != scroll_list_get_window_handle(sl))
     return event_HANDLED;
 
   /* We need to work this out from scratch in case the drag was too quick
    * to actually get a null event or never went near the pane window. */
 
   /* convert work area to insertion point */
-  index = scroll_list__where_to_insert(sl, &pointer);
+  index = scroll_list_where_to_insert(sl, &pointer);
 
   if (drageffect_state.moving)
   {
@@ -1241,22 +1241,22 @@ static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel)
   draw_marker(x, y);
 }
 
-static void scroll_list_event(scroll_list__event *event)
+static void scroll_list_event_callback(scroll_list_event *event)
 {
   switch (event->type)
   {
-  case scroll_list__SELECTION_CHANGED:
+  case scroll_list_SELECTION_CHANGED:
     new_selection();
     break;
 
-  case scroll_list__DRAG:
+  case scroll_list_DRAG:
     drageffect_box(event->data.drag.pointer,
                    event->index,
                    1,
                   &event->data.drag.box);
     break;
 
-  case scroll_list__DELETE:
+  case scroll_list_DELETE:
     remove_effect(event->index);
     break;
   }
@@ -1682,7 +1682,7 @@ static void blur_slider_update(wimp_i i, int val)
 
   *pval = val;
 
-  icon_set_int(dialogue__get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL, val);
+  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL, val);
 
   //blur_set_values_and_redraw();
 }
@@ -1709,14 +1709,14 @@ static void blur_reset_dialogue(void)
     if (map[i].method == blur.method)
       break;
 
-  icon_set_radio(dialogue__get_window(&GLOBALS.effects_blr_d), map[i].i);
+  icon_set_radio(dialogue_get_window(&GLOBALS.effects_blr_d), map[i].i);
 
   /* set slider values */
 
   r = &blur_sliders[0];
-  slider_set(dialogue__get_window(&GLOBALS.effects_blr_d), r->icon, *r->pval, r->min, r->max);
+  slider_set(dialogue_get_window(&GLOBALS.effects_blr_d), r->icon, *r->pval, r->min, r->max);
 
-  icon_set_int(dialogue__get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL, *r->pval);
+  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL, *r->pval);
 }
 
 static void blur_start_editing(void)
@@ -1736,7 +1736,7 @@ static int blur_edit(effect_element *e, int x, int y)
 
   blur_start_editing();
 
-  dialogue__show_here(&GLOBALS.effects_blr_d, x, y);
+  dialogue_show_here(&GLOBALS.effects_blr_d, x, y);
 
   return 0;
 }
@@ -1764,7 +1764,7 @@ static int blur_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
       switch (pointer->i)
       {
       case EFFECTS_BLR_B_APPLY:
-        val = icon_get_int(dialogue__get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL);
+        val = icon_get_int(dialogue_get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL);
         blur.level = CLAMP(val, 2, 24);
 
         editing_element->args.blur = blur;
@@ -1882,7 +1882,7 @@ static int delete_images(void)
   r = flex_extend((flex_ptr) &LOCALS.image->image, areasize / 3);
   if (r == 0)
   {
-    oserror__report(0, "error.no.mem");
+    oserror_report(0, "error.no.mem");
     return 1;
   }
 
@@ -1941,7 +1941,7 @@ void effects__open(image_t *image)
   err = create_images();
   if (err)
   {
-    error__report(err);
+    error_report(err);
     return;
   }
 

@@ -8,7 +8,7 @@
 #include "impl.h"
 
 // need insert_row?
-void scroll_list__add_row(scroll_list *sl)
+void scroll_list_add_row(scroll_list *sl)
 {
   refresh_rows(sl, sl->rows, sl->rows);
 

@@ -9,12 +9,12 @@
 
 typedef struct T T;
 
-T *lex__create(const char *input);
-void lex__destroy(T *lx);
-Token lex__scan(T *lx);
-int lex__get_val(T *lx);
-sym *lex__get_sym(T *lx);
-void lex__dump(T *lx);
+T *lex_create(const char *input);
+void lex_destroy(T *lx);
+Token lex_scan(T *lx);
+int lex_get_val(T *lx);
+sym *lex_get_sym(T *lx);
+void lex_dump(T *lx);
 
 #undef T
 

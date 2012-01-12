@@ -138,7 +138,7 @@ static char *set_transform(char *s, int a, int b, int c, int d)
 
 static error scales_calc(tag_cloud *tc)
 {
-  if (tc->display_type == tag_cloud__DISPLAY_TYPE_CLOUD)
+  if (tc->display_type == tag_cloud_DISPLAY_TYPE_CLOUD)
   {
     /* del.icio.us uses 80,90,100,115,150% { -4, -2, 0, 3, 10 } */
     /* differences from 100% divided by 5. */
@@ -226,7 +226,7 @@ static error metrics_new(tag_cloud *tc)
 
   if (N > tc->layout.dims.allocated)
   {
-    tag_cloud__dim *dims;
+    tag_cloud_dim *dims;
 
     dims = realloc(tc->layout.dims.dims, N * sizeof(*dims));
     if (dims == NULL)
@@ -257,7 +257,7 @@ enum
 static error metrics_calc(tag_cloud *tc)
 {
   error            err;
-  tag_cloud__dims *dims;
+  tag_cloud_dims *dims;
   int              i;
 
   dims = &tc->layout.dims;
@@ -389,7 +389,7 @@ static error lengths_calc(tag_cloud *tc)
     int highlight;
     int l;
 
-    highlight = tag_cloud__is_highlighted(tc, i);
+    highlight = tag_cloud_is_highlighted(tc, i);
 
     l = tc->layout.dims.dims[i].length[highlight];
 
@@ -440,7 +440,7 @@ static void boxes_del(tag_cloud *tc)
 
 /* ----------------------------------------------------------------------- */
 
-error tag_cloud__layout_prepare(tag_cloud *tc)
+error tag_cloud_layout_prepare(tag_cloud *tc)
 {
   static const char default_font[]      = "Homerton.Medium";
   static const char default_bold_font[] = "Homerton.Bold";
@@ -456,7 +456,7 @@ error tag_cloud__layout_prepare(tag_cloud *tc)
   font_metrics_misc_info  misc_info;
   int                     misc_info_size;
 
-  if (tc->flags & tag_cloud__FLAG_LAYOUT_PREPED)
+  if (tc->flags & tag_cloud_FLAG_LAYOUT_PREPED)
     return error_OK;
 
   /* defaults */
@@ -471,7 +471,7 @@ error tag_cloud__layout_prepare(tag_cloud *tc)
   if (fh != 0) /* a non-system font */
   {
     char        *p;
-    font__attrs  attrs;
+    font_attrs  attrs;
 
     /* normal */
 
@@ -486,9 +486,9 @@ error tag_cloud__layout_prepare(tag_cloud *tc)
 
     /* find a bold version */
 
-    attrs = font__get_attrs(font_id);
-    attrs = (attrs & ~font__WEIGHT_MASK) | font__WEIGHT_BOLD;
-    err2 = font__select(font_id, attrs, bold_font_id, sizeof(bold_font_id));
+    attrs = font_get_attrs(font_id);
+    attrs = (attrs & ~font_WEIGHT_MASK) | font_WEIGHT_BOLD;
+    err2 = font_select(font_id, attrs, bold_font_id, sizeof(bold_font_id));
     if (err2)
       return err2;
 
@@ -562,19 +562,19 @@ error tag_cloud__layout_prepare(tag_cloud *tc)
   }
 
   /* any hover info is likely to now be invalidated */
-  tag_cloud__hover_init(tc);
+  tag_cloud_hover_init(tc);
 
-  tc->flags |= tag_cloud__FLAG_LAYOUT_PREPED;
+  tc->flags |= tag_cloud_FLAG_LAYOUT_PREPED;
 
   return error_OK;
 }
 
-void tag_cloud__layout_discard(tag_cloud *tc)
+void tag_cloud_layout_discard(tag_cloud *tc)
 {
   if (tc == NULL)
     return;
 
-  if ((tc->flags & tag_cloud__FLAG_LAYOUT_PREPED) == 0)
+  if ((tc->flags & tag_cloud_FLAG_LAYOUT_PREPED) == 0)
     return;
 
   paintstring_del(tc);
@@ -587,12 +587,12 @@ void tag_cloud__layout_discard(tag_cloud *tc)
   font_lose_font(tc->layout.font);
   tc->layout.font                  = 0;
 
-  tc->flags &= ~tag_cloud__FLAG_LAYOUT_PREPED;
+  tc->flags &= ~tag_cloud_FLAG_LAYOUT_PREPED;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error tag_cloud__layout(tag_cloud *tc, int width)
+error tag_cloud_layout(tag_cloud *tc, int width)
 {
   error      err = error_OK;
   int        i;
@@ -608,26 +608,26 @@ error tag_cloud__layout(tag_cloud *tc, int width)
   int        lineheight;
   int        y;
 
-  err = tag_cloud__layout_prepare(tc);
+  err = tag_cloud_layout_prepare(tc);
   if (err)
     goto cleanup;
 
-  if ((tc->flags & tag_cloud__FLAG_NEW_ALL) == 0 &&
+  if ((tc->flags & tag_cloud_FLAG_NEW_ALL) == 0 &&
        tc->layout.width == width)
   {
     return error_OK; /* nothing has changed */
   }
 
   /* call if: new data, new highlights, new display */
-  if (tc->flags & (tag_cloud__FLAG_NEW_DATA       |
-                   tag_cloud__FLAG_NEW_HIGHLIGHTS |
-                   tag_cloud__FLAG_NEW_DISPLAY))
+  if (tc->flags & (tag_cloud_FLAG_NEW_DATA       |
+                   tag_cloud_FLAG_NEW_HIGHLIGHTS |
+                   tag_cloud_FLAG_NEW_DISPLAY))
   {
-    tag_cloud__hover_init(tc);
+    tag_cloud_hover_init(tc);
   }
 
   /* call if: tc->config.scale changes */
-  if (tc->flags & tag_cloud__FLAG_NEW_DISPLAY)
+  if (tc->flags & tag_cloud_FLAG_NEW_DISPLAY)
   {
     err = scales_calc(tc);
     if (err)
@@ -635,8 +635,8 @@ error tag_cloud__layout(tag_cloud *tc, int width)
   }
 
   /* call if: new data, (but not new highlights), new display */
-  if (tc->flags & (tag_cloud__FLAG_NEW_DATA       |
-                   tag_cloud__FLAG_NEW_DISPLAY))
+  if (tc->flags & (tag_cloud_FLAG_NEW_DATA       |
+                   tag_cloud_FLAG_NEW_DISPLAY))
   {
     err = metrics_calc(tc);
     if (err)
@@ -649,7 +649,7 @@ error tag_cloud__layout(tag_cloud *tc, int width)
   if (err)
     goto cleanup;
 
-  tc->flags &= ~tag_cloud__FLAG_NEW_ALL;
+  tc->flags &= ~tag_cloud_FLAG_NEW_ALL;
 
 
   err = paintstring_new(tc);
@@ -663,7 +663,7 @@ error tag_cloud__layout(tag_cloud *tc, int width)
 
 
   colours[0] = os_COLOUR_VERY_LIGHT_GREY;  /* background */
-  if (tc->flags & tag_cloud__FLAG_SHADED)
+  if (tc->flags & tag_cloud_FLAG_SHADED)
   {
     /* if we're shaded - draw stuff greyed out */
 
@@ -799,7 +799,7 @@ error tag_cloud__layout(tag_cloud *tc, int width)
         x += tc->layout.dims.gaplength;
       }
 
-      highlight = tag_cloud__is_highlighted(tc, index);
+      highlight = tag_cloud_is_highlighted(tc, index);
       if (highlight)
       {
         p = set_colour(p, colours[0], colours[2]);
@@ -893,7 +893,7 @@ error tag_cloud__layout(tag_cloud *tc, int width)
       tc->layout.boxes.boxes[index] = b;
 
       /* round the boxes to whole pixels */
-      box__round4(&tc->layout.boxes.boxes[index]);
+      box_round4(&tc->layout.boxes.boxes[index]);
     }
 
     linestart = i;
@@ -913,12 +913,12 @@ cleanup:
 
 /* ----------------------------------------------------------------------- */
 
-int tag_cloud__hit(tag_cloud *tc, int x, int y)
+int tag_cloud_hit(tag_cloud *tc, int x, int y)
 {
   int i;
 
   for (i = 0; i < tc->e_used; i++)
-    if (box__contains_point(&tc->layout.boxes.boxes[i], x, y))
+    if (box_contains_point(&tc->layout.boxes.boxes[i], x, y))
       break;
 
   return (i == tc->e_used) ? -1 : i;

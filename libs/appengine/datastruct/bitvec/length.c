@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-int bitvec__length(const bitvec_t *v)
+int bitvec_length(const bitvec_t *v)
 {
   return v->length << 5;
 }

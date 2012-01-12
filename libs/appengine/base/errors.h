@@ -87,13 +87,13 @@ typedef unsigned long int error;
 /* ----------------------------------------------------------------------- */
 
 /* report an error using Wimp_ReportError */
-void error__report(error err);
+void error_report(error err);
 
 /* throw a fatal error */
-void error__fatal(const char *token);
-void error__fatal1(const char *token, const char *parameter1);
+void error_fatal(const char *token);
+void error_fatal1(const char *token, const char *parameter1);
 
 /* throw a fatal out of memory error */
-void error__fatal_oom(void);
+void error_fatal_oom(void);
 
 #endif /* APPENGINE_ERRORS_H */

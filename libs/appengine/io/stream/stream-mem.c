@@ -17,18 +17,18 @@
 
 #include "appengine/io/stream-mem.h"
 
-typedef struct stream__mem
+typedef struct stream_mem
 {
   stream               base;
 
   const unsigned char *block;
   size_t               length;
 }
-stream__mem;
+stream_mem;
 
-static error stream_mem__seek(stream *s, int pos)
+static error stream_mem_seek(stream *s, int pos)
 {
-  stream__mem *sf = (stream__mem *) s;
+  stream_mem *sf = (stream_mem *) s;
 
   if (pos > sf->length) /* allow seeks equal to file length (to EOF) */
     return error_STREAM_BAD_SEEK;
@@ -38,9 +38,9 @@ static error stream_mem__seek(stream *s, int pos)
   return error_OK;
 }
 
-static int stream_mem__get(stream *s)
+static int stream_mem_get(stream *s)
 {
-  stream__mem *sf = (stream__mem *) s;
+  stream_mem *sf = (stream_mem *) s;
 
   NOT_USED(sf); /* only used in debug builds */
 
@@ -50,18 +50,18 @@ static int stream_mem__get(stream *s)
   return EOF;
 }
 
-static int stream_mem__length(stream *s)
+static int stream_mem_length(stream *s)
 {
-  stream__mem *sf = (stream__mem *) s;
+  stream_mem *sf = (stream_mem *) s;
 
   return sf->length;
 }
 
-error stream_mem__create(const unsigned char *block,
+error stream_mem_create(const unsigned char *block,
                          size_t               length,
                          stream             **s)
 {
-  stream__mem *sf;
+  stream_mem *sf;
 
   assert(block);
 
@@ -75,9 +75,9 @@ error stream_mem__create(const unsigned char *block,
   sf->base.last    = error_OK;
 
   sf->base.op      = NULL;
-  sf->base.seek    = stream_mem__seek;
-  sf->base.get     = stream_mem__get;
-  sf->base.length  = stream_mem__length;
+  sf->base.seek    = stream_mem_seek;
+  sf->base.get     = stream_mem_get;
+  sf->base.length  = stream_mem_length;
   sf->base.destroy = NULL;
 
   sf->block  = block;

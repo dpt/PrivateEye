@@ -8,7 +8,7 @@
 #include "impl.h"
 
 /* max is inclusive */
-void scroll_list__delete_rows(scroll_list *sl, int min, int max)
+void scroll_list_delete_rows(scroll_list *sl, int min, int max)
 {
   int n;
 

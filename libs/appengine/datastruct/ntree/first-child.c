@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-ntree_t *ntree__first_child(ntree_t *t)
+ntree_t *ntree_first_child(ntree_t *t)
 {
   return t ? t->children : NULL;
 }

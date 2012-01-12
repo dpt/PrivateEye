@@ -12,7 +12,7 @@
 
 #include "appengine/io/stream.h"
 
-error stream__seek(stream *s, int pos)
+error stream_seek(stream *s, int pos)
 {
   if (!s->seek)
     return error_STREAM_CANT_SEEK;
@@ -20,7 +20,7 @@ error stream__seek(stream *s, int pos)
   return s->seek(s, pos);
 }
 
-int stream__length(stream *s)
+int stream_length(stream *s)
 {
   if (!s->length)
     return -1;
@@ -28,7 +28,7 @@ int stream__length(stream *s)
   return s->length(s);
 }
 
-error stream__op(stream *s, stream__opcode opcode, void *arg)
+error stream_op(stream *s, stream_opcode opcode, void *arg)
 {
   if (!s->op)
     return error_STREAM_UNKNOWN_OP;
@@ -36,7 +36,7 @@ error stream__op(stream *s, stream__opcode opcode, void *arg)
   return s->op(s, opcode, arg);
 }
 
-void stream__destroy(stream *doomed)
+void stream_destroy(stream *doomed)
 {
   if (!doomed)
     return;
@@ -47,7 +47,7 @@ void stream__destroy(stream *doomed)
   free(doomed);
 }
 
-int stream__fill(stream *s)
+int stream_fill(stream *s)
 {
   int c;
 
@@ -57,6 +57,6 @@ int stream__fill(stream *s)
 
   s->buf--;
 
-  return stream__remaining(s);
+  return stream_remaining(s);
 }
 

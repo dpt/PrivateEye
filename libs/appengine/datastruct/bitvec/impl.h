@@ -12,6 +12,6 @@ struct bitvec_t
   unsigned int *vec;
 };
 
-error bitvec__ensure(bitvec_t *v, int need);
+error bitvec_ensure(bitvec_t *v, int need);
 
 #endif /* APPENGINE_BITVEC_IMPL_H */

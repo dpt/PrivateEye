@@ -10,7 +10,7 @@
 
 #include "impl.h"
 
-error ntree__insert_before(ntree_t *parent, ntree_t *sibling, ntree_t *node)
+error ntree_insert_before(ntree_t *parent, ntree_t *sibling, ntree_t *node)
 {
   assert(node->parent == NULL);
 

@@ -18,15 +18,15 @@ node;
 
 struct hash_t
 {
-  hash__fn            *hash_fn;
-  hash__compare       *compare;
-  hash__destroy_key   *destroy_key;
-  hash__destroy_value *destroy_value;
+  hash_fn            *hash_fn;
+  hash_compare       *compare;
+  hash_destroy_key   *destroy_key;
+  hash_destroy_value *destroy_value;
   int                  nbins;
   node               **bins;
 };
 
-node **hash__lookup_node(hash_t *h, const void *key);
-void hash__remove_node(hash_t *h, node **n);
+node **hash_lookup_node(hash_t *h, const void *key);
+void hash_remove_node(hash_t *h, node **n);
 
 #endif /* APPENGINE_HASH_IMPL_H */

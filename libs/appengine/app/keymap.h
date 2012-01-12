@@ -34,15 +34,15 @@ typedef struct T T;
 
 /* Uses the specified mapping to parse the keymap <filename> creating a
  * mapping between key numbers and operation codes. */
-error keymap__create(const char           *filename,
+error keymap_create(const char           *filename,
                      const keymap_section *sections,
                      int                   nsections,
                      T                   **keymap);
 
 /* Returns the operation associated with the specified key number. */
-int keymap__action(T *keymap, int section, wimp_key_no key_no);
+int keymap_get_action(T *keymap, int section, wimp_key_no key_no);
 
-void keymap__destroy(T *keymap);
+void keymap_destroy(T *keymap);
 
 #undef T
 

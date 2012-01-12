@@ -61,10 +61,10 @@ error tags_common__detagfile(tag_cloud  *tc,
                              void       *arg);
 
 error tags_common__event(tag_cloud        *tc,
-                         tag_cloud__event  event,
+                         tag_cloud_event  event,
                          void             *arg);
 
-tag_cloud__event tags_common__keyhandler(wimp_key_no  key_no,
+tag_cloud_event tags_common__keyhandler(wimp_key_no  key_no,
                                          void        *arg);
 
 

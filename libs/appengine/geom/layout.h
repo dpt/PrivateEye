@@ -35,18 +35,18 @@ layout_element;
 
 typedef struct layout_spec
 {
-  packer_t    *packer;
-  packer_loc   loc;
-  packer_clear clear;
-  int          spacing;
-  int          leading;
+  packer_t       *packer;
+  packer_loc      loc;
+  packer_cleardir clear;
+  int             spacing;
+  int             leading;
 }
 layout_spec;
 
-error layout__place(const layout_spec     *spec,
-                    const layout_element  *elements,
-                          int              nelements,
-                          os_box          *boxes,
-                          int              nboxes);
+error layout_place(const layout_spec     *spec,
+                   const layout_element  *elements,
+                         int              nelements,
+                         os_box          *boxes,
+                         int              nboxes);
 
 #endif /* APPENGINE_LAYOUT_H */

@@ -9,11 +9,11 @@
 
 #include "impl.h"
 
-void *hash__lookup(hash_t *h, const void *key)
+void *hash_lookup(hash_t *h, const void *key)
 {
   node **n;
 
-  n = hash__lookup_node(h, key);
+  n = hash_lookup_node(h, key);
 
   return (*n != NULL) ? (*n)->value : NULL;
 }

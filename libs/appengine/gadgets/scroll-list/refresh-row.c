@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-void scroll_list__refresh_row(scroll_list *sl, int row)
+void scroll_list_refresh_row(scroll_list *sl, int row)
 {
   int y1;
   int y0;

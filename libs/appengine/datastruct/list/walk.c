@@ -1,8 +1,8 @@
 
 #include "appengine/datastruct/list.h"
 
-void list__walk(list_t              *anchor,
-                list__walk_callback  cb,
+void list_walk(list_t              *anchor,
+                list_walk_callback  cb,
                 void                *cbarg)
 {
   list_t *e;

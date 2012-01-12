@@ -12,34 +12,34 @@ int lang_parse(const char *s)
   lex   *lex;
   parse *parser;
 
-  lex = lex__create(s);
+  lex = lex_create(s);
   if (lex == NULL)
     goto failure;
 
-  /*t = lex__scan(lex);
+  /*t = lex_scan(lex);
   while (t != END)
   {
     if (t < 256)
       printf("<%c>", t);
     else
       printf("<%d>", t);
-    t = lex__scan(lex);
+    t = lex_scan(lex);
   }
   printf("\n");
 
-  lex__dump(lex);*/
+  lex_dump(lex);*/
 
-  parser = parser__create(lex);
+  parser = parser_create(lex);
   if (parser == NULL)
     goto failure;
 
-  parse__program(parser);
+  parse_program(parser);
 
   // run
 
-  parser__destroy(parser);
+  parser_destroy(parser);
 
-  lex__destroy(lex);
+  lex_destroy(lex);
 
   return 0;
 

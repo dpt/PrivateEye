@@ -78,9 +78,9 @@ static void viewer_scaledlg_fillout(dialogue_t *d, void *arg)
 
   image = viewer->drawable->image;
 
-  scale__set_bounds(d, image->scale.min, image->scale.max);
+  scale_set_bounds(d, image->scale.min, image->scale.max);
 
-  scale__set(d, viewer->scale.cur);
+  scale_set(d, viewer->scale.cur);
 }
 
 static void viewer_scaledlg_set_fit_screen(dialogue_t *d, viewer_t *viewer)
@@ -92,7 +92,7 @@ static void viewer_scaledlg_set_fit_screen(dialogue_t *d, viewer_t *viewer)
 
   s = viewer_scale_for_box(viewer->drawable, sw, sh);
 
-  scale__set(d, s);
+  scale_set(d, s);
 }
 
 static void viewer_scaledlg_set_fit_window(dialogue_t *d, viewer_t *viewer)
@@ -109,10 +109,10 @@ static void viewer_scaledlg_set_fit_window(dialogue_t *d, viewer_t *viewer)
 
   s = viewer_scale_for_box(viewer->drawable, ww, wh);
 
-  scale__set(d, s);
+  scale_set(d, s);
 }
 
-static void viewer_scaledlg_handler(dialogue_t *d, scale__type type, int scale)
+static void viewer_scaledlg_handler(dialogue_t *d, scale_type type, int scale)
 {
   viewer_t *viewer;
 
@@ -127,15 +127,15 @@ static void viewer_scaledlg_handler(dialogue_t *d, scale__type type, int scale)
 
   switch (type)
   {
-  case scale__TYPE_VALUE:
+  case scale_TYPE_VALUE:
     viewer_scaledlg_set(viewer, scale, 1 /* redraw */);
     break;
 
-  case scale__TYPE_FIT_TO_SCREEN:
+  case scale_TYPE_FIT_TO_SCREEN:
     viewer_scaledlg_set_fit_screen(d, viewer);
     break;
 
-  case scale__TYPE_FIT_TO_WINDOW:
+  case scale_TYPE_FIT_TO_WINDOW:
     viewer_scaledlg_set_fit_window(d, viewer);
     break;
   }
@@ -147,14 +147,14 @@ error viewer_scaledlg_init(void)
 {
   dialogue_t *scale;
 
-  scale = scale__create();
+  scale = scale_create();
   if (scale == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(scale, viewer_scaledlg_fillout, NULL);
-  scale__set_steppings(scale, GLOBALS.choices.scale.step,
+  dialogue_set_fillout_handler(scale, viewer_scaledlg_fillout, NULL);
+  scale_set_steppings(scale, GLOBALS.choices.scale.step,
                               GLOBALS.choices.scale.mult);
-  scale__set_scale_handler(scale, viewer_scaledlg_handler);
+  scale_set_scale_handler(scale, viewer_scaledlg_handler);
 
   viewer_scaledlg = scale;
 
@@ -163,5 +163,5 @@ error viewer_scaledlg_init(void)
 
 void viewer_scaledlg_fin(void)
 {
-  scale__destroy(viewer_scaledlg);
+  scale_destroy(viewer_scaledlg);
 }

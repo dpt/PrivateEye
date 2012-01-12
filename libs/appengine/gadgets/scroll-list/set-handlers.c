@@ -7,10 +7,10 @@
 
 #include "impl.h"
 
-void scroll_list__set_handlers(scroll_list           *sl,
-                               scroll_list__redrawfn *redraw_elem,
-                               scroll_list__redrawfn *redraw_lead,
-                               scroll_list__eventfn  *event)
+void scroll_list_set_handlers(scroll_list           *sl,
+                               scroll_list_redrawfn *redraw_elem,
+                               scroll_list_redrawfn *redraw_lead,
+                               scroll_list_eventfn  *event)
 {
   sl->redraw_elem = redraw_elem;
   sl->redraw_lead = redraw_lead;

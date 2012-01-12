@@ -3,7 +3,7 @@
 
 #include "appengine/geom/box.h"
 
-void box__round(os_box *a, int amount)
+void box_round(os_box *a, int amount)
 {
   // not fully tested
   a->x0 = ((a->x0 - (amount - 1)) / amount) * amount;

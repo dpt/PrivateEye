@@ -27,7 +27,7 @@
 
 #define INITIALAREAS 8
 
-packer_t *packer__create(const os_box *dims)
+packer_t *packer_create(const os_box *dims)
 {
   packer_t *p;
 
@@ -50,7 +50,7 @@ packer_t *packer__create(const os_box *dims)
   p->dims             = *dims;
   p->margins          = *dims;
 
-  p->order            = packer__SORT_TOP_LEFT; /* any will do */
+  p->order            = packer_SORT_TOP_LEFT; /* any will do */
   p->sorted           = 1;
 
   p->consumed_area.x0 = INT_MAX;
@@ -61,7 +61,7 @@ packer_t *packer__create(const os_box *dims)
   return p;
 }
 
-void packer__destroy(packer_t *doomed)
+void packer_destroy(packer_t *doomed)
 {
   if (doomed == NULL)
     return;
@@ -72,14 +72,14 @@ void packer__destroy(packer_t *doomed)
 
 /* ----------------------------------------------------------------------- */
 
-void packer__set_margins(packer_t *packer, const os_box *margins)
+void packer_set_margins(packer_t *packer, const os_box *margins)
 {
   packer->margins.x0 = packer->dims.x0 + margins->x0; /* left */
   packer->margins.y0 = packer->dims.y0 + margins->y0; /* bottom */
   packer->margins.x1 = packer->dims.x1 - margins->x1; /* right */
   packer->margins.y1 = packer->dims.y1 - margins->y1; /* top */
 
-  if (box__is_empty(&packer->margins))
+  if (box_is_empty(&packer->margins))
   {
     /* keep valid */
 
@@ -108,8 +108,8 @@ static error add_area(packer_t *packer, const os_box *area)
 
   for (i = 0; i < packer->usedareas; i++)
   {
-    if (box__is_empty(&packer->areas[i]) ||
-       !box__contains_box(area, &packer->areas[i]))
+    if (box_is_empty(&packer->areas[i]) ||
+       !box_contains_box(area, &packer->areas[i]))
         continue;
 
     debugf(("add_area: contained by: %d <%d %d %d %d>\n",
@@ -167,7 +167,7 @@ static error remove_area(packer_t *packer, const os_box *area)
 
     saved = packer->areas[i];
 
-    if (box__is_empty(&saved) || !box__intersects(&saved, area))
+    if (box_is_empty(&saved) || !box_intersects(&saved, area))
       continue;
 
     /* invalidate the area */
@@ -222,7 +222,7 @@ static error remove_area(packer_t *packer, const os_box *area)
     }
   }
 
-  box__union(&packer->consumed_area, area, &packer->consumed_area);
+  box_union(&packer->consumed_area, area, &packer->consumed_area);
 
   return error_OK;
 
@@ -241,8 +241,8 @@ static int compare_areas_##name(const void *va, const void *vb) \
   int           emptya, emptyb;                                 \
   int           v;                                              \
                                                                 \
-  emptya = box__is_empty(a);                                    \
-  emptyb = box__is_empty(b);                                    \
+  emptya = box_is_empty(a);                                    \
+  emptyb = box_is_empty(b);                                    \
                                                                 \
   /* place invalid boxes towards the end of the list */         \
                                                                 \
@@ -263,14 +263,14 @@ COMPARE_AREAS(top_right,    b->y1 - a->y1, b->x1 - a->x1, a->x0 - b->x0)
 COMPARE_AREAS(bottom_left,  a->y0 - b->y0, a->x0 - b->x0, b->x1 - a->x1)
 COMPARE_AREAS(bottom_right, a->y0 - b->y0, b->x1 - a->x1, a->x0 - b->x0)
 
-static void packer__sort(packer_t *packer, packer_sort order)
+static void packer_sort(packer_t *packer, packer_sortdir order)
 {
   os_box       *areas;
   int           usedareas;
   const os_box *end;
   os_box       *b;
 
-  assert(order < packer__SORT__LIMIT);
+  assert(order < packer_SORT__LIMIT);
 
   if (packer->sorted && packer->order == order)
     return;
@@ -282,21 +282,21 @@ static void packer__sort(packer_t *packer, packer_sort order)
   {
     int (*compare)(const void *, const void *);
 
-    debugf(("packer__sort: sorting areas to %d\n", order));
+    debugf(("packer_sort: sorting areas to %d\n", order));
 
     switch (order)
     {
     default:
-    case packer__SORT_TOP_LEFT:
+    case packer_SORT_TOP_LEFT:
       compare = compare_areas_top_left;
       break;
-    case packer__SORT_TOP_RIGHT:
+    case packer_SORT_TOP_RIGHT:
       compare = compare_areas_top_right;
       break;
-    case packer__SORT_BOTTOM_LEFT:
+    case packer_SORT_BOTTOM_LEFT:
       compare = compare_areas_bottom_left;
       break;
-    case packer__SORT_BOTTOM_RIGHT:
+    case packer_SORT_BOTTOM_RIGHT:
       compare = compare_areas_bottom_right;
       break;
     }
@@ -304,7 +304,7 @@ static void packer__sort(packer_t *packer, packer_sort order)
     qsort(areas, usedareas, sizeof(*areas), compare);
   }
 
-  debugf(("packer__sort: trimming\n"));
+  debugf(("packer_sort: trimming\n"));
 
   end = areas + usedareas;
 
@@ -317,7 +317,7 @@ static void packer__sort(packer_t *packer, packer_sort order)
 
     debugf(("%d %d %d %d\n", b->x0, b->y0, b->x1, b->y1));
 
-    if (!box__is_empty(b))
+    if (!box_is_empty(b))
       continue;
 
     n = b - areas;
@@ -333,7 +333,7 @@ static void packer__sort(packer_t *packer, packer_sort order)
 
 /* ----------------------------------------------------------------------- */
 
-static const os_box *packer__next(packer_t *packer)
+static const os_box *packer_next(packer_t *packer)
 {
   do
   {
@@ -343,11 +343,11 @@ static const os_box *packer__next(packer_t *packer)
       return NULL; /* no more areas */
     }
 
-    box__intersection(&packer->areas[packer->nextindex++],
+    box_intersection(&packer->areas[packer->nextindex++],
                       &packer->margins,
                       &packer->nextarea);
   }
-  while (box__is_empty(&packer->nextarea));
+  while (box_is_empty(&packer->nextarea));
 
   debugf(("next: %d %d %d %d\n", packer->nextarea.x0,
                                  packer->nextarea.y0,
@@ -357,24 +357,24 @@ static const os_box *packer__next(packer_t *packer)
   return &packer->nextarea;
 }
 
-static const os_box *packer__start(packer_t *packer, packer_sort order)
+static const os_box *packer_start(packer_t *packer, packer_sortdir order)
 {
-  packer__sort(packer, order);
+  packer_sort(packer, order);
 
   packer->nextindex = 0;
 
   debugf(("start: list is %d long\n", packer->usedareas));
 
-  return packer__next(packer);
+  return packer_next(packer);
 }
 
 /* ----------------------------------------------------------------------- */
 
-int packer__next_width(packer_t *packer, packer_loc loc)
+int packer_next_width(packer_t *packer, packer_loc loc)
 {
   const os_box *b;
 
-  b = packer__start(packer, (packer_sort) loc);
+  b = packer_start(packer, (packer_sortdir) loc);
   if (!b)
     return 0;
 
@@ -383,21 +383,21 @@ int packer__next_width(packer_t *packer, packer_loc loc)
 
 /* ----------------------------------------------------------------------- */
 
-error packer__place_at(packer_t *packer, const os_box *area)
+error packer_place_at(packer_t *packer, const os_box *area)
 {
   os_box b;
 
   /* subtract the margins */
 
-  box__intersection(&packer->margins, area, &b);
+  box_intersection(&packer->margins, area, &b);
 
-  if (box__is_empty(&b))
+  if (box_is_empty(&b))
     return error_PACKER_EMPTY;
 
   return remove_area(packer, &b);
 }
 
-error packer__place_by(packer_t   *packer,
+error packer_place_by(packer_t   *packer,
                        packer_loc  loc,
                        int         w,
                        int         h,
@@ -412,33 +412,33 @@ error packer__place_by(packer_t   *packer,
   if (w == 0 || h == 0)
     return error_PACKER_EMPTY;
 
-  for (b = packer__start(packer, (packer_sort) loc);
+  for (b = packer_start(packer, (packer_sortdir) loc);
        b;
-       b = packer__next(packer))
+       b = packer_next(packer))
   {
-    if (box__could_hold(b, w, h))
+    if (box_could_hold(b, w, h))
     {
-      debugf(("packer__place_by: fits\n"));
+      debugf(("packer_place_by: fits\n"));
       break;
     }
   }
 
   if (!b)
   {
-    debugf(("packer__place_by: didn't fit\n"));
+    debugf(("packer_place_by: didn't fit\n"));
     return error_PACKER_DIDNT_FIT;
   }
 
   switch (loc)
   {
-  case packer__LOC_TOP_LEFT:
-  case packer__LOC_BOTTOM_LEFT:
+  case packer_LOC_TOP_LEFT:
+  case packer_LOC_BOTTOM_LEFT:
     packer->placed_area.x0 = b->x0;
     packer->placed_area.x1 = b->x0 + w;
     break;
 
-  case packer__LOC_TOP_RIGHT:
-  case packer__LOC_BOTTOM_RIGHT:
+  case packer_LOC_TOP_RIGHT:
+  case packer_LOC_BOTTOM_RIGHT:
     packer->placed_area.x0 = b->x1 - w;
     packer->placed_area.x1 = b->x1;
     break;
@@ -446,14 +446,14 @@ error packer__place_by(packer_t   *packer,
 
   switch (loc)
   {
-  case packer__LOC_TOP_LEFT:
-  case packer__LOC_TOP_RIGHT:
+  case packer_LOC_TOP_LEFT:
+  case packer_LOC_TOP_RIGHT:
     packer->placed_area.y0 = b->y1 - h;
     packer->placed_area.y1 = b->y1;
     break;
 
-  case packer__LOC_BOTTOM_LEFT:
-  case packer__LOC_BOTTOM_RIGHT:
+  case packer_LOC_BOTTOM_LEFT:
+  case packer_LOC_BOTTOM_RIGHT:
     packer->placed_area.y0 = b->y0;
     packer->placed_area.y1 = b->y0 + h;
     break;
@@ -471,35 +471,35 @@ error packer__place_by(packer_t   *packer,
 
 /* ----------------------------------------------------------------------- */
 
-error packer__clear(packer_t *packer, packer_clear clear)
+error packer_clear(packer_t *packer, packer_cleardir clear)
 {
   error         err;
   int           left, right;
   const os_box *b;
   os_box        clearbox;
 
-  debugf(("packer__clear\n"));
+  debugf(("packer_clear\n"));
 
   switch (clear)
   {
   default:
-  case packer__CLEAR_LEFT:
+  case packer_CLEAR_LEFT:
     left  = packer->margins.x0;
     right = INT_MIN;
     break;
-  case packer__CLEAR_RIGHT:
+  case packer_CLEAR_RIGHT:
     left  = INT_MAX;
     right = packer->margins.x1;
     break;
-  case packer__CLEAR_BOTH:
+  case packer_CLEAR_BOTH:
     left  = packer->margins.x0;
     right = packer->margins.x1;
     break;
   }
 
-  for (b = packer__start(packer, packer__SORT_TOP_LEFT);
+  for (b = packer_start(packer, packer_SORT_TOP_LEFT);
        b;
-       b = packer__next(packer))
+       b = packer_next(packer))
   {
     /* find an area which touches the required edge(s) */
 
@@ -509,7 +509,7 @@ error packer__clear(packer_t *packer, packer_clear clear)
 
   /* clear from top of found box upwards to top of doc */
 
-  debugf(("packer__clear: invalidate area\n"));
+  debugf(("packer_clear: invalidate area\n"));
 
   clearbox = packer->margins;
 
@@ -527,14 +527,14 @@ error packer__clear(packer_t *packer, packer_clear clear)
 
 /* ----------------------------------------------------------------------- */
 
-error packer__map(packer_t *packer, packer__map_fn *fn, void *arg)
+error packer_map(packer_t *packer, packer_map_fn *fn, void *arg)
 {
   error         err;
   const os_box *b;
 
-  for (b = packer__start(packer, packer->order);
+  for (b = packer_start(packer, packer->order);
        b;
-       b = packer__next(packer))
+       b = packer_next(packer))
   {
     err = fn(b, arg);
     if (err)
@@ -546,7 +546,7 @@ error packer__map(packer_t *packer, packer__map_fn *fn, void *arg)
 
 /* ----------------------------------------------------------------------- */
 
-const os_box *packer__get_consumed_area(const packer_t *packer)
+const os_box *packer_get_consumed_area(const packer_t *packer)
 {
   return &packer->consumed_area;
 }

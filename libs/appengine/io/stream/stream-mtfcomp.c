@@ -209,10 +209,10 @@ static int comp_fetch_byte_callback(void *arg)
 {
   stream_mtfcomp *sm = arg;
 
-  return stream__getc(sm->input);
+  return stream_getc(sm->input);
 }
 
-static int stream_mtfcomp__get(stream *s)
+static int stream_mtfcomp_get(stream *s)
 {
   stream_mtfcomp *sm = (stream_mtfcomp *) s;
   unsigned char *p;
@@ -228,7 +228,7 @@ static int stream_mtfcomp__get(stream *s)
     c = compress(&sm->compressor, comp_fetch_byte_callback, sm);
     if (c == EOF)
     {
-      DBUG(("stream_mtfcomp__get hit EOF\n"));
+      DBUG(("stream_mtfcomp_get hit EOF\n"));
       break;
     }
 
@@ -237,7 +237,7 @@ static int stream_mtfcomp__get(stream *s)
 
   if (p == sm->buffer)
   {
-    DBUG(("no bytes generated in stream_mtfcomp__get\n"));
+    DBUG(("no bytes generated in stream_mtfcomp_get\n"));
     return EOF; /* EOF at start */
   }
 
@@ -247,7 +247,7 @@ static int stream_mtfcomp__get(stream *s)
   return *s->buf++;
 }
 
-error stream_mtfcomp__create(stream *input, int bufsz, stream **s)
+error stream_mtfcomp_create(stream *input, int bufsz, stream **s)
 {
   stream_mtfcomp *sm;
 
@@ -267,7 +267,7 @@ error stream_mtfcomp__create(stream *input, int bufsz, stream **s)
 
   sm->base.op      = NULL;
   sm->base.seek    = NULL; /* can't seek */
-  sm->base.get     = stream_mtfcomp__get;
+  sm->base.get     = stream_mtfcomp_get;
   sm->base.length  = NULL; /* unknown length */
   sm->base.destroy = NULL;
 
@@ -298,10 +298,10 @@ static int decomp_fetch_byte_callback(void *arg)
 {
   stream_mtfdecomp *sm = arg;
 
-  return stream__getc(sm->input);
+  return stream_getc(sm->input);
 }
 
-static int stream_mtfdecomp__get(stream *s)
+static int stream_mtfdecomp_get(stream *s)
 {
   stream_mtfdecomp *sm = (stream_mtfdecomp *) s;
   unsigned char *p;
@@ -317,7 +317,7 @@ static int stream_mtfdecomp__get(stream *s)
     c = decompress(&sm->decompressor, decomp_fetch_byte_callback, sm);
     if (c == EOF)
     {
-      DBUG(("stream_mtfdecomp__get hit EOF\n"));
+      DBUG(("stream_mtfdecomp_get hit EOF\n"));
       break;
     }
 
@@ -326,7 +326,7 @@ static int stream_mtfdecomp__get(stream *s)
 
   if (p == sm->buffer)
   {
-    DBUG(("no bytes generated in stream_mtfdecomp__get\n"));
+    DBUG(("no bytes generated in stream_mtfdecomp_get\n"));
     return EOF; /* EOF at start */
   }
 
@@ -336,7 +336,7 @@ static int stream_mtfdecomp__get(stream *s)
   return *s->buf++;
 }
 
-error stream_mtfdecomp__create(stream *input, int bufsz, stream **s)
+error stream_mtfdecomp_create(stream *input, int bufsz, stream **s)
 {
   stream_mtfdecomp *sm;
 
@@ -356,7 +356,7 @@ error stream_mtfdecomp__create(stream *input, int bufsz, stream **s)
 
   sm->base.op      = NULL;
   sm->base.seek    = NULL; /* can't seek */
-  sm->base.get     = stream_mtfdecomp__get;
+  sm->base.get     = stream_mtfdecomp_get;
   sm->base.length  = NULL; /* unknown length */
   sm->base.destroy = NULL;
 

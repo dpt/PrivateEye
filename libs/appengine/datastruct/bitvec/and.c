@@ -11,7 +11,7 @@
 
 #include "impl.h"
 
-error bitvec__and(const bitvec_t *a, const bitvec_t *b, bitvec_t **c)
+error bitvec_and(const bitvec_t *a, const bitvec_t *b, bitvec_t **c)
 {
   int       l;
   bitvec_t *v;
@@ -23,7 +23,7 @@ error bitvec__and(const bitvec_t *a, const bitvec_t *b, bitvec_t **c)
   l = MIN(a->length, b->length);
 
   /* create vec, ensuring that enough space is allocated to perform the op */
-  v = bitvec__create(l << 5);
+  v = bitvec_create(l << 5);
   if (v == NULL)
     return error_OOM;
 

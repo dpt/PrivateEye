@@ -12,7 +12,7 @@
 
 #include "impl.h"
 
-void scroll_list__autoscroll(scroll_list *sl, int on)
+void scroll_list_autoscroll(scroll_list *sl, int on)
 {
   wimp_auto_scroll_info info;
 

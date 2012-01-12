@@ -23,7 +23,7 @@ static int _load_sprites(const char *spritefile, int area_size)
 
   template_sprite_area = malloc(area_size);
   if (template_sprite_area == NULL)
-    error__fatal_oom();
+    error_fatal_oom();
 
   template_sprite_area->size  = area_size;
   template_sprite_area->first = 16;
@@ -48,7 +48,7 @@ void window_load_sprites(const char *filename)
 
   suffixed = malloc(strlen(filename) + strlen(suffix) + 1);
   if (suffixed == NULL)
-    error__fatal_oom();
+    error_fatal_oom();
 
   strcpy(suffixed, filename);
   strcat(suffixed, suffix);
@@ -66,7 +66,7 @@ void window_load_sprites(const char *filename)
     obj_type = osfile_read_no_path(filename, NULL, NULL,
                                   &area_size, NULL);
     if (obj_type != fileswitch_IS_FILE)
-      error__fatal1("NoFile", filename);
+      error_fatal1("NoFile", filename);
 
     _load_sprites(filename, area_size);
   }

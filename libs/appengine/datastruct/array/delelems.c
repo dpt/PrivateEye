@@ -4,7 +4,7 @@
 
 #include "appengine/datastruct/array.h"
 
-void array__delete_elements(void  *array,
+void array_delete_elements(void  *array,
                             size_t elemsize,
                             int    nelems,
                             int    first_doomed,

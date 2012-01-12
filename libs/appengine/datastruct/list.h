@@ -22,23 +22,23 @@ typedef struct T
 }
 T;
 
-void list__init(T *anchor);
+void list_init(T *anchor);
 
 /* Anchor is assumed to be a static element whose only job is to point to
  * the first element in the list. */
 
-void list__add_to_head(T *anchor, T *item);
+void list_add_to_head(T *anchor, T *item);
 
-void list__remove(T *anchor, T *doomed);
+void list_remove(T *anchor, T *doomed);
 
-typedef int (list__walk_callback)(T *, void *);
+typedef int (list_walk_callback)(T *, void *);
 
-void list__walk(T *anchor, list__walk_callback *cb, void *opaque);
+void list_walk(T *anchor, list_walk_callback *cb, void *opaque);
 
 /* Searches the linked list looking for a key. The key is specified as an
  * offset from the start of the linked list element. It is an int-sized unit.
  */
-T *list__find(T *anchor, size_t keyloc, int key);
+T *list_find(T *anchor, size_t keyloc, int key);
 
 #undef T
 

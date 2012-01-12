@@ -31,7 +31,7 @@ static int match(parse *p, Token t)
 {
   if (p->lookahead == t)
   {
-    p->lookahead = lex__scan(p->lex);
+    p->lookahead = lex_scan(p->lex);
     return 1;
   }
   else
@@ -46,12 +46,12 @@ static void factor(parse *p)
   switch (p->lookahead)
   {
   case IDENT:
-    emit(lex__get_sym(p->lex), p->lookahead, lex__get_val(p->lex));
+    emit(lex_get_sym(p->lex), p->lookahead, lex_get_val(p->lex));
     match(p, IDENT);
     break;
 
   case NUMBER:
-    emit(lex__get_sym(p->lex), p->lookahead, lex__get_val(p->lex));
+    emit(lex_get_sym(p->lex), p->lookahead, lex_get_val(p->lex));
     match(p, NUMBER);
     break;
 
@@ -83,7 +83,7 @@ static void term(parse *p)
       t = p->lookahead;
       match(p, t);
       factor(p);
-      emit(lex__get_sym(p->lex), t, NONE);
+      emit(lex_get_sym(p->lex), t, NONE);
       continue;
 
     default:
@@ -107,7 +107,7 @@ static void expr(parse *p)
       t = p->lookahead;
       match(p, t);
       term(p);
-      emit(lex__get_sym(p->lex), t, NONE);
+      emit(lex_get_sym(p->lex), t, NONE);
       continue;
 
     default:
@@ -126,7 +126,7 @@ static void stmt(parse *p)
   {
   case IDENT:
     t = p->lookahead;
-    v = lex__get_val(p->lex);
+    v = lex_get_val(p->lex);
     match(p, IDENT);
 
     t2 = p->lookahead;
@@ -134,8 +134,8 @@ static void stmt(parse *p)
 
     expr(p);
 
-    emit(lex__get_sym(p->lex), t, v);
-    emit(lex__get_sym(p->lex), t2, NONE);
+    emit(lex_get_sym(p->lex), t, v);
+    emit(lex_get_sym(p->lex), t2, NONE);
 
     match(p, ';');
     break;
@@ -148,7 +148,7 @@ static void stmt(parse *p)
 
 /* ----------------------------------------------------------------------- */
 
-parse *parser__create(lex *lex)
+parse *parser_create(lex *lex)
 {
   parse *p;
 
@@ -161,7 +161,7 @@ parse *parser__create(lex *lex)
   return p;
 }
 
-void parser__destroy(parse *doomed)
+void parser_destroy(parse *doomed)
 {
   if (doomed == NULL)
     return;
@@ -169,9 +169,9 @@ void parser__destroy(parse *doomed)
   free(doomed);
 }
 
-void parse__program(parse *parse)
+void parse_program(parse *parse)
 {
-  parse->lookahead = lex__scan(parse->lex);
+  parse->lookahead = lex_scan(parse->lex);
   while (parse->lookahead != END)
   {
     stmt(parse);

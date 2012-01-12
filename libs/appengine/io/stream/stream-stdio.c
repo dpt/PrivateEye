@@ -28,7 +28,7 @@ typedef struct stream_file
 }
 stream_file;
 
-static error stream_file__seek(stream *s, int pos)
+static error stream_stdio_seek(stream *s, int pos)
 {
   stream_file *sf = (stream_file *) s;
 
@@ -39,7 +39,7 @@ static error stream_file__seek(stream *s, int pos)
   return error_OK;
 }
 
-static int stream_file__get(stream *s)
+static int stream_stdio_get(stream *s)
 {
   stream_file *sf = (stream_file *) s;
   int         read;
@@ -57,7 +57,7 @@ static int stream_file__get(stream *s)
   return *sf->base.buf++;
 }
 
-static int stream_file__length(stream *s)
+static int stream_stdio_length(stream *s)
 {
   stream_file *sf = (stream_file *) s;
 
@@ -76,14 +76,14 @@ static int stream_file__length(stream *s)
   return (int) sf->length;
 }
 
-static void stream_file__destroy(stream *doomed)
+static void stream_stdio_destroy(stream *doomed)
 {
   stream_file *sf = (stream_file *) doomed;
 
   fclose(sf->file);
 }
 
-error stream_file__create(FILE *f, int bufsz, stream **s)
+error stream_stdio_create(FILE *f, int bufsz, stream **s)
 {
   stream_file *sf;
 
@@ -102,10 +102,10 @@ error stream_file__create(FILE *f, int bufsz, stream **s)
   sf->base.last    = error_OK;
 
   sf->base.op      = NULL;
-  sf->base.seek    = stream_file__seek;
-  sf->base.get     = stream_file__get;
-  sf->base.length  = stream_file__length;
-  sf->base.destroy = stream_file__destroy;
+  sf->base.seek    = stream_stdio_seek;
+  sf->base.get     = stream_stdio_get;
+  sf->base.length  = stream_stdio_length;
+  sf->base.destroy = stream_stdio_destroy;
 
   sf->file   = f;
   sf->length = -1;

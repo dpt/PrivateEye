@@ -335,7 +335,7 @@ static int messageack_translate_ffg(wimp_message *message, void *handle)
 
   // if (event == 19 && ...)
   if (message->sender != GLOBALS.task_handle)
-    oserror__report(12345, "error.ffg.died");
+    oserror_report(12345, "error.ffg.died");
 
   return 1;
 }

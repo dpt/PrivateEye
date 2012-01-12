@@ -37,7 +37,7 @@ static void jpeg_redraw(const drawable_choices *choices, wimp_draw *draw, drawab
                            drawable->image->display.file_size,
                            choices->jpeg.plot_flags));
   if (e)
-    oserror__plot(e, x, y);
+    oserror_plot(e, x, y);
 }
 
 // almost identical to bitmap_scaling

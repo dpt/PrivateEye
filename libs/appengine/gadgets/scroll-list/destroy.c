@@ -13,9 +13,9 @@
 
 #include "impl.h"
 
-void scroll_list__destroy(scroll_list *doomed)
+void scroll_list_destroy(scroll_list *doomed)
 {
-  scroll_list__internal_set_handlers(0, doomed->w, doomed);
+  scroll_list_internal_set_handlers(0, doomed->w, doomed);
 
   wimp_delete_window(doomed->w);
 

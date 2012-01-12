@@ -10,18 +10,18 @@
 
 #include "appengine/base/errors.h"
 
-error icon_bar__init(void);
-void icon_bar__fin(void);
+error icon_bar_init(void);
+void icon_bar_fin(void);
 
-typedef void (icon_bar__menu_pointerfn)(const wimp_pointer *pointer,
+typedef void (icon_bar_menu_pointerfn)(const wimp_pointer *pointer,
                                         void               *opaque);
-typedef void (icon_bar__menu_selectionfn)(const wimp_selection *selection,
+typedef void (icon_bar_menu_selectionfn)(const wimp_selection *selection,
                                           void                 *opaque);
-typedef void (icon_bar__menu_updatefn)(wimp_menu *menu, void *opaque);
+typedef void (icon_bar_menu_updatefn)(wimp_menu *menu, void *opaque);
 
-void icon_bar__set_handlers(icon_bar__menu_pointerfn   *pointer,
-                            icon_bar__menu_selectionfn *select,
-                            icon_bar__menu_updatefn    *update,
+void icon_bar_set_handlers(icon_bar_menu_pointerfn   *pointer,
+                            icon_bar_menu_selectionfn *select,
+                            icon_bar_menu_updatefn    *update,
                             void                       *opaque);
 
 #endif /* ICONBAR_H */

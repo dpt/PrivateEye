@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-error ntree__prepend(ntree_t *parent, ntree_t *node)
+error ntree_prepend(ntree_t *parent, ntree_t *node)
 {
-  return ntree__insert_before(parent, parent->children, node);
+  return ntree_insert_before(parent, parent->children, node);
 }

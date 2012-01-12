@@ -60,7 +60,7 @@ static int sprite_load(image_choices *choices, image_t *image)
   if (e)
   {
     flex_free((flex_ptr) &area);
-    oserror__report_block(e);
+    oserror_report_block(e);
     return TRUE; /* failure */
   }
 
@@ -112,7 +112,7 @@ static int sprite_load(image_choices *choices, image_t *image)
 
 NoMem:
 
-  oserror__report(0, "error.no.mem");
+  oserror_report(0, "error.no.mem");
 
   return TRUE; /* failure */
 }

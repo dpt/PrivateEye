@@ -21,85 +21,85 @@
 
 /* ----------------------------------------------------------------------- */
 
-error tagdb__init(void);
-void tagdb__fin(void);
+error tagdb_init(void);
+void tagdb_fin(void);
 
 /* ----------------------------------------------------------------------- */
 
-error tagdb__create(const char *filename);
-void tagdb__delete(const char *filename);
+error tagdb_create(const char *filename);
+void tagdb_delete(const char *filename);
 
 /* ----------------------------------------------------------------------- */
 
 typedef struct T T;
 
-error tagdb__open(const char *filename, T **db);
-void tagdb__close(T *db);
+error tagdb_open(const char *filename, T **db);
+void tagdb_close(T *db);
 
 /* force any pending changes to disc */
-error tagdb__commit(T *db);
+error tagdb_commit(T *db);
 
 /* ----------------------------------------------------------------------- */
 
 /* tag management */
 
-typedef unsigned int tagdb__tag;
+typedef unsigned int tagdb_tag;
 
 /* add a new tag */
-error tagdb__add(T *db, const char *name, tagdb__tag *tag);
+error tagdb_add(T *db, const char *name, tagdb_tag *tag);
 
 /* delete a tag */
-void tagdb__remove(T *db, tagdb__tag tag);
+void tagdb_remove(T *db, tagdb_tag tag);
 
 /* rename a tag */
-error tagdb__rename(T *db, tagdb__tag tag, const char *name);
+error tagdb_rename(T *db, tagdb_tag tag, const char *name);
 
 /* enumerate tags with counts */
-error tagdb__enumerate_tags(T *db, int *continuation,
-                            tagdb__tag *tag, int *count);
+error tagdb_enumerate_tags(T *db, int *continuation,
+                            tagdb_tag *tag, int *count);
 
 /* convert a tag to a name */
 /* 'buf' may be NULL if bufsz is 0 */
-error tagdb__tagtoname(T *db, tagdb__tag tag, char *buf, size_t bufsz);
+error tagdb_tagtoname(T *db, tagdb_tag tag, char *buf, size_t bufsz);
 
 /* ----------------------------------------------------------------------- */
 
 /* tagging */
 
 /* apply tag to id */
-error tagdb__tagid(T *db, const char *id, tagdb__tag tag);
+error tagdb_tagid(T *db, const char *id, tagdb_tag tag);
 
 /* remove tag from id */
-error tagdb__untagid(T *db, const char *id, tagdb__tag tag);
+error tagdb_untagid(T *db, const char *id, tagdb_tag tag);
 
 /* ----------------------------------------------------------------------- */
 
 /* queries */
 
 /* query tags for id */
-error tagdb__get_tags_for_id(T *db, const char *id,
-                             int *continuation, tagdb__tag *tag);
+error tagdb_get_tags_for_id(T *db, const char *id,
+                             int *continuation, tagdb_tag *tag);
 
 /* enumerate ids */
-error tagdb__enumerate_ids(T *db,
+error tagdb_enumerate_ids(T *db,
                            int *continuation,
                            char *buf, size_t bufsz);
 
 /* enumerate ids by tag */
-error tagdb__enumerate_ids_by_tag(T *db, tagdb__tag tag,
+error tagdb_enumerate_ids_by_tag(T *db, tagdb_tag tag,
                                   int *continuation,
                                   char *buf, size_t bufsz);
 
 /* enumerate ids which match all specified tags */
-error tagdb__enumerate_ids_by_tags(T *db,
-                                   const tagdb__tag *tags, int ntags,
+error tagdb_enumerate_ids_by_tags(T *db,
+                                   const tagdb_tag *tags, int ntags,
                                    int *continuation,
                                    char *buf, size_t bufsz);
 
 /* ----------------------------------------------------------------------- */
 
 /* delete knowledge of id */
-void tagdb__forget(T *db, const char *id);
+void tagdb_forget(T *db, const char *id);
 
 /* ----------------------------------------------------------------------- */
 

@@ -44,7 +44,7 @@ typedef struct save_t
   dialogue_t          dialogue; /* base class */
   char               *file_name;
   bits                file_type;
-  save__save_handler *save_handler;
+  save_save_handler *save_handler;
 }
 save_t;
 
@@ -54,12 +54,12 @@ static wimp_mouse_state saving_close_menu;
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler save__event_mouse_click,
-                          save__event_user_drag_box;
+static event_wimp_handler save_event_mouse_click,
+                          save_event_user_drag_box;
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *save__create(void)
+dialogue_t *save_create(void)
 {
   save_t *s;
 
@@ -67,23 +67,23 @@ dialogue_t *save__create(void)
   if (s == NULL)
     return NULL;
 
-  dialogue__construct(&s->dialogue, "save", SAVE_B_SAVE, SAVE_B_CANCEL);
+  dialogue_construct(&s->dialogue, "save", SAVE_B_SAVE, SAVE_B_CANCEL);
 
-  dialogue__set_handlers(&s->dialogue,
-                         save__event_mouse_click,
+  dialogue_set_handlers(&s->dialogue,
+                         save_event_mouse_click,
                          NULL,
                          NULL);
 
   return &s->dialogue;
 }
 
-void save__destroy(dialogue_t *d)
+void save_destroy(dialogue_t *d)
 {
   save_t *s;
 
   s = (save_t *) d;
 
-  dialogue__destruct(&s->dialogue);
+  dialogue_destruct(&s->dialogue);
 
   free(s->file_name);
   free(s);
@@ -91,7 +91,7 @@ void save__destroy(dialogue_t *d)
 
 /* ----------------------------------------------------------------------- */
 
-static int save__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int save_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
   save_t       *s;
@@ -111,7 +111,7 @@ static int save__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
         char   file_name[256]; /* Careful Now */
         char  *p;
 
-        win = dialogue__get_window(&s->dialogue);
+        win = dialogue_get_window(&s->dialogue);
 
         icon_get_text(win, SAVE_W_FILENAME, file_name);
 
@@ -120,8 +120,8 @@ static int save__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
           ;
         if (*p == '\0')
         {
-          oserror__report(0, "warn.drag.to.save");
-          dialogue__keep_open(&s->dialogue);
+          oserror_report(0, "warn.drag.to.save");
+          dialogue_keep_open(&s->dialogue);
         }
         else
         {
@@ -149,7 +149,7 @@ static int save__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
 
         event_register_wimp_handler(wimp_USER_DRAG_BOX,
                                     event_ANY_WINDOW, event_ANY_ICON,
-                                    save__event_user_drag_box, handle);
+                                    save_event_user_drag_box, handle);
 
         break;
       }
@@ -159,7 +159,7 @@ static int save__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
   return event_HANDLED;
 }
 
-static int save__event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int save_event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   save_t      *s;
   wimp_pointer pointer;
@@ -172,13 +172,13 @@ static int save__event_user_drag_box(wimp_event_no event_no, wimp_block *block, 
 
   event_deregister_wimp_handler(wimp_USER_DRAG_BOX,
                                 event_ANY_WINDOW, event_ANY_ICON,
-                                save__event_user_drag_box, handle);
+                                save_event_user_drag_box, handle);
 
   drag_icon_stop();
 
   wimp_get_pointer_info(&pointer);
 
-  w = dialogue__get_window(&s->dialogue);
+  w = dialogue_get_window(&s->dialogue);
 
   if (pointer.w != w)
   {
@@ -213,7 +213,7 @@ static int save__event_user_drag_box(wimp_event_no event_no, wimp_block *block, 
 
 /* ----------------------------------------------------------------------- */
 
-error save__set_file_name(dialogue_t *d, const char *file_name)
+error save_set_file_name(dialogue_t *d, const char *file_name)
 {
   save_t *s = (save_t *) d;
   wimp_w  win;
@@ -227,27 +227,27 @@ error save__set_file_name(dialogue_t *d, const char *file_name)
   if (s->file_name == NULL)
     return error_OOM;
 
-  win = dialogue__get_window(d);
+  win = dialogue_get_window(d);
 
   icon_set_text(win, SAVE_W_FILENAME, s->file_name);
 
   return error_OK;
 }
 
-void save__set_file_type(dialogue_t *d, bits file_type)
+void save_set_file_type(dialogue_t *d, bits file_type)
 {
   save_t *s = (save_t *) d;
   wimp_w  win;
 
   s->file_type = file_type;
 
-  win = dialogue__get_window(d);
+  win = dialogue_get_window(d);
 
   icon_validation_printf(win, SAVE_I_ICON,
                          "Ni_icon;Sfile_%3x", s->file_type);
 }
 
-void save__set_save_handler(dialogue_t *d, save__save_handler *save_handler)
+void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)
 {
   save_t *s = (save_t *) d;
 
@@ -256,7 +256,7 @@ void save__set_save_handler(dialogue_t *d, save__save_handler *save_handler)
 
 /* ----------------------------------------------------------------------- */
 
-int save__should_close_menu(void)
+int save_should_close_menu(void)
 {
   return saving_close_menu & wimp_DRAG_SELECT;
 }

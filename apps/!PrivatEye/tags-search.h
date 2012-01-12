@@ -8,8 +8,8 @@
 
 #include "appengine/base/errors.h"
 
-error tags_search__init(void);
-void tags_search__fin(void);
-error tags_search__open(void);
+error tags_search_init(void);
+void tags_search_fin(void);
+error tags_search_open(void);
 
 #endif /* TAGS_SEARCH_H */

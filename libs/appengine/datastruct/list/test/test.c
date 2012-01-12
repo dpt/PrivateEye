@@ -50,12 +50,12 @@ int list_test(void)
   for (i = 0; i < NELEMS(data); i++)
   {
     printf("adding '%s'...\n", data[i].string);
-    list__add_to_head(&anchor, &data[i].ll);
+    list_add_to_head(&anchor, &data[i].ll);
   }
 
   printf("test: iterate\n");
 
-  list__walk(&anchor, printelement, NULL);
+  list_walk(&anchor, printelement, NULL);
 
   return 0;
 }

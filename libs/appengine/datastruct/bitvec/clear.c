@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-void bitvec__clear(bitvec_t *v, int bit)
+void bitvec_clear(bitvec_t *v, int bit)
 {
   int word;
 

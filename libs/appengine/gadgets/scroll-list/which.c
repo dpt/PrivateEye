@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-int scroll_list__which(scroll_list *sl, wimp_pointer *pointer)
+int scroll_list_which(scroll_list *sl, wimp_pointer *pointer)
 {
   wimp_window_state state;
   int               y;

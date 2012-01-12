@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-int ntree__depth(ntree_t *t)
+int ntree_depth(ntree_t *t)
 {
   int d;
 

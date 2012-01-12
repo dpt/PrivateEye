@@ -160,7 +160,7 @@ typedef int (thumbview__map_callback)(thumbview *tv, void *arg);
 /* Call the specified function for every thumbview window. */
 static void thumbview__map(thumbview__map_callback *fn, void *arg)
 {
-  list__walk(&LOCALS.list_anchor, (list__walk_callback *) fn, arg);
+  list_walk(&LOCALS.list_anchor, (list_walk_callback *) fn, arg);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -198,7 +198,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
   e = tv->entries + index;
 
 
-  card__draw(redraw, x, y, sel ? card__draw_flag_INVERT : 0);
+  card_draw(redraw, x, y, sel ? card_draw_flag_INVERT : 0);
 
   for (i = 0; i < ElementIndex__Limit; i++)
   {
@@ -206,7 +206,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
 
     b = &tv->layout.elements[i];
 
-    if (box__is_empty(b)) /* should ideally cull empty boxes before they
+    if (box_is_empty(b)) /* should ideally cull empty boxes before they
                              reach this stage */
         continue;
 
@@ -344,7 +344,7 @@ static void pointer(wimp_pointer *pointer, void *arg)
   thumbview__menu_update();
 
 //  a = GLOBALS.thumbview_m->entries[1].sub_menu;
-//  a->entries[0].sub_menu = tag_cloud__get_window_handle(tv->tc);
+//  a->entries[0].sub_menu = tag_cloud_get_window_handle(tv->tc);
 
   menu_open(GLOBALS.thumbview_m, pointer->pos.x - 64, pointer->pos.y);
 }
@@ -361,7 +361,7 @@ static void thumbview__reg(int reg, thumbview *tv)
 
   event_register_wimp_group(reg,
                             wimp_handlers, NELEMS(wimp_handlers),
-                            filerwin__get_window_handle(tv->fw), event_ANY_ICON,
+                            filerwin_get_window_handle(tv->fw), event_ANY_ICON,
                             tv);
 }
 
@@ -371,16 +371,16 @@ static error thumbview__set_handlers(thumbview *tv)
 
   thumbview__reg(1, tv);
 
-  filerwin__set_handlers(tv->fw, redraw, close, pointer);
+  filerwin_set_handlers(tv->fw, redraw, close, pointer);
 
-  err = help__add_window(filerwin__get_window_handle(tv->fw), "thumbview");
+  err = help_add_window(filerwin_get_window_handle(tv->fw), "thumbview");
 
   return err;
 }
 
 static void thumbview__release_handlers(thumbview *tv)
 {
-  help__remove_window(filerwin__get_window_handle(tv->fw));
+  help_remove_window(filerwin_get_window_handle(tv->fw));
 
   thumbview__reg(0, tv);
 }
@@ -419,11 +419,11 @@ error thumbview__init(void)
 
   /* dependencies */
 
-  err = help__init();
+  err = help_init();
   if (err)
     return err;
 
-  err = tag_cloud__init();
+  err = tag_cloud_init();
   if (err)
     return err;
 
@@ -442,11 +442,11 @@ error thumbview__init(void)
                                           "(filename goes here)",
                                           NULL);
 
-  err = help__add_menu(GLOBALS.thumbview_m, "thumbview");
+  err = help_add_menu(GLOBALS.thumbview_m, "thumbview");
   if (err)
     return err;
 
-  list__init(&LOCALS.list_anchor);
+  list_init(&LOCALS.list_anchor);
 
   return error_OK;
 }
@@ -455,15 +455,15 @@ void thumbview__fin(void)
 {
   thumbview__close_all();
 
-  help__remove_menu(GLOBALS.thumbview_m);
+  help_remove_menu(GLOBALS.thumbview_m);
 
   menu_destroy(GLOBALS.thumbview_m);
 
   thumbview__set_single_handlers(0);
 
   viewer_keymap_fin();
-  tag_cloud__fin();
-  help__fin();
+  tag_cloud_fin();
+  help_fin();
 }
 
 /* ----------------------------------------------------------------------- */
@@ -506,15 +506,15 @@ static void thumbview__action(thumbview *tv, int op)
     break;
 
   case Thumbview_SelectAll:
-    filerwin__select(fw, -1);
+    filerwin_select(fw, -1);
     break;
 
   case Thumbview_ClearSelection:
-    filerwin__deselect(fw, -1);
+    filerwin_deselect(fw, -1);
     break;
 
   case Close:
-    err = action_close_window(filerwin__get_window_handle(tv->fw));
+    err = action_close_window(filerwin_get_window_handle(tv->fw));
     break;
 
   case Help:
@@ -522,7 +522,7 @@ static void thumbview__action(thumbview *tv, int op)
     break;
   }
 
-  error__report(err);
+  error_report(err);
 }
 
 static int thumbview__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
@@ -707,10 +707,10 @@ static void thumbview__update(thumbview *tv, thumbview__update_flags flags)
     //}
   }
 
-  card__prepare(tv->item_w, tv->item_h);
+  card_prepare(tv->item_w, tv->item_h);
 
   if (flags & thumbview__UPDATE_REDRAW)
-    window_redraw(filerwin__get_window_handle(tv->fw));
+    window_redraw(filerwin_get_window_handle(tv->fw));
 }
 
 static int update_all_callback(thumbview *tv, void *arg)
@@ -764,11 +764,11 @@ error thumbview_create(thumbview **new_tv)
   if (text == NULL)
     goto NoMem;
 
-  fw = filerwin__create();
+  fw = filerwin_create();
   if (fw == NULL)
     goto NoMem;
 
-  filerwin__set_arg(fw, tv);
+  filerwin_set_arg(fw, tv);
 
   /* fill out */
 
@@ -779,7 +779,7 @@ error thumbview_create(thumbview **new_tv)
   tv->nentries   = 0;
   tv->maxentries = 0;
 
-  list__add_to_head(&LOCALS.list_anchor, &tv->list);
+  list_add_to_head(&LOCALS.list_anchor, &tv->list);
 
   thumbview__set_handlers(tv);
 
@@ -796,7 +796,7 @@ NoMem:
 
   err = error_OOM;
 
-  error__report(err);
+  error_report(err);
 
   return err;
 }
@@ -820,9 +820,9 @@ void thumbview_destroy(thumbview *doomed)
 
   thumbview__release_handlers(doomed);
 
-  list__remove(&LOCALS.list_anchor, &doomed->list);
+  list_remove(&LOCALS.list_anchor, &doomed->list);
 
-  filerwin__destroy(doomed->fw);
+  filerwin_destroy(doomed->fw);
 
   atom_destroy(doomed->text);
 
@@ -831,7 +831,7 @@ void thumbview_destroy(thumbview *doomed)
 
 void thumbview_open(thumbview *tv)
 {
-  filerwin__open(tv->fw);
+  filerwin_open(tv->fw);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -917,18 +917,18 @@ static error layout(thumbview *tv)
     break;
   }
 
-  packer = packer__create(&pagedims);
+  packer = packer_create(&pagedims);
   if (packer == NULL)
   {
     err = error_OOM;
     goto failure;
   }
 
-  packer__set_margins(packer, &margins);
+  packer_set_margins(packer, &margins);
 
   spec.packer  = packer;
-  spec.loc     = packer__LOC_TOP_LEFT;
-  spec.clear   = packer__CLEAR_LEFT;
+  spec.loc     = packer_LOC_TOP_LEFT;
+  spec.clear   = packer_CLEAR_LEFT;
   spec.spacing = margins.x0 / 2; /* use padding config */
   spec.leading = margins.y0 / 2;
 
@@ -973,7 +973,7 @@ static error layout(thumbview *tv)
     i++;
   }
 
-  err = layout__place(&spec, els, i, boxes, NELEMS(boxes));
+  err = layout_place(&spec, els, i, boxes, NELEMS(boxes));
   if (err)
     goto failure;
 
@@ -1000,7 +1000,7 @@ static error layout(thumbview *tv)
   if (flags & FILEN)
     tv->layout.elements[ElementIndex_Filename]  = boxes[i++];
 
-  used = *packer__get_consumed_area(packer);
+  used = *packer_get_consumed_area(packer);
 
   /* Re-add the margins, which get_consumed_area does not account for. */
 
@@ -1019,13 +1019,13 @@ static error layout(thumbview *tv)
 
     b = &tv->layout.elements[i];
 
-    if (box__is_empty(b))
+    if (box_is_empty(b))
       continue;
 
     b->y0 -= y;
     b->y1 -= y;
 
-    box__round4(b);
+    box_round4(b);
 
     tv->elements_present |= 1u << i;
   }
@@ -1033,16 +1033,16 @@ static error layout(thumbview *tv)
   tv->item_w = used.x1 - used.x0; // want final values
   tv->item_h = used.y1 - used.y0;
 
-  packer__destroy(packer);
+  packer_destroy(packer);
 
   // min item size influenced by sizes of edges
 
-  filerwin__set_nobjects(tv->fw, tv->nentries);
+  filerwin_set_nobjects(tv->fw, tv->nentries);
 
-  filerwin__set_padding(tv->fw, GLOBALS.choices.thumbview.padding_h,
+  filerwin_set_padding(tv->fw, GLOBALS.choices.thumbview.padding_h,
                                 GLOBALS.choices.thumbview.padding_v);
 
-  filerwin__set_dimensions(tv->fw, tv->item_w, tv->item_h);
+  filerwin_set_dimensions(tv->fw, tv->item_w, tv->item_h);
 
   return error_OK;
 
@@ -1196,7 +1196,7 @@ void thumbview_load_dir(thumbview *tv, const char *dir_name)
 
   dirscan(dir_name, load_directory_cb, dirscan_FILES, tv);
 
-  filerwin__set_window_title(tv->fw, dir_name);
+  filerwin_set_window_title(tv->fw, dir_name);
 
   /* Once we have all the directory details we can go about calculating what
    * the layout should be. */

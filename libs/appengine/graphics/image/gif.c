@@ -217,7 +217,7 @@ static int gif_load(image_choices *choices, image_t *image)
   if (buffer_start(image->file_name, 16384 /* buffer size */) < 0)
   {
     tidyup(&S);
-    oserror__report(0, "error.buffer.start"); /* XXX poor (fixed) error */
+    oserror_report(0, "error.buffer.start"); /* XXX poor (fixed) error */
     return TRUE; /* failure */
   }
 
@@ -229,7 +229,7 @@ static int gif_load(image_choices *choices, image_t *image)
     != '8' || (buffer[4] != '7' && buffer[4] != '9') || buffer[5] != 'a')
   {
     tidyup(&S);
-    oserror__report(0, "error.gif.not");
+    oserror_report(0, "error.gif.not");
     return TRUE; /* failure */
   }
 
@@ -265,7 +265,7 @@ static int gif_load(image_choices *choices, image_t *image)
       fprintf(stderr, "failed to load global palette\n");
 #endif
       tidyup(&S);
-      oserror__report(0, "error.no.mem");      /* XXX or bad.gif */
+      oserror_report(0, "error.no.mem");      /* XXX or bad.gif */
       return TRUE; /* failure */
     }
   }
@@ -384,7 +384,7 @@ static int gif_load(image_choices *choices, image_t *image)
           fprintf(stderr, "failed to load local palette\n");
 #endif
           tidyup(&S);
-          oserror__report(0, "error.no.mem");
+          oserror_report(0, "error.no.mem");
           return TRUE; /* failure */
         }
 
@@ -413,7 +413,7 @@ static int gif_load(image_choices *choices, image_t *image)
             fprintf(stderr, "failed to alloc space for emergency global palette\n");
 #endif
             tidyup(&S);
-            oserror__report(0, "error.no.mem");
+            oserror_report(0, "error.no.mem");
             return TRUE; /* failure */
           }
 
@@ -458,7 +458,7 @@ static int gif_load(image_choices *choices, image_t *image)
     fprintf(stderr, "failed to alloc space for sprite\n");
 #endif
     tidyup(&S);
-    oserror__report(0, "error.no.mem");
+    oserror_report(0, "error.no.mem");
     return TRUE; /* failure */
   }
 
@@ -521,7 +521,7 @@ static int gif_load(image_choices *choices, image_t *image)
     }
 
     if (errtok)
-      oserror__report(0, errtok);
+      oserror_report(0, errtok);
 #ifndef NDEBUG
     stop = os_read_monotonic_time();
     fprintf(stderr, "Time: %d\n", stop - start);

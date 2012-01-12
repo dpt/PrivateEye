@@ -83,18 +83,18 @@ static int event_mouse_click(wimp_event_no event_no, wimp_block *block, void *ha
     int old_sel;
     int new_sel;
 
-    old_sel = scroll_list__get_selection(sl);
-    new_sel = scroll_list__which(sl, pointer);
+    old_sel = scroll_list_get_selection(sl);
+    new_sel = scroll_list_which(sl, pointer);
 
     if (new_sel >= 0) /* click in range */
     {
       /* clicking with ADJUST toggles the selection */
       if (pointer->buttons & wimp_CLICK_ADJUST && old_sel == new_sel)
-        scroll_list__clear_selection(sl);
+        scroll_list_clear_selection(sl);
       else
-        scroll_list__set_selection(sl, new_sel);
+        scroll_list_set_selection(sl, new_sel);
 
-      send_event(sl, scroll_list__SELECTION_CHANGED);
+      send_event(sl, scroll_list_SELECTION_CHANGED);
     }
 
     break;
@@ -104,15 +104,15 @@ static int event_mouse_click(wimp_event_no event_no, wimp_block *block, void *ha
   {
     int i;
 
-    i = scroll_list__which(sl, pointer);
+    i = scroll_list_which(sl, pointer);
     if (i >= 0)
     {
-      scroll_list__event event;
+      scroll_list_event event;
 
-      event.type  = scroll_list__DRAG;
+      event.type  = scroll_list_DRAG;
       event.index = i;
       event.data.drag.pointer = pointer;
-      scroll_list__get_bbox(sl, i, &event.data.drag.box);
+      scroll_list_get_bbox(sl, i, &event.data.drag.box);
 
       sl->event(&event);
     }
@@ -173,20 +173,20 @@ static int event_key_pressed(wimp_event_no event_no, wimp_block *block, void *ha
     old = sl->selection;
 
     if (map[i].type == Relative)
-      sel = scroll_list__move_selection_relative(sl, map[i].value);
+      sel = scroll_list_move_selection_relative(sl, map[i].value);
     else /* if (map[i].type == Absolute) */
-      sel = scroll_list__move_selection_absolute(sl, map[i].value);
+      sel = scroll_list_move_selection_absolute(sl, map[i].value);
 
     if (sel != old)
     {
-      send_event(sl, scroll_list__SELECTION_CHANGED);
-      scroll_list__make_visible(sl, sel);
+      send_event(sl, scroll_list_SELECTION_CHANGED);
+      scroll_list_make_visible(sl, sel);
     }
     break;
   }
 
   case wimp_KEY_DELETE:
-    send_event(sl, scroll_list__DELETE);
+    send_event(sl, scroll_list_DELETE);
     break;
 
   default:
@@ -199,7 +199,7 @@ static int event_key_pressed(wimp_event_no event_no, wimp_block *block, void *ha
 
 /* ----------------------------------------------------------------------- */
 
-void scroll_list__internal_set_handlers(int reg, wimp_w w, scroll_list *sl)
+void scroll_list_internal_set_handlers(int reg, wimp_w w, scroll_list *sl)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {

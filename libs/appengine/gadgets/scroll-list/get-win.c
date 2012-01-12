@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-wimp_w scroll_list__get_window_handle(scroll_list *sl)
+wimp_w scroll_list_get_window_handle(scroll_list *sl)
 {
   return sl->w;
 }

@@ -13,12 +13,12 @@
 
 #include "impl.h"
 
-error hash__insert(hash_t *h, void *key, void *value)
+error hash_insert(hash_t *h, void *key, void *value)
 {
   node **n;
   int    hash;
 
-  n = hash__lookup_node(h, key);
+  n = hash_lookup_node(h, key);
   if (*n)
   {
     /* already exists: update the value */

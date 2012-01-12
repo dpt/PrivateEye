@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-int bitvec__get(const bitvec_t *v, int bit)
+int bitvec_get(const bitvec_t *v, int bit)
 {
   int word;
 

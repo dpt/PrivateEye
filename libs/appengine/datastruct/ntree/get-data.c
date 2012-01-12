@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-void *ntree__get_data(ntree_t *t)
+void *ntree_get_data(ntree_t *t)
 {
   return t->data;
 }

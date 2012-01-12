@@ -43,18 +43,18 @@ typedef struct scale_t
   dialogue_t            dialogue; /* base class */
   int                   min, max;
   int                   step, mult;
-  scale__scale_handler *scale_handler;
+  scale_scale_handler *scale_handler;
 }
 scale_t;
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler scale__event_mouse_click,
-                          scale__event_key_pressed;
+static event_wimp_handler scale_event_mouse_click,
+                          scale_event_key_pressed;
 
 /* ----------------------------------------------------------------------- */
 
-dialogue_t *scale__create(void)
+dialogue_t *scale_create(void)
 {
   scale_t *s;
 
@@ -62,7 +62,7 @@ dialogue_t *scale__create(void)
   if (s == NULL)
     return NULL;
 
-  dialogue__construct(&s->dialogue, "scale", SCALE_B_SCALE, SCALE_B_CANCEL);
+  dialogue_construct(&s->dialogue, "scale", SCALE_B_SCALE, SCALE_B_CANCEL);
 
   /* set defaults */
   s->min  = 1;
@@ -70,34 +70,34 @@ dialogue_t *scale__create(void)
   s->step = 1;
   s->mult = 1;
 
-  dialogue__set_handlers(&s->dialogue,
-                         scale__event_mouse_click,
-                         scale__event_key_pressed,
+  dialogue_set_handlers(&s->dialogue,
+                         scale_event_mouse_click,
+                         scale_event_key_pressed,
                          NULL);
 
   return &s->dialogue;
 }
 
-void scale__destroy(dialogue_t *d)
+void scale_destroy(dialogue_t *d)
 {
   scale_t *s;
 
   s = (scale_t *) d;
 
-  dialogue__destruct(&s->dialogue);
+  dialogue_destruct(&s->dialogue);
 
   free(s);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void scale__nudge(scale_t *s, int up, int faster)
+static void scale_nudge(scale_t *s, int up, int faster)
 {
   wimp_w win;
   int    scale;
   int    inc;
 
-  win = dialogue__get_window(&s->dialogue);
+  win = dialogue_get_window(&s->dialogue);
 
   scale = icon_get_int(win, SCALE_W_SCALE);
 
@@ -116,10 +116,10 @@ static void scale__nudge(scale_t *s, int up, int faster)
   scale /= inc;
   scale *= inc;
 
-  scale__set(&s->dialogue, scale);
+  scale_set(&s->dialogue, scale);
 }
 
-static int scale__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int scale_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_pointer *pointer;
   scale_t      *s;
@@ -138,13 +138,13 @@ static int scale__event_mouse_click(wimp_event_no event_no, wimp_block *block, v
         wimp_w win;
         int    scale;
 
-        win = dialogue__get_window(&s->dialogue);
+        win = dialogue_get_window(&s->dialogue);
 
         scale = icon_get_int(win, SCALE_W_SCALE);
 
-        scale__set(&s->dialogue, scale);
+        scale_set(&s->dialogue, scale);
 
-        s->scale_handler(&s->dialogue, scale__TYPE_VALUE, scale);
+        s->scale_handler(&s->dialogue, scale_TYPE_VALUE, scale);
       }
       break;
 
@@ -159,7 +159,7 @@ static int scale__event_mouse_click(wimp_event_no event_no, wimp_block *block, v
 
         faster = inkey(INKEY_SHIFT);
 
-        scale__nudge(s, up, faster);
+        scale_nudge(s, up, faster);
       }
       break;
 
@@ -175,18 +175,18 @@ static int scale__event_mouse_click(wimp_event_no event_no, wimp_block *block, v
                 (pointer->i == SCALE_B_100PC) ? 100 :
                                                 200;
 
-        scale__set(&s->dialogue, scale);
+        scale_set(&s->dialogue, scale);
       }
       break;
 
     case SCALE_B_FITSCR:
-      /* handler calls scale__set */
-      s->scale_handler(&s->dialogue, scale__TYPE_FIT_TO_SCREEN, 0);
+      /* handler calls scale_set */
+      s->scale_handler(&s->dialogue, scale_TYPE_FIT_TO_SCREEN, 0);
       break;
 
     case SCALE_B_FITWIN:
-      /* handler calls scale__set */
-      s->scale_handler(&s->dialogue, scale__TYPE_FIT_TO_WINDOW, 0);
+      /* handler calls scale_set */
+      s->scale_handler(&s->dialogue, scale_TYPE_FIT_TO_WINDOW, 0);
       break;
     }
   }
@@ -194,7 +194,7 @@ static int scale__event_mouse_click(wimp_event_no event_no, wimp_block *block, v
   return event_HANDLED;
 }
 
-static int scale__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int scale_event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
 {
   wimp_key *key;
   scale_t  *s;
@@ -218,11 +218,11 @@ static int scale__event_key_pressed(wimp_event_no event_no, wimp_block *block, v
 
       faster = key->c & wimp_KEY_SHIFT;
 
-      scale__nudge(s, up, faster);
+      scale_nudge(s, up, faster);
 
       /* cause an immediate update */
-      s->scale_handler(&s->dialogue, scale__TYPE_VALUE,
-                       scale__get(&s->dialogue));
+      s->scale_handler(&s->dialogue, scale_TYPE_VALUE,
+                       scale_get(&s->dialogue));
     }
     break;
 
@@ -236,25 +236,25 @@ static int scale__event_key_pressed(wimp_event_no event_no, wimp_block *block, v
 
 /* ----------------------------------------------------------------------- */
 
-void scale__set(dialogue_t *d, int scale)
+void scale_set(dialogue_t *d, int scale)
 {
   scale_t *s = (scale_t *) d;
   wimp_w   win;
 
   scale = CLAMP(scale, s->min, s->max);
 
-  win = dialogue__get_window(d);
+  win = dialogue_get_window(d);
 
   icon_set_int(win, SCALE_W_SCALE, scale);
 }
 
-int scale__get(dialogue_t *d)
+int scale_get(dialogue_t *d)
 {
   scale_t *s = (scale_t *) d;
   wimp_w   win;
   int      scale;
 
-  win = dialogue__get_window(d);
+  win = dialogue_get_window(d);
 
   scale = icon_get_int(win, SCALE_W_SCALE);
 
@@ -265,7 +265,7 @@ int scale__get(dialogue_t *d)
   return scale;
 }
 
-void scale__set_bounds(dialogue_t *d, int min, int max)
+void scale_set_range(dialogue_t *d, int min, int max)
 {
   scale_t *s = (scale_t *) d;
 
@@ -275,7 +275,7 @@ void scale__set_bounds(dialogue_t *d, int min, int max)
   s->max = max;
 }
 
-void scale__set_steppings(dialogue_t *d, int step, int mult)
+void scale_set_steppings(dialogue_t *d, int step, int mult)
 {
   scale_t *s = (scale_t *) d;
 
@@ -286,7 +286,7 @@ void scale__set_steppings(dialogue_t *d, int step, int mult)
   s->mult = mult;
 }
 
-void scale__set_scale_handler(dialogue_t *d, scale__scale_handler *scale_handler)
+void scale_set_scale_handler(dialogue_t *d, scale_scale_handler *scale_handler)
 {
   scale_t *s = (scale_t *) d;
 

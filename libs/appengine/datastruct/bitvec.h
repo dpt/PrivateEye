@@ -27,32 +27,32 @@ typedef struct T T;
 
 /* Creates a bit vector big enough to hold 'length' bits.
  * All bits are zero after creation. */
-T *bitvec__create(int length);
-void bitvec__destroy(T *v);
+T *bitvec_create(int length);
+void bitvec_destroy(T *v);
 
-error bitvec__set(T *v, int bit);
-void bitvec__clear(T *v, int bit);
-error bitvec__toggle(T *v, int bit);
+error bitvec_set(T *v, int bit);
+void bitvec_clear(T *v, int bit);
+error bitvec_toggle(T *v, int bit);
 
-int bitvec__get(const T *v, int bit);
+int bitvec_get(const T *v, int bit);
 
 /* Returns the length of the vector in bits. */
-int bitvec__length(const T *v);
+int bitvec_length(const T *v);
 
 /* Returns the number of set bits in the vector. */
-int bitvec__count(const T *v);
+int bitvec_count(const T *v);
 
 /* Returns the number of the next set bit after 'n'. */
 /* -1 should be the initial value (bits are numbered 0..) */
-int bitvec__next(const T *v, int n);
+int bitvec_next(const T *v, int n);
 
-int bitvec__eq(const T *a, const T *b);
+int bitvec_eq(const T *a, const T *b);
 
-error bitvec__and(const T *a, const T *b, T **c);
-error bitvec__or(const T *a, const T *b, T **c);
+error bitvec_and(const T *a, const T *b, T **c);
+error bitvec_or(const T *a, const T *b, T **c);
 
-void bitvec__set_all(T *v);
-void bitvec__clear_all(T *v);
+void bitvec_set_all(T *v);
+void bitvec_clear_all(T *v);
 
 #undef T
 

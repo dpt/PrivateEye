@@ -7,16 +7,16 @@
 
 #include "impl.h"
 
-error tag_cloud__set_config(tag_cloud         *tc,
-                      const tag_cloud__config *config)
+error tag_cloud_set_config(tag_cloud         *tc,
+                      const tag_cloud_config *config)
 {
   tc->config = *config;
 
-  tag_cloud__layout_discard(tc);
+  tag_cloud_layout_discard(tc);
 
-  tc->flags |= tag_cloud__FLAG_NEW_DISPLAY;
+  tc->flags |= tag_cloud_FLAG_NEW_DISPLAY;
 
-  tag_cloud__schedule_redraw(tc);
+  tag_cloud_schedule_redraw(tc);
 
   return error_OK;
 }

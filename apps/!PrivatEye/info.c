@@ -158,10 +158,10 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
 
   file_type = *((size_t *) ((char *) image + info->file_type));
 
-  info__set_file_type(d, file_type);
-  info__set_info(d, specs, spec);
+  info_set_file_type(d, file_type);
+  info_set_info(d, specs, spec);
 
-  info__layout(d);
+  info_layout(d);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -208,29 +208,29 @@ error viewer_infodlg_init(void)
 {
   /* Info dialogue */
 
-  viewer_infodlg = info__create("image_info");
+  viewer_infodlg = info_create("image_info");
   if (viewer_infodlg == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(viewer_infodlg, viewer_infodlg_fillout, NULL);
+  dialogue_set_fillout_handler(viewer_infodlg, viewer_infodlg_fillout, NULL);
 
-  info__set_padding(viewer_infodlg, GLOBALS.choices.info.padding);
+  info_set_padding(viewer_infodlg, GLOBALS.choices.info.padding);
 
   /* Source Info dialogue */
 
-  viewer_srcinfodlg = info__create("source_info");
+  viewer_srcinfodlg = info_create("source_info");
   if (viewer_srcinfodlg == NULL)
     return error_OOM;
 
-  dialogue__set_fillout_handler(viewer_srcinfodlg, viewer_srcinfodlg_fillout, NULL);
+  dialogue_set_fillout_handler(viewer_srcinfodlg, viewer_srcinfodlg_fillout, NULL);
 
-  info__set_padding(viewer_srcinfodlg, GLOBALS.choices.info.padding);
+  info_set_padding(viewer_srcinfodlg, GLOBALS.choices.info.padding);
 
   return error_OK;
 }
 
 void viewer_infodlg_fin(void)
 {
-  info__destroy(viewer_srcinfodlg);
-  info__destroy(viewer_infodlg);
+  info_destroy(viewer_srcinfodlg);
+  info_destroy(viewer_infodlg);
 }

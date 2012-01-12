@@ -13,7 +13,7 @@
 
 #include "impl.h"
 
-error ntree__new(ntree_t **t)
+error ntree_new(ntree_t **t)
 {
   ntree_t *n;
 

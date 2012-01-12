@@ -15,8 +15,8 @@
 
 #include "impl.h"
 
-tag_cloud *tag_cloud__create(tag_cloud__create_flags  flags,
-                             const tag_cloud__config *config)
+tag_cloud *tag_cloud_create(tag_cloud_create_flags  flags,
+                             const tag_cloud_config *config)
 {
   tag_cloud *tc;
   wimp_w     main_w;
@@ -25,7 +25,7 @@ tag_cloud *tag_cloud__create(tag_cloud__create_flags  flags,
   if (tc == NULL)
     return tc;
 
-  main_w = window_clone(tag_cloud__get_main_window());
+  main_w = window_clone(tag_cloud_get_main_window());
 
   tc->config           = *config;
 
@@ -38,17 +38,17 @@ tag_cloud *tag_cloud__create(tag_cloud__create_flags  flags,
   tc->sort.last_sort_type  = -1;
   tc->sort.last_order_type = -1;
 
-  tag_cloud__set_display(tc, tag_cloud__DISPLAY_TYPE_CLOUD);
+  tag_cloud_set_display(tc, tag_cloud_DISPLAY_TYPE_CLOUD);
 
-  tag_cloud__internal_set_handlers(1, tc);
+  tag_cloud_internal_set_handlers(1, tc);
 
-  if (flags & tag_cloud__CREATE_FLAG_TOOLBAR_DISABLED)
+  if (flags & tag_cloud_CREATE_FLAG_TOOLBAR_DISABLED)
   {
-    tc->flags |= tag_cloud__FLAG_TOOLBAR_NOT_EVER;
+    tc->flags |= tag_cloud_FLAG_TOOLBAR_NOT_EVER;
   }
-  else if ((flags & tag_cloud__CREATE_FLAG_TOOLBAR_HIDDEN) == 0)
+  else if ((flags & tag_cloud_CREATE_FLAG_TOOLBAR_HIDDEN) == 0)
   {
-    tag_cloud__attach_toolbar(tc);
+    tag_cloud_attach_toolbar(tc);
   }
 
   return tc;

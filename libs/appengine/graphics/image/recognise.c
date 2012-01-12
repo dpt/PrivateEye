@@ -33,7 +33,7 @@ int image_recognise(wimp_message *message)
                          message->data.data_xfer.file_name, NULL, &f));
   if (e)
   {
-    oserror__report_block(e);
+    oserror_report_block(e);
     return 1; /* failure */
   }
 

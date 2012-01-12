@@ -39,7 +39,7 @@ static void expandbuf(void)
   bufsz = messages.bufsz * 2;
   buf   = realloc(messages.buf, bufsz);
   if (buf == NULL)
-    error__fatal_oom();
+    error_fatal_oom();
 
   messages.buf   = buf;
   messages.bufsz = bufsz;
@@ -117,7 +117,7 @@ void open_messages(const char *filename)
 
 NoMem:
   free(messages.buf);
-  error__fatal_oom();
+  error_fatal_oom();
 }
 
 /*

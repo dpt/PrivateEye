@@ -14,7 +14,7 @@
 
 #include "impl.h"
 
-error bitvec__ensure(bitvec_t *v, int need)
+error bitvec_ensure(bitvec_t *v, int need)
 {
   if (need > v->length)
   {

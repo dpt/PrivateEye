@@ -32,24 +32,24 @@ static void wipe_underline(tag_cloud *tc, int index)
                     b->y0 + (b->y1 - b->y0) / 4);
 }
 
-void tag_cloud__hover_init(tag_cloud *tc)
+void tag_cloud_hover_init(tag_cloud *tc)
 {
   /* layout calls this to reset the hover, when tag data has changed */
   tc->hover.index      = -1;
   tc->hover.last_index = -1;
 }
 
-void tag_cloud__hover(tag_cloud *tc, int x, int y)
+void tag_cloud_hover(tag_cloud *tc, int x, int y)
 {
   atom_t last_index;
   int    index;
 
   last_index = tc->hover.last_index;
 
-  if (tc->flags & tag_cloud__FLAG_SHADED)
+  if (tc->flags & tag_cloud_FLAG_SHADED)
     index = -1; /* hover is disabled when we're shaded */
   else
-    index = tag_cloud__hit(tc, x, y);
+    index = tag_cloud_hit(tc, x, y);
 
   if (index == last_index)
     return;
@@ -59,7 +59,7 @@ void tag_cloud__hover(tag_cloud *tc, int x, int y)
     int         highlight;
     const char *ptrname;
 
-    highlight = tag_cloud__is_highlighted(tc, index);
+    highlight = tag_cloud_is_highlighted(tc, index);
     ptrname   = highlight ? ptr_detag : ptr_tag;
 
     if (tc->hover.pointer_shape_name != ptrname)
@@ -70,23 +70,23 @@ void tag_cloud__hover(tag_cloud *tc, int x, int y)
   }
   else
   {
-    tag_cloud__restore_pointer_shape(tc);
+    tag_cloud_restore_pointer_shape(tc);
   }
 
   wipe_underline(tc, tc->hover.last_index); /* erase previous */
 
   tc->hover.index = index;
 
-  tc->flags |= tag_cloud__FLAG_NEW_HOVER;
+  tc->flags |= tag_cloud_FLAG_NEW_HOVER;
 
-  tag_cloud__layout(tc, tc->layout.width /* no change */);
+  tag_cloud_layout(tc, tc->layout.width /* no change */);
 
   wipe_underline(tc, index); /* draw new */
 
   tc->hover.last_index = index;
 }
 
-void tag_cloud__hover_toggle(tag_cloud *tc)
+void tag_cloud_hover_toggle(tag_cloud *tc)
 {
   const char *ptrname;
 
@@ -103,7 +103,7 @@ void tag_cloud__hover_toggle(tag_cloud *tc)
   tc->hover.pointer_shape_name = ptrname;
 }
 
-void tag_cloud__restore_pointer_shape(tag_cloud *tc)
+void tag_cloud_restore_pointer_shape(tag_cloud *tc)
 {
   if (tc->hover.pointer_shape_name)
   {

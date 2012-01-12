@@ -9,12 +9,12 @@
 
 #include "impl.h"
 
-void ntree__delete(ntree_t *t)
+void ntree_delete(ntree_t *t)
 {
   assert(t);
 
   if (!IS_ROOT(t))
-    ntree__unlink(t);
+    ntree_unlink(t);
 
-  ntree__free(t);
+  ntree_free(t);
 }

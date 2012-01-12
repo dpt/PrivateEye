@@ -9,7 +9,7 @@
 #include "appengine/base/errors.h"
 #include "appengine/io/stream.h"
 
-error stream_mem__create(const unsigned char *block,
+error stream_mem_create(const unsigned char *block,
                          size_t               length,
                          stream             **s);
 

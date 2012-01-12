@@ -30,13 +30,13 @@
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler imageobwin__event_close_window_request;
+static event_wimp_handler imageobwin_event_close_window_request;
 
-static void imageobwin__close(imageobwin_t *obwin);
+static void imageobwin_close(imageobwin_t *obwin);
 
 /* ----------------------------------------------------------------------- */
 
-static void imageobwin__set_handlers(imageobwin_factory_t *factory,
+static void imageobwin_set_handlers(imageobwin_factory_t *factory,
                                      int                   reg,
                                      wimp_w                w,
                                      void                 *handle)
@@ -49,7 +49,7 @@ static void imageobwin__set_handlers(imageobwin_factory_t *factory,
   wimp_handlers[3].event_no = wimp_MENU_SELECTION;
 
   wimp_handlers[0].handler = factory->event_redraw_window_request;
-  wimp_handlers[1].handler = imageobwin__event_close_window_request;
+  wimp_handlers[1].handler = imageobwin_event_close_window_request;
   wimp_handlers[2].handler = factory->event_mouse_click_request;
   wimp_handlers[3].handler = factory->event_menu_selection;
 
@@ -61,17 +61,17 @@ static void imageobwin__set_handlers(imageobwin_factory_t *factory,
 
 /* ----------------------------------------------------------------------- */
 
-static imageobwin_t *imageobwin__image_to_obwin(imageobwin_factory_t *factory,
+static imageobwin_t *imageobwin_image_to_obwin(imageobwin_factory_t *factory,
                                                 image_t              *image)
 {
-  return (imageobwin_t *) list__find(&factory->list_anchor,
+  return (imageobwin_t *) list_find(&factory->list_anchor,
                                      offsetof(imageobwin_t, image),
                                (int) image);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void imageobwin__image_changed_callback(image_t              *image,
+static void imageobwin_image_changed_callback(image_t              *image,
                                                imageobserver_change  change,
                                                imageobserver_data   *data,
                                                void                 *opaque)
@@ -86,21 +86,21 @@ static void imageobwin__image_changed_callback(image_t              *image,
     /* Modifications to images can cause availability to change.
      * e.g. converting a JPEG to a sprite may discard metadata. */
     if (!obwin->factory->available(image))
-      imageobwin__close(obwin);
+      imageobwin_close(obwin);
     else
-      imageobwin__kick(obwin);
+      imageobwin_kick(obwin);
     break;
 
   case imageobserver_CHANGE_HIDDEN:
   case imageobserver_CHANGE_ABOUT_TO_DESTROY:
-    imageobwin__close(obwin);
+    imageobwin_close(obwin);
     break;
   }
 }
 
 /* ----------------------------------------------------------------------- */
 
-error imageobwin__construct(imageobwin_factory_t *factory,
+error imageobwin_construct(imageobwin_factory_t *factory,
                             const char           *name,
                             window_open_at_flags  open_at,
                             imageobwin_available *available,
@@ -122,7 +122,7 @@ error imageobwin__construct(imageobwin_factory_t *factory,
 
   /* dependencies */
 
-  err = help__init();
+  err = help_init();
   if (err)
     return err;
 
@@ -138,17 +138,17 @@ error imageobwin__construct(imageobwin_factory_t *factory,
     goto Failure;
   }
 
-  err = help__add_menu(factory->menu, name);
+  err = help_add_menu(factory->menu, name);
   if (err)
     goto Failure;
 
-  list__init(&factory->list_anchor);
+  list_init(&factory->list_anchor);
 
   len = strlen(name) + 1;
   factory->name = malloc(len);
   if (factory->name == NULL)
   {
-    help__remove_menu(factory->menu);
+    help_remove_menu(factory->menu);
     goto Failure;
   }
   memcpy(factory->name, name, len);
@@ -171,25 +171,25 @@ Failure:
 
   menu_destroy(factory->menu);
 
-  help__fin();
+  help_fin();
 
   return err;
 }
 
-void imageobwin__destruct(imageobwin_factory_t *doomed)
+void imageobwin_destruct(imageobwin_factory_t *doomed)
 {
   if (doomed == NULL)
     return;
 
   free(doomed->name);
 
-  help__remove_menu(doomed->menu);
+  help_remove_menu(doomed->menu);
   menu_destroy(doomed->menu);
 
-  help__fin();
+  help_fin();
 }
 
-static int imageobwin__event_close_window_request(wimp_event_no  event_no,
+static int imageobwin_event_close_window_request(wimp_event_no  event_no,
                                                   wimp_block    *block,
                                                   void          *handle)
 {
@@ -198,12 +198,12 @@ static int imageobwin__event_close_window_request(wimp_event_no  event_no,
   NOT_USED(event_no);
   NOT_USED(block);
 
-  imageobwin__close(obwin);
+  imageobwin_close(obwin);
 
   return event_HANDLED;
 }
 
-static error imageobwin__new(imageobwin_factory_t *factory,
+static error imageobwin_new(imageobwin_factory_t *factory,
                              image_t              *image,
                              const void           *config,
                              imageobwin_t        **new_obwin)
@@ -231,7 +231,7 @@ static error imageobwin__new(imageobwin_factory_t *factory,
     goto Failure;
   }
 
-  err = help__add_window(obwin->w, factory->name);
+  err = help_add_window(obwin->w, factory->name);
   if (err)
     goto Failure;
 
@@ -247,15 +247,15 @@ static error imageobwin__new(imageobwin_factory_t *factory,
   obwin->image   = image;
   obwin->factory = factory;
 
-  imageobwin__set_handlers(factory, 1, obwin->w, obwin);
+  imageobwin_set_handlers(factory, 1, obwin->w, obwin);
 
   /* watch for changes */
 
-  imageobserver_register(image, imageobwin__image_changed_callback, obwin);
+  imageobserver_register(image, imageobwin_image_changed_callback, obwin);
 
   /* link it in */
 
-  list__add_to_head(&factory->list_anchor, &obwin->list);
+  list_add_to_head(&factory->list_anchor, &obwin->list);
 
   *new_obwin = obwin;
 
@@ -273,7 +273,7 @@ Failure:
   return error_OOM;
 }
 
-error imageobwin__open(imageobwin_factory_t *factory,
+error imageobwin_open(imageobwin_factory_t *factory,
                        image_t              *image,
                        const void           *config)
 {
@@ -286,10 +286,10 @@ error imageobwin__open(imageobwin_factory_t *factory,
     return error_OK;
   }
 
-  obwin = imageobwin__image_to_obwin(factory, image);
+  obwin = imageobwin_image_to_obwin(factory, image);
   if (obwin == NULL)
   {
-    err = imageobwin__new(factory, image, config, &obwin);
+    err = imageobwin_new(factory, image, config, &obwin);
     if (!err)
       err = factory->compute(obwin);
     if (err)
@@ -301,16 +301,16 @@ error imageobwin__open(imageobwin_factory_t *factory,
   return error_OK;
 }
 
-static void imageobwin__close(imageobwin_t *obwin)
+static void imageobwin_close(imageobwin_t *obwin)
 {
-  imageobserver_deregister(obwin->image, imageobwin__image_changed_callback,
+  imageobserver_deregister(obwin->image, imageobwin_image_changed_callback,
                            obwin);
 
-  help__remove_window(obwin->w);
+  help_remove_window(obwin->w);
 
-  imageobwin__set_handlers(obwin->factory, 0, obwin->w, obwin);
+  imageobwin_set_handlers(obwin->factory, 0, obwin->w, obwin);
 
-  list__remove(&obwin->factory->list_anchor, &obwin->list);
+  list_remove(&obwin->factory->list_anchor, &obwin->list);
 
   window_delete_cloned(obwin->w);
 
@@ -318,7 +318,7 @@ static void imageobwin__close(imageobwin_t *obwin)
                                      come last */
 }
 
-void imageobwin__kick(imageobwin_t *obwin)
+void imageobwin_kick(imageobwin_t *obwin)
 {
   error err;
 
@@ -331,7 +331,7 @@ void imageobwin__kick(imageobwin_t *obwin)
   err = obwin->factory->compute(obwin);
   if (err)
   {
-    error__report(err);
+    error_report(err);
     return;
   }
 

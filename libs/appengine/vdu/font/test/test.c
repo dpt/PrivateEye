@@ -11,30 +11,30 @@ int font_test(void)
   static const struct
   {
     const char  *name;
-    font__attrs  attrs;
+    font_attrs  attrs;
   }
   data[] =
   {
-    { "Homerton",               font__WEIGHT_NORMAL  |
-                                font__VARIANT_NORMAL |
-                                font__STYLE_NORMAL   |
-                                font__STRETCH_NORMAL },
-    { "Goudy",                  font__WEIGHT_BOLD    |
-                                font__VARIANT_NORMAL |
-                                font__STYLE_NORMAL   |
-                                font__STRETCH_NORMAL },
-    { "eric",                   font__WEIGHT_BOLD    |
-                                font__VARIANT_NORMAL |
-                                font__STYLE_NORMAL   |
-                                font__STRETCH_COND   },
-    { "eric.cond.bold",         font__WEIGHT_LIGHT   |
-                                font__VARIANT_NORMAL |
-                                font__STYLE_NORMAL   |
-                                font__STRETCH_NORMAL },
-    { "goudy.oldstyle.italic",  font__WEIGHT_NORMAL  |
-                                font__VARIANT_NORMAL |
-                                font__STYLE_NORMAL   |
-                                font__STRETCH_NORMAL },
+    { "Homerton",               font_WEIGHT_NORMAL  |
+                                font_VARIANT_NORMAL |
+                                font_STYLE_NORMAL   |
+                                font_STRETCH_NORMAL },
+    { "Goudy",                  font_WEIGHT_BOLD    |
+                                font_VARIANT_NORMAL |
+                                font_STYLE_NORMAL   |
+                                font_STRETCH_NORMAL },
+    { "eric",                   font_WEIGHT_BOLD    |
+                                font_VARIANT_NORMAL |
+                                font_STYLE_NORMAL   |
+                                font_STRETCH_COND   },
+    { "eric.cond.bold",         font_WEIGHT_LIGHT   |
+                                font_VARIANT_NORMAL |
+                                font_STYLE_NORMAL   |
+                                font_STRETCH_NORMAL },
+    { "goudy.oldstyle.italic",  font_WEIGHT_NORMAL  |
+                                font_VARIANT_NORMAL |
+                                font_STYLE_NORMAL   |
+                                font_STRETCH_NORMAL },
   };
 
   error err;
@@ -47,11 +47,11 @@ int font_test(void)
   {
     printf("Matching for '%s' with attrs %x\n", data[i].name, data[i].attrs);
 
-    err = font__select(data[i].name, data[i].attrs, buf, sizeof(buf));
+    err = font_select(data[i].name, data[i].attrs, buf, sizeof(buf));
     if (!err)
-      printf("font__select says: Use '%s'.\n", buf);
+      printf("font_select says: Use '%s'.\n", buf);
     else if (err == error_FONT_NO_MATCH)
-      printf("font__select says: No good match.\n");
+      printf("font_select says: No good match.\n");
     else
       printf("error: %lx\n", err);
   }

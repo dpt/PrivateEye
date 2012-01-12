@@ -9,7 +9,7 @@
 #include "appengine/base/errors.h"
 #include "appengine/io/stream.h"
 
-error stream_mtfcomp__create(stream *input, int bufsz, stream **s);
-error stream_mtfdecomp__create(stream *input, int bufsz, stream **s);
+error stream_mtfcomp_create(stream *input, int bufsz, stream **s);
+error stream_mtfdecomp_create(stream *input, int bufsz, stream **s);
 
 #endif /* APPENGINE_STREAM_MTFCOMP_H */

@@ -39,7 +39,7 @@ static const wimp_window wdef =
 
 /* ----------------------------------------------------------------------- */
 
-scroll_list *scroll_list__create(wimp_w main_w, wimp_i main_i)
+scroll_list *scroll_list_create(wimp_w main_w, wimp_i main_i)
 {
   scroll_list      *sl;
   wimp_window_state wstate;
@@ -99,7 +99,7 @@ scroll_list *scroll_list__create(wimp_w main_w, wimp_i main_i)
   sl->selection = -1; /* no initial selection */
   sl->marker    = -1; /* no initial marker */
 
-  scroll_list__internal_set_handlers(1, sw, sl);
+  scroll_list_internal_set_handlers(1, sw, sl);
 
   return sl;
 }

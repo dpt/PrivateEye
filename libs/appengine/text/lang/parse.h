@@ -8,9 +8,9 @@
 
 typedef struct T T;
 
-T *parser__create(lex *lx);
-void parser__destroy(T *p);
-void parse__program(T *p);
+T *parser_create(lex *lx);
+void parser_destroy(T *p);
+void parse_program(T *p);
 
 #undef T
 

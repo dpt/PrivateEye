@@ -38,7 +38,7 @@ typedef struct stream_packbits_decomp
 }
 stream_packbits_decomp;
 
-static int stream_packbits_decomp__get(stream *s)
+static int stream_packbits_decomp_get(stream *s)
 {
   stream_packbits_decomp *sm = (stream_packbits_decomp *) s;
   unsigned char        *p;
@@ -54,7 +54,7 @@ static int stream_packbits_decomp__get(stream *s)
   {
     int N;
 
-    N = stream__getc(sm->input);
+    N = stream_getc(sm->input);
     if (N == EOF)
       break;
 
@@ -66,7 +66,7 @@ static int stream_packbits_decomp__get(stream *s)
        * N = -(N - 256) + 1; when N is unsigned, since N > 128
        * N = -N + 257; */
 
-      DBUG(("stream_packbits_decomp__get: decomp run: %d -> %d\n", N, -N + 257));
+      DBUG(("stream_packbits_decomp_get: decomp run: %d -> %d\n", N, -N + 257));
 
       N = -N + 257;
 
@@ -74,11 +74,11 @@ static int stream_packbits_decomp__get(stream *s)
 
       if (p + N > end)
       {
-        stream__ungetc(sm->input);
+        stream_ungetc(sm->input);
         break; /* out of buffer space */
       }
 
-      v = stream__getc(sm->input);
+      v = stream_getc(sm->input);
       if (v == EOF)
         break; /* likely truncated data */
 
@@ -89,13 +89,13 @@ static int stream_packbits_decomp__get(stream *s)
     {
       N++; /* 0-127 on input means 1-128 bytes out */
 
-      DBUG(("stream_packbits_decomp__get: decomp literal: %d\n", N));
+      DBUG(("stream_packbits_decomp_get: decomp literal: %d\n", N));
 
       /* ensure we have enough buffer space */
 
       if (p + N > end)
       {
-        stream__ungetc(sm->input);
+        stream_ungetc(sm->input);
         break; /* out of buffer space */
       }
 
@@ -106,7 +106,7 @@ static int stream_packbits_decomp__get(stream *s)
       {
         int v;
 
-        v = stream__getc(sm->input);
+        v = stream_getc(sm->input);
         if (v == EOF)
           break; /* likely truncated data */
 
@@ -124,7 +124,7 @@ static int stream_packbits_decomp__get(stream *s)
 
         /* how much is available? */
 
-        avail = stream__remaining_and_fill(sm->input);
+        avail = stream_remaining_and_fill(sm->input);
         if (avail == 0)
         {
           DBUG(("*** truncated ***\n"));
@@ -151,7 +151,7 @@ static int stream_packbits_decomp__get(stream *s)
     }
     else
     {
-        DBUG(("stream_packbits_decomp__get: *** 128 encountered! ***"));
+        DBUG(("stream_packbits_decomp_get: *** 128 encountered! ***"));
         /* ignore the 128 case */
     }
   }
@@ -160,7 +160,7 @@ exit:
 
   if (p == sm->buffer)
   {
-    DBUG(("stream_packbits_decomp__get: no bytes generated in decomp\n"));
+    DBUG(("stream_packbits_decomp_get: no bytes generated in decomp\n"));
     return EOF; /* EOF at start */
   }
 
@@ -170,7 +170,7 @@ exit:
   return *sm->base.buf++;
 }
 
-error stream_packbitsdecomp__create(stream *input, int bufsz, stream **s)
+error stream_packbitsdecomp_create(stream *input, int bufsz, stream **s)
 {
   stream_packbits_decomp *sp;
 
@@ -193,7 +193,7 @@ error stream_packbitsdecomp__create(stream *input, int bufsz, stream **s)
 
   sp->base.op      = NULL;
   sp->base.seek    = NULL; /* can't seek */
-  sp->base.get     = stream_packbits_decomp__get;
+  sp->base.get     = stream_packbits_decomp_get;
   sp->base.length  = NULL; /* unknown length */
   sp->base.destroy = NULL;
 

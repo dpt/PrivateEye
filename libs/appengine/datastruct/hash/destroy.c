@@ -13,13 +13,13 @@
 
 #include "impl.h"
 
-void hash__destroy(hash_t *h)
+void hash_destroy(hash_t *h)
 {
   int i;
 
   for (i = 0; i < h->nbins; i++)
     while (h->bins[i])
-      hash__remove_node(h, &h->bins[i]);
+      hash_remove_node(h, &h->bins[i]);
 
   free(h->bins);
 

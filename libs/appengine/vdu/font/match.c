@@ -21,7 +21,7 @@ typedef struct nameattr
 {
   char        name[11];
   int         mask;
-  font__attrs value;
+  font_attrs value;
 }
 nameattr;
 
@@ -29,41 +29,41 @@ nameattr;
 /* Weights are taken from TTF/OTF OS/2 table usWeightClass. */
 static const nameattr map[] =
 {
-  { "Black",      font__WEIGHT_MASK,  font__WEIGHT_BLACK      },
-  { "Bold",       font__WEIGHT_MASK,  font__WEIGHT_BOLD       },
-  { "Book",       font__WEIGHT_MASK,  font__WEIGHT_400        },
-  { "Comp",       font__STRETCH_MASK, font__STRETCH_COND      },
-  { "Cond",       font__STRETCH_MASK, font__STRETCH_COND      },
-  { "Demi",       font__WEIGHT_MASK,  font__WEIGHT_600        },
-  { "DemiBold",   font__WEIGHT_MASK,  font__WEIGHT_600        },
-  { "Expert",     font__VARIANT_MASK, font__VARIANT_EXPERT    },
-  { "Extended",   font__STRETCH_MASK, font__STRETCH_EXT       },
-  { "Extra",      font__WEIGHT_MASK,  font__WEIGHT_950        },
-  { "ExtraBlack", font__WEIGHT_MASK,  font__WEIGHT_950        },
-  { "ExtraBold",  font__WEIGHT_MASK,  font__WEIGHT_800        },
-  { "ExtraComp",  font__STRETCH_MASK, font__STRETCH_EXTRACOND },
-  { "ExtraLight", font__WEIGHT_MASK,  font__WEIGHT_200        },
-  { "Heavy",      font__WEIGHT_MASK,  font__WEIGHT_900        },
-  { "Italic",     font__STYLE_MASK,   font__STYLE_ITALIC      },
-  { "Light",      font__WEIGHT_MASK,  font__WEIGHT_LIGHT      },
-  { "Medium",     font__WEIGHT_MASK,  font__WEIGHT_500        },
-  { "Normal",     font__WEIGHT_MASK,  font__WEIGHT_NORMAL     },
-  { "OSF",        font__VARIANT_MASK, font__VARIANT_OSF       },
-  { "Oblique",    font__STYLE_MASK,   font__STYLE_OBLIQUE     },
-  { "Open",       font__VARIANT_MASK, font__VARIANT_OPEN      },
-  { "Poster",     font__VARIANT_MASK, font__VARIANT_POSTER    },
-  { "Regular",    font__WEIGHT_MASK,  font__WEIGHT_400        },
-  { "Roman",      font__WEIGHT_MASK,  font__WEIGHT_400        },
-  { "SemiBold",   font__WEIGHT_MASK,  font__WEIGHT_600        },
-  { "Slanted",    font__STYLE_MASK,   font__STYLE_SLANTED     },
-  { "SmallCaps",  font__VARIANT_MASK, font__VARIANT_SMALLCAPS },
-  { "Thin",       font__WEIGHT_MASK,  font__WEIGHT_100        },
-  { "Title",      font__VARIANT_MASK, font__VARIANT_TITLE     },
-  { "Ultra",      font__WEIGHT_MASK,  font__WEIGHT_800        },
-  { "UltraBlack", font__WEIGHT_MASK,  font__WEIGHT_950        },
-  { "UltraBold",  font__WEIGHT_MASK,  font__WEIGHT_800        },
-  { "UltraComp",  font__STRETCH_MASK, font__STRETCH_ULTRACOND },
-  { "UltraLight", font__WEIGHT_MASK,  font__WEIGHT_200        },
+  { "Black",      font_WEIGHT_MASK,  font_WEIGHT_BLACK      },
+  { "Bold",       font_WEIGHT_MASK,  font_WEIGHT_BOLD       },
+  { "Book",       font_WEIGHT_MASK,  font_WEIGHT_400        },
+  { "Comp",       font_STRETCH_MASK, font_STRETCH_COND      },
+  { "Cond",       font_STRETCH_MASK, font_STRETCH_COND      },
+  { "Demi",       font_WEIGHT_MASK,  font_WEIGHT_600        },
+  { "DemiBold",   font_WEIGHT_MASK,  font_WEIGHT_600        },
+  { "Expert",     font_VARIANT_MASK, font_VARIANT_EXPERT    },
+  { "Extended",   font_STRETCH_MASK, font_STRETCH_EXT       },
+  { "Extra",      font_WEIGHT_MASK,  font_WEIGHT_950        },
+  { "ExtraBlack", font_WEIGHT_MASK,  font_WEIGHT_950        },
+  { "ExtraBold",  font_WEIGHT_MASK,  font_WEIGHT_800        },
+  { "ExtraComp",  font_STRETCH_MASK, font_STRETCH_EXTRACOND },
+  { "ExtraLight", font_WEIGHT_MASK,  font_WEIGHT_200        },
+  { "Heavy",      font_WEIGHT_MASK,  font_WEIGHT_900        },
+  { "Italic",     font_STYLE_MASK,   font_STYLE_ITALIC      },
+  { "Light",      font_WEIGHT_MASK,  font_WEIGHT_LIGHT      },
+  { "Medium",     font_WEIGHT_MASK,  font_WEIGHT_500        },
+  { "Normal",     font_WEIGHT_MASK,  font_WEIGHT_NORMAL     },
+  { "OSF",        font_VARIANT_MASK, font_VARIANT_OSF       },
+  { "Oblique",    font_STYLE_MASK,   font_STYLE_OBLIQUE     },
+  { "Open",       font_VARIANT_MASK, font_VARIANT_OPEN      },
+  { "Poster",     font_VARIANT_MASK, font_VARIANT_POSTER    },
+  { "Regular",    font_WEIGHT_MASK,  font_WEIGHT_400        },
+  { "Roman",      font_WEIGHT_MASK,  font_WEIGHT_400        },
+  { "SemiBold",   font_WEIGHT_MASK,  font_WEIGHT_600        },
+  { "Slanted",    font_STYLE_MASK,   font_STYLE_SLANTED     },
+  { "SmallCaps",  font_VARIANT_MASK, font_VARIANT_SMALLCAPS },
+  { "Thin",       font_WEIGHT_MASK,  font_WEIGHT_100        },
+  { "Title",      font_VARIANT_MASK, font_VARIANT_TITLE     },
+  { "Ultra",      font_WEIGHT_MASK,  font_WEIGHT_800        },
+  { "UltraBlack", font_WEIGHT_MASK,  font_WEIGHT_950        },
+  { "UltraBold",  font_WEIGHT_MASK,  font_WEIGHT_800        },
+  { "UltraComp",  font_STRETCH_MASK, font_STRETCH_ULTRACOND },
+  { "UltraLight", font_WEIGHT_MASK,  font_WEIGHT_200        },
 };
 
 /* Copy 'in' to 'out' zero-terminating all full stops and placing pointers
@@ -107,12 +107,12 @@ static int compattrs(const void *a, const void *b)
 
 /* Compute the distance between two attrs. A smaller value is better (ie.
  * closer). */
-static int score(font__attrs a, font__attrs b)
+static int score(font_attrs a, font_attrs b)
 {
-  return abs((a & font__WEIGHT_MASK)  - (b & font__WEIGHT_MASK))  +
-         abs((a & font__STYLE_MASK)   - (b & font__STYLE_MASK))   +
-         abs((a & font__STRETCH_MASK) - (b & font__STRETCH_MASK)) +
-         abs((a & font__VARIANT_MASK) - (b & font__VARIANT_MASK));
+  return abs((a & font_WEIGHT_MASK)  - (b & font_WEIGHT_MASK))  +
+         abs((a & font_STYLE_MASK)   - (b & font_STYLE_MASK))   +
+         abs((a & font_STRETCH_MASK) - (b & font_STRETCH_MASK)) +
+         abs((a & font_VARIANT_MASK) - (b & font_VARIANT_MASK));
 }
 
 /* Split a font name into family name and attrs.
@@ -126,12 +126,12 @@ static int score(font__attrs a, font__attrs b)
  * Foo.Bar.Baz.Oblique -> Foo.Bar.Baz
  *
  */
-static font__attrs splitname(const char *fontname, char *family)
+static font_attrs splitname(const char *fontname, char *family)
 {
   char         tokenised[128];
   char        *tokens[16];
   int          c;
-  font__attrs  attrs;
+  font_attrs  attrs;
   int          highest_contiguous_unrecognised_token;
   int          i;
 
@@ -139,10 +139,10 @@ static font__attrs splitname(const char *fontname, char *family)
 
   /* detect attrs */
 
-  attrs = font__WEIGHT_NORMAL  |
-          font__STYLE_NORMAL   |
-          font__STRETCH_NORMAL |
-          font__VARIANT_NORMAL;
+  attrs = font_WEIGHT_NORMAL  |
+          font_STYLE_NORMAL   |
+          font_STRETCH_NORMAL |
+          font_VARIANT_NORMAL;
 
   highest_contiguous_unrecognised_token = -1;
 
@@ -180,8 +180,8 @@ static font__attrs splitname(const char *fontname, char *family)
   return attrs;
 }
 
-error font__select(const char  *wantname,
-                   font__attrs  wantattrs,
+error font_select(const char  *wantname,
+                   font_attrs  wantattrs,
                    char        *selected,
                    int          selected_size)
 {
@@ -204,7 +204,7 @@ error font__select(const char  *wantname,
   {
     char        fontname[128];
     char        family[128];
-    font__attrs attrs;
+    font_attrs attrs;
     int         sc;
 
     context = font_list_fonts((byte *) fontname,
@@ -243,7 +243,7 @@ error font__select(const char  *wantname,
   return error_OK;
 }
 
-font__attrs font__get_attrs(const char *name)
+font_attrs font_get_attrs(const char *name)
 {
   char family[128];
 

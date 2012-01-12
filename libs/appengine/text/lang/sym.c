@@ -29,7 +29,7 @@ struct sym
   int            lastentry;
 };
 
-sym *sym__create(void)
+sym *sym_create(void)
 {
   sym *s;
 
@@ -43,7 +43,7 @@ sym *sym__create(void)
   return s;
 }
 
-void sym__destroy(sym *doomed)
+void sym_destroy(sym *doomed)
 {
   if (doomed == NULL)
     return;
@@ -51,7 +51,7 @@ void sym__destroy(sym *doomed)
   free(doomed);
 }
 
-int sym__lookup(sym *sy, const char *s)
+int sym_lookup(sym *sy, const char *s)
 {
   int i;
 
@@ -62,7 +62,7 @@ int sym__lookup(sym *sy, const char *s)
   return 0;
 }
 
-int sym__insert(sym *sy, const char *s, Token tok)
+int sym_insert(sym *sy, const char *s, Token tok)
 {
   int len;
 
@@ -81,7 +81,7 @@ int sym__insert(sym *sy, const char *s, Token tok)
   return sy->lastentry;
 }
 
-const char *sym__get(sym *sy, int index)
+const char *sym_get(sym *sy, int index)
 {
   assert(index >= 0);
   assert(index <= sy->lastentry);
@@ -89,7 +89,7 @@ const char *sym__get(sym *sy, int index)
   return sy->symtable[index].lexptr;
 }
 
-void sym__dump(sym *sy)
+void sym_dump(sym *sy)
 {
   int i;
 

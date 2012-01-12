@@ -84,17 +84,17 @@ static error concat(ntree_t *t, void *arg)
   print_data *data = arg;
   char       *s;
 
-  s = ntree__get_data(t);
+  s = ntree_get_data(t);
 
   strcat(data->buf, s);
   data->index += strlen(s);
 
-  printf("'%s' at depth %d\n", s, ntree__depth(t));
+  printf("'%s' at depth %d\n", s, ntree_depth(t));
 
   return error_OK;
 }
 
-static error tree_to_string(ntree_t *t, ntree__walk_flags flags, int depth,
+static error tree_to_string(ntree_t *t, ntree_walk_flags flags, int depth,
                             char *buf)
 {
   error      err;
@@ -105,12 +105,12 @@ static error tree_to_string(ntree_t *t, ntree__walk_flags flags, int depth,
   data.buf   = buf;
   data.index = 0;
 
-  err = ntree__walk(t, flags | ntree__WALK_ALL, depth, concat, &data);
+  err = ntree_walk(t, flags | ntree_WALK_ALL, depth, concat, &data);
 
   return err;
 }
 
-static error walk_test(ntree_t *t, ntree__walk_flags flags,
+static error walk_test(ntree_t *t, ntree_walk_flags flags,
                        const char *expected[])
 {
   error err;
@@ -165,7 +165,7 @@ static error free_data(ntree_t *t, void *arg)
 {
   NOT_USED(arg);
 
-  free(ntree__get_data(t));
+  free(ntree_get_data(t));
 
   return error_OK;
 }
@@ -179,11 +179,11 @@ int ntree_test(void)
 
   for (i = 0; i < NELEMS(data); i++)
   {
-    err = ntree__new(&data[i].node);
+    err = ntree_new(&data[i].node);
     if (err)
       goto Failure;
 
-    ntree__set_data(data[i].node, data[i].data);
+    ntree_set_data(data[i].node, data[i].data);
 
     if (data[i].parent >= 0) /* skip root */
     {
@@ -193,7 +193,7 @@ int ntree_test(void)
       parent   = data[data[i].parent].node;
       position = data[i].position;
 
-      err = ntree__insert(parent, position, data[i].node);
+      err = ntree_insert(parent, position, data[i].node);
       if (err)
         goto Failure;
     }
@@ -201,29 +201,29 @@ int ntree_test(void)
 
   printf("test: walk in order\n");
 
-  err = walk_test(data[0].node, ntree__WALK_IN_ORDER, expected_in_order);
+  err = walk_test(data[0].node, ntree_WALK_IN_ORDER, expected_in_order);
   if (err)
     goto Failure;
 
   printf("test: walk pre order\n");
 
-  err = walk_test(data[0].node, ntree__WALK_PRE_ORDER, expected_pre_order);
+  err = walk_test(data[0].node, ntree_WALK_PRE_ORDER, expected_pre_order);
   if (err)
     goto Failure;
 
   printf("test: walk post order\n");
 
-  err = walk_test(data[0].node, ntree__WALK_POST_ORDER, expected_post_order);
+  err = walk_test(data[0].node, ntree_WALK_POST_ORDER, expected_post_order);
   if (err)
     goto Failure;
 
   printf("test: max height\n");
 
-  printf("height = %d\n", ntree__max_height(data[0].node));
+  printf("height = %d\n", ntree_max_height(data[0].node));
 
   printf("test: number of nodes\n");
 
-  printf("nodes = %d\n", ntree__n_nodes(data[0].node));
+  printf("nodes = %d\n", ntree_n_nodes(data[0].node));
 
   printf("test: copy tree\n");
 
@@ -232,31 +232,31 @@ int ntree_test(void)
 
     printf("sub-test: copy\n");
 
-    err = ntree__copy(data[0].node, dup_data, NULL, &copy);
+    err = ntree_copy(data[0].node, dup_data, NULL, &copy);
     if (err)
       goto Failure;
 
     printf("sub-test: walk in order\n");
 
-    err = walk_test(copy, ntree__WALK_IN_ORDER, expected_in_order);
+    err = walk_test(copy, ntree_WALK_IN_ORDER, expected_in_order);
     if (err)
       goto Failure;
 
     printf("sub-test: discard copied data\n");
 
-    err = ntree__walk(copy, ntree__WALK_IN_ORDER | ntree__WALK_ALL, 0,
+    err = ntree_walk(copy, ntree_WALK_IN_ORDER | ntree_WALK_ALL, 0,
                       free_data, NULL);
     if (err)
       goto Failure;
 
     printf("sub-test: delete tree\n");
 
-    ntree__delete(copy);
+    ntree_delete(copy);
   }
 
   printf("test: delete tree\n");
 
-  ntree__delete(data[0].node);
+  ntree_delete(data[0].node);
 
   return 0;
 

@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-void scroll_list__set_selection(scroll_list *sl, int row)
+void scroll_list_set_selection(scroll_list *sl, int row)
 {
   int old;
   int sel;
@@ -22,12 +22,12 @@ void scroll_list__set_selection(scroll_list *sl, int row)
   {
     sl->selection = sel;
 
-    scroll_list__refresh_row(sl, old);
-    scroll_list__refresh_row(sl, sel);
+    scroll_list_refresh_row(sl, old);
+    scroll_list_refresh_row(sl, sel);
   }
 }
 
-int scroll_list__get_selection(scroll_list *sl)
+int scroll_list_get_selection(scroll_list *sl)
 {
   assert(sl->selection >= -1);
   assert(sl->selection <= sl->rows - 1);
@@ -35,7 +35,7 @@ int scroll_list__get_selection(scroll_list *sl)
   return sl->selection;
 }
 
-void scroll_list__clear_selection(scroll_list *sl)
+void scroll_list_clear_selection(scroll_list *sl)
 {
   int old;
 
@@ -43,10 +43,10 @@ void scroll_list__clear_selection(scroll_list *sl)
 
   sl->selection = -1;
 
-  scroll_list__refresh_row(sl, old);
+  scroll_list_refresh_row(sl, old);
 }
 
-int scroll_list__move_selection_absolute(scroll_list *sl, int where)
+int scroll_list_move_selection_absolute(scroll_list *sl, int where)
 {
   int old;
   int sel;
@@ -60,12 +60,12 @@ int scroll_list__move_selection_absolute(scroll_list *sl, int where)
   sel = clamp(sl, sel);
 
   if (sel != old)
-    scroll_list__set_selection(sl, sel);
+    scroll_list_set_selection(sl, sel);
 
   return sel; /* the new selection */
 }
 
-int scroll_list__move_selection_relative(scroll_list *sl, int delta)
+int scroll_list_move_selection_relative(scroll_list *sl, int delta)
 {
-  return scroll_list__move_selection_absolute(sl, sl->selection + delta);
+  return scroll_list_move_selection_absolute(sl, sl->selection + delta);
 }

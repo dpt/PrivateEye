@@ -43,7 +43,7 @@ image_t *image_create(void)
   i->refcount = 1;
   i->background_colour = os_COLOUR_TRANSPARENT;
 
-  list__add_to_head(&list_anchor, &i->list);
+  list_add_to_head(&list_anchor, &i->list);
 
   return i;
 }
@@ -171,7 +171,7 @@ void image_destroy(image_t *i)
   {
     imageobserver_event(i, imageobserver_CHANGE_ABOUT_TO_DESTROY, NULL);
 
-    list__remove(&list_anchor, &i->list);
+    list_remove(&list_anchor, &i->list);
 
     if (i->methods.unload)
       i->methods.unload(i);
@@ -198,7 +198,7 @@ void image_map(image_map_callback *fn, void *arg)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list__walk(&list_anchor, (list__walk_callback *) fn, arg);
+  list_walk(&list_anchor, (list_walk_callback *) fn, arg);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -227,7 +227,7 @@ static error destroy_metadata_callback(ntree_t *t, void *arg)
 {
   NOT_USED(arg);
 
-  free(ntree__get_data(t));
+  free(ntree_get_data(t));
 
   return error_OK;
 }
@@ -236,13 +236,13 @@ void image_destroy_metadata(ntree_t *metadata)
 {
   error err;
 
-  err = ntree__walk(metadata,
-                    ntree__WALK_POST_ORDER | ntree__WALK_ALL,
+  err = ntree_walk(metadata,
+                    ntree_WALK_POST_ORDER | ntree_WALK_ALL,
                     0,
                     destroy_metadata_callback,
                     NULL);
 
-  ntree__delete(metadata);
+  ntree_delete(metadata);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -251,7 +251,7 @@ error image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
 {
   if ((image->flags & image_FLAG_HAS_DIGEST) == 0)
   {
-    md5__from_file(image->file_name, image->digest);
+    md5_from_file(image->file_name, image->digest);
 
     image->flags |= image_FLAG_HAS_DIGEST;
   }

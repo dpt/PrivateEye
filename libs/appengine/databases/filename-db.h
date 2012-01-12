@@ -20,36 +20,36 @@
 
 /* ----------------------------------------------------------------------- */
 
-error filenamedb__init(void);
-void filenamedb__fin(void);
+error filenamedb_init(void);
+void filenamedb_fin(void);
 
 /* ----------------------------------------------------------------------- */
 
-error filenamedb__create(const char *filename);
-void filenamedb__delete(const char *filename);
+error filenamedb_create(const char *filename);
+void filenamedb_delete(const char *filename);
 
 /* ----------------------------------------------------------------------- */
 
 typedef struct T T;
 
-error filenamedb__open(const char *filename, T **db);
-void filenamedb__close(T *db);
+error filenamedb_open(const char *filename, T **db);
+void filenamedb_close(T *db);
 
 /* force any pending changes to disc */
-error filenamedb__commit(T *db);
+error filenamedb_commit(T *db);
 
 /* ----------------------------------------------------------------------- */
 
-error filenamedb__add(T          *db,
+error filenamedb_add(T          *db,
                       const char *id,
                       const char *filename);
 
-const char *filenamedb__get(T          *db,
+const char *filenamedb_get(T          *db,
                             const char *id);
 
 /* ----------------------------------------------------------------------- */
 
-error filenamedb__prune(T *db);
+error filenamedb_prune(T *db);
 
 /* ----------------------------------------------------------------------- */
 

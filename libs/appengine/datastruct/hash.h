@@ -26,22 +26,22 @@ typedef struct T T;
 /**
  * A function called to hash the specified key.
  */
-typedef unsigned int (hash__fn)(const void *a);
+typedef unsigned int (hash_fn)(const void *a);
 
 /**
  * A function called to compare the two specified keys.
  */
-typedef int (hash__compare)(const void *a, const void *b);
+typedef int (hash_compare)(const void *a, const void *b);
 
 /**
  * A function called to destroy the specified key.
  */
-typedef void (hash__destroy_key)(void *key);
+typedef void (hash_destroy_key)(void *key);
 
 /**
  * A function called to destroy the specified value.
  */
-typedef void (hash__destroy_value)(void *value);
+typedef void (hash_destroy_value)(void *value);
 
 /**
  * Create a hash.
@@ -55,11 +55,11 @@ typedef void (hash__destroy_value)(void *value);
  *
  * \return Error indication.
  */
-error hash__create(int                  nbins,
-                   hash__fn            *fn,
-                   hash__compare       *compare,
-                   hash__destroy_key   *destroy_key,
-                   hash__destroy_value *destroy_value,
+error hash_create(int                  nbins,
+                   hash_fn            *fn,
+                   hash_compare       *compare,
+                   hash_destroy_key   *destroy_key,
+                   hash_destroy_value *destroy_value,
                    T                  **hash);
 
 /**
@@ -67,7 +67,7 @@ error hash__create(int                  nbins,
  *
  * \param doomed Hash to destroy.
  */
-void hash__destroy(T *doomed);
+void hash_destroy(T *doomed);
 
 /* ----------------------------------------------------------------------- */
 
@@ -79,13 +79,13 @@ void hash__destroy(T *doomed);
  *
  * \return Value associated with the specified key.
  */
-void *hash__lookup(T *hash, const void *key);
+void *hash_lookup(T *hash, const void *key);
 
 /**
  * Insert the specified key:value pair into the hash.
  *
  * The hash takes ownership of the key and value pointers. It will call the
- * destroy functions passed to hash__create when the keys and values are to
+ * destroy functions passed to hash_create when the keys and values are to
  * be destroyed.
  *
  * \param hash  Hash.
@@ -94,7 +94,7 @@ void *hash__lookup(T *hash, const void *key);
  *
  * \return Error indication.
  */
-error hash__insert(T *hash, void *key, void *value);
+error hash_insert(T *hash, void *key, void *value);
 
 /**
  * Remove the specified key from the hash.
@@ -102,7 +102,7 @@ error hash__insert(T *hash, void *key, void *value);
  * \param hash Hash.
  * \param key  Key to remove.
  */
-void hash__remove(T *hash, const void *key);
+void hash_remove(T *hash, const void *key);
 
 /* ----------------------------------------------------------------------- */
 
@@ -111,7 +111,7 @@ void hash__remove(T *hash, const void *key);
  *
  * Return a negative value to halt the walk operation.
  */
-typedef int (hash__walk_callback)(const void *key,
+typedef int (hash_walk_callback)(const void *key,
                                   const void *value,
                                   void       *opaque);
 
@@ -125,7 +125,7 @@ typedef int (hash__walk_callback)(const void *key,
  * \return The negative value returned from the callback, or zero for
  * success.
  */
-int hash__walk(T *hash, hash__walk_callback *cb, void *opaque);
+int hash_walk(T *hash, hash_walk_callback *cb, void *opaque);
 
 /* ----------------------------------------------------------------------- */
 
@@ -141,7 +141,7 @@ int hash__walk(T *hash, hash__walk_callback *cb, void *opaque);
  * \retval  0 No more elements.
  * \retval -1 Invalid continuation value.
  */
-int hash__walk_continuation(T           *hash,
+int hash_walk_continuation(T           *hash,
                             int          continuation,
                             const void **key,
                             const void **value);

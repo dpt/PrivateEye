@@ -15,14 +15,14 @@
 #include "appengine/base/oserror.h"
 
 /*
- * oserror__report_block
+ * oserror_report_block
  *
  * Open an error box with an 'OK' (or 'Continue') button, given a
  * os_error block.
  *
  */
 
-void oserror__report_block(os_error *error)
+void oserror_report_block(os_error *error)
 {
   os_error e;
   char     icon[13]; /* twelve characters plus terminator */

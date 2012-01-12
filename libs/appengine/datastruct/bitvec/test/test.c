@@ -14,8 +14,8 @@ static void dumpbits(bitvec_t *v)
 {
   int i;
 
-  for (i = bitvec__length(v) - 1; i >= 0; i--)
-    printf("%d", bitvec__get(v, i));
+  for (i = bitvec_length(v) - 1; i >= 0; i--)
+    printf("%d", bitvec_get(v, i));
   printf("\n");
 }
 
@@ -29,7 +29,7 @@ int bitvec_test(void)
 
   printf("test: create\n");
 
-  v = bitvec__create(0);
+  v = bitvec_create(0);
   if (!v)
     return 1;
 
@@ -37,7 +37,7 @@ int bitvec_test(void)
 
   for (i = 0; i < NBITS; i++)
   {
-    err = bitvec__set(v, i);
+    err = bitvec_set(v, i);
     if (err)
       return 1;
   }
@@ -49,19 +49,19 @@ int bitvec_test(void)
 
     c = 0;
     for (i = 0; i < NBITS; i++)
-      c += bitvec__get(v, i);
+      c += bitvec_get(v, i);
 
     printf("%d bits set\n", c);
   }
 
   printf("test: count\n");
 
-  printf("%d bits set\n", bitvec__count(v));
+  printf("%d bits set\n", bitvec_count(v));
 
   printf("test: clear\n");
 
   for (i = 0; i < NBITS; i++)
-    bitvec__clear(v, i);
+    bitvec_clear(v, i);
 
   printf("test: get\n");
 
@@ -70,18 +70,18 @@ int bitvec_test(void)
 
     c = 0;
     for (i = 0; i < NBITS; i++)
-      c += bitvec__get(v, i);
+      c += bitvec_get(v, i);
 
     printf("%d bits set\n", c);
   }
 
   printf("test: count\n");
 
-  printf("%d bits set\n", bitvec__count(v));
+  printf("%d bits set\n", bitvec_count(v));
 
   printf("test: length\n");
 
-  printf("length=%d bits\n", bitvec__length(v));
+  printf("length=%d bits\n", bitvec_length(v));
 
   printf("test: next\n");
 
@@ -89,7 +89,7 @@ int bitvec_test(void)
 
   for (i = 0; i < NBITS; i += 11)
   {
-    err = bitvec__set(v, i);
+    err = bitvec_set(v, i);
     if (err)
       return 1;
   }
@@ -100,117 +100,117 @@ int bitvec_test(void)
   do
   {
     printf("after %d ", i);
-    i = bitvec__next(v, i);
+    i = bitvec_next(v, i);
     printf("comes %d\n", i);
   }
   while (i != -1);
 
   printf("test: destroy\n");
 
-  bitvec__destroy(v);
+  bitvec_destroy(v);
 
   printf("test: eq\n");
 
-  v = bitvec__create(0);
+  v = bitvec_create(0);
   if (!v)
     return 1;
 
-  w = bitvec__create(0);
+  w = bitvec_create(0);
   if (!w)
     return 1;
 
-  printf("created. equal? %d\n", bitvec__eq(v, w));
+  printf("created. equal? %d\n", bitvec_eq(v, w));
 
-  err = bitvec__set(v, 1);
-  err = bitvec__set(w, 1);
+  err = bitvec_set(v, 1);
+  err = bitvec_set(w, 1);
 
-  printf("set bit 1 for v+w. equal? %d\n", bitvec__eq(v, w));
+  printf("set bit 1 for v+w. equal? %d\n", bitvec_eq(v, w));
 
-  err = bitvec__set(v, 1000);
-  err = bitvec__set(w, 1000);
+  err = bitvec_set(v, 1000);
+  err = bitvec_set(w, 1000);
 
-  printf("set bit 1000 for v+w. equal? %d\n", bitvec__eq(v, w));
+  printf("set bit 1000 for v+w. equal? %d\n", bitvec_eq(v, w));
 
-  bitvec__clear(v, 1000);
+  bitvec_clear(v, 1000);
 
-  printf("clear bit 1000 for v. equal? %d\n", bitvec__eq(v, w));
+  printf("clear bit 1000 for v. equal? %d\n", bitvec_eq(v, w));
 
-  bitvec__clear(w, 1000);
+  bitvec_clear(w, 1000);
 
-  printf("clear bit 1000 for w. equal? %d\n", bitvec__eq(v, w));
+  printf("clear bit 1000 for w. equal? %d\n", bitvec_eq(v, w));
 
   /* this tests that bitvecs with different internal lengths still compare
    * equal */
 
-  bitvec__destroy(w);
+  bitvec_destroy(w);
 
-  w = bitvec__create(0);
+  w = bitvec_create(0);
   if (!w)
     return 1;
 
-  bitvec__clear(v, 1);
+  bitvec_clear(v, 1);
 
-  printf("clear bit 1 for v. recreate w. equal? %d\n", bitvec__eq(v, w));
+  printf("clear bit 1 for v. recreate w. equal? %d\n", bitvec_eq(v, w));
 
-  bitvec__destroy(w);
+  bitvec_destroy(w);
 
-  bitvec__destroy(v);
+  bitvec_destroy(v);
 
   printf("test: and\n");
 
-  v = bitvec__create(0);
+  v = bitvec_create(0);
   if (!v)
     return 1;
 
-  w = bitvec__create(0);
+  w = bitvec_create(0);
   if (!w)
     return 1;
 
-  err = bitvec__set(v, 32);
+  err = bitvec_set(v, 32);
   if (err)
     return 1;
 
-  err = bitvec__set(w, 32);
+  err = bitvec_set(w, 32);
   if (err)
     return 1;
 
-  err = bitvec__and(v, w, &x);
+  err = bitvec_and(v, w, &x);
   if (err)
     return 1;
 
   dumpbits(x);
 
-  bitvec__destroy(x);
-  bitvec__destroy(w);
-  bitvec__destroy(v);
+  bitvec_destroy(x);
+  bitvec_destroy(w);
+  bitvec_destroy(v);
 
   printf("test: or\n");
 
-  v = bitvec__create(0);
+  v = bitvec_create(0);
   if (!v)
     return 1;
 
-  w = bitvec__create(0);
+  w = bitvec_create(0);
   if (!w)
     return 1;
 
-  err = bitvec__set(v, 0);
+  err = bitvec_set(v, 0);
   if (err)
     return 1;
 
-  err = bitvec__set(w, 32);
+  err = bitvec_set(w, 32);
   if (err)
     return 1;
 
-  err = bitvec__or(v, w, &x);
+  err = bitvec_or(v, w, &x);
   if (err)
     return 1;
 
   dumpbits(x);
 
-  bitvec__destroy(x);
-  bitvec__destroy(w);
-  bitvec__destroy(v);
+  bitvec_destroy(x);
+  bitvec_destroy(w);
+  bitvec_destroy(v);
 
   return 0;
 }

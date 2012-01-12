@@ -1,7 +1,7 @@
 
 #include "appengine/datastruct/list.h"
 
-list_t *list__find(list_t *anchor,
+list_t *list_find(list_t *anchor,
                    size_t  keyloc,
                    int     key)
 {

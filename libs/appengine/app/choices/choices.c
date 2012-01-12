@@ -89,7 +89,7 @@ error choices_init(void)
   {
     /* dependencies */
 
-    err = help__init();
+    err = help_init();
     if (err)
       goto failure;
   }
@@ -107,7 +107,7 @@ void choices_fin(void)
 {
   if (--choices_refcount == 0)
   {
-    help__fin();
+    help_fin();
   }
 }
 
@@ -526,7 +526,7 @@ static error create_windows_callback(const choices      *cs,
   if (*p->window == 0)
       return error_OOM; /* potentially inaccurate */
 
-  err = help__add_window(*p->window, buf);
+  err = help_add_window(*p->window, buf);
   if (err)
     return err;
 
@@ -577,7 +577,7 @@ error choices_create_windows(const choices *cs)
   if (*cs->window == 0)
     return error_OOM; /* potentially inaccurate */
 
-  err = help__add_window(*cs->window, "choices");
+  err = help_add_window(*cs->window, "choices");
   if (err)
     return err;
 
@@ -604,7 +604,7 @@ static error destroy_windows_callback(const choices      *cs,
   if (p->window == NULL)
     return error_OK; /* this group has no associated window */
 
-  help__remove_window(*p->window);
+  help_remove_window(*p->window);
 
   choices_set_pane_handlers(0, cs, p);
 
@@ -1000,7 +1000,7 @@ static error mouse_click_stringset(const choices        *cs,
 
     if (cs->vars->current_menu)
     {
-      help__remove_menu(cs->vars->current_menu);
+      help_remove_menu(cs->vars->current_menu);
       menu_destroy(cs->vars->current_menu);
       cs->vars->current_menu = NULL;
     }
@@ -1013,7 +1013,7 @@ static error mouse_click_stringset(const choices        *cs,
     if (menu == NULL)
       return error_OOM; /* potentially inaccurate */
 
-    err = help__add_menu(menu, c->data.string_set->name);
+    err = help_add_menu(menu, c->data.string_set->name);
     if (err)
       return err;
 
@@ -1218,7 +1218,7 @@ static int choices_message_menus_deleted(wimp_message *message, void *handle)
   if (cs->vars->current_menu == NULL)
     return event_NOT_HANDLED;
 
-  help__remove_menu(cs->vars->current_menu);
+  help_remove_menu(cs->vars->current_menu);
 
   menu_destroy(cs->vars->current_menu);
 

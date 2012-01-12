@@ -4,13 +4,13 @@
 
 #include "appengine/datastruct/array.h"
 
-void array__delete_element(void  *array,
+void array_delete_element(void  *array,
                            size_t elemsize,
                            int    nelems,
                            int    doomed)
 {
   /* alternative:
-     array__delete_elements(array, elemsize, nelems, doomed, doomed); */
+     array_delete_elements(array, elemsize, nelems, doomed, doomed); */
 
   size_t n;
   char  *to;

@@ -17,16 +17,16 @@
 #include "iconnames.h"
 #include "impl.h"
 
-void tag_cloud__attach_toolbar(tag_cloud *tc)
+void tag_cloud_attach_toolbar(tag_cloud *tc)
 {
   wimp_w                    toolbar_w;
   wimp_window_state         wstate;
   wimp_window_nesting_flags linkage;
 
-  if (tc->flags & tag_cloud__FLAG_TOOLBAR)
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR)
     return; /* already attached */
 
-  toolbar_w = window_clone(tag_cloud__get_toolbar_window());
+  toolbar_w = window_clone(tag_cloud_get_toolbar_window());
 
   wstate.w = tc->main_w;
   wimp_get_window_state(&wstate);
@@ -42,15 +42,15 @@ void tag_cloud__attach_toolbar(tag_cloud *tc)
 
   wimp_open_window_nested((wimp_open *) &wstate, tc->main_w, linkage);
 
-  tc->flags    |= tag_cloud__FLAG_TOOLBAR;
+  tc->flags    |= tag_cloud_FLAG_TOOLBAR;
   tc->toolbar_w = toolbar_w;
 
-  // grisly - maybe have tag_cloud__internal_set_handlers_toolbar?
-  tag_cloud__internal_set_handlers(0, tc);
-  tag_cloud__internal_set_handlers(1, tc);
+  // grisly - maybe have tag_cloud_internal_set_handlers_toolbar?
+  tag_cloud_internal_set_handlers(0, tc);
+  tag_cloud_internal_set_handlers(1, tc);
 
   // reset the buttons - also grisly, copied from display.c etc.
-  // have separate calls for these too? e.g. tag_cloud__set_display_sync_toolbar?
+  // have separate calls for these too? e.g. tag_cloud_set_display_sync_toolbar?
 
   /* toolbar icons need to match the order of display_type */
   icon_set_radio(tc->toolbar_w, TAG_CLOUD_T_B_DISPLIST + tc->display_type);
@@ -59,28 +59,28 @@ void tag_cloud__attach_toolbar(tag_cloud *tc)
   icon_set_radio(tc->toolbar_w, TAG_CLOUD_T_B_SORTALPHA + tc->sort_type);
 
   icon_set_selected(tc->toolbar_w, TAG_CLOUD_T_O_SELFIRST,
-                    tc->flags & tag_cloud__FLAG_SORT_SEL_FIRST);
+                    tc->flags & tag_cloud_FLAG_SORT_SEL_FIRST);
 }
 
-void tag_cloud__detach_toolbar(tag_cloud *tc)
+void tag_cloud_detach_toolbar(tag_cloud *tc)
 {
-  if ((tc->flags & tag_cloud__FLAG_TOOLBAR) == 0)
+  if ((tc->flags & tag_cloud_FLAG_TOOLBAR) == 0)
     return; /* already detached */
 
   window_delete_cloned(tc->toolbar_w);
 
-  tc->flags    &= ~tag_cloud__FLAG_TOOLBAR;
+  tc->flags    &= ~tag_cloud_FLAG_TOOLBAR;
   tc->toolbar_w = NULL;
 
   // grisly - see above
-  tag_cloud__internal_set_handlers(0, tc);
-  tag_cloud__internal_set_handlers(1, tc);
+  tag_cloud_internal_set_handlers(0, tc);
+  tag_cloud_internal_set_handlers(1, tc);
 }
 
-void tag_cloud__toggle_toolbar(tag_cloud *tc)
+void tag_cloud_toggle_toolbar(tag_cloud *tc)
 {
-  if (tc->flags & tag_cloud__FLAG_TOOLBAR)
-    tag_cloud__detach_toolbar(tc);
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR)
+    tag_cloud_detach_toolbar(tc);
   else
-    tag_cloud__attach_toolbar(tc);
+    tag_cloud_attach_toolbar(tc);
 }

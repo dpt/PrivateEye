@@ -74,7 +74,7 @@ taggings[] =
 
 typedef struct
 {
-  tagdb__tag tags[8]; /* 8 == NELEMS(tagnames) */
+  tagdb_tag tags[8]; /* 8 == NELEMS(tagnames) */
   tagdb     *db;
 }
 State;
@@ -87,9 +87,9 @@ static error test_create(State *state)
 
   NOT_USED(state);
 
-  tagdb__delete(FILENAME);
+  tagdb_delete(FILENAME);
 
-  err = tagdb__create(FILENAME);
+  err = tagdb_create(FILENAME);
 
   return err;
 }
@@ -98,7 +98,7 @@ static error test_open(State *state)
 {
   error err;
 
-  err = tagdb__open(FILENAME, &state->db);
+  err = tagdb_open(FILENAME, &state->db);
 
   return err;
 }
@@ -111,7 +111,7 @@ static error test_add_tags(State *state)
   for (i = 0; i < NELEMS(tagnames); i++)
   {
     printf("adding '%s'...", tagnames[i]);
-    err = tagdb__add(state->db, tagnames[i], &state->tags[i]);
+    err = tagdb_add(state->db, tagnames[i], &state->tags[i]);
     if (err)
       goto Failure;
 
@@ -135,17 +135,17 @@ static error test_rename_tags(State *state)
   {
     char buf[256];
 
-    err = tagdb__tagtoname(state->db, state->tags[i], buf, sizeof(buf));
+    err = tagdb_tagtoname(state->db, state->tags[i], buf, sizeof(buf));
     if (err)
       goto Failure;
 
     printf("renaming '%s'...", buf);
 
-    err = tagdb__rename(state->db, state->tags[i], renames[i]);
+    err = tagdb_rename(state->db, state->tags[i], renames[i]);
     if (err)
       goto Failure;
 
-    err = tagdb__tagtoname(state->db, state->tags[i], buf, sizeof(buf));
+    err = tagdb_tagtoname(state->db, state->tags[i], buf, sizeof(buf));
     if (err)
       goto Failure;
 
@@ -169,12 +169,12 @@ static error test_enumerate_tags(State *state)
   cont = 0;
   do
   {
-    tagdb__tag tag;
+    tagdb_tag tag;
     int        count;
 
     printf("continuation %d...", cont);
 
-    err = tagdb__enumerate_tags(state->db, &cont, &tag, &count);
+    err = tagdb_enumerate_tags(state->db, &cont, &tag, &count);
     if (err)
       goto Failure;
 
@@ -182,7 +182,7 @@ static error test_enumerate_tags(State *state)
     {
       printf("tag %d, count %d", tag, count);
 
-      err = tagdb__tagtoname(state->db, tag, buf, sizeof(buf));
+      err = tagdb_tagtoname(state->db, tag, buf, sizeof(buf));
       if (err)
         goto Failure;
 
@@ -216,7 +216,7 @@ static error test_tag_id(State *state)
 
     printf("tagging id '%d' with %d\n", whichf, state->tags[whicht]);
 
-    err = tagdb__tagid(state->db, ids[whichf], state->tags[whicht]);
+    err = tagdb_tagid(state->db, ids[whichf], state->tags[whicht]);
     if (err)
       goto Failure;
   }
@@ -239,7 +239,7 @@ static error test_get_tags_for_id(State *state)
   for (i = 0; i < NELEMS(ids); i++)
   {
     int        ntags;
-    tagdb__tag tag;
+    tagdb_tag tag;
 
     printf("getting tags for id '%d'... ", i);
 
@@ -247,7 +247,7 @@ static error test_get_tags_for_id(State *state)
     cont  = 0;
     do
     {
-      err = tagdb__get_tags_for_id(state->db, ids[i], &cont, &tag);
+      err = tagdb_get_tags_for_id(state->db, ids[i], &cont, &tag);
       if (err == error_TAGDB_UNKNOWN_ID)
       {
         printf("id not found ");
@@ -260,7 +260,7 @@ static error test_get_tags_for_id(State *state)
 
       if (cont)
       {
-        err = tagdb__tagtoname(state->db, tag, buf, sizeof(buf));
+        err = tagdb_tagtoname(state->db, tag, buf, sizeof(buf));
         if (err)
           goto Failure;
 
@@ -298,7 +298,7 @@ static error test_enumerate_ids(State *state)
   cont = 0;
   do
   {
-    err = tagdb__enumerate_ids(state->db, &cont, buf, sizeof(buf));
+    err = tagdb_enumerate_ids(state->db, &cont, buf, sizeof(buf));
     if (err)
       goto Failure;
 
@@ -329,7 +329,7 @@ static error test_enumerate_ids_by_tag(State *state)
     int  cont;
     char buf[256];
 
-    err = tagdb__tagtoname(state->db, state->tags[i], buf, sizeof(buf));
+    err = tagdb_tagtoname(state->db, state->tags[i], buf, sizeof(buf));
     if (err)
       goto Failure;
 
@@ -338,7 +338,7 @@ static error test_enumerate_ids_by_tag(State *state)
     cont = 0;
     do
     {
-      err = tagdb__enumerate_ids_by_tag(state->db, i, &cont,
+      err = tagdb_enumerate_ids_by_tag(state->db, i, &cont,
                                         buf, sizeof(buf));
       if (err)
         goto Failure;
@@ -368,7 +368,7 @@ static error test_enumerate_ids_by_tags(State *state)
   char  buf[256];
 
   {
-    static const tagdb__tag want[] = { 0, 1 };
+    static const tagdb_tag want[] = { 0, 1 };
 
     printf("ids tagged with '%s' and '%s'...\n",
            tagnames[want[0]], tagnames[want[1]]);
@@ -376,7 +376,7 @@ static error test_enumerate_ids_by_tags(State *state)
     cont = 0;
     do
     {
-      err = tagdb__enumerate_ids_by_tags(state->db, want, NELEMS(want),
+      err = tagdb_enumerate_ids_by_tags(state->db, want, NELEMS(want),
                                               &cont, buf, sizeof(buf));
       if (err)
         goto Failure;
@@ -404,7 +404,7 @@ static error test_tag_remove(State *state)
   int i;
 
   for (i = 0; i < NELEMS(state->tags); i++)
-    tagdb__remove(state->db, state->tags[i]);
+    tagdb_remove(state->db, state->tags[i]);
 
   return error_OK;
 }
@@ -413,7 +413,7 @@ static error test_commit(State *state)
 {
   error err;
 
-  err = tagdb__commit(state->db);
+  err = tagdb_commit(state->db);
   if (err)
     return err;
 
@@ -425,14 +425,14 @@ static error test_forget(State *state)
   int i;
 
   for (i = 0; i < NELEMS(ids); i++)
-    tagdb__forget(state->db, ids[i]);
+    tagdb_forget(state->db, ids[i]);
 
   return error_OK;
 }
 
 static error test_close(State *state)
 {
-  tagdb__close(state->db); /* remember that this calls __commit */
+  tagdb_close(state->db); /* remember that this calls _commit */
 
   return error_OK;
 }
@@ -441,7 +441,7 @@ static error test_delete(State *state)
 {
   NOT_USED(state);
 
-  tagdb__delete(FILENAME);
+  tagdb_delete(FILENAME);
 
   return error_OK;
 }
@@ -491,14 +491,14 @@ static error bash_enumerate(State *state)
   cont = 0;
   do
   {
-    err = tagdb__enumerate_ids(state->db, &cont, buf, sizeof(buf));
+    err = tagdb_enumerate_ids(state->db, &cont, buf, sizeof(buf));
     if (err)
       goto failure;
 
     if (cont)
     {
       int        ntags;
-      tagdb__tag tag;
+      tagdb_tag tag;
       int        cont2;
       char       buf2[256];
 
@@ -510,7 +510,7 @@ static error bash_enumerate(State *state)
       cont2 = 0;
       do
       {
-        err = tagdb__get_tags_for_id(state->db, buf, &cont2, &tag);
+        err = tagdb_get_tags_for_id(state->db, buf, &cont2, &tag);
         if (err == error_TAGDB_UNKNOWN_ID)
         {
           printf("id not found ");
@@ -523,7 +523,7 @@ static error bash_enumerate(State *state)
 
         if (cont2)
         {
-          err = tagdb__tagtoname(state->db, tag, buf2, sizeof(buf2));
+          err = tagdb_tagtoname(state->db, tag, buf2, sizeof(buf2));
           if (err)
             goto failure;
 
@@ -556,7 +556,7 @@ static error test_bash(State *state)
 
   error       err;
   int         i;
-  tagdb__tag  tags[ntags];
+  tagdb_tag  tags[ntags];
   char       *tagnames[ntags];
   char       *idnames[nids];
   int         j;
@@ -565,13 +565,13 @@ static error test_bash(State *state)
 
   printf("bash: create\n");
 
-  err = tagdb__create(FILENAME);
+  err = tagdb_create(FILENAME);
   if (err)
     goto failure;
 
   printf("bash: open\n");
 
-  err = tagdb__open(FILENAME, &state->db);
+  err = tagdb_open(FILENAME, &state->db);
   if (err)
     goto failure;
 
@@ -617,7 +617,7 @@ static error test_bash(State *state)
 
       printf("adding '%s'...", tagnames[i]);
 
-      err = tagdb__add(state->db, tagnames[i], &tags[i]);
+      err = tagdb_add(state->db, tagnames[i], &tags[i]);
       if (err)
         goto failure;
 
@@ -678,7 +678,7 @@ static error test_bash(State *state)
       printdigest(idnames[whichid]);
       printf("' with %d\n", tags[whichtag]);
 
-      err = tagdb__tagid(state->db, idnames[whichid], tags[whichtag]);
+      err = tagdb_tagid(state->db, idnames[whichid], tags[whichtag]);
       if (err)
         goto failure;
     }
@@ -696,7 +696,7 @@ static error test_bash(State *state)
       char        buf[256];
       const char *tagname;
 
-      err = tagdb__tagtoname(state->db, tags[i], buf, sizeof(buf));
+      err = tagdb_tagtoname(state->db, tags[i], buf, sizeof(buf));
       if (err)
         goto failure;
 
@@ -719,7 +719,7 @@ static error test_bash(State *state)
 
         printf("renaming '%s' to '%s'", buf, tagnames[i]);
 
-        err = tagdb__rename(state->db, tags[i], tagnames[i]);
+        err = tagdb_rename(state->db, tags[i], tagnames[i]);
         if (err == error_OK)
           break;
 
@@ -729,7 +729,7 @@ static error test_bash(State *state)
         printf("..name clash..");
       }
 
-      err = tagdb__tagtoname(state->db, tags[i], buf, sizeof(buf));
+      err = tagdb_tagtoname(state->db, tags[i], buf, sizeof(buf));
       if (err)
         goto failure;
 
@@ -763,7 +763,7 @@ static error test_bash(State *state)
       printdigest(idnames[whichid]);
       printf("' with %d\n", tags[whichtag]);
 
-      err = tagdb__untagid(state->db, idnames[whichid], tags[whichtag]);
+      err = tagdb_untagid(state->db, idnames[whichid], tags[whichtag]);
       if (err)
         goto failure;
     }
@@ -783,7 +783,7 @@ static error test_bash(State *state)
       free(tagnames[i]);
       tagnames[i] = NULL;
 
-      tagdb__remove(state->db, tags[i]);
+      tagdb_remove(state->db, tags[i]);
       tags[i] = -1;
     }
 
@@ -801,7 +801,7 @@ static error test_bash(State *state)
       printdigest(idnames[i]);
       printf("'\n");
 
-      tagdb__forget(state->db, idnames[i]);
+      tagdb_forget(state->db, idnames[i]);
 
       free(idnames[i]);
       idnames[i] = NULL;
@@ -820,9 +820,9 @@ static error test_bash(State *state)
   for (i = 0; i < ntags; i++)
     free(tagnames[i]);
 
-  tagdb__close(state->db); /* remember that this calls __commit */
+  tagdb_close(state->db); /* remember that this calls __commit */
 
-  tagdb__delete(FILENAME);
+  tagdb_delete(FILENAME);
 
   return error_OK;
 
@@ -891,7 +891,7 @@ int tagdb_test(void)
 
   printf("test: init\n");
 
-  err = tagdb__init();
+  err = tagdb_init();
   if (err)
     goto Failure;
 
@@ -904,7 +904,7 @@ int tagdb_test(void)
       goto Failure;
   }
 
-  tagdb__fin();
+  tagdb_fin();
 
   return 0;
 

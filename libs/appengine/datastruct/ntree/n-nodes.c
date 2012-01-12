@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-static error ntree__count_func(ntree_t *t, void *arg)
+static error ntree_count_func(ntree_t *t, void *arg)
 {
   int *n;
 
@@ -22,14 +22,14 @@ static error ntree__count_func(ntree_t *t, void *arg)
   return error_OK;
 }
 
-int ntree__n_nodes(ntree_t *t)
+int ntree_n_nodes(ntree_t *t)
 {
   int n;
 
   n = 0;
 
-  ntree__walk(t, ntree__WALK_IN_ORDER | ntree__WALK_ALL, 0,
-              ntree__count_func, (void *) &n);
+  ntree_walk(t, ntree_WALK_IN_ORDER | ntree_WALK_ALL, 0,
+              ntree_count_func, (void *) &n);
 
   return n;
 }

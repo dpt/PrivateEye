@@ -76,7 +76,7 @@ struct imageobwin_t
 };
 
 /* Constructs a new imageobwin_factory_t. */
-error imageobwin__construct(imageobwin_factory_t  *self,
+error imageobwin_construct(imageobwin_factory_t  *self,
                             const char            *name,
                             window_open_at_flags   open_at,
                             imageobwin_available  *available,
@@ -88,15 +88,15 @@ error imageobwin__construct(imageobwin_factory_t  *self,
                             event_wimp_handler    *click,
                             event_wimp_handler    *menu);
 
-void imageobwin__destruct(imageobwin_factory_t *doomed);
+void imageobwin_destruct(imageobwin_factory_t *doomed);
 
 /* Called to create and open a new image observer window. */
-error imageobwin__open(imageobwin_factory_t *factory,
+error imageobwin_open(imageobwin_factory_t *factory,
                        image_t              *image,
                        const void           *config);
 
 /* Compute then refresh the window. */
-void imageobwin__kick(imageobwin_t *obwin);
+void imageobwin_kick(imageobwin_t *obwin);
 
 #endif /* APPENGINE_IMAGEOBWIN_H */
 

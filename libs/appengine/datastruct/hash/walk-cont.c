@@ -16,7 +16,7 @@
 
 #include "impl.h"
 
-int hash__walk_continuation(hash_t      *h,
+int hash_walk_continuation(hash_t      *h,
                             int          continuation,
                             const void **key,
                             const void **value)
