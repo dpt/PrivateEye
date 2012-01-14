@@ -11,10 +11,10 @@
 
 #include "appengine/graphics/sprite-effects.h"
 
-static void grey_888(osspriteop_header         *src,
-                     osspriteop_header         *dst,
-                     int                        width,
-                     int                        height)
+static void grey_888(osspriteop_header *src,
+                     osspriteop_header *dst,
+                     int                width,
+                     int                height)
 {
 #if 1
   /* libjpeg's weights */
@@ -62,9 +62,9 @@ error effects_grey_apply(osspriteop_area   *area,
                          osspriteop_header *src,
                          osspriteop_header *dst)
 {
-  int                        width, height;
-  osspriteop_mode_word       mode;
-  int                        log2bpp;
+  int                  width, height;
+  osspriteop_mode_word mode;
+  int                  log2bpp;
 
   sprite_info(area, src, &width, &height, NULL, (os_mode *) &mode, &log2bpp);
 

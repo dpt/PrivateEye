@@ -43,10 +43,10 @@ typedef struct layout_spec
 }
 layout_spec;
 
-error layout_place(const layout_spec     *spec,
-                   const layout_element  *elements,
-                         int              nelements,
-                         os_box          *boxes,
-                         int              nboxes);
+error layout_place(const layout_spec    *spec,
+                   const layout_element *elements,
+                         int             nelements,
+                         os_box         *boxes,
+                         int             nboxes);
 
 #endif /* APPENGINE_LAYOUT_H */

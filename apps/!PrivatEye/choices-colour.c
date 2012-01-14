@@ -72,9 +72,7 @@ error colour_choicepane_changed(const choices_pane *p)
   spec.bias       = 50;
   spec.gain       = 50;
 
-  tonemap_set(LOCALS.map,
-              tonemap_CHANNEL_RGB,
-             &spec);
+  tonemap_set(LOCALS.map, tonemap_CHANNEL_RGB, &spec);
 
   tonemapgadget_update(LOCALS.map, *p->window, CHOICES_COL_D_CURVE);
 
@@ -98,9 +96,7 @@ error colour_choicepane_changed(const choices_pane *p)
       if (temp_map == NULL)
         return error_OOM;
 
-      tonemap_set(temp_map,
-                  tonemap_CHANNEL_RGB,
-                 &spec);
+      tonemap_set(temp_map, tonemap_CHANNEL_RGB, &spec);
 
       screen_map = temp_map;
     }

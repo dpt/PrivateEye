@@ -10,10 +10,10 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/gadgets/tag-cloud.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/strings.h"
 #include "appengine/datastruct/array.h"
+#include "appengine/gadgets/tag-cloud.h"
 
 #include "makecloud.h"
 
@@ -106,7 +106,7 @@ static error set_highlights(void)
 static error add_tag(tag_cloud  *tc,
                      const char *name,
                      int         length,
-                     void       *arg)
+                     void       *opaque)
 {
   error err;
 
@@ -127,7 +127,7 @@ static error add_tag(tag_cloud  *tc,
 
 static error delete_tag(tag_cloud *tc,
                         int        index,
-                        void      *arg)
+                        void      *opaque)
 {
   error err;
 
@@ -149,7 +149,7 @@ static error rename_tag(tag_cloud  *tc,
                         int         index,
                         const char *name,
                         int         length,
-                        void       *arg)
+                        void       *opaque)
 {
   error err;
 
@@ -169,7 +169,7 @@ static error rename_tag(tag_cloud  *tc,
 
 static error tag(tag_cloud *tc,
                  int        index,
-                 void      *arg)
+                 void      *opaque)
 {
   error err;
 
@@ -184,7 +184,7 @@ static error tag(tag_cloud *tc,
 
 static error detag(tag_cloud *tc,
                    int        index,
-                   void      *arg)
+                   void      *opaque)
 {
   tag_cloud_remove_highlight(LOCALS.tc, index);
 
@@ -196,7 +196,7 @@ static error detag(tag_cloud *tc,
 static error tag_file(tag_cloud  *tc,
                       const char *file_name,
                       int         index,
-                      void       *arg)
+                      void       *opaque)
 {
   return error_OK;
 }
@@ -204,17 +204,17 @@ static error tag_file(tag_cloud  *tc,
 static error detag_file(tag_cloud  *tc,
                         const char *file_name,
                         int         index,
-                        void       *arg)
+                        void       *opaque)
 {
   return error_OK;
 }
 
-static error event(tag_cloud        *tc,
+static error event(tag_cloud       *tc,
                    tag_cloud_event  event,
-                   void             *arg)
+                   void            *opaque)
 {
   NOT_USED(tc);
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   switch (event)
   {
@@ -228,11 +228,11 @@ static error event(tag_cloud        *tc,
 /* ----------------------------------------------------------------------- */
 
 static tag_cloud_event keyhandler(wimp_key_no  key_no,
-                                   void        *arg)
+                                   void       *opaque)
 {
   int op;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   switch (key_no)
   {

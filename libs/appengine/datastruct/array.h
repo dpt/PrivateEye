@@ -16,17 +16,17 @@
 
 /* Delete the specified element. */
 void array_delete_element(void  *array,
-                           size_t elemsize,
-                           int    nelems,
-                           int    doomed);
+                          size_t elemsize,
+                          int    nelems,
+                          int    doomed);
 
 /* Delete the specified elements. */
 /* last_doomed is inclusive. */
 void array_delete_elements(void  *array,
-                            size_t elemsize,
-                            int    nelems,
-                            int    first_doomed,
-                            int    last_doomed);
+                           size_t elemsize,
+                           int    nelems,
+                           int    first_doomed,
+                           int    last_doomed);
 
 /* Take the contents of an array which used to have elements 'oldwidth' bytes
  * wide and adjust them so they are 'newwidth' bytes wide. Set new bytes to

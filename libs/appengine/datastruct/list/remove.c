@@ -3,8 +3,7 @@
 
 #include "appengine/datastruct/list.h"
 
-void list_remove(list_t *anchor,
-                  list_t *doomed)
+void list_remove(list_t *anchor, list_t *doomed)
 {
   list_t *e;
 

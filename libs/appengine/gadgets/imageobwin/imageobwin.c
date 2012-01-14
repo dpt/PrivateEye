@@ -37,9 +37,9 @@ static void imageobwin_close(imageobwin_t *obwin);
 /* ----------------------------------------------------------------------- */
 
 static void imageobwin_set_handlers(imageobwin_factory_t *factory,
-                                     int                   reg,
-                                     wimp_w                w,
-                                     void                 *handle)
+                                    int                   reg,
+                                    wimp_w                w,
+                                    void                 *handle)
 {
   event_wimp_handler_spec wimp_handlers[4];
 
@@ -54,15 +54,17 @@ static void imageobwin_set_handlers(imageobwin_factory_t *factory,
   wimp_handlers[3].handler = factory->event_menu_selection;
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            w,
+                            event_ANY_ICON,
                             handle);
 }
 
 /* ----------------------------------------------------------------------- */
 
 static imageobwin_t *imageobwin_image_to_obwin(imageobwin_factory_t *factory,
-                                                image_t              *image)
+                                               image_t              *image)
 {
   return (imageobwin_t *) list_find(&factory->list_anchor,
                                      offsetof(imageobwin_t, image),
@@ -72,9 +74,9 @@ static imageobwin_t *imageobwin_image_to_obwin(imageobwin_factory_t *factory,
 /* ----------------------------------------------------------------------- */
 
 static void imageobwin_image_changed_callback(image_t              *image,
-                                               imageobserver_change  change,
-                                               imageobserver_data   *data,
-                                               void                 *opaque)
+                                              imageobserver_change  change,
+                                              imageobserver_data   *data,
+                                              void                 *opaque)
 {
   imageobwin_t *obwin = opaque;
 
@@ -101,16 +103,16 @@ static void imageobwin_image_changed_callback(image_t              *image,
 /* ----------------------------------------------------------------------- */
 
 error imageobwin_construct(imageobwin_factory_t *factory,
-                            const char           *name,
-                            window_open_at_flags  open_at,
-                            imageobwin_available *available,
-                            imageobwin_alloc     *alloc,
-                            imageobwin_dealloc   *dealloc,
-                            imageobwin_compute   *compute,
-                            imageobwin_refresh   *refresh,
-                            event_wimp_handler   *redraw,
-                            event_wimp_handler   *click,
-                            event_wimp_handler   *menu)
+                           const char           *name,
+                           window_open_at_flags  open_at,
+                           imageobwin_available *available,
+                           imageobwin_alloc     *alloc,
+                           imageobwin_dealloc   *dealloc,
+                           imageobwin_compute   *compute,
+                           imageobwin_refresh   *refresh,
+                           event_wimp_handler   *redraw,
+                           event_wimp_handler   *click,
+                           event_wimp_handler   *menu)
 {
   error  err;
   char   scratch[32]; /* Careful Now */
@@ -190,8 +192,8 @@ void imageobwin_destruct(imageobwin_factory_t *doomed)
 }
 
 static int imageobwin_event_close_window_request(wimp_event_no  event_no,
-                                                  wimp_block    *block,
-                                                  void          *handle)
+                                                 wimp_block    *block,
+                                                 void          *handle)
 {
   imageobwin_t *obwin = handle;
 
@@ -204,9 +206,9 @@ static int imageobwin_event_close_window_request(wimp_event_no  event_no,
 }
 
 static error imageobwin_new(imageobwin_factory_t *factory,
-                             image_t              *image,
-                             const void           *config,
-                             imageobwin_t        **new_obwin)
+                            image_t              *image,
+                            const void           *config,
+                            imageobwin_t        **new_obwin)
 {
   error         err;
   imageobwin_t *obwin;
@@ -274,8 +276,8 @@ Failure:
 }
 
 error imageobwin_open(imageobwin_factory_t *factory,
-                       image_t              *image,
-                       const void           *config)
+                      image_t              *image,
+                      const void           *config)
 {
   error         err;
   imageobwin_t *obwin;
@@ -303,7 +305,8 @@ error imageobwin_open(imageobwin_factory_t *factory,
 
 static void imageobwin_close(imageobwin_t *obwin)
 {
-  imageobserver_deregister(obwin->image, imageobwin_image_changed_callback,
+  imageobserver_deregister(obwin->image,
+                           imageobwin_image_changed_callback,
                            obwin);
 
   help_remove_window(obwin->w);

@@ -20,17 +20,17 @@ void menu_title(T **, const char *);
 
 void menu_entry(T **, const char *);
 
-void menu_set_menu_flags(T               *menu,
-                         int              entry,
-                         wimp_menu_flags  eor_bits,
-                         wimp_menu_flags  clear_bits);
+void menu_set_menu_flags(T              *menu,
+                         int             entry,
+                         wimp_menu_flags eor_bits,
+                         wimp_menu_flags clear_bits);
 
 void menu_set_submenu(T *, int, void *);
 
-void menu_set_icon_flags(T               *menu,
-                         int              entry,
-                         wimp_icon_flags  eor_bits,
-                         wimp_icon_flags  clear_bits);
+void menu_set_icon_flags(T              *menu,
+                         int             entry,
+                         wimp_icon_flags eor_bits,
+                         wimp_icon_flags clear_bits);
 
 /* ticks a single entry, unticking all others */
 void menu_tick_exclusive(T *, int entry_to_tick);
@@ -51,10 +51,10 @@ T *menu_create_from_desc(const char *desc, ...);
 const char *menu_desc_name_from_sel(const char           *desc,
                                     const wimp_selection *sel);
 
-void menu_range_tick_exclusive(T   *menu,
-                               int  entry_to_tick,
-                               int  low,
-                               int  high);
+void menu_range_tick_exclusive(T  *menu,
+                               int entry_to_tick,
+                               int low,
+                               int high);
 
 /* Return the number of entries in the menu. */
 int menu_count(const T *menu);

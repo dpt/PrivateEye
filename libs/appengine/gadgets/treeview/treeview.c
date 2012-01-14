@@ -51,37 +51,37 @@ typedef unsigned int connector_flags;
 /* ----------------------------------------------------------------------- */
 
 typedef error (treeview_callback)(treeview_t      *tr,
-                                   int              depth,
-                                   int              x,
-                                   int              y,
-                                   ntree_t         *t,
-                                   connector_flags  flags,
-                                   int              index,
-                                   txtfmt_t        *tx,
-                                   int              height,
-                                   void            *arg);
+                                  int              depth,
+                                  int              x,
+                                  int              y,
+                                  ntree_t         *t,
+                                  connector_flags  flags,
+                                  int              index,
+                                  txtfmt_t        *tx,
+                                  int              height,
+                                  void            *opaque);
 
 struct treeview_t
 {
-  ntree_t              *tree;
+  ntree_t             *tree;
 
-  bitvec_t             *openable;
-  bitvec_t             *open;
-  bitvec_t             *multiline;
+  bitvec_t            *openable;
+  bitvec_t            *open;
+  bitvec_t            *multiline;
 
-  int                   text_width;
+  int                  text_width;
 
-  wimp_colour           bgcolour;    /* background of highlighted nodes */
+  wimp_colour          bgcolour;    /* background of highlighted nodes */
 
-  int                   line_height; /* OS units */
+  int                  line_height; /* OS units */
 
   struct
   {
-    int                 x,y;
-    int                 index;
-    ntree_t            *next;
+    int                x,y;
+    int                index;
+    ntree_t           *next;
     treeview_callback *cb;
-    void               *cbarg;
+    void              *cbarg;
   }
   walk;
 };
@@ -106,9 +106,9 @@ void treeview_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-static error discard_tree_callback(ntree_t *t, void *arg)
+static error discard_tree_callback(ntree_t *t, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   txtfmt_destroy(ntree_get_data(t));
 
@@ -123,10 +123,10 @@ static error discard_tree(ntree_t *t)
     return error_OK;
 
   err = ntree_walk(t,
-                    ntree_WALK_POST_ORDER | ntree_WALK_ALL,
-                    0,
-                    discard_tree_callback,
-                    NULL);
+                   ntree_WALK_POST_ORDER | ntree_WALK_ALL,
+                   0,
+                   discard_tree_callback,
+                   NULL);
 
   ntree_delete(t);
 
@@ -180,10 +180,10 @@ void treeview_destroy(treeview_t *tr)
 
 /* ----------------------------------------------------------------------- */
 
-static error treeview_walk_node(ntree_t *t, void *arg)
+static error treeview_walk_node(ntree_t *t, void *opaque)
 {
   error            err;
-  treeview_t      *tr = arg;
+  treeview_t      *tr = opaque;
   int              x,y;
   connector_flags  flags;
   int              stop = 0;
@@ -278,7 +278,15 @@ static error treeview_walk_node(ntree_t *t, void *arg)
 
   if (tr->walk.cb)
   {
-    err = tr->walk.cb(tr, depth, x, y, t, flags, tr->walk.index, tx, height,
+    err = tr->walk.cb(tr,
+                      depth,
+                      x,
+                      y,
+                      t,
+                      flags,
+                      tr->walk.index,
+                      tx,
+                      height,
                       tr->walk.cbarg);
     if (err)
       return err;
@@ -298,9 +306,9 @@ static error treeview_walk_node(ntree_t *t, void *arg)
   return (stop) ? error_TREEVIEW_STOP_WALK : error_OK;
 }
 
-static error treeview_walk(treeview_t         *tr,
-                            treeview_callback *cb,
-                            void               *cbarg)
+static error treeview_walk(treeview_t        *tr,
+                           treeview_callback *cb,
+                           void              *cbarg)
 {
   error err;
 
@@ -312,10 +320,10 @@ static error treeview_walk(treeview_t         *tr,
   tr->walk.cbarg = cbarg;
 
   err = ntree_walk(tr->tree,
-                    ntree_WALK_PRE_ORDER | ntree_WALK_ALL,
-                    0,
-                    treeview_walk_node,
-                    tr);
+                   ntree_WALK_PRE_ORDER | ntree_WALK_ALL,
+                   0,
+                   treeview_walk_node,
+                   tr);
 
   if (err == error_TREEVIEW_STOP_WALK)
     err = error_OK;
@@ -391,10 +399,14 @@ typedef struct treeview_draw_data
 }
 treeview_draw_data;
 
-static error draw_connectors(treeview_t *tr,
-                             ntree_t *t, treeview_draw_data *draw,
-                             int depth, int x, int y, connector_flags flags,
-                             int index)
+static error draw_connectors(treeview_t         *tr,
+                             ntree_t            *t,
+                             treeview_draw_data *draw,
+                             int                 depth,
+                             int                 x,
+                             int                 y,
+                             connector_flags     flags,
+                             int                 index)
 {
   int          i;
   unsigned int stack;
@@ -449,22 +461,22 @@ static error draw_connectors(treeview_t *tr,
   return error_OK;
 }
 
-static error draw_walk(treeview_t      *tr,
-                       int              depth,
-                       int              x,
-                       int              y,
-                       ntree_t         *t,
-                       connector_flags  flags,
-                       int              index,
-                       txtfmt_t        *tx,
-                       int              height,
-                       void            *arg)
+static error draw_walk(treeview_t     *tr,
+                       int             depth,
+                       int             x,
+                       int             y,
+                       ntree_t        *t,
+                       connector_flags flags,
+                       int             index,
+                       txtfmt_t       *tx,
+                       int             height,
+                       void           *opaque)
 {
-  error                err;
-  treeview_draw_data *draw = arg;
-  int                  line_height;
-  wimp_colour          bgcolour;
-  int                  x0;
+  error               err;
+  treeview_draw_data *draw = opaque;
+  int                 line_height;
+  wimp_colour         bgcolour;
+  int                 x0;
 
   /* plot initial connectors */
 
@@ -483,14 +495,16 @@ static error draw_walk(treeview_t      *tr,
 
     for (i = 0; i < depth + 1; i++)
       if (draw->stack & (1u << i))
-        for (hy = y - 1 * line_height; hy != y - height * line_height; hy -= line_height)
+        for (hy = y - 1 * line_height;
+             hy != y - height * line_height;
+             hy -= line_height)
           plot_connector(VBAR, x + i * line_height, hy, line_height);
   }
 
   /* select background colour */
 
   bgcolour = ntree_first_child(t) ? wimp_COLOUR_TRANSPARENT :
-                                     tr->bgcolour;
+                                    tr->bgcolour;
 
   /* plot text */
 
@@ -509,7 +523,7 @@ Failure:
 
 error treeview_draw(treeview_t *tr)
 {
-  error               err;
+  error              err;
   treeview_draw_data data;
 
   data.stack = 0;
@@ -527,19 +541,19 @@ typedef struct treeview_click_data
 }
 treeview_click_data;
 
-static error click_walk(treeview_t     *tr,
-                       int              depth,
-                       int              x,
-                       int              y,
-                       ntree_t         *t,
-                       connector_flags  flags,
-                       int              index,
-                       txtfmt_t        *tx,
-                       int              height,
-                       void            *arg)
+static error click_walk(treeview_t    *tr,
+                       int             depth,
+                       int             x,
+                       int             y,
+                       ntree_t        *t,
+                       connector_flags flags,
+                       int             index,
+                       txtfmt_t       *tx,
+                       int             height,
+                       void           *opaque)
 {
-  treeview_click_data *data = arg;
-  os_box                box;
+  treeview_click_data *data = opaque;
+  os_box               box;
 
   NOT_USED(tr);
   NOT_USED(t);
@@ -564,7 +578,7 @@ static error click_walk(treeview_t     *tr,
 
 error treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
 {
-  error                err;
+  error               err;
   treeview_click_data click;
 
   click.x = x;
@@ -602,10 +616,10 @@ error treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
 
 /* ----------------------------------------------------------------------- */
 
-static error string_to_txtfmt(void *data, void *arg, void **newdata)
+static error string_to_txtfmt(void *data, void *opaque, void **newdata)
 {
   error       err;
-  treeview_t *tr = arg;
+  treeview_t *tr = opaque;
   txtfmt_t   *tx;
 
   err = txtfmt_create(data, &tx);
@@ -640,10 +654,10 @@ error treeview_set_tree(treeview_t *tr, ntree_t *tree)
 
 /* ----------------------------------------------------------------------- */
 
-static error make_collapsible_walk(ntree_t *t, void *arg)
+static error make_collapsible_walk(ntree_t *t, void *opaque)
 {
   error       err;
-  treeview_t *tr = arg;
+  treeview_t *tr = opaque;
   int         i;
   txtfmt_t   *tx;
 
@@ -689,10 +703,10 @@ error treeview_make_collapsible(treeview_t *tr)
   tr->walk.index = -1;
 
   err = ntree_walk(tr->tree,
-                    ntree_WALK_PRE_ORDER | ntree_WALK_ALL,
-                    0,
-                    make_collapsible_walk,
-                    tr);
+                   ntree_WALK_PRE_ORDER | ntree_WALK_ALL,
+                   0,
+                   make_collapsible_walk,
+                   tr);
 
   return err;
 }
@@ -717,19 +731,19 @@ typedef struct treeview_get_dimensions_data
 }
 treeview_get_dimensions_data;
 
-static error get_dimensions_walk(treeview_t      *tr,
-                                 int              depth,
-                                 int              x,
-                                 int              y,
-                                 ntree_t         *t,
-                                 connector_flags  flags,
-                                 int              index,
-                                 txtfmt_t        *tx,
-                                 int              height,
-                                 void            *arg)
+static error get_dimensions_walk(treeview_t     *tr,
+                                 int             depth,
+                                 int             x,
+                                 int             y,
+                                 ntree_t        *t,
+                                 connector_flags flags,
+                                 int             index,
+                                 txtfmt_t       *tx,
+                                 int             height,
+                                 void           *opaque)
 {
-  treeview_get_dimensions_data *data = arg;
-  int                            width;
+  treeview_get_dimensions_data *data = opaque;
+  int                           width;
 
   NOT_USED(tr);
   NOT_USED(y);
@@ -768,8 +782,7 @@ error treeview_get_dimensions(treeview_t *tr, int *width, int *height)
 
 /* ----------------------------------------------------------------------- */
 
-void treeview_set_highlight_background(treeview_t *tr,
-                                        wimp_colour bgcolour)
+void treeview_set_highlight_background(treeview_t *tr, wimp_colour bgcolour)
 {
   tr->bgcolour = bgcolour;
 }

@@ -41,9 +41,9 @@ enum
 
 typedef struct save_t
 {
-  dialogue_t          dialogue; /* base class */
-  char               *file_name;
-  bits                file_type;
+  dialogue_t         dialogue; /* base class */
+  char              *file_name;
+  bits               file_type;
   save_save_handler *save_handler;
 }
 save_t;
@@ -91,7 +91,9 @@ void save_destroy(dialogue_t *d)
 
 /* ----------------------------------------------------------------------- */
 
-static int save_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int save_event_mouse_click(wimp_event_no event_no,
+                                  wimp_block   *block,
+                                  void         *handle)
 {
   wimp_pointer *pointer;
   save_t       *s;
@@ -148,8 +150,10 @@ static int save_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
         saving_close_menu = pointer->buttons;
 
         event_register_wimp_handler(wimp_USER_DRAG_BOX,
-                                    event_ANY_WINDOW, event_ANY_ICON,
-                                    save_event_user_drag_box, handle);
+                                    event_ANY_WINDOW,
+                                    event_ANY_ICON,
+                                    save_event_user_drag_box,
+                                    handle);
 
         break;
       }
@@ -159,7 +163,9 @@ static int save_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
   return event_HANDLED;
 }
 
-static int save_event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int save_event_user_drag_box(wimp_event_no event_no,
+                                    wimp_block   *block,
+                                    void         *handle)
 {
   save_t      *s;
   wimp_pointer pointer;
@@ -171,8 +177,10 @@ static int save_event_user_drag_box(wimp_event_no event_no, wimp_block *block, v
   s = handle;
 
   event_deregister_wimp_handler(wimp_USER_DRAG_BOX,
-                                event_ANY_WINDOW, event_ANY_ICON,
-                                save_event_user_drag_box, handle);
+                                event_ANY_WINDOW,
+                                event_ANY_ICON,
+                                save_event_user_drag_box,
+                                handle);
 
   drag_icon_stop();
 
@@ -243,8 +251,10 @@ void save_set_file_type(dialogue_t *d, bits file_type)
 
   win = dialogue_get_window(d);
 
-  icon_validation_printf(win, SAVE_I_ICON,
-                         "Ni_icon;Sfile_%3x", s->file_type);
+  icon_validation_printf(win,
+                         SAVE_I_ICON,
+                        "Ni_icon;Sfile_%3x",
+                         s->file_type);
 }
 
 void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)

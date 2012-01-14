@@ -13,6 +13,7 @@
 
 /* ----------------------------------------------------------------------- */
 
+// FIXME: Used linked list library?
 /* (image,callback,opaque) pairs are unique to an element. */
 typedef struct element
 {

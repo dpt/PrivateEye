@@ -45,11 +45,11 @@ typedef enum effects_blur_method
 }
 effects_blur_method;
 
-error effects_blur_apply(osspriteop_area     *area,
-                         osspriteop_header   *src,
-                         osspriteop_header   *dst,
-                         effects_blur_method  method,
-                         int                  amount);
+error effects_blur_apply(osspriteop_area    *area,
+                         osspriteop_header  *src,
+                         osspriteop_header  *dst,
+                         effects_blur_method method,
+                         int                 amount);
 
 error effects_clear_apply(osspriteop_area   *area,
                           osspriteop_header *src,

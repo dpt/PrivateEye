@@ -7,8 +7,8 @@
 
 #include "oslib/types.h"
 
-#include "appengine/wimp/dialogue.h"
 #include "appengine/dialogues/save.h"
+#include "appengine/wimp/dialogue.h"
 
 #include "globals.h"
 #include "viewer.h"
@@ -21,12 +21,12 @@ dialogue_t *viewer_savedlg;
 
 /* ----------------------------------------------------------------------- */
 
-static void viewer_savedlg_fillout(dialogue_t *d, void *arg)
+static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
 {
   viewer_t *viewer;
   image_t  *image;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   viewer = viewer_find(GLOBALS.current_display_w);
   if (viewer == NULL)

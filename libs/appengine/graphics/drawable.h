@@ -13,10 +13,9 @@
 #include "oslib/wimp.h"
 
 #include "appengine/base/errors.h"
+#include "appengine/graphics/image.h"
 
 #include "awrender.h"
-
-#include "appengine/graphics/image.h"
 
 #define T drawable_t
 
@@ -131,7 +130,7 @@ struct T
 
     struct
     {
-      os_factors   factors;
+      os_factors            factors;
     }
     jpeg;
 
@@ -140,20 +139,20 @@ struct T
 
     struct
     {
-      os_trfm      trfm;
+      os_trfm               trfm;
     }
     generic; /* generic to vectors */
 
     struct
     {
-      os_trfm      trfm;
+      os_trfm               trfm;
     }
     drawfile;
 
     struct
     {
-      os_trfm      trfm;
-      awrender_vdu_block vdu_block;
+      os_trfm               trfm;
+      awrender_vdu_block    vdu_block;
     }
     artworks;
   }
@@ -162,8 +161,8 @@ struct T
 
 /* ----------------------------------------------------------------------- */
 
-error drawable_create(image_t  *image,
-                      T       **newdrawable);
+error drawable_create(image_t *image,
+                      T      **newdrawable);
 
 error drawable_clone(T  *original,
                      T **newdrawable);

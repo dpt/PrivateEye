@@ -63,10 +63,10 @@ static void stream_packbitscomp_reset(stream_packbitscomp *c)
 static int stream_packbitscomp_get(stream *s)
 {
   stream_packbitscomp *sm = (stream_packbitscomp *) s;
-  unsigned char      *p;
-  unsigned char      *end;
-  int                 n;
-  int                 first;
+  unsigned char       *p;
+  unsigned char       *end;
+  int                  n;
+  int                  first;
 
   /* are we only called when buffer empty? */
   assert(sm->base.buf == sm->base.end);

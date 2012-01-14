@@ -172,7 +172,11 @@ enum
 
 /* ----------------------------------------------------------------------- */
 
-static int redraw(tonemap *map, wimp_w w, wimp_i i, wimp_draw *draw, osbool (*draw_fn)(wimp_draw *))
+static int redraw(tonemap   *map,
+                  wimp_w     w,
+                  wimp_i     i,
+                  wimp_draw *draw,
+                  osbool   (*draw_fn)(wimp_draw *))
 {
   os_box screenbox;
   int    more;

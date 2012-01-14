@@ -36,19 +36,21 @@ static void register_event_handlers(int reg)
   };
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               event_ANY_WINDOW, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               event_ANY_WINDOW,
+                               event_ANY_ICON,
                                NULL);
 }
 
-error clipboard__init(void)
+error clipboard_init(void)
 {
   register_event_handlers(1);
 
   return error_OK;
 }
 
-void clipboard__fin(void)
+void clipboard_fin(void)
 {
   register_event_handlers(0);
 }
@@ -99,7 +101,8 @@ static int message_data_request(wimp_message *message, void *handle)
       datasave.data.data_xfer.pos.y     = message->data.data_xfer.pos.y;
       datasave.data.data_xfer.est_size  = GLOBALS.clipboard_viewer->drawable->image->display.file_size;
       datasave.data.data_xfer.file_type = file_type;
-      strcpy(datasave.data.data_xfer.file_name, str_leaf(GLOBALS.clipboard_viewer->drawable->image->file_name));
+      strcpy(datasave.data.data_xfer.file_name,
+             str_leaf(GLOBALS.clipboard_viewer->drawable->image->file_name));
 
       datasave.size = wimp_SIZEOF_MESSAGE_HEADER((
                         offsetof(wimp_message_data_xfer, file_name) +

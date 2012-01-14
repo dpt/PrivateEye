@@ -9,11 +9,11 @@
 
 struct Args
 {
-  const os_box         *box;
-  window_open_at_flags  flags;
+  const os_box        *box;
+  window_open_at_flags flags;
 };
 
-static void open_here_cb(CallbackArgs *sizes, void *arg)
+static void open_here_cb(CallbackArgs *sizes, void *opaque)
 {
   struct Args *args;
   int          x, y;
@@ -22,7 +22,7 @@ static void open_here_cb(CallbackArgs *sizes, void *arg)
   int          scr_w, scr_h;
   int          over_x, over_y;
 
-  args = arg;
+  args = opaque;
 
   x = args->box->x0 - sizes->left;
   y = args->box->y0 - sizes->bottom;
@@ -73,9 +73,9 @@ static void open_here_cb(CallbackArgs *sizes, void *arg)
   centre_scrollbars(&sizes->info);
 }
 
-void window_open_here_flags(wimp_w                w,
-                      const os_box               *box,
-                            window_open_at_flags  flags)
+void window_open_here_flags(wimp_w               w,
+                      const os_box              *box,
+                            window_open_at_flags flags)
 {
   struct Args args;
 

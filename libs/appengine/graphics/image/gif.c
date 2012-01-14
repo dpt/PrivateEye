@@ -15,16 +15,16 @@
 #include "flex.h"
 
 #include "oslib/types.h"
-#include "oslib/os.h"
 #include "oslib/draw.h"
 #include "oslib/hourglass.h"
+#include "oslib/os.h"
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
 #include "appengine/base/bitwise.h"
+#include "appengine/base/messages.h"
 #include "appengine/base/oserror.h"
 #include "appengine/io/filing.h"
-#include "appengine/base/messages.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/vdu/sprite.h"
 

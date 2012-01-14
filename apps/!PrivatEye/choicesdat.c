@@ -26,21 +26,21 @@
 
 static struct
 {
-  choices_vars  vars;
+  choices_vars vars;
 
-  wimp_w        choices_w;
-  wimp_w        choices_vwr_w;
-  wimp_w        choices_thm_w;
-  wimp_w        choices_col_w;
-  wimp_w        choices_tag_w;
-  wimp_w        choices_spr_w;
-  wimp_w        choices_jpg_w;
-  wimp_w        choices_gif_w;
-  wimp_w        choices_png_w;
-  wimp_w        choices_drw_w;
-  wimp_w        choices_art_w;
+  wimp_w       choices_w;
+  wimp_w       choices_vwr_w;
+  wimp_w       choices_thm_w;
+  wimp_w       choices_col_w;
+  wimp_w       choices_tag_w;
+  wimp_w       choices_spr_w;
+  wimp_w       choices_jpg_w;
+  wimp_w       choices_gif_w;
+  wimp_w       choices_png_w;
+  wimp_w       choices_drw_w;
+  wimp_w       choices_art_w;
 
-  wimp_w        current_choices_xxx_w;
+  wimp_w       current_choices_xxx_w;
 }
 W;
 
@@ -136,40 +136,40 @@ static const choices_option viewerchoices_cover_icon_bar =
 static const choices_choice viewerchoices[] =
 {
   { "size",
-     offsetof(eye_choices, viewer.size),
-      choices_TYPE_STRING_SET,
-       viewersize_FIT_TO_IMAGE,
-        { .string_set = &viewerchoices_size } },
+    offsetof(eye_choices, viewer.size),
+    choices_TYPE_STRING_SET,
+    viewersize_FIT_TO_IMAGE,
+    { .string_set = &viewerchoices_size } },
 
   { "scale",
-     offsetof(eye_choices, viewer.scale),
-      choices_TYPE_STRING_SET,
-       SCALE_100PC,
-        { .string_set = &viewerchoices_scale } },
+    offsetof(eye_choices, viewer.scale),
+    choices_TYPE_STRING_SET,
+    SCALE_100PC,
+    { .string_set = &viewerchoices_scale } },
 
   { "steps",
-     offsetof(eye_choices, viewer.steps),
-      choices_TYPE_STRING_SET,
-       1, /* "Instant" */
-        { .string_set = &viewerchoices_steps } },
+    offsetof(eye_choices, viewer.steps),
+    choices_TYPE_STRING_SET,
+    1, /* "Instant" */
+    { .string_set = &viewerchoices_steps } },
 
   { "covericonbar",
-     offsetof(eye_choices, viewer.cover_icon_bar),
-      choices_TYPE_OPTION,
-       1,
-        { .option = &viewerchoices_cover_icon_bar } },
+    offsetof(eye_choices, viewer.cover_icon_bar),
+    choices_TYPE_OPTION,
+    1,
+    { .option = &viewerchoices_cover_icon_bar } },
 
   { "scroll.x",
-     offsetof(eye_choices, viewer.scroll_x),
-      choices_TYPE_NUMBER_RANGE,
-       32, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, viewer.scroll_x),
+    choices_TYPE_NUMBER_RANGE,
+    32, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 
   { "scroll.y",
-     offsetof(eye_choices, viewer.scroll_y),
-      choices_TYPE_NUMBER_RANGE,
-       32, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, viewer.scroll_y),
+    choices_TYPE_NUMBER_RANGE,
+    32, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group_handlers viewerchoices_handlers =
@@ -201,10 +201,10 @@ static const choices_numberrange cache_size =
 static const choices_choice cache[] =
 {
   { "size",
-     offsetof(eye_choices, cache.size),
-      choices_TYPE_NUMBER_RANGE,
-       0,
-        { .number_range = &cache_size } },
+    offsetof(eye_choices, cache.size),
+    choices_TYPE_NUMBER_RANGE,
+    0,
+    { .number_range = &cache_size } },
 };
 
 static const choices_group cache_group =
@@ -273,60 +273,60 @@ static const choices_choice thumbview[] =
   /* --- visible --- */
 
   { "size",
-     offsetof(eye_choices, thumbview.size),
-      choices_TYPE_STRING_SET,
-       0,
-        { .string_set = &thumbview_size_set } },
+    offsetof(eye_choices, thumbview.size),
+    choices_TYPE_STRING_SET,
+    0,
+    { .string_set = &thumbview_size_set } },
 
   { "item.size",
-     offsetof(eye_choices, thumbview.item_size),
-      choices_TYPE_STRING_SET,
-       0,
-        { .string_set = &thumbview_item_size_set } },
+    offsetof(eye_choices, thumbview.item_size),
+    choices_TYPE_STRING_SET,
+    0,
+    { .string_set = &thumbview_item_size_set } },
 
   { "padding.size",
-     offsetof(eye_choices, thumbview.padding_size),
-      choices_TYPE_STRING_SET,
-       0,
-        { .string_set = &thumbview_padding_size_set } },
+    offsetof(eye_choices, thumbview.padding_size),
+    choices_TYPE_STRING_SET,
+    0,
+    { .string_set = &thumbview_padding_size_set } },
 
   /* --- hidden --- */
 
   { "thumbnail.width",
-     offsetof(eye_choices, thumbview.thumbnail_w),
-      choices_TYPE_NUMBER_RANGE,
-       128, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, thumbview.thumbnail_w),
+    choices_TYPE_NUMBER_RANGE,
+    128, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 
   { "thumbnail.height",
-     offsetof(eye_choices, thumbview.thumbnail_h),
-      choices_TYPE_NUMBER_RANGE,
-       96, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, thumbview.thumbnail_h),
+    choices_TYPE_NUMBER_RANGE,
+    96, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 
   { "item.width",
-     offsetof(eye_choices, thumbview.item_w),
-      choices_TYPE_NUMBER_RANGE,
-       512, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, thumbview.item_w),
+    choices_TYPE_NUMBER_RANGE,
+    512, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 
   { "item.height",
-     offsetof(eye_choices, thumbview.item_h),
-      choices_TYPE_NUMBER_RANGE,
-       256, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, thumbview.item_h),
+    choices_TYPE_NUMBER_RANGE,
+    256, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 
   { "padding.horz",
-     offsetof(eye_choices, thumbview.padding_h),
-      choices_TYPE_NUMBER_RANGE,
-       16, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, thumbview.padding_h),
+    choices_TYPE_NUMBER_RANGE,
+    16, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 
   { "padding.vert",
-     offsetof(eye_choices, thumbview.padding_v),
-      choices_TYPE_NUMBER_RANGE,
-       16, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, thumbview.padding_v),
+    choices_TYPE_NUMBER_RANGE,
+    16, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group thumbview_group =
@@ -380,28 +380,28 @@ static const choices_numberrange colour_brightness =
 static const choices_choice colour[] =
 {
   { "on",
-     offsetof(eye_choices, colour.on),
-      choices_TYPE_OPTION,
-       0, /* off by default */
-        { .option = &colour_on } },
+    offsetof(eye_choices, colour.on),
+    choices_TYPE_OPTION,
+    0, /* off by default */
+    { .option = &colour_on } },
 
   { "gamma",
-     offsetof(eye_choices, colour.gamma),
-      choices_TYPE_NUMBER_RANGE,
-       100,
-        { .number_range = &colour_gamma } },
+    offsetof(eye_choices, colour.gamma),
+    choices_TYPE_NUMBER_RANGE,
+    100,
+    { .number_range = &colour_gamma } },
 
   { "contrast",
-     offsetof(eye_choices, colour.contrast),
-      choices_TYPE_NUMBER_RANGE,
-       100,
-        { .number_range = &colour_contrast } },
+    offsetof(eye_choices, colour.contrast),
+    choices_TYPE_NUMBER_RANGE,
+    100,
+    { .number_range = &colour_contrast } },
 
   { "brightness",
-     offsetof(eye_choices, colour.brightness),
-      choices_TYPE_NUMBER_RANGE,
-       100,
-        { .number_range = &colour_brightness } },
+    offsetof(eye_choices, colour.brightness),
+    choices_TYPE_NUMBER_RANGE,
+    100,
+    { .number_range = &colour_brightness } },
 };
 
 static const choices_group colour_group =
@@ -496,51 +496,51 @@ static const choices_option tagcloud_selfirst =
 static const choices_choice tagcloud[] =
 {
   { "display",
-     offsetof(eye_choices, tagcloud.display),
-      choices_TYPE_STRING_SET,
-       0,
-        { .string_set = &tagcloud_display_set } },
+    offsetof(eye_choices, tagcloud.display),
+    choices_TYPE_STRING_SET,
+    0,
+    { .string_set = &tagcloud_display_set } },
 
   { "sort",
-     offsetof(eye_choices, tagcloud.sort),
-      choices_TYPE_STRING_SET,
-       0,
-        { .string_set = &tagcloud_sort_set } },
+    offsetof(eye_choices, tagcloud.sort),
+    choices_TYPE_STRING_SET,
+    0,
+    { .string_set = &tagcloud_sort_set } },
 
   { "size",
-     offsetof(eye_choices, tagcloud.size),
-      choices_TYPE_STRING_SET,
-       12, /* pt */
-        { .string_set = &tagcloud_size_set } },
+    offsetof(eye_choices, tagcloud.size),
+    choices_TYPE_STRING_SET,
+    12, /* pt */
+    { .string_set = &tagcloud_size_set } },
 
   { "leading",
-     offsetof(eye_choices, tagcloud.leading),
-      choices_TYPE_NUMBER_RANGE,
-       (int) (1.4 * 256), /* 8.8 fixed point */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, tagcloud.leading),
+    choices_TYPE_NUMBER_RANGE,
+    (int) (1.4 * 256), /* 8.8 fixed point */
+    { .number_range = NULL /* no GUI */ } },
 
   { "padding",
-     offsetof(eye_choices, tagcloud.padding),
-      choices_TYPE_NUMBER_RANGE,
-       16, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, tagcloud.padding),
+    choices_TYPE_NUMBER_RANGE,
+    16, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 
   { "scale",
-     offsetof(eye_choices, tagcloud.scale),
-      choices_TYPE_STRING_SET,
-       100, /* percent */
-        { .string_set = &tagcloud_scale_set } },
+    offsetof(eye_choices, tagcloud.scale),
+    choices_TYPE_STRING_SET,
+    100, /* percent */
+    { .string_set = &tagcloud_scale_set } },
 
   { "selfirst",
-     offsetof(eye_choices, tagcloud.selfirst),
-      choices_TYPE_OPTION,
-       FALSE,
-        { .option = &tagcloud_selfirst } },
+    offsetof(eye_choices, tagcloud.selfirst),
+    choices_TYPE_OPTION,
+    FALSE,
+    { .option = &tagcloud_selfirst } },
 };
 
 static const choices_group_handlers tagcloud_handlers =
 {
-  tags__choices_updated
+  tags_choices_updated
 };
 
 static const choices_group tagcloud_group =
@@ -589,28 +589,28 @@ static const choices_option sprite_usetinct =
 static const choices_choice sprite[] =
 {
   { "background",
-     offsetof(eye_choices, sprite.background),
-      choices_TYPE_COLOUR,
-       (int) os_COLOUR_TRANSPARENT,
-        { .colour = &sprite_background } },
+    offsetof(eye_choices, sprite.background),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_TRANSPARENT,
+    { .colour = &sprite_background } },
 
   { "load",
-     offsetof(eye_choices, sprite.load),
-      choices_TYPE_OPTION,
-       FALSE,
-        { .option = &sprite_load } },
+    offsetof(eye_choices, sprite.load),
+    choices_TYPE_OPTION,
+    FALSE,
+    { .option = &sprite_load } },
 
   { "plot.flags",
-     offsetof(eye_choices, drawable.sprite.plot_flags),
-      choices_TYPE_STRING_SET,
-       osspriteop_DITHERED,
-        { .string_set = &sprite_plotflags } },
+    offsetof(eye_choices, drawable.sprite.plot_flags),
+    choices_TYPE_STRING_SET,
+    osspriteop_DITHERED,
+    { .string_set = &sprite_plotflags } },
 
   { "tinct",
-     offsetof(eye_choices, drawable.sprite.use_tinct),
-      choices_TYPE_OPTION,
-       TRUE,
-        { .option = &sprite_usetinct } },
+    offsetof(eye_choices, drawable.sprite.use_tinct),
+    choices_TYPE_OPTION,
+    TRUE,
+    { .option = &sprite_usetinct } },
 };
 
 static const choices_group sprite_group =
@@ -678,40 +678,40 @@ static const choices_option jpeg_trim =
 static const choices_choice jpeg[] =
 {
   { "background",
-     offsetof(eye_choices, jpeg.background),
-      choices_TYPE_COLOUR,
-       (int) os_COLOUR_TRANSPARENT,
-        { .colour = &jpeg_background } },
+    offsetof(eye_choices, jpeg.background),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_TRANSPARENT,
+    { .colour = &jpeg_background } },
 
   { "cleaning",
-     offsetof(eye_choices, image.jpeg.cleaning),
-      choices_TYPE_STRING_SET,
-       image_JPEG_CLEANING_IF_REQUIRED,
-        { .string_set = &jpeg_cleaning_set } },
+    offsetof(eye_choices, image.jpeg.cleaning),
+    choices_TYPE_STRING_SET,
+    image_JPEG_CLEANING_IF_REQUIRED,
+    { .string_set = &jpeg_cleaning_set } },
 
   { "load",
-     offsetof(eye_choices, jpeg.load),
-      choices_TYPE_OPTION,
-       TRUE,
-        { .option = &jpeg_load } },
+    offsetof(eye_choices, jpeg.load),
+    choices_TYPE_OPTION,
+    TRUE,
+    { .option = &jpeg_load } },
 
   { "plot.flags",
-     offsetof(eye_choices, drawable.jpeg.plot_flags),
-      choices_TYPE_STRING_SET,
-       jpeg_SCALE_DITHERED | jpeg_SCALE_ERROR_DIFFUSED,
-        { .string_set = &jpeg_plotflags } },
+    offsetof(eye_choices, drawable.jpeg.plot_flags),
+    choices_TYPE_STRING_SET,
+    jpeg_SCALE_DITHERED | jpeg_SCALE_ERROR_DIFFUSED,
+    { .string_set = &jpeg_plotflags } },
 
   { "sprite",
-     offsetof(eye_choices, image.jpeg.sprite),
-      choices_TYPE_OPTION,
-       FALSE,
-        { .option = &jpeg_sprite } },
+    offsetof(eye_choices, image.jpeg.sprite),
+    choices_TYPE_OPTION,
+    FALSE,
+    { .option = &jpeg_sprite } },
 
   { "trim",
-     offsetof(eye_choices, image.jpeg.trim),
-      choices_TYPE_OPTION,
-       TRUE,
-        { .option = &jpeg_trim } },
+    offsetof(eye_choices, image.jpeg.trim),
+    choices_TYPE_OPTION,
+    TRUE,
+    { .option = &jpeg_trim } },
 };
 
 static const choices_group jpeg_group =
@@ -738,16 +738,16 @@ static const choices_option gif_load =
 static const choices_choice gif[] =
 {
   { "background",
-     offsetof(eye_choices, gif.background),
-      choices_TYPE_COLOUR,
-       (int) os_COLOUR_TRANSPARENT,
-        { .colour = &gif_background } },
+    offsetof(eye_choices, gif.background),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_TRANSPARENT,
+    { .colour = &gif_background } },
 
   { "load",
-     offsetof(eye_choices, gif.load),
-      choices_TYPE_OPTION,
-       TRUE,
-        { .option = &gif_load } },
+    offsetof(eye_choices, gif.load),
+    choices_TYPE_OPTION,
+    TRUE,
+    { .option = &gif_load } },
 };
 
 static const choices_group gif_group =
@@ -774,16 +774,16 @@ static const choices_option png_load =
 static const choices_choice png[] =
 {
   { "background",
-     offsetof(eye_choices, png.background),
-      choices_TYPE_COLOUR,
-       (int) os_COLOUR_TRANSPARENT,
-        { .colour = &png_background } },
+    offsetof(eye_choices, png.background),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_TRANSPARENT,
+    { .colour = &png_background } },
 
   { "load",
-     offsetof(eye_choices, png.load),
-      choices_TYPE_OPTION,
-       TRUE,
-        { .option = &png_load } },
+    offsetof(eye_choices, png.load),
+    choices_TYPE_OPTION,
+    TRUE,
+    { .option = &png_load } },
 };
 
 static const choices_group png_group =
@@ -831,28 +831,28 @@ static const choices_stringset drawfile_flatness_set =
 static const choices_choice drawfile[] =
 {
   { "background",
-     offsetof(eye_choices, drawfile.background),
-      choices_TYPE_COLOUR,
-       (int) os_COLOUR_WHITE, /* poo */
-        { .colour = &drawfile_background } },
+    offsetof(eye_choices, drawfile.background),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_WHITE, /* poo */
+    { .colour = &drawfile_background } },
 
   { "border",
-     offsetof(eye_choices, image.drawfile.border),
-      choices_TYPE_NUMBER_RANGE,
-       16,
-        { .number_range = NULL /* &drawfile_border */ } },
+    offsetof(eye_choices, image.drawfile.border),
+    choices_TYPE_NUMBER_RANGE,
+    16,
+    { .number_range = NULL /* &drawfile_border */ } },
 
   { "flatness",
-     offsetof(eye_choices, drawable.drawfile.flatness),
-      choices_TYPE_STRING_SET,
-       drawfile_FLATNESS_NORMAL,
-        { .string_set = &drawfile_flatness_set } },
+    offsetof(eye_choices, drawable.drawfile.flatness),
+    choices_TYPE_STRING_SET,
+    drawfile_FLATNESS_NORMAL,
+    { .string_set = &drawfile_flatness_set } },
 
   { "load",
-     offsetof(eye_choices, drawfile.load),
-      choices_TYPE_OPTION,
-       FALSE,
-        { .option = &drawfile_load } },
+    offsetof(eye_choices, drawfile.load),
+    choices_TYPE_OPTION,
+    FALSE,
+    { .option = &drawfile_load } },
 };
 
 static const choices_group drawfile_group =
@@ -900,28 +900,28 @@ static const choices_stringset artworks_quality_set =
 static const choices_choice artworks[] =
 {
   { "background",
-     offsetof(eye_choices, artworks.background),
-      choices_TYPE_COLOUR,
-       (int) os_COLOUR_WHITE,
-        { .colour = &artworks_background } },
+    offsetof(eye_choices, artworks.background),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_WHITE,
+    { .colour = &artworks_background } },
 
   { "border",
-     offsetof(eye_choices, image.artworks.border),
-      choices_TYPE_NUMBER_RANGE,
-       16,
-        { .number_range = NULL /* &artworks_border */ } },
+    offsetof(eye_choices, image.artworks.border),
+    choices_TYPE_NUMBER_RANGE,
+    16,
+    { .number_range = NULL /* &artworks_border */ } },
 
   { "load",
-     offsetof(eye_choices, artworks.load),
-      choices_TYPE_OPTION,
-       FALSE,
-        { .option = &artworks_load } },
+    offsetof(eye_choices, artworks.load),
+    choices_TYPE_OPTION,
+    FALSE,
+    { .option = &artworks_load } },
 
   { "quality",
-     offsetof(eye_choices, drawable.artworks.quality),
-      choices_TYPE_STRING_SET,
-       artworks_ANTI_ALIASED,
-        { .string_set = &artworks_quality_set } },
+    offsetof(eye_choices, drawable.artworks.quality),
+    choices_TYPE_STRING_SET,
+    artworks_ANTI_ALIASED,
+    { .string_set = &artworks_quality_set } },
 };
 
 static const choices_group artworks_group =
@@ -938,10 +938,10 @@ static const choices_group artworks_group =
 static const choices_choice hist[] =
 {
   { "bars",
-     offsetof(eye_choices, hist.bars),
-      choices_TYPE_NUMBER_RANGE,
-       32,
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, hist.bars),
+    choices_TYPE_NUMBER_RANGE,
+    32,
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group hist_group =
@@ -958,10 +958,10 @@ static const choices_group hist_group =
 static const choices_choice info[] =
 {
   { "padding",
-     offsetof(eye_choices, info.padding),
-      choices_TYPE_NUMBER_RANGE,
-       128, /* 64 on either side */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, info.padding),
+    choices_TYPE_NUMBER_RANGE,
+    128, /* 64 on either side */
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group info_group =
@@ -980,22 +980,22 @@ static const choices_group info_group =
 static const choices_choice metadata[] =
 {
   { "bgcolour",
-     offsetof(eye_choices, metadata.bgcolour),
-      choices_TYPE_NUMBER_RANGE,
-       wimp_COLOUR_WHITE, /* wimp_colour */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, metadata.bgcolour),
+    choices_TYPE_NUMBER_RANGE,
+    wimp_COLOUR_WHITE, /* wimp_colour */
+    { .number_range = NULL /* no GUI */ } },
 
   { "wrapwidth",
-     offsetof(eye_choices, metadata.wrapwidth),
-      choices_TYPE_NUMBER_RANGE,
-       80, /* columns */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, metadata.wrapwidth),
+    choices_TYPE_NUMBER_RANGE,
+    80, /* columns */
+    { .number_range = NULL /* no GUI */ } },
 
   { "line.height",
-     offsetof(eye_choices, metadata.line_height),
-      choices_TYPE_NUMBER_RANGE,
-       44, /* OS units */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, metadata.line_height),
+    choices_TYPE_NUMBER_RANGE,
+    44, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group metadata_group =
@@ -1014,16 +1014,16 @@ static const choices_group metadata_group =
 static const choices_choice rotate[] =
 {
   { "snap",
-     offsetof(eye_choices, rotate.snap),
-      choices_TYPE_NUMBER_RANGE,
-       9, /* degrees */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, rotate.snap),
+    choices_TYPE_NUMBER_RANGE,
+    9, /* degrees */
+    { .number_range = NULL /* no GUI */ } },
 
   { "maxthumb",
-     offsetof(eye_choices, rotate.max_thumb),
-      choices_TYPE_NUMBER_RANGE,
-       100, /* pixels */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, rotate.max_thumb),
+    choices_TYPE_NUMBER_RANGE,
+    100, /* pixels */
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group rotate_group =
@@ -1040,16 +1040,16 @@ static const choices_group rotate_group =
 static const choices_choice scale[] =
 {
   { "step",
-     offsetof(eye_choices, scale.step),
-      choices_TYPE_NUMBER_RANGE,
-       1,
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, scale.step),
+    choices_TYPE_NUMBER_RANGE,
+    1,
+    { .number_range = NULL /* no GUI */ } },
 
   { "mult",
-     offsetof(eye_choices, scale.mult),
-      choices_TYPE_NUMBER_RANGE,
-       10,
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, scale.mult),
+    choices_TYPE_NUMBER_RANGE,
+    10,
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group scale_group =
@@ -1067,10 +1067,10 @@ static const choices_group scale_group =
 static const choices_choice effects[] =
 {
   { "curve.width",
-     offsetof(eye_choices, effects.curve_width),
-      choices_TYPE_NUMBER_RANGE,
-       8, /* Draw units / 256 */
-        { .number_range = NULL /* no GUI */ } },
+    offsetof(eye_choices, effects.curve_width),
+    choices_TYPE_NUMBER_RANGE,
+    8, /* Draw units / 256 */
+    { .number_range = NULL /* no GUI */ } },
 };
 
 static const choices_group effects_group =

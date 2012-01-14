@@ -72,8 +72,8 @@ static keymap_action name_to_action(const keymap_name_to_action *map,
 
 typedef struct
 {
-  const char  *name;
-  wimp_key_no  no;
+  const char *name;
+  wimp_key_no no;
 }
 keymap_keyname_to_keynum;
 
@@ -137,7 +137,10 @@ static wimp_key_no keyname_to_keynum(const char                     *s,
   fake.name = s;
   fake.no   = -1;
 
-  m = bsearch(&fake, tab, nelems, sizeof(*tab),
+  m = bsearch(&fake,
+               tab,
+               nelems,
+               sizeof(*tab),
                keyname_to_keynum_compare);
   if (m)
     return m->no;
@@ -154,35 +157,35 @@ static wimp_key_no keyname_to_keynum(const char                     *s,
 
 typedef struct
 {
-  wimp_key_no                   key;
-  keymap_action                 action;
+  wimp_key_no           key;
+  keymap_action         action;
 }
 keymap_key_to_action;
 
 typedef struct
 {
-  keymap_key_to_action         *map;
-  int                           allocated;
-  int                           used;
+  keymap_key_to_action *map;
+  int                   allocated;
+  int                   used;
 }
 keymap_section2;
 
 struct keymap_t
 {
-  int                           nsections;
-  keymap_section2               sections[UNKNOWN];
+  int                   nsections;
+  keymap_section2       sections[UNKNOWN];
 };
 
 static error parse_line(const keymap_section *section,
                         char                 *buf,
                         keymap_key_to_action *mapping)
 {
-  char          *delimiter;
-  char          *key;
-  char          *act;
-  wimp_key_no    modifier_key_no;
-  wimp_key_no    key_no;
-  keymap_action  action;
+  char         *delimiter;
+  char         *key;
+  char         *act;
+  wimp_key_no   modifier_key_no;
+  wimp_key_no   key_no;
+  keymap_action action;
 
   delimiter = strchr(buf, ':');
   if (delimiter == NULL)
@@ -281,9 +284,9 @@ static int key_to_action_compare(const void *a, const void *b)
 }
 
 error keymap_create(const char           *filename,
-                     const keymap_section *sections,
-                     int                   nsections,
-                     keymap_t            **keymap_out)
+                    const keymap_section *sections,
+                    int                   nsections,
+                    keymap_t            **keymap_out)
 {
   error                 err;
   FILE                 *f;
@@ -395,7 +398,8 @@ error keymap_create(const char           *filename,
       output_section->allocated = newallocated;
     }
 
-    err = parse_line(input_section, buf,
+    err = parse_line(input_section,
+                     buf,
                     &output_section->map[output_section->used]);
     if (err)
       goto Failure;
@@ -446,7 +450,9 @@ void keymap_destroy(keymap_t *keymap)
 {
   keymap_section2 *s;
 
-  for (s = &keymap->sections[0]; s < &keymap->sections[keymap->nsections]; s++)
+  for (s = &keymap->sections[0];
+       s < &keymap->sections[keymap->nsections];
+       s++)
     free(s->map);
 
   free(keymap);

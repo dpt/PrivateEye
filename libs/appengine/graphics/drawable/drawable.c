@@ -17,9 +17,9 @@
 #include "appengine/graphics/image.h"
 
 #include "drawable-artworks.h"
+#include "drawable-bitmap.h"
 #include "drawable-drawfile.h"
 #include "drawable-jpeg.h"
-#include "drawable-bitmap.h"
 
 #include "appengine/graphics/drawable.h"
 
@@ -27,7 +27,7 @@ static void set_methods(drawable_t *d)
 {
   static const struct
   {
-    bits file_type;
+    bits   file_type;
     void (*export)(drawable_t *);
   }
   map[] =
@@ -43,8 +43,10 @@ static void set_methods(drawable_t *d)
 
   int i;
 
-  i = bsearch_uint(&map[0].file_type, nelems, stride,
-                   d->image->display.file_type);
+  i = bsearch_uint(&map[0].file_type,
+                    nelems,
+                    stride,
+                    d->image->display.file_type);
 
   if (i >= 0)
     map[i].export(d);

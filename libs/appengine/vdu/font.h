@@ -64,10 +64,10 @@ typedef unsigned int font_attrs;
  *
  * Returns error_FONT_NO_MATCH where no match is found.
  */
-error font_select(const char  *name,
-                   font_attrs  attrs,
-                   char        *selected,
-                   int          selected_size);
+error font_select(const char *name,
+                  font_attrs  attrs,
+                  char       *selected,
+                  int         selected_size);
 
 font_attrs font_get_attrs(const char *name);
 

@@ -12,10 +12,10 @@
 #include "oslib/territory.h"
 #include "oslib/wimp.h"
 
-#include "appengine/wimp/dialogue.h"
-#include "appengine/dialogues/info.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/numstr.h"
+#include "appengine/dialogues/info.h"
+#include "appengine/wimp/dialogue.h"
 
 #include "globals.h"
 #include "viewer.h"
@@ -36,7 +36,8 @@ typedef struct InfoDialogueSpecifier
 }
 InfoDialogueSpecifier;
 
-static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *info)
+static void populate_info_dialogue(dialogue_t                  *d,
+                                   const InfoDialogueSpecifier *info)
 {
   static const char DASH[] = "˜";
 
@@ -85,6 +86,9 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
     int          w,h;
     int          xdpi,ydpi;
 
+    // FIXME: This mush looks like a strong argument for better notation and
+    //        a custom printf-style formatting scheme.
+
     attrs = (image_attrs *)((char *) image + info->attrs);
 
     /* dimensions */
@@ -97,8 +101,11 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
     comma_number(w * h, scratch + 24, 12);
 
     specs[spec++].value = buf;
-    buf += sprintf(buf, message0("size.pixels"),
-                   scratch, scratch + 12, scratch + 24) + 1;
+    buf += sprintf(buf,
+                   message0("size.pixels"),
+                   scratch,
+                   scratch + 12,
+                   scratch + 24) + 1;
 
     xdpi = attrs->dims.bm.xdpi;
     ydpi = attrs->dims.bm.ydpi;
@@ -130,8 +137,8 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
 
     sprintf(buf, message0("info.depth"), attrs->dims.bm.bpp);
 
-    strcat(buf, message0((image->flags & image_FLAG_COLOUR) ?
-           "info.colour" : "info.mono"));
+    strcat(buf,
+           message0((image->flags & image_FLAG_COLOUR) ? "info.colour" : "info.mono"));
 
     if (image->flags & image_FLAG_HAS_ALPHA)
       strcat(buf, message0("info.alpha"));
@@ -168,7 +175,7 @@ static void populate_info_dialogue(dialogue_t *d, const InfoDialogueSpecifier *i
 
 dialogue_t *viewer_infodlg;
 
-static void viewer_infodlg_fillout(dialogue_t *d, void *arg)
+static void viewer_infodlg_fillout(dialogue_t *d, void *opaque)
 {
   static const InfoDialogueSpecifier info =
   {
@@ -178,7 +185,7 @@ static void viewer_infodlg_fillout(dialogue_t *d, void *arg)
     offsetof(image_t, display.file_size)
   };
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   populate_info_dialogue(d, &info);
 }
@@ -187,7 +194,7 @@ static void viewer_infodlg_fillout(dialogue_t *d, void *arg)
 
 dialogue_t *viewer_srcinfodlg;
 
-static void viewer_srcinfodlg_fillout(dialogue_t *d, void *arg)
+static void viewer_srcinfodlg_fillout(dialogue_t *d, void *opaque)
 {
   static const InfoDialogueSpecifier info =
   {
@@ -197,7 +204,7 @@ static void viewer_srcinfodlg_fillout(dialogue_t *d, void *arg)
     offsetof(image_t, source.file_size)
   };
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   populate_info_dialogue(d, &info);
 }
@@ -206,13 +213,44 @@ static void viewer_srcinfodlg_fillout(dialogue_t *d, void *arg)
 
 error viewer_infodlg_init(void)
 {
+  // FIXME: Idea for data driving this process.
+  //
+  // static const struct
+  // {
+  //   const char               *name;
+  //   wimp_w                   *w;
+  //   dialogue_fillout_handler *fillout;
+  // }
+  // map[] =
+  // {
+  //   { "image_info",  &viewer_infodlg,    viewer_infodlg_fillout    },
+  //   { "source_info", &viewer_srcinfodlg, viewer_srcinfodlg_fillout }
+  // };
+  //
+  // int i;
+  //
+  // for (i = 0; i < NELEMS(map); i++)
+  // {
+  //   *map[i].w = info_create(map[i].name);
+  //   if (*map[i].w == NULL)
+  //     return error_OOM; // will leak when i > 0
+  //
+  //   dialogue_set_fillout_handler(*map[i].w, map[i].fillout, NULL);
+  //
+  //   info_set_padding(*map[i].w, GLOBALS.choices.info.padding);
+  // }
+  //
+  // return error_OK;
+
   /* Info dialogue */
 
   viewer_infodlg = info_create("image_info");
   if (viewer_infodlg == NULL)
     return error_OOM;
 
-  dialogue_set_fillout_handler(viewer_infodlg, viewer_infodlg_fillout, NULL);
+  dialogue_set_fillout_handler(viewer_infodlg,
+                               viewer_infodlg_fillout,
+                               NULL);
 
   info_set_padding(viewer_infodlg, GLOBALS.choices.info.padding);
 
@@ -222,7 +260,9 @@ error viewer_infodlg_init(void)
   if (viewer_srcinfodlg == NULL)
     return error_OOM;
 
-  dialogue_set_fillout_handler(viewer_srcinfodlg, viewer_srcinfodlg_fillout, NULL);
+  dialogue_set_fillout_handler(viewer_srcinfodlg,
+                               viewer_srcinfodlg_fillout,
+                               NULL);
 
   info_set_padding(viewer_srcinfodlg, GLOBALS.choices.info.padding);
 

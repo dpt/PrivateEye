@@ -21,10 +21,15 @@
   printf("%s\n%s\n%s\n%i\n%s\n", scheme, creds, host, port, path);
 }*/
 
-int uri_decode(const char *uri, char *scheme, char *creds, char *host, int *port, char *path)
+int uri_decode(const char *uri,
+               char       *scheme,
+               char       *creds,
+               char       *host,
+               int        *port,
+               char       *path)
 {
   const char *p;
-  char *q, *r;
+  char       *q, *r;
 
   p = uri;
 

@@ -14,9 +14,9 @@
 
 /* ----------------------------------------------------------------------- */
 
-static error drawbox(const os_box *box, void *arg)
+static error drawbox(const os_box *box, void *opaque)
 {
-  txtscr_t *scr = arg;
+  txtscr_t *scr = opaque;
 
   printf("drawbox: %d %d %d %d\n", box->x0, box->y0, box->x1, box->y1);
 
@@ -97,8 +97,12 @@ static error subtest1(packer_t *packer, txtscr_t *scr)
       break;
     }
 
-    printf("%d placed at: {%d %d %d %d}\n", i, placed->x0, placed->y0,
-                                               placed->x1, placed->y1);
+    printf("%d placed at: {%d %d %d %d}\n",
+           i,
+           placed->x0,
+           placed->y0,
+           placed->x1,
+           placed->y1);
   }
 
   dumppacker(packer, scr);
@@ -373,8 +377,8 @@ static int test2(void)
   }
   tests[] =
   {
-    { packer_LOC_TOP_LEFT,     packer_CLEAR_LEFT  },
-    { packer_LOC_TOP_RIGHT,    packer_CLEAR_RIGHT },
+    { packer_LOC_TOP_LEFT,  packer_CLEAR_LEFT  },
+    { packer_LOC_TOP_RIGHT, packer_CLEAR_RIGHT },
   };
 
   error err;

@@ -43,18 +43,18 @@
 
 #include "appengine/types.h"
 #include "appengine/app/choices.h"
-#include "appengine/dialogues/dcs-quit.h"
-#include "appengine/wimp/event.h"
-#include "appengine/wimp/icon.h"
-#include "appengine/wimp/menu.h"
+#include "appengine/base/bsearch.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"
 #include "appengine/base/oserror.h"
+#include "appengine/base/strings.h"
+#include "appengine/dialogues/dcs-quit.h"
+#include "appengine/gadgets/hist.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/vdu/sprite.h"
-#include "appengine/base/strings.h"
-#include "appengine/base/bsearch.h"
-#include "appengine/gadgets/hist.h"
+#include "appengine/wimp/event.h"
+#include "appengine/wimp/icon.h"
+#include "appengine/wimp/menu.h"
 
 #include "choicesdat.h"
 #include "clipboard.h"
@@ -71,8 +71,8 @@
 #include "quit.h"
 #include "rotate.h"
 #include "scale.h"
-#include "tags.h"
 #include "tags-search.h"
+#include "tags.h"
 #include "thumbview.h"
 #include "viewer.h"
 #include "zones.h"
@@ -99,8 +99,10 @@ static void register_event_handlers(int reg)
   };
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               event_ANY_WINDOW, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               event_ANY_WINDOW,
+                               event_ANY_ICON,
                                NULL);
 }
 
@@ -113,17 +115,17 @@ static error initialise_subsystems(void)
     dcs_quit_init,  /* in AppEngine */
     hist_init,      /* in AppEngine */
     eye_icon_bar_init,
-    rotate__init,
-    effects__init,
+    rotate_init,
+    rotate_init,
 #ifdef EYE_TAGS
     tags_search_init,
 #endif
-    display__init,   /* careful: this one depends on the earlier init calls */
+    display_init,   /* careful: this one depends on the earlier init calls */
 #ifdef EYE_THUMBVIEW
-    thumbview__init,
+    thumbview_init,
 #endif
-    clipboard__init,
-    dataxfer__init
+    clipboard_init,
+    dataxfer_init
   };
 
   error err;
@@ -145,17 +147,17 @@ static void finalise_subsystems(void)
 
   static const finfn finfns[] =
   {
-    dataxfer__fin,
-    clipboard__fin,
+    dataxfer_fin,
+    clipboard_fin,
 #ifdef EYE_THUMBVIEW
-    thumbview__fin,
+    thumbview_fin,
 #endif
-    display__fin,
+    display_fin,
 #ifdef EYE_TAGS
     tags_search_fin,
 #endif
-    effects__fin,
-    rotate__fin,
+    rotate_fin,
+    rotate_fin,
     eye_icon_bar_fin,
     hist_fin,
     dcs_quit_fin,
@@ -186,8 +188,12 @@ static void upgrade_choices(void)
    * and does have multiple entries on it. Instead we use '<Choices$Write>.'
    */
 
-  err = xosfile_read_no_path("<Choices$Write>." APPNAME, &type,
-                             NULL, NULL, NULL, NULL);
+  err = xosfile_read_no_path("<Choices$Write>." APPNAME,
+                            &type,
+                             NULL,
+                             NULL,
+                             NULL,
+                             NULL);
   if (err == NULL && type == fileswitch_IS_DIR)
     return; /* new format choices already exists */
 
@@ -195,8 +201,12 @@ static void upgrade_choices(void)
 
   /* Convert Choices:Sliced.PrivateEye to Choices:PrivateEye.Choices. */
 
-  err = xosfile_read_no_path("<Choices$Write>.Sliced." APPNAME, &type,
-                             NULL, NULL, NULL, NULL);
+  err = xosfile_read_no_path("<Choices$Write>.Sliced." APPNAME,
+                            &type,
+                             NULL,
+                             NULL,
+                             NULL,
+                             NULL);
   if (err != NULL || type == fileswitch_NOT_FOUND)
     return; /* old format doesn't exist either */
 
@@ -244,7 +254,11 @@ static void install_keymap(void)
   osfscontrol_copy(APPNAME "Res:Keys",
                    "<Choices$Write>." APPNAME ".Keys",
                    osfscontrol_COPY_FORCE | osfscontrol_COPY_NEWER,
-                   0, 0, 0, 0, NULL);
+                   0,
+                   0,
+                   0,
+                   0,
+                   NULL);
 }
 
 static void install_choices(void)
@@ -320,7 +334,10 @@ int main(int argc, char *argv[])
     flex_set_budge(1);
   }
 
-  GLOBALS.task_handle = wimp_initialise(wimp_VERSION_RO38, message0("task"), (const wimp_message_list *) &messages, &GLOBALS.wimp_version);
+  GLOBALS.task_handle = wimp_initialise(wimp_VERSION_RO38,
+                                        message0("task"),
+           (const wimp_message_list *) &messages,
+                                       &GLOBALS.wimp_version);
 
   /* Event handling */
   event_initialise();
@@ -360,11 +377,11 @@ int main(int argc, char *argv[])
   /* Process command line arguments */
   while (--argc)
   {
-    os_error               *e;
-    fileswitch_object_type  obj_type;
-    bits                    load_addr;
-    bits                    exec_addr;
-    bits                    file_type;
+    os_error              *e;
+    fileswitch_object_type obj_type;
+    bits                   load_addr;
+    bits                   exec_addr;
+    bits                   file_type;
 
     e = EC(xosfile_read_no_path(argv[argc],
                                &obj_type,
@@ -393,13 +410,9 @@ int main(int argc, char *argv[])
       if (err == error_OK)
       {
         if (viewer_load(viewer, argv[argc], load_addr, exec_addr))
-        {
           viewer_destroy(viewer);
-        }
         else
-        {
           viewer_open(viewer);
-        }
       }
     }
   }
@@ -470,9 +483,10 @@ static int message_quit(wimp_message *message, void *handle)
 
 static int message_save_desktop(wimp_message *message, void *handle)
 {
-  const char *dir;
   static const char run[] = "Run ";
-  os_fw file;
+
+  const char *dir;
+  os_fw       file;
 
   NOT_USED(handle);
 
@@ -517,7 +531,8 @@ static int message_pre_quit(wimp_message *message, void *handle)
 
     key.c = wimp_KEY_SHIFT | wimp_KEY_CONTROL | wimp_KEY_F12;
 
-    wimp_send_message(wimp_KEY_PRESSED, (wimp_message *) &key,
+    wimp_send_message(wimp_KEY_PRESSED,
+    (wimp_message *) &key,
                       message->sender);
   }
 
@@ -536,7 +551,9 @@ static int message_palette_change(wimp_message *message, void *handle)
   return event_PASS_ON;
 }
 
-static int kick_update__event_null_reason_code(wimp_event_no event_no, wimp_block *block, void *handle)
+static int kick_update_event_null_reason_code(wimp_event_no event_no,
+                                               wimp_block   *block,
+                                               void         *handle)
 {
   NOT_USED(event_no);
   NOT_USED(block);
@@ -545,8 +562,10 @@ static int kick_update__event_null_reason_code(wimp_event_no event_no, wimp_bloc
   viewer_update_all(viewer_UPDATE_EXTENT | viewer_UPDATE_REDRAW);
 
   event_deregister_wimp_handler(wimp_NULL_REASON_CODE,
-                                event_ANY_WINDOW, event_ANY_ICON,
-                                kick_update__event_null_reason_code, NULL);
+                                event_ANY_WINDOW,
+                                event_ANY_ICON,
+                                kick_update_event_null_reason_code,
+                                NULL);
 
   return event_HANDLED;
 }
@@ -568,8 +587,10 @@ static int message_mode_change(wimp_message *message, void *handle)
      * avoid this. */
 
     event_register_wimp_handler(wimp_NULL_REASON_CODE,
-                                event_ANY_WINDOW, event_ANY_ICON,
-                                kick_update__event_null_reason_code, NULL);
+                                event_ANY_WINDOW,
+                                event_ANY_ICON,
+                                kick_update_event_null_reason_code,
+                                NULL);
   }
 
   return event_PASS_ON;

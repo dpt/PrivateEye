@@ -146,10 +146,10 @@ void filenamedb_delete(const char *filename)
 
 struct filenamedb_t
 {
-  char             *filename;
+  char       *filename;
 
-  atom_set_t       *filenames;
-  hash_t           *hash;
+  atom_set_t *filenames;
+  hash_t     *hash;
 
   struct
   {
@@ -370,9 +370,9 @@ struct commit_state
   os_fw         f;
 };
 
-static int commit_cb(const void *key, const void *value, void *arg)
+static int commit_cb(const void *key, const void *value, void *opaque)
 {
-  struct commit_state *state = arg;
+  struct commit_state *state = opaque;
   const unsigned char *k;
   const char          *v;
   char                 ktext[digestdb_DIGESTSZ * 2 + 1];
@@ -439,8 +439,8 @@ Failure:
 /* ----------------------------------------------------------------------- */
 
 error filenamedb_add(filenamedb_t *db,
-                      const char   *id,
-                      const char   *filename)
+                     const char   *id,
+                     const char   *filename)
 {
   error                err;
   unsigned char        hash[16];
@@ -477,16 +477,16 @@ error filenamedb_add(filenamedb_t *db,
 /* ----------------------------------------------------------------------- */
 
 const char *filenamedb_get(filenamedb_t *db,
-                            const char   *id)
+                           const char   *id)
 {
   return hash_lookup(db->hash, id);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static int prune_cb(const void *key, const void *value, void *arg)
+static int prune_cb(const void *key, const void *value, void *opaque)
 {
-  filenamedb_t           *db = arg;
+  filenamedb_t           *db = opaque;
   fileswitch_object_type  object_type;
 
   /* does the file exist? */

@@ -7,8 +7,8 @@
 
 #include "impl.h"
 
-error tag_cloud_set_config(tag_cloud         *tc,
-                      const tag_cloud_config *config)
+error tag_cloud_set_config(tag_cloud        *tc,
+                     const tag_cloud_config *config)
 {
   tc->config = *config;
 

@@ -25,7 +25,9 @@ void vector_scaling(drawable_t *drawable, const os_factors *factors)
   trfm->entries[1][1] = (factors->ymul << 16) / factors->ydiv;
 }
 
-void vector_get_dimensions(drawable_t *drawable, const os_factors *factors, os_box *box)
+void vector_get_dimensions(drawable_t *drawable,
+                     const os_factors *factors,
+                           os_box     *box)
 {
   os_factors f;
   int        xdiv, ydiv;

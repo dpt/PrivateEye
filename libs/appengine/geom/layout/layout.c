@@ -15,10 +15,10 @@
 /* ----------------------------------------------------------------------- */
 
 error layout_place(const layout_spec     *spec,
-                    const layout_element  *elements,
-                          int              nelements,
-                          os_box          *boxes,
-                          int              nboxes)
+                   const layout_element  *elements,
+                         int              nelements,
+                         os_box          *boxes,
+                         int              nboxes)
 {
   error err = error_OK;
   int   j;
@@ -78,9 +78,10 @@ error layout_place(const layout_spec     *spec,
           elements[0].type == layout_NEWLINE /* unless explicit */)
       {
         err = packer_place_by(spec->packer,
-                               spec->loc,
-                               nextw, spec->leading,
-                               NULL);
+                              spec->loc,
+                              nextw,
+                              spec->leading,
+                              NULL);
         if (err == error_PACKER_DIDNT_FIT)
           break;
         else if (err)
@@ -99,9 +100,10 @@ error layout_place(const layout_spec     *spec,
           /* place horizontal padding */
 
           err = packer_place_by(spec->packer,
-                                 spec->loc,
-                                 spec->spacing, elements[k].data.box.height,
-                                 NULL);
+                                spec->loc,
+                                spec->spacing,
+                                elements[k].data.box.height,
+                                NULL);
           if (err == error_PACKER_DIDNT_FIT)
             break;
           else if (err)
@@ -111,9 +113,10 @@ error layout_place(const layout_spec     *spec,
         /* place element */
 
         err = packer_place_by(spec->packer,
-                               spec->loc,
-                               chosen_width[k], elements[k].data.box.height,
-                              &placed);
+                              spec->loc,
+                              chosen_width[k],
+                              elements[k].data.box.height,
+                             &placed);
         if (err == error_PACKER_DIDNT_FIT)
           break;
         else if (err)

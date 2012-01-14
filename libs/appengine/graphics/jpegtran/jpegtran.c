@@ -271,11 +271,11 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 
 /* ----------------------------------------------------------------------- */
 
-static int jpegtran(const unsigned char *data,
-                    size_t               length,
-                    unsigned char      **newbuffer,
-                    size_t              *newlength,
-                    jpegtran_transform_type        args)
+static int jpegtran(const unsigned char    *data,
+                    size_t                  length,
+                    unsigned char         **newbuffer,
+                    size_t                 *newlength,
+                    jpegtran_transform_type args)
 {
   static const JXFORM_CODE map[] =
   {
@@ -427,11 +427,11 @@ int jpegtran_clean(const unsigned char *data,
 
 /* ----------------------------------------------------------------------- */
 
-int jpegtran_transform(const unsigned char *data,
-                       size_t               length,
-                       unsigned char      **newdata,
-                       size_t              *newlength,
-                       jpegtran_transform_type        args)
+int jpegtran_transform(const unsigned char    *data,
+                       size_t                  length,
+                       unsigned char         **newdata,
+                       size_t                 *newlength,
+                       jpegtran_transform_type args)
 {
   return jpegtran(data, length, newdata, newlength, args);
 }

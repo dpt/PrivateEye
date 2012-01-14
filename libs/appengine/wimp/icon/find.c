@@ -3,7 +3,9 @@
 
 #include "appengine/wimp/icon.h"
 
-wimp_i icon_find(wimp_window_info *defn, wimp_icon_flags mask, wimp_icon_flags want)
+wimp_i icon_find(wimp_window_info *defn,
+                 wimp_icon_flags   mask,
+                 wimp_icon_flags   want)
 {
   wimp_icon *p;
   wimp_icon *q;
@@ -15,5 +17,5 @@ wimp_i icon_find(wimp_window_info *defn, wimp_icon_flags mask, wimp_icon_flags w
   if (p < q)
     return (wimp_i) (p - defn->icons);
   else
-    return wimp_ICON_WINDOW; /* ie. no icon matched */
+    return wimp_ICON_WINDOW; /* no icon matched */
 }

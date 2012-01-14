@@ -42,7 +42,7 @@ struct filerwin
   filerwin_mode       mode;
   filerwin_sort       sort;
 
-  void                *arg;
+  void                *opaque;
 
   // computed
   int                  last_width, last_height;
@@ -79,8 +79,10 @@ void filerwin_internal_set_handlers(int reg, filerwin *fw)
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            fw->w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            fw->w,
+                            event_ANY_ICON,
                             fw);
 }
 
@@ -111,10 +113,19 @@ static const wimp_window wdef =
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (mapfn)(filerwin *fw, int x, int y, int c, unsigned int flags, void *arg);
+typedef error (mapfn)(filerwin     *fw,
+                      int           x,
+                      int           y,
+                      int           c,
+                      unsigned int  flags,
+                      void         *opaque);
 
-static error map(filerwin *fw, mapfn *fn, int x, int y,
-                 const os_box *test, void *arg)
+static error map(filerwin     *fw,
+                 mapfn        *fn,
+                 int           x,
+                 int           y,
+                 const os_box *test,
+                 void         *opaque)
 {
   error err;
   int   c;
@@ -147,7 +158,7 @@ static error map(filerwin *fw, mapfn *fn, int x, int y,
 
       if (!test || (test && box_intersects(&box, test)))
       {
-        err = fn(fw, xr, yr, c, bitvec_get(fw->selection, c), arg);
+        err = fn(fw, xr, yr, c, bitvec_get(fw->selection, c), opaque);
         if (err)
           return err;
       }
@@ -163,18 +174,25 @@ static error map(filerwin *fw, mapfn *fn, int x, int y,
 
 /* ----------------------------------------------------------------------- */
 
-static error redraw_bobs(filerwin *fw, int x, int y, int c, unsigned int flags, void *arg)
+static error redraw_bobs(filerwin    *fw,
+                         int          x,
+                         int          y,
+                         int          c,
+                         unsigned int flags,
+                         void        *opaque)
 {
   wimp_draw *redraw;
 
-  redraw = arg;
+  redraw = opaque;
 
-  fw->redraw(redraw, x, y, c, flags & 1 /* flags -> selection */, fw->arg);
+  fw->redraw(redraw, x, y, c, flags & 1 /* flags -> selection */, fw->opaque);
 
   return error_OK;
 }
 
-static int filerwin_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_redraw_window_request(wimp_event_no event_no,
+                                                wimp_block   *block,
+                                                void         *handle)
 {
   error      err;
   wimp_draw *redraw;
@@ -247,7 +265,9 @@ static int layout(filerwin *fw, int width, int height)
   return 0;
 }
 
-static int filerwin_event_open_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_open_window_request(wimp_event_no event_no,
+                                              wimp_block   *block,
+                                              void         *handle)
 {
   wimp_open *open;
   filerwin  *fw;
@@ -277,7 +297,9 @@ static int filerwin_event_open_window_request(wimp_event_no event_no, wimp_block
   return event_HANDLED;
 }
 
-static int filerwin_event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_close_window_request(wimp_event_no event_no,
+                                               wimp_block   *block,
+                                               void         *handle)
 {
   wimp_close  *close;
   filerwin    *fw;
@@ -313,12 +335,14 @@ static int filerwin_event_close_window_request(wimp_event_no event_no, wimp_bloc
   }
 #endif
 
-  fw->close(close, fw->arg);
+  fw->close(close, fw->opaque);
 
   return event_HANDLED;
 }
 
-static int filerwin_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_mouse_click(wimp_event_no event_no,
+                                      wimp_block   *block,
+                                      void         *handle)
 {
   wimp_pointer *pointer;
   filerwin     *fw;
@@ -355,7 +379,8 @@ static int filerwin_event_mouse_click(wimp_event_no event_no, wimp_block *block,
     // ie. start drag op always selects
 
     fw->drag_type = (pointer->buttons == wimp_DRAG_SELECT) ?
-                     drag_type_SELECTION_SELECT : drag_type_SELECTION_ADJUST;
+                     drag_type_SELECTION_SELECT :
+                     drag_type_SELECTION_ADJUST;
 
     info.w = fw->w;
     wimp_get_window_info_header_only(&info);
@@ -381,8 +406,9 @@ static int filerwin_event_mouse_click(wimp_event_no event_no, wimp_block *block,
     {
       wimp_auto_scroll_info scrinfo;
 
-      wimp_drag_box_with_flags(&drag, wimp_DRAG_BOX_KEEP_IN_LINE |
-                                      wimp_DRAG_BOX_CLIP);
+      wimp_drag_box_with_flags(&drag,
+                                wimp_DRAG_BOX_KEEP_IN_LINE |
+                                wimp_DRAG_BOX_CLIP);
 
       /* The following settings are Filer compatible. */
 
@@ -410,7 +436,7 @@ static int filerwin_event_mouse_click(wimp_event_no event_no, wimp_block *block,
     // if nothing selected, highlight the entry under the pointer, if one
     // if existing selection, preserve it
 
-    fw->pointer(pointer, fw->arg);
+    fw->pointer(pointer, fw->opaque);
     break;
   }
 
@@ -434,14 +460,19 @@ static void index_to_area(filerwin *fw, int index, os_box *box)
   box->y1 = y;
 }
 
-static error select_bobs(filerwin *fw, int x, int y, int c, unsigned int flags, void *arg)
+static error select_bobs(filerwin    *fw,
+                         int          x,
+                         int          y,
+                         int          c,
+                         unsigned int flags,
+                         void        *opaque)
 {
   os_box b;
 
   NOT_USED(x);
   NOT_USED(y);
   NOT_USED(flags);
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   bitvec_set(fw->selection, c);
 
@@ -451,14 +482,19 @@ static error select_bobs(filerwin *fw, int x, int y, int c, unsigned int flags, 
   return error_OK;
 }
 
-static error adjust_bobs(filerwin *fw, int x, int y, int c, unsigned int flags, void *arg)
+static error adjust_bobs(filerwin    *fw,
+                         int          x,
+                         int          y,
+                         int          c,
+                         unsigned int flags,
+                         void        *opaque)
 {
   os_box b;
 
   NOT_USED(x);
   NOT_USED(y);
   NOT_USED(flags);
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   bitvec_toggle(fw->selection, c);
 
@@ -486,7 +522,9 @@ static void screen_box_to_workarea(os_box *b, const wimp_window_state *state)
   if (b->y0 > b->y1) { temp = b->y1; b->y1 = b->y0; b->y0 = temp; }
 }
 
-static int filerwin_event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_user_drag_box(wimp_event_no event_no,
+                                        wimp_block   *block,
+                                        void         *handle)
 {
   wimp_dragged *dragged;
   filerwin     *fw;
@@ -537,7 +575,9 @@ static int filerwin_event_user_drag_box(wimp_event_no event_no, wimp_block *bloc
   return event_HANDLED;
 }
 
-static int filerwin_event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int filerwin_event_key_pressed(wimp_event_no event_no,
+                                      wimp_block   *block,
+                                      void         *handle)
 {
   wimp_key *key;
   filerwin *fw;
@@ -626,19 +666,19 @@ wimp_w filerwin_get_window_handle(filerwin *fw)
   return fw->w;
 }
 
-void filerwin_set_handlers(filerwin            *fw,
-                            filerwin_redrawfn  *redraw,
-                            filerwin_closefn   *close,
-                            filerwin_pointerfn *pointer)
+void filerwin_set_handlers(filerwin           *fw,
+                           filerwin_redrawfn  *redraw,
+                           filerwin_closefn   *close,
+                           filerwin_pointerfn *pointer)
 {
   fw->redraw  = redraw;
   fw->close   = close;
   fw->pointer = pointer;
 }
 
-void filerwin_set_arg(filerwin *fw, void *arg)
+void filerwin_set_arg(filerwin *fw, void *opaque)
 {
-  fw->arg = arg;
+  fw->opaque = opaque;
 }
 
 void filerwin_set_padding(filerwin *fw, int hpad, int vpad)

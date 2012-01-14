@@ -10,9 +10,10 @@
 
 typedef void (slider_update)(wimp_i i, int val);
 
-void slider_start(wimp_pointer *pointer,
+void slider_start(wimp_pointer  *pointer,
                   slider_update *update,
-                  int min, int max);
+                  int            min,
+                  int            max);
 
 void slider_set(wimp_w w, wimp_i i, int val, int min, int max);
 

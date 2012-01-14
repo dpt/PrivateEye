@@ -12,22 +12,24 @@
 #include "fortify/fortify.h"
 
 #include "oslib/types.h"
-#include "oslib/os.h"
 #include "oslib/colourtrans.h"
 #include "oslib/draw.h"
 #include "oslib/hourglass.h"
+#include "oslib/os.h"
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
-#include "appengine/base/oserror.h"
 #include "appengine/base/messages.h"
+#include "appengine/base/oserror.h"
+#include "appengine/geom/trfm.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/vdu/sprite.h"
-#include "appengine/geom/trfm.h"
 
 #include "bitmap.h"
 
-int bitmap_save(image_choices *choices, image_t *image, const char *file_name)
+int bitmap_save(image_choices *choices,
+                image_t       *image,
+                const char    *file_name)
 {
   osspriteop_area *area;
   os_error        *e;
@@ -246,7 +248,11 @@ NoMem:
 /* 0,2,4,6: easy flips */
 static int rotate_easy(image_t *image, int angle)
 {
-  enum { FlipH = 1, FlipV = 2 };
+  enum
+  {
+    FlipH = 1,
+    FlipV = 2
+  };
 
   osspriteop_area   *area;
   osspriteop_header *header;

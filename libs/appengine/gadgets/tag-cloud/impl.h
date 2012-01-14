@@ -119,30 +119,30 @@ typedef unsigned int tag_cloud_flags;
 
 struct tag_cloud
 {
-  tag_cloud_config         config;
+  tag_cloud_config          config;
 
-  tag_cloud_flags          flags;
+  tag_cloud_flags           flags;
 
   wimp_w                    main_w; /* cloned per instance */
   wimp_w                    toolbar_w;
   wimp_menu                *main_m; // should not need to be per-instance
 
-  tag_cloud_newtagfn      *newtag;
-  tag_cloud_deletetagfn   *deletetag;
-  tag_cloud_renametagfn   *renametag;
-  tag_cloud_tagfn         *tag;
-  tag_cloud_tagfn         *detag;
-  tag_cloud_tagfilefn     *tagfile;
-  tag_cloud_tagfilefn     *detagfile;
-  tag_cloud_eventfn       *event;
-  void                     *arg;
+  tag_cloud_newtagfn       *newtag;
+  tag_cloud_deletetagfn    *deletetag;
+  tag_cloud_renametagfn    *renametag;
+  tag_cloud_tagfn          *tag;
+  tag_cloud_tagfn          *detag;
+  tag_cloud_tagfilefn      *tagfile;
+  tag_cloud_tagfilefn      *detagfile;
+  tag_cloud_eventfn        *event;
+  void                     *opaque;
 
   tag_cloud_key_handler_fn *key_handler;
   void                     *key_handler_arg;
 
   atom_set_t               *dict;
 
-  tag_cloud_entry         *entries;
+  tag_cloud_entry          *entries;
   int                       e_used;
   int                       e_allocated;
 
@@ -153,13 +153,13 @@ struct tag_cloud
   int                       scaletab[5];
   int                       display_type;
 
-  tag_cloud_scale_data     scale;
+  tag_cloud_scale_data      scale;
 
-  tag_cloud_layout_data    layout;
+  tag_cloud_layout_data     layout;
 
-  tag_cloud_highlight_data highlight;
+  tag_cloud_highlight_data  highlight;
 
-  tag_cloud_hover_data     hover;
+  tag_cloud_hover_data      hover;
 
   int                       menued_tag_index;
 

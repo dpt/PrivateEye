@@ -42,24 +42,24 @@ T *filerwin_create(void);
 void filerwin_destroy(T *doomed);
 
 typedef void (filerwin_redrawfn)(wimp_draw *redraw,
-                                  int        x,
-                                  int        y,
-                                  int        index,
-                                  int        sel,
-                                  void      *arg);
+                                 int        x,
+                                 int        y,
+                                 int        index,
+                                 int        sel,
+                                 void      *opaque);
 
 typedef void (filerwin_closefn)(wimp_close *close,
-                                 void       *arg);
+                                void       *opaque);
 
 typedef void (filerwin_pointerfn)(wimp_pointer *pointer,
-                                   void         *arg);
+                                  void         *opaque);
 
-void filerwin_set_handlers(T *fw,
-                            filerwin_redrawfn  *redraw,
-                            filerwin_closefn   *close,
-                            filerwin_pointerfn *pointer);
+void filerwin_set_handlers(T                  *fw,
+                           filerwin_redrawfn  *redraw,
+                           filerwin_closefn   *close,
+                           filerwin_pointerfn *pointer);
 
-void filerwin_set_arg(T *fw, void *arg);
+void filerwin_set_arg(T *fw, void *opaque);
 
 wimp_w filerwin_get_window_handle(T *fw);
 

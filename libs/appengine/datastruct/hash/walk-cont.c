@@ -17,9 +17,9 @@
 #include "impl.h"
 
 int hash_walk_continuation(hash_t      *h,
-                            int          continuation,
-                            const void **key,
-                            const void **value)
+                           int          continuation,
+                           const void **key,
+                           const void **value)
 {
   unsigned int bin;
   unsigned int item;

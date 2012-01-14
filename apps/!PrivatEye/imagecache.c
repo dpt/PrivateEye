@@ -31,6 +31,7 @@ typedef struct entry
 }
 entry;
 
+// FIXME: Allow this to be configured by the user.
 #define MAX_ENTRIES 100
 
 static struct
@@ -57,9 +58,7 @@ error imagecache_get(const char *file_name,
         strcmp(ci->file_name, file_name) == 0 &&
         ci->source.load == load &&
         ci->source.exec == exec)
-    {
       break;
-    }
   }
 
   if (i == cache.nentries)
@@ -73,12 +72,12 @@ error imagecache_get(const char *file_name,
     /* yes, it's in the cache */
 
     array_delete_element(cache.entries,
-                          sizeof(cache.entries[0]),
-                          cache.nentries,
-                          i);
+                         sizeof(cache.entries[0]),
+                         cache.nentries,
+                         i);
 
-    cache.nentries--;
-    cache.used -= ci->display.file_size;
+    cache.nentries -= 1;
+    cache.used     -= ci->display.file_size;
 
     image_addref(ci);
 
@@ -93,8 +92,8 @@ error imagecache_get(const char *file_name,
 
 static int evict_one_image(void)
 {
-  int t;
   int i;
+  int t;
 
   i = 0; /* oldest entry */
 
@@ -105,9 +104,9 @@ static int evict_one_image(void)
   image_destroy(cache.entries[i].image);
 
   array_delete_element(cache.entries,
-                        sizeof(cache.entries[0]),
-                        cache.nentries,
-                        i);
+                       sizeof(cache.entries[0]),
+                       cache.nentries,
+                       i);
 
   cache.nentries -= 1;
   cache.used     -= t;
@@ -144,10 +143,10 @@ static int evict_nbytes(int need)
     image_destroy(cache.entries[j].image);
 
   array_delete_elements(cache.entries,
-                         sizeof(cache.entries[0]),
-                         cache.nentries,
-                         0,
-                         i - 1);
+                        sizeof(cache.entries[0]),
+                        cache.nentries,
+                        0,
+                        i - 1);
 
   cache.nentries -= i;
   cache.used     -= t;

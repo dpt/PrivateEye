@@ -19,7 +19,7 @@
 error dirscan(const char       *dir_name,
               dirscan_callback *callback,
               dirscan_flags     flags,
-              void             *arg)
+              void             *opaque)
 {
   error                err;
   osgbpb_info_stamped *info     = NULL;
@@ -106,14 +106,14 @@ error dirscan(const char       *dir_name,
 
         if (flags & dirscan_DIRECTORIES)
         {
-          err = callback(namebuf, p, arg);
+          err = callback(namebuf, p, opaque);
           if (err)
             goto Failure;
         }
 
         if (flags & dirscan_RECURSE)
         {
-          err = dirscan(namebuf, callback, flags, arg);
+          err = dirscan(namebuf, callback, flags, opaque);
           if (err)
             goto Failure;
         }
@@ -125,7 +125,7 @@ error dirscan(const char       *dir_name,
 
         if (flags & dirscan_FILES)
         {
-          err = callback(namebuf, p, arg);
+          err = callback(namebuf, p, opaque);
           if (err)
             goto Failure;
         }

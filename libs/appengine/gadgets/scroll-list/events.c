@@ -15,7 +15,9 @@
 
 #include "impl.h"
 
-static int event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int event_redraw_window_request(wimp_event_no event_no,
+                                       wimp_block   *block,
+                                       void         *handle)
 {
   scroll_list *sl;
   wimp_draw   *redraw;
@@ -65,7 +67,9 @@ static int event_redraw_window_request(wimp_event_no event_no, wimp_block *block
   return event_HANDLED;
 }
 
-static int event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int event_mouse_click(wimp_event_no event_no,
+                             wimp_block   *block,
+                             void         *handle)
 {
   scroll_list  *sl;
   wimp_pointer *pointer;
@@ -124,7 +128,9 @@ static int event_mouse_click(wimp_event_no event_no, wimp_block *block, void *ha
   return event_HANDLED;
 }
 
-static int event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int event_key_pressed(wimp_event_no event_no,
+                             wimp_block   *block,
+                             void         *handle)
 {
   scroll_list *sl;
   wimp_key    *key;
@@ -209,8 +215,10 @@ void scroll_list_internal_set_handlers(int reg, wimp_w w, scroll_list *sl)
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            w,
+                            event_ANY_ICON,
                             sl);
 }
 

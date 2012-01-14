@@ -12,8 +12,8 @@
 /* ----------------------------------------------------------------------- */
 
 os_error *oserror_check(os_error   *e,
-                         const char *file,
-                         int         line);
+                        const char *file,
+                        int         line);
 
 #ifndef NDEBUG
 #define EC(_e) oserror_check((os_error *) _e, __FILE__, __LINE__)

@@ -322,7 +322,9 @@ static void hist_refresh(imageobwin_t *obwin)
 
 /* ----------------------------------------------------------------------- */
 
-static int hist_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int hist_event_redraw_window_request(wimp_event_no event_no,
+                                            wimp_block   *block,
+                                            void         *handle)
 {
   hist_window  *self;
   wimp_draw    *draw;
@@ -435,7 +437,9 @@ static void hist_menu_update(hist_window *self)
   menu_tick_exclusive(LOCALS.factory.menu, self->flags & flag_COMPS);
 }
 
-static int hist_event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int hist_event_menu_selection(wimp_event_no event_no,
+                                     wimp_block   *block,
+                                     void         *handle)
 {
   hist_window    *self;
   wimp_selection *selection;

@@ -20,7 +20,6 @@
  *
  * Any place where VALINT is written through there should be an update
  * callback.
- *
  */
 
 #include <assert.h>
@@ -33,22 +32,22 @@
 
 #include "fortify/fortify.h"
 
-#include "appengine/types.h"
-#include "appengine/wimp/colourpick.h"
-#include "appengine/wimp/event.h"
-#include "appengine/base/errors.h"
-#include "appengine/wimp/help.h"
-#include "appengine/wimp/icon.h"
-#include "appengine/wimp/menu.h"
-#include "appengine/base/messages.h"
-#include "appengine/wimp/window.h"
-
 #include "oslib/colourpicker.h"
 #include "oslib/fileswitch.h"
 #include "oslib/help.h"
 #include "oslib/jpeg.h"
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
+
+#include "appengine/types.h"
+#include "appengine/base/errors.h"
+#include "appengine/base/messages.h"
+#include "appengine/wimp/colourpick.h"
+#include "appengine/wimp/event.h"
+#include "appengine/wimp/help.h"
+#include "appengine/wimp/icon.h"
+#include "appengine/wimp/menu.h"
+#include "appengine/wimp/window.h"
 
 #include "appengine/app/choices.h"
 
@@ -116,7 +115,7 @@ void choices_fin(void)
 typedef error (for_every_callback)(const choices        *cs,
                                    const choices_group  *g,
                                    const choices_choice *c,
-                                   void                 *arg);
+                                   void                 *opaque);
 
 /* calls back the user-supplied callback function for every choices_choice in
  * the choices */
@@ -125,7 +124,7 @@ typedef error (for_every_callback)(const choices        *cs,
 
 static error for_every_choice(const choices      *cs,
                               for_every_callback *fn,
-                              void               *arg)
+                              void               *opaque)
 {
   error err;
   int   i;
@@ -143,7 +142,7 @@ static error for_every_choice(const choices      *cs,
 
       c = &g->choices[j];
 
-      err = fn(cs, g, c, arg);
+      err = fn(cs, g, c, opaque);
       if (err == error_STOP_WALK)
         return error_OK;
       else if (err)
@@ -158,18 +157,18 @@ static error for_every_choice(const choices      *cs,
 
 typedef error (for_every_pane_callback)(const choices      *cs,
                                         const choices_pane *p,
-                                        void               *arg);
+                                        void               *opaque);
 
 static error for_every_pane(const choices           *cs,
                             for_every_pane_callback *fn,
-                            void                    *arg)
+                            void                    *opaque)
 {
   error               err;
   const choices_pane *p;
 
   for (p = &cs->panes[0]; p < &cs->panes[cs->npanes]; p++)
   {
-    err = fn(cs, p, arg);
+    err = fn(cs, p, opaque);
     if (err == error_STOP_WALK)
       return error_OK;
     else if (err)
@@ -199,10 +198,10 @@ static int stringset_index_of_val(const choices_stringset *string_set,
 static error init_callback(const choices        *cs,
                            const choices_group  *g,
                            const choices_choice *c,
-                           void                 *arg)
+                           void                 *opaque)
 {
   NOT_USED(g);
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   PVALINT(c->offset) = c->defaultval;
 
@@ -241,9 +240,9 @@ error choices_load(const choices *cs)
   {
     while (fgets(buf, sizeof(buf), f) != NULL)
     {
-      char         *bufptr;
-      unsigned int  value;
-      int           i;
+      char        *bufptr;
+      unsigned int value;
+      int          i;
 
       if (isspace(*buf) || *buf == '#')
           continue;
@@ -310,9 +309,9 @@ struct save_callback_args
 static error save_callback(const choices        *cs,
                            const choices_group  *g,
                            const choices_choice *c,
-                           void                 *arg)
+                           void                 *opaque)
 {
-  struct save_callback_args *args = arg;
+  struct save_callback_args *args = opaque;
   int                        val;
 
   val = PVALINT(c->offset);
@@ -385,17 +384,17 @@ static error update_icons_numberrange(const choices        *cs,
   if (number_range->prec == 0)
   {
     icon_set_int(*cs->panes[g->pane_index].window,
-                 number_range->icon_display,
-                 val);
+                  number_range->icon_display,
+                  val);
   }
   else
   {
     assert(number_range->prec >= 1 && number_range->prec <= 3);
 
     icon_set_double(*cs->panes[g->pane_index].window,
-                    number_range->icon_display,
-                    val / precs[number_range->prec - 1],
-                    number_range->prec);
+                     number_range->icon_display,
+                     val / precs[number_range->prec - 1],
+                     number_range->prec);
   }
 
   return error_OK;
@@ -413,8 +412,8 @@ static error update_icons_option(const choices        *cs,
   val = PVALINT(c->offset);
 
   icon_set_selected(*cs->panes[g->pane_index].window,
-                    option->icon,
-                    val != 0);
+                     option->icon,
+                     val != 0);
 
   return error_OK;
 }
@@ -452,9 +451,9 @@ static error update_icons_stringset(const choices        *cs,
 static error update_icons_callback(const choices        *cs,
                                    const choices_group  *g,
                                    const choices_choice *c,
-                                   void                 *arg)
+                                   void                 *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   switch (c->type)
   {
@@ -503,19 +502,19 @@ static void choices_set_pane_handlers(int                 reg,
   event_register_wimp_group(reg,
                             wimp_handlers,
                             NELEMS(wimp_handlers),
-                            *p->window,
+                           *p->window,
                             event_ANY_ICON,
                             cs);
 }
 
 static error create_windows_callback(const choices      *cs,
                                      const choices_pane *p,
-                                     void               *arg)
+                                     void               *opaque)
 {
   error err;
   char  buf[13];
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   if (p->window == NULL)
     return error_OK; /* this group has no associated window */
@@ -556,7 +555,7 @@ static void choices_set_handlers(int reg, const choices *cs)
   event_register_wimp_group(reg,
                             wimp_handlers,
                             NELEMS(wimp_handlers),
-                            *cs->window,
+                           *cs->window,
                             event_ANY_ICON,
                             cs);
 
@@ -594,9 +593,9 @@ error choices_create_windows(const choices *cs)
 
 static error destroy_windows_callback(const choices      *cs,
                                       const choices_pane *p,
-                                      void               *arg)
+                                      void               *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   if (p->handlers && p->handlers->finalise_callback)
     p->handlers->finalise_callback(p);
@@ -629,10 +628,10 @@ void choices_destroy_windows(const choices *cs)
 
 static error redraw_window_callback(const choices      *cs,
                                     const choices_pane *p,
-                                    void               *arg)
+                                    void               *opaque)
 {
   error      err;
-  wimp_draw *redraw = arg;
+  wimp_draw *redraw = opaque;
   int        more;
 
   NOT_USED(cs);
@@ -659,9 +658,9 @@ static error redraw_window_callback(const choices      *cs,
   return error_STOP_WALK; /* terminate early */
 }
 
-int choices_event_redraw_window_request(wimp_event_no  event_no,
-                                        wimp_block    *block,
-                                        void          *handle)
+int choices_event_redraw_window_request(wimp_event_no event_no,
+                                        wimp_block   *block,
+                                        void         *handle)
 {
   const choices *cs = handle;
 
@@ -674,9 +673,9 @@ int choices_event_redraw_window_request(wimp_event_no  event_no,
 
 /* ----------------------------------------------------------------------- */
 
-int choices_event_open_window_request(wimp_event_no  event_no,
-                                      wimp_block    *block,
-                                      void          *handle)
+int choices_event_open_window_request(wimp_event_no event_no,
+                                      wimp_block   *block,
+                                      void         *handle)
 {
   const choices *cs = handle;
 
@@ -806,12 +805,12 @@ error choices_set(const choices *cs)
 
 static error call_changed_callback(const choices      *cs,
                                    const choices_pane *p,
-                                   void               *arg)
+                                   void               *opaque)
 {
   error err;
 
   NOT_USED(cs);
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   if (p->handlers && p->handlers->changed_callback)
   {
@@ -1107,9 +1106,9 @@ int choices_event_mouse_click_pane(wimp_event_no  event_no,
   return event_HANDLED;
 }
 
-int choices_event_mouse_click_main(wimp_event_no  event_no,
-                                   wimp_block    *block,
-                                   void          *handle)
+int choices_event_mouse_click_main(wimp_event_no event_no,
+                                   wimp_block   *block,
+                                   void         *handle)
 {
   const choices *cs      = handle;
   wimp_pointer  *pointer = &block->pointer;
@@ -1152,9 +1151,9 @@ int choices_event_mouse_click_main(wimp_event_no  event_no,
 
 /* menu selection handler */
 
-int choices_event_menu_selection(wimp_event_no  event_no,
-                                 wimp_block    *block,
-                                 void          *handle)
+int choices_event_menu_selection(wimp_event_no event_no,
+                                 wimp_block   *block,
+                                 void         *handle)
 {
   const choices           *cs        = handle;
   wimp_selection          *selection = &block->selection;

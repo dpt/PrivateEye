@@ -52,7 +52,9 @@ static void slider_set_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-static int slider_event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int slider_event_user_drag_box(wimp_event_no event_no,
+                                      wimp_block   *block,
+                                      void         *handle)
 {
   NOT_USED(event_no);
   NOT_USED(block);
@@ -99,10 +101,19 @@ static void slider_resize(wimp_pointer *pointer)
   iconstate.i = slider.i;
   wimp_get_icon_state(&iconstate); // avoid this?
 
-  wimp_resize_icon(slider.w, slider.i,
-                   slider.bbox.x0, slider.bbox.y0, newx, slider.bbox.y1);
-  wimp_resize_icon(slider.w, slider.i - 1,
-                   newx, slider.bbox.y0, slider.bbox.x1, slider.bbox.y1);
+  wimp_resize_icon(slider.w,
+                   slider.i,
+                   slider.bbox.x0,
+                   slider.bbox.y0,
+                   newx,
+                   slider.bbox.y1);
+
+  wimp_resize_icon(slider.w,
+                   slider.i - 1,
+                   newx,
+                   slider.bbox.y0,
+                   slider.bbox.x1,
+                   slider.bbox.y1);
 
   oldx = iconstate.icon.extent.x1;
 
@@ -123,7 +134,9 @@ static void slider_resize(wimp_pointer *pointer)
   slider.callback(slider.i - 2, val); /* callback quoting the 'pit' icon */
 }
 
-static int slider_event_pollword_non_zero(wimp_event_no event_no, wimp_block *block, void *handle)
+static int slider_event_pollword_non_zero(wimp_event_no event_no,
+                                          wimp_block   *block,
+                                          void         *handle)
 {
   wimp_pointer pointer;
 
@@ -142,8 +155,10 @@ static int slider_event_pollword_non_zero(wimp_event_no event_no, wimp_block *bl
 
 /* ----------------------------------------------------------------------- */
 
-void slider_start(wimp_pointer *pointer, slider_update *update,
-                  int min, int max)
+void slider_start(wimp_pointer  *pointer,
+                  slider_update *update,
+                  int            min,
+                  int            max)
 {
   wimp_window_state state;
   int               x,y;
@@ -185,8 +200,12 @@ void slider_start(wimp_pointer *pointer, slider_update *update,
   drag.bbox.y1    = iconstate.icon.extent.y1 - y - GAP;
 
   drag.handle     = event_get_pollword();
-  _swi(0x4D942 /* AppEngine_WindowOp */, _IN(0)|_OUTR(0,2),
-       8, &drag.draw, &drag.undraw, &drag.redraw);
+  _swi(0x4D942 /* AppEngine_WindowOp */,
+       _IN(0)|_OUTR(0,2),
+       8,
+       &drag.draw,
+       &drag.undraw,
+       &drag.redraw);
 
   slider.w        = pointer->w;
   slider.i        = i;

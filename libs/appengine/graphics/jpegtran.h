@@ -42,11 +42,11 @@ enum
 
 typedef unsigned int jpegtran_transform_type;
 
-int jpegtran_transform(const unsigned char      *data,
-                       size_t                    length,
-                       unsigned char           **newdata,
-                       size_t                   *newlength,
-                       jpegtran_transform_type   args);
+int jpegtran_transform(const unsigned char    *data,
+                       size_t                  length,
+                       unsigned char         **newdata,
+                       size_t                 *newlength,
+                       jpegtran_transform_type args);
 
 /* Retrieve stored error messages. */
 const char *jpegtran_get_messages(void);

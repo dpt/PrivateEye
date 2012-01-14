@@ -87,7 +87,7 @@ typedef error (choices_pane_initialise_handler)(const choices_pane *);
 typedef void (choices_pane_finalise_handler)(const choices_pane *);
 typedef error (choices_pane_changed_handler)(const choices_pane *);
 typedef error (choices_pane_redraw_handler)(const choices_pane *,
-                                                  wimp_draw    *);
+                                            wimp_draw          *);
 
 /* these handlers deal with 'proposed' choices */
 typedef struct choices_pane_handlers

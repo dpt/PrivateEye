@@ -32,6 +32,8 @@
 
 /* ----------------------------------------------------------------------- */
 
+/* Linked list of Translators. */
+// FIXME: Use linked list library for this.
 typedef struct Translator
 {
   struct Translator *next;
@@ -52,8 +54,9 @@ static Translator *first_ffg = NULL;
 
 /* ----------------------------------------------------------------------- */
 
+// FIXME: Introduce a typedef for loadable_fn.
 static void read_translators(const char *wildcard,
-                             osbool (*loadable_fn)(bits))
+                             osbool    (*loadable_fn)(bits))
 {
   enum { MaxTypes = 8 }; /* FIXME: Hard limit. */
 
@@ -143,12 +146,12 @@ static void read_translators(const char *wildcard,
     {
       if (p[0] == '-' && p[1] == 'T' && p[2] == ' ')
       {
-        int c;
+        int  c;
         bits from, to;
 
         p += 3;
 
-        c = sscanf(p, "&%x &%x", &from, &to); /* ### &s are optional */
+        c = sscanf(p, "&%x &%x", &from, &to); /* FIXME: &s are optional */
         if (c != 2)
           continue;
 
@@ -163,7 +166,7 @@ static void read_translators(const char *wildcard,
         }
         else
         {
-          /* FIXME: need a bigger block */
+          /* FIXME: Need a bigger block */
         }
       }
       else
@@ -191,15 +194,12 @@ static void read_translators(const char *wildcard,
 static const Translator *get_converter(bits src_file_type)
 {
   const Translator *f;
+  int               i;
 
   for (f = first_ffg; f != NULL; f = f->next)
-  {
-    int i;
-
     for (i = 0; i < f->ntypes; i++)
       if (f->types[i].from == src_file_type)
         return f;
-  }
 
   return NULL;
 }
@@ -213,16 +213,19 @@ void ffg_initialise(osbool (*loadable_fn)(bits))
   static const char *vars[] =
   {
     "FFGServer$*"
-    /* , "FFXServer$*", "FileSwopper$*" ... not quite sure about these yet */
+    /* FFXServer$* and FileSwopper$* also exist but not quite sure about
+     * these yet */
   };
 
   int i;
 
+  // FIXME: Use NELEMS macro.
   for (i = 0; i < (int) (sizeof(vars) / sizeof(vars[0])); i++)
     read_translators(vars[i], loadable_fn);
 
   event_register_messageack_handler(message_TRANSLATE_FFG,
-                                    event_ANY_WINDOW, event_ANY_ICON,
+                                    event_ANY_WINDOW,
+                                    event_ANY_ICON,
                                     messageack_translate_ffg,
                                     NULL);
 }
@@ -233,7 +236,8 @@ void ffg_finalise(void)
   Translator *next;
 
   event_deregister_messageack_handler(message_TRANSLATE_FFG,
-                                      event_ANY_WINDOW, event_ANY_ICON,
+                                      event_ANY_WINDOW,
+                                      event_ANY_ICON,
                                       messageack_translate_ffg,
                                       NULL);
 
@@ -333,9 +337,8 @@ static int messageack_translate_ffg(wimp_message *message, void *handle)
    *   report an error 'translator died'. "
    */
 
-  // if (event == 19 && ...)
   if (message->sender != GLOBALS.task_handle)
     oserror_report(12345, "error.ffg.died");
 
-  return 1;
+  return 1; // FIXME: Use relevant event return code.
 }

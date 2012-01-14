@@ -36,22 +36,31 @@ void icon_set_selected(wimp_w w, wimp_i i, int select);
 
 wimp_icon_flags icon_get_flags(wimp_w w, wimp_i i);
 
-void icon_set_flags(wimp_w w, wimp_i i,
-                    wimp_icon_flags eor, wimp_icon_flags clear);
+void icon_set_flags(wimp_w          w,
+                    wimp_i          i,
+                    wimp_icon_flags eor,
+                    wimp_icon_flags clear);
 
 /* Sets the flags of a linear range of icons. */
-void icon_range_set_flags(wimp_w w, wimp_i i_low, wimp_i i_high,
-                          wimp_icon_flags eor, wimp_icon_flags clear);
+void icon_range_set_flags(wimp_w          w,
+                          wimp_i          i_low,
+                          wimp_i          i_high,
+                          wimp_icon_flags eor,
+                          wimp_icon_flags clear);
 
 /* Sets the flags of a list of specified icons. (e.g. for shading groups of
  * icons.) This is different than icon_range_set_flags in that the range need
  * not be contiguous. */
-void icon_group_set_flags(wimp_w w, const wimp_i *icons, int nicons,
-                          wimp_icon_flags eor, wimp_icon_flags clear);
+void icon_group_set_flags(wimp_w          w,
+                          const wimp_i   *icons,
+                          int             nicons,
+                          wimp_icon_flags eor,
+                          wimp_icon_flags clear);
 
 /* Finds the first icon in the window definition which matches the flags. */
 wimp_i icon_find(wimp_window_info *defn,
-                 wimp_icon_flags mask, wimp_icon_flags want);
+                 wimp_icon_flags   mask,
+                 wimp_icon_flags   want);
 
 /* Sets the specified icon, unsetting any others with the same ESG. */
 void icon_set_radio(wimp_w w, wimp_i i);
@@ -99,17 +108,27 @@ void icon_sprite_name(const char *validation, char *name);
 
 /* Drags the specified icon. */
 void drag_icon(wimp_w w, wimp_i i, int x, int y, const char *sprite);
+
 /* Called on the UserDragBox event to terminate the drag. */
 void drag_icon_stop(void);
 
 /* As above, but uses DragAnObject to drag the rendered object. */
-typedef void (drag_object_renderer)(void *arg);
-void drag_object(wimp_w w, wimp_i i, int x, int y,
-                 drag_object_renderer *render, void *args);
+typedef void (drag_object_renderer)(void *opaque);
+void drag_object(wimp_w                w,
+                 wimp_i                i,
+                 int                   x,
+                 int                   y,
+                 drag_object_renderer *render,
+                 void                 *opaque);
+
 /* A variation of the above routine for use when there is no 'real' icon to
  * base the drag upon. */
-void drag_object_box(wimp_w w, const os_box *box, int x, int y,
-                     drag_object_renderer *render, void *args);
+void drag_object_box(wimp_w                w,
+                     const os_box         *box,
+                     int                   x,
+                     int                   y,
+                     drag_object_renderer *render,
+                     void                 *opaque);
 void drag_object_stop(void);
 
 /* ----------------------------------------------------------------------- */

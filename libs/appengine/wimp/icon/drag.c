@@ -76,12 +76,18 @@ void drag_icon(wimp_w w, wimp_i i, int x, int y, const char *sprite)
     error = xosspriteop_read_sprite_info(osspriteop_NAME,
                                          area,
                          (osspriteop_id) sprite,
-                                         NULL, NULL, NULL, NULL);
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL);
 
     if (error)
       area = dragasprite_WIMP_SPRITE_AREA;
 
-    dragasprite_start(dragasprite_HPOS_CENTRE | dragasprite_VPOS_CENTRE | dragasprite_BOUND_POINTER | dragasprite_DROP_SHADOW,
+    dragasprite_start(dragasprite_HPOS_CENTRE   |
+                      dragasprite_VPOS_CENTRE   |
+                      dragasprite_BOUND_POINTER |
+                      dragasprite_DROP_SHADOW,
                       area,
                       sprite,
                      &drag.initial,

@@ -21,8 +21,12 @@ static int cmos;
 
 /* ----------------------------------------------------------------------- */
 
-void drag_object_box(wimp_w w, const os_box *box, int x, int y,
-                     drag_object_renderer *render, void *args)
+void drag_object_box(wimp_w                w,
+                     const os_box         *box,
+                     int                   x,
+                     int                   y,
+                     drag_object_renderer *render,
+                     void                 *opaque)
 {
   wimp_window_state wstate;
   wimp_drag         drag;
@@ -61,7 +65,7 @@ void drag_object_box(wimp_w w, const os_box *box, int x, int y,
             draganobject_CALL_FUNCTION |
             draganobject_FUNCTION_USE_USER;
 
-    regs.registers[0] = (int) args;
+    regs.registers[0] = (int) opaque;
 
     /* enabled */
     draganobject_start(flags,
@@ -88,8 +92,12 @@ void drag_object_box(wimp_w w, const os_box *box, int x, int y,
   }
 }
 
-void drag_object(wimp_w w, wimp_i i, int x, int y,
-                 drag_object_renderer *render, void *args)
+void drag_object(wimp_w                w,
+                 wimp_i                i,
+                 int                   x,
+                 int                   y,
+                 drag_object_renderer *render,
+                 void                 *opaque)
 {
   wimp_icon_state istate;
 
@@ -97,7 +105,7 @@ void drag_object(wimp_w w, wimp_i i, int x, int y,
   istate.i = i;
   wimp_get_icon_state(&istate);
 
-  drag_object_box(w, &istate.icon.extent, x, y, render, args);
+  drag_object_box(w, &istate.icon.extent, x, y, render, opaque);
 }
 
 void drag_object_stop(void)

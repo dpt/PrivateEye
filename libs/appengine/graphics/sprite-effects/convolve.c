@@ -107,14 +107,14 @@ static error convolve_8(const convolve_lut *lut,
                         int                 stride,
                         Pixel8             *buf)
 {
-  int             padlen;
-  const Pixel8   *p1;
-  Pixel8         *p2;
-  int             x;
-  const Pixel8   *ip;
-  Pixel8         *op;
-  int             bias;
-  const int      *lut0;
+  int           padlen;
+  const Pixel8 *p1;
+  Pixel8       *p2;
+  int           x;
+  const Pixel8 *ip;
+  Pixel8       *op;
+  int           bias;
+  const int    *lut0;
 
   int fwd0;
   //int fwd1;
@@ -198,13 +198,13 @@ static void convolve_888_1stage(const convolve_lut *lut,
                                 int                 bias,
                                 int                 stride)
 {
-  const int      *lut0;
-  int             fwd0_r;
-  int             rev0_r;
-  int             fwd0_g;
-  int             rev0_g;
-  int             fwd0_b;
-  int             rev0_b;
+  const int *lut0;
+  int        fwd0_r;
+  int        rev0_r;
+  int        fwd0_g;
+  int        rev0_g;
+  int        fwd0_b;
+  int        rev0_b;
 
   lut0 = lut->lut[0];
 
@@ -256,14 +256,14 @@ static void convolve_888_2stage(const convolve_lut *lut,
                                 int                 bias,
                                 int                 stride)
 {
-  const int      *lut0;
-  const int      *lut1;
-  int             fwd0_r, fwd1_r;
-  int             rev0_r, rev1_r;
-  int             fwd0_g, fwd1_g;
-  int             rev0_g, rev1_g;
-  int             fwd0_b, fwd1_b;
-  int             rev0_b, rev1_b;
+  const int *lut0;
+  const int *lut1;
+  int        fwd0_r, fwd1_r;
+  int        rev0_r, rev1_r;
+  int        fwd0_g, fwd1_g;
+  int        rev0_g, rev1_g;
+  int        fwd0_b, fwd1_b;
+  int        rev0_b, rev1_b;
 
   lut0 = lut->lut[0];
   lut1 = lut->lut[1];
@@ -333,15 +333,15 @@ static void convolve_888_3stage(const convolve_lut *lut,
                                 int                 bias,
                                 int                 stride)
 {
-  const int      *lut0;
-  const int      *lut1;
-  const int      *lut2;
-  int             fwd0_r, fwd1_r, fwd2_r;
-  int             rev0_r, rev1_r, rev2_r;
-  int             fwd0_g, fwd1_g, fwd2_g;
-  int             rev0_g, rev1_g, rev2_g;
-  int             fwd0_b, fwd1_b, fwd2_b;
-  int             rev0_b, rev1_b, rev2_b;
+  const int *lut0;
+  const int *lut1;
+  const int *lut2;
+  int        fwd0_r, fwd1_r, fwd2_r;
+  int        rev0_r, rev1_r, rev2_r;
+  int        fwd0_g, fwd1_g, fwd2_g;
+  int        rev0_g, rev1_g, rev2_g;
+  int        fwd0_b, fwd1_b, fwd2_b;
+  int        rev0_b, rev1_b, rev2_b;
 
   lut0 = lut->lut[0];
   lut1 = lut->lut[1];
@@ -431,15 +431,15 @@ static void convolve_888_Nstage(const convolve_lut *lut,
                                 int                 bias,
                                 int                 stride)
 {
-  int             stages;
-  int             i;
-  const int      *lutN[MAXLUTS];
-  int             fwd_r[MAXLUTS];
-  int             rev_r[MAXLUTS];
-  int             fwd_g[MAXLUTS];
-  int             rev_g[MAXLUTS];
-  int             fwd_b[MAXLUTS];
-  int             rev_b[MAXLUTS];
+  int        stages;
+  int        i;
+  const int *lutN[MAXLUTS];
+  int        fwd_r[MAXLUTS];
+  int        rev_r[MAXLUTS];
+  int        fwd_g[MAXLUTS];
+  int        rev_g[MAXLUTS];
+  int        fwd_b[MAXLUTS];
+  int        rev_b[MAXLUTS];
 
   stages = lut->stages;
 
@@ -529,7 +529,6 @@ static error convolve_888(const convolve_lut *lut,
   const Pixel888  *ip;
   Pixel888        *op;
   convolve_888_fn *fn;
-
   int              bias;
 
   /* buffer and pad the input */
@@ -605,10 +604,10 @@ error convolve_sprite(const convolve_lut      *lut,
   {
   case 3:
   {
-    Pixel8               *row;
-    int                   rowbytes;
-    const Pixel8         *sp;
-    Pixel8               *dp;
+    Pixel8       *row;
+    int           rowbytes;
+    const Pixel8 *sp;
+    Pixel8       *dp;
 
     row = malloc(maxdim * sizeof(*row));
     if (row == NULL)
@@ -643,9 +642,9 @@ error convolve_sprite(const convolve_lut      *lut,
 
   case 5:
   {
-    Pixel888             *row;
-    const Pixel888       *sp;
-    Pixel888             *dp;
+    Pixel888       *row;
+    const Pixel888 *sp;
+    Pixel888       *dp;
 
     row = malloc(maxdim * sizeof(*row));
     if (row == NULL)

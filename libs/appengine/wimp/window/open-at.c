@@ -14,9 +14,9 @@ enum
 
 /* ----------------------------------------------------------------------- */
 
-void window_open_with_callback(wimp_w  w,
-                               void  (*cb)(CallbackArgs *, void *),
-                               void   *arg)
+void window_open_with_callback(wimp_w w,
+                               void (*cb)(CallbackArgs *, void *),
+                               void  *opaque)
 {
   static const os_VDU_VAR_LIST(5) var_list =
   {{
@@ -48,7 +48,7 @@ void window_open_with_callback(wimp_w  w,
 
   /* fprintf(stderr, "%d %d %d %d\n", args.left, args.bottom, args.right, args.top); */
 
-  cb(&args, arg);
+  cb(&args, opaque);
 
   wimp_open_window((wimp_open *) &args.info);
 }
@@ -72,7 +72,7 @@ void centre_scrollbars(wimp_window_info *info)
 
 /* ----------------------------------------------------------------------- */
 
-static void open_at_cb(CallbackArgs *args, void *arg)
+static void open_at_cb(CallbackArgs *args, void *opaque)
 {
   unsigned int where;
   unsigned int flags;
@@ -82,7 +82,7 @@ static void open_at_cb(CallbackArgs *args, void *arg)
   int          scr_w, scr_h;
   int          x, y;
 
-  where = (unsigned int) arg;
+  where = (unsigned int) opaque;
   flags = where & (AT_FORCE | AT_NOCOVERICONBAR | AT_USEVISIBLEAREA);
   where ^= flags;
 

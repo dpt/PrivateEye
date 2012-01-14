@@ -47,7 +47,11 @@
 
 #define tinct_SPRITE_TYPE       (0x301680B5) /* 90x90dpi, 24bpp */
 
-static void redraw_tinct(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
+static void redraw_tinct(const drawable_choices *choices,
+                         wimp_draw              *draw,
+                         drawable_t             *drawable,
+                         int                     x,
+                         int                     y)
 {
   osspriteop_area   *area;
   osspriteop_header *header;
@@ -80,7 +84,11 @@ static void redraw_tinct(const drawable_choices *choices, wimp_draw *draw, drawa
   _swi(swi, _INR(2,7), header, x, y, w, h, flags);
 }
 
-static void redraw_os(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
+static void redraw_os(const drawable_choices *choices,
+                      wimp_draw              *draw,
+                      drawable_t             *drawable,
+                      int                     x,
+                      int                     y)
 {
   osspriteop_area      *area;
   osspriteop_header    *header;
@@ -97,17 +105,27 @@ static void redraw_os(const drawable_choices *choices, wimp_draw *draw, drawable
                                area,
                (osspriteop_id) header,
                                x, y,
-                               choices->sprite.plot_flags | osspriteop_USE_MASK | osspriteop_GIVEN_WIDE_ENTRIES,
+                               choices->sprite.plot_flags |
+                               osspriteop_USE_MASK        |
+                               osspriteop_GIVEN_WIDE_ENTRIES,
                               &drawable->details.sprite.factors,
                                trans_tab);
 }
 
-typedef void (redraw_fn)(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y);
+typedef void (redraw_fn)(const drawable_choices *choices,
+                         wimp_draw              *draw,
+                         drawable_t             *drawable,
+                         int                     x,
+                         int                     y);
 
-static void bitmap_redraw(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
+static void bitmap_redraw(const drawable_choices *choices,
+                          wimp_draw              *draw,
+                          drawable_t             *drawable,
+                          int                     x,
+                          int                     y)
 {
-  osbool  has_mask;
-  os_mode mode;
+  osbool     has_mask;
+  os_mode    mode;
   redraw_fn *redraw;
 
   has_mask = (drawable->image->flags & image_FLAG_HAS_MASK) != 0;
@@ -124,12 +142,12 @@ static void bitmap_redraw(const drawable_choices *choices, wimp_draw *draw, draw
 
     /* see if Tinct is loaded */
     features = 0;
-    err = _swix(Tinct_AvailableFeatures, _IN(0)|_OUT(0), features,
-                                                        &features);
+    err = _swix(Tinct_AvailableFeatures,
+                _IN(0)|_OUT(0),
+                features,
+               &features);
     if (err == NULL)
-    {
       redraw = redraw_tinct;
-    }
   }
 
   drawable->methods.redraw = redraw;
@@ -145,16 +163,14 @@ static void bitmap_colours(drawable_t *drawable)
   osspriteop_header *header;
 
   if (drawable->details.sprite.trans_tab)
-  {
     /* Discard previous translation table */
     flex_free((flex_ptr) &drawable->details.sprite.trans_tab);
-  }
 
   area   = drawable->image->image;
   header = sprite_select(area, 0);
 
   sprite_colours((osspriteop_area **) &drawable->image->image,
-                 header,
+                  header,
                  &drawable->details.sprite.trans_tab);
 }
 
@@ -176,7 +192,9 @@ static void bitmap_scaling(drawable_t *drawable, const os_factors *factors)
   scaled_factors->ydiv = factors->ydiv << screen_yeig;
 }
 
-void bitmap_get_dimensions(drawable_t *drawable, const os_factors *factors, os_box *box)
+void bitmap_get_dimensions(drawable_t       *drawable,
+                           const os_factors *factors,
+                           os_box           *box)
 {
   image_t *image;
 
@@ -191,10 +209,8 @@ void bitmap_get_dimensions(drawable_t *drawable, const os_factors *factors, os_b
 static void bitmap_reset(drawable_t *drawable)
 {
   if (drawable->details.sprite.trans_tab)
-  {
     /* Discard previous translation table */
     flex_free((flex_ptr) &drawable->details.sprite.trans_tab);
-  }
 
   drawable->details.sprite.index = 0;
 }

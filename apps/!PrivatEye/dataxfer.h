@@ -10,7 +10,7 @@
 
 #include "appengine/base/errors.h"
 
-error dataxfer__init(void);
-void dataxfer__fin(void);
+error dataxfer_init(void);
+void dataxfer_fin(void);
 
 #endif /* DATAXFER_H */

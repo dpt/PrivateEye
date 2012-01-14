@@ -245,15 +245,15 @@ static void calc(tonemap *map)
   map->flags |= FLAG_TABLES_UP_TO_DATE;
 }
 
-void tonemap_set(tonemap          *map,
-                 tonemap_channels  channels,
-           const tonemap_spec     *spec)
+void tonemap_set(tonemap         *map,
+                 tonemap_channels channels,
+           const tonemap_spec    *spec)
 {
-  tonemap_internal_flags  intflags;
-  tonemap_internal_flags  rgbflags;
-  int                     ncomponents;
-  tonemap_comp           *comp;
-  int                     i;
+  tonemap_internal_flags intflags;
+  tonemap_internal_flags rgbflags;
+  int                    ncomponents;
+  tonemap_comp          *comp;
+  int                    i;
 
   intflags = map->flags;
 
@@ -438,9 +438,7 @@ static const style_map_ent *get_style_map(const tonemap *map)
   return &style_map[alpha][sync];
 }
 
-error tonemap_draw(tonemap *map,
-                   int      x,
-                   int      y)
+error tonemap_draw(tonemap *map, int x, int y)
 {
   error                  err;
   int                    npaths;
@@ -565,9 +563,9 @@ void tonemap_get_corrections(tonemap                    *map,
 
 /* ----------------------------------------------------------------------- */
 
-void tonemap_get_values(tonemap          *map,
-                        tonemap_channels  channels,
-                        tonemap_spec     *spec)
+void tonemap_get_values(tonemap         *map,
+                        tonemap_channels channels,
+                        tonemap_spec    *spec)
 {
   int i;
 

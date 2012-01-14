@@ -40,9 +40,9 @@ enum
 
 typedef struct scale_t
 {
-  dialogue_t            dialogue; /* base class */
-  int                   min, max;
-  int                   step, mult;
+  dialogue_t           dialogue; /* base class */
+  int                  min, max;
+  int                  step, mult;
   scale_scale_handler *scale_handler;
 }
 scale_t;
@@ -119,7 +119,9 @@ static void scale_nudge(scale_t *s, int up, int faster)
   scale_set(&s->dialogue, scale);
 }
 
-static int scale_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int scale_event_mouse_click(wimp_event_no event_no,
+                                   wimp_block   *block,
+                                   void         *handle)
 {
   wimp_pointer *pointer;
   scale_t      *s;
@@ -194,7 +196,9 @@ static int scale_event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
   return event_HANDLED;
 }
 
-static int scale_event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int scale_event_key_pressed(wimp_event_no event_no,
+                                   wimp_block   *block,
+                                   void         *handle)
 {
   wimp_key *key;
   scale_t  *s;
@@ -286,7 +290,8 @@ void scale_set_steppings(dialogue_t *d, int step, int mult)
   s->mult = mult;
 }
 
-void scale_set_scale_handler(dialogue_t *d, scale_scale_handler *scale_handler)
+void scale_set_scale_handler(dialogue_t          *d,
+                             scale_scale_handler *scale_handler)
 {
   scale_t *s = (scale_t *) d;
 

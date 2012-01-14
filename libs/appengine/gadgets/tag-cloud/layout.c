@@ -192,7 +192,8 @@ static error paintstring_ensure(tag_cloud *tc, int need, char **ptr)
 
   allocated = power2gt(used + need);
 
-  string = realloc(tc->layout.paintstring.string, sizeof(*tc->layout.paintstring.string) * allocated);
+  string = realloc(tc->layout.paintstring.string,
+                   sizeof(*tc->layout.paintstring.string) * allocated);
   if (string == NULL)
     return error_OOM;
 
@@ -516,13 +517,25 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
     }
   }
 
-  err = xfont_find_font(font_p, font_size, font_size, 0, 0,
-                       &tc->layout.font, NULL, NULL);
+  err = xfont_find_font(font_p,
+                        font_size,
+                        font_size,
+                        0,
+                        0,
+                       &tc->layout.font,
+                        NULL,
+                        NULL);
   if (err)
     return error_OS;
 
-  err = xfont_find_font(bold_font_p, font_size, font_size, 0, 0,
-                       &tc->layout.bold_font, NULL, NULL);
+  err = xfont_find_font(bold_font_p,
+                        font_size,
+                        font_size,
+                        0,
+                        0,
+                       &tc->layout.bold_font,
+                        NULL,
+                        NULL);
   if (err)
     return error_OS;
 
@@ -541,8 +554,17 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
   tc->layout.dims.allocated        = 0;
 
   font_read_font_metrics(tc->layout.font,
-                         NULL, NULL, NULL, &misc_info, NULL, NULL,
-                         NULL, NULL, NULL, &misc_info_size, NULL);
+                         NULL,
+                         NULL,
+                         NULL,
+                        &misc_info,
+                         NULL,
+                         NULL,
+                         NULL,
+                         NULL,
+                         NULL,
+                        &misc_info_size,
+                         NULL);
 
   if (misc_info_size)
   {
@@ -725,8 +747,9 @@ error tag_cloud_layout(tag_cloud *tc, int width)
     {
       int x1;
 
-      x1 = x + tc->layout.dims.gaplength +
-               tc->layout.lengths.length[tc->sorted[i]];
+      x1 = x +
+           tc->layout.dims.gaplength +
+           tc->layout.lengths.length[tc->sorted[i]];
       if (x1 >= scaledw)
         break;
 

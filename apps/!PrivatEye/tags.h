@@ -10,10 +10,10 @@
 #include "appengine/base/errors.h"
 #include "appengine/graphics/image.h"
 
-error tags__init(void);
-void tags__fin(void);
-error tags__open(image_t *image);
+error tags_init(void);
+void tags_fin(void);
+error tags_open(image_t *image);
 
-error tags__choices_updated(const choices_group *g);
+error tags_choices_updated(const choices_group *g);
 
 #endif /* TAGS_H */

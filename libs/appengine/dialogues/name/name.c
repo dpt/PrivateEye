@@ -27,15 +27,15 @@
 
 typedef struct name_t
 {
-  dialogue_t             dialogue; /* base class */
-  name_ok_handler      *ok_handler;
-  void                  *ok_arg;
+  dialogue_t        dialogue; /* base class */
+  name_ok_handler *ok_handler;
+  void            *ok_arg;
 }
 name_t;
 
 /* ----------------------------------------------------------------------- */
 
-static dialogue_fillout  name_default_fillout;
+static dialogue_fillout name_default_fillout;
 
 static event_wimp_handler name_event_mouse_click;
 
@@ -84,14 +84,16 @@ void name_set(dialogue_t *d, const char *name)
 /* Default fillout handler. Can be overridden by the client registering their
  * own using dialogue_set_fillout_handler.
  */
-static void name_default_fillout(dialogue_t *d, void *arg)
+static void name_default_fillout(dialogue_t *d, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   name_set(d, "");
 }
 
-static int name_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int name_event_mouse_click(wimp_event_no event_no,
+                                  wimp_block   *block,
+                                  void         *handle)
 {
   wimp_pointer *pointer;
   name_t       *d;
@@ -127,7 +129,7 @@ static int name_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
       break;
 
     case ICON_B_CANCEL:
-      d->dialogue.fillout(&d->dialogue, d->dialogue.arg);
+      d->dialogue.fillout(&d->dialogue, d->dialogue.opaque);
       break;
     }
 
@@ -142,12 +144,12 @@ static int name_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
 
 /* ----------------------------------------------------------------------- */
 
-void name_set_ok_handler(dialogue_t       *d,
-                          name_ok_handler *handler,
-                          void             *arg)
+void name_set_ok_handler(dialogue_t      *d,
+                         name_ok_handler *handler,
+                         void            *opaque)
 {
   name_t *n = (name_t *) d;
 
   n->ok_handler = handler;
-  n->ok_arg     = arg;
+  n->ok_arg     = opaque;
 }

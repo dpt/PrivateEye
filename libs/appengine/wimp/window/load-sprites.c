@@ -30,7 +30,8 @@ static int _load_sprites(const char *spritefile, int area_size)
 
   osspriteop_clear_sprites(osspriteop_USER_AREA, template_sprite_area);
 
-  osspriteop_load_sprite_file(osspriteop_USER_AREA, template_sprite_area,
+  osspriteop_load_sprite_file(osspriteop_USER_AREA,
+                              template_sprite_area,
                               spritefile);
 
   return 0;
@@ -54,8 +55,11 @@ void window_load_sprites(const char *filename)
   strcat(suffixed, suffix);
 
   /* Read suffixed object type and length */
-  obj_type = osfile_read_no_path(suffixed, NULL, NULL,
-                                &area_size, NULL);
+  obj_type = osfile_read_no_path(suffixed,
+                                 NULL,
+                                 NULL,
+                                &area_size,
+                                 NULL);
   if (obj_type == fileswitch_IS_FILE)
   {
     _load_sprites(suffixed, area_size);
@@ -63,8 +67,11 @@ void window_load_sprites(const char *filename)
   else
   {
     /* Suffixed spritefile not found, try the original filename */
-    obj_type = osfile_read_no_path(filename, NULL, NULL,
-                                  &area_size, NULL);
+    obj_type = osfile_read_no_path(filename,
+                                   NULL,
+                                   NULL,
+                                  &area_size,
+                                   NULL);
     if (obj_type != fileswitch_IS_FILE)
       error_fatal1("NoFile", filename);
 

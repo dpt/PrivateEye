@@ -15,9 +15,9 @@ typedef struct
 }
 CallbackArgs;
 
-void window_open_with_callback(wimp_w  w,
-                               void  (*cb)(CallbackArgs *, void *),
-                               void   *arg);
+void window_open_with_callback(wimp_w w,
+                               void (*cb)(CallbackArgs *, void *),
+                               void  *opaque);
 
 void centre_scrollbars(wimp_window_info *info);
 

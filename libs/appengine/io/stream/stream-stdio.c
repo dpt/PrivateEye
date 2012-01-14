@@ -19,12 +19,12 @@
 
 typedef struct stream_file
 {
-  stream         base;
-  FILE          *file;
-  long int       length;
+  stream        base;
+  FILE         *file;
+  long int      length;
 
-  int            bufsz;
-  unsigned char  buffer[UNKNOWN];
+  int           bufsz;
+  unsigned char buffer[UNKNOWN];
 }
 stream_file;
 
@@ -42,7 +42,7 @@ static error stream_stdio_seek(stream *s, int pos)
 static int stream_stdio_get(stream *s)
 {
   stream_file *sf = (stream_file *) s;
-  int         read;
+  int          read;
 
   /* are we only called when buffer empty? */
   assert(sf->base.buf == sf->base.end);

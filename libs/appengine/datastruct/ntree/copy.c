@@ -12,7 +12,10 @@
 
 #include "impl.h"
 
-error ntree_copy(ntree_t *t, ntree_copy_fn *fn, void *arg, ntree_t **new_t)
+error ntree_copy(ntree_t       *t,
+                 ntree_copy_fn *fn,
+                 void          *opaque,
+                 ntree_t      **new_t)
 {
   error    err;
   void    *data;
@@ -22,7 +25,7 @@ error ntree_copy(ntree_t *t, ntree_copy_fn *fn, void *arg, ntree_t **new_t)
   if (!t)
     return NULL;
 
-  err = fn(t->data, arg, &data);
+  err = fn(t->data, opaque, &data);
   if (err)
     return err;
 
@@ -39,7 +42,7 @@ error ntree_copy(ntree_t *t, ntree_copy_fn *fn, void *arg, ntree_t **new_t)
   {
     ntree_t *new_child;
 
-    err = ntree_copy(child, fn, arg, &new_child);
+    err = ntree_copy(child, fn, opaque, &new_child);
     if (err)
       return err;
 

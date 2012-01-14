@@ -820,7 +820,7 @@ static error test_bash(State *state)
   for (i = 0; i < ntags; i++)
     free(tagnames[i]);
 
-  tagdb_close(state->db); /* remember that this calls __commit */
+  tagdb_close(state->db); /* remember that this calls _commit */
 
   tagdb_delete(FILENAME);
 

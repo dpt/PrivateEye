@@ -10,7 +10,7 @@
 #include "appengine/io/stream.h"
 
 error stream_mem_create(const unsigned char *block,
-                         size_t               length,
-                         stream             **s);
+                        size_t               length,
+                        stream             **s);
 
 #endif /* APPENGINE_STREAM_MEM_H */

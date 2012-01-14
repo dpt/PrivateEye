@@ -15,10 +15,10 @@
 
 // I DON'T THINK THIS CODE HAS EVER BEEN EXERCISED
 
-wimp_i iconbar_create_device_icon(const char    *sprite,
-                                  const char    *text,
-                                  wimp_w         w,
-                                  wimp_priority  priority)
+wimp_i iconbar_create_device_icon(const char   *sprite,
+                                  const char   *text,
+                                  wimp_w        w,
+                                  wimp_priority priority)
 {
   int               width, height;
   os_mode           mode;
@@ -27,7 +27,10 @@ wimp_i iconbar_create_device_icon(const char    *sprite,
   char             *validation;
   wimp_icon_create  create;
 
-  if (EC(xwimpspriteop_read_sprite_info(sprite, &width, &height, NULL, &mode)))
+  if (EC(xwimpspriteop_read_sprite_info(sprite,
+                                       &width, &height,
+                                        NULL,
+                                       &mode)))
   {
     /* FIXME: should check error number really */
     width  = 34;

@@ -45,26 +45,26 @@ typedef void (imageobwin_refresh)(imageobwin_t *obwin);
 
 struct imageobwin_factory_t
 {
-  wimp_w                 w;           /* window from which we clone each new
-                                         instance's window */
-  wimp_menu             *menu;        /* used for _every_ window (itself a
-                                         singleton) (or NULL) */
-  list_t                 list_anchor; /* linked list of observer windows of
-                                         this class */
+  wimp_w                w;           /* window from which we clone each new
+                                        instance's window */
+  wimp_menu            *menu;        /* used for _every_ window (itself a
+                                        singleton) (or NULL) */
+  list_t                list_anchor; /* linked list of observer windows of
+                                        this class */
 
-  char                  *name;
+  char                 *name;
 
-  window_open_at_flags   open_at;
+  window_open_at_flags  open_at;
 
-  imageobwin_available  *available;
-  imageobwin_alloc      *alloc;
-  imageobwin_dealloc    *dealloc;
-  imageobwin_compute    *compute;
-  imageobwin_refresh    *refresh;
+  imageobwin_available *available;
+  imageobwin_alloc     *alloc;
+  imageobwin_dealloc   *dealloc;
+  imageobwin_compute   *compute;
+  imageobwin_refresh   *refresh;
 
-  event_wimp_handler    *event_redraw_window_request;
-  event_wimp_handler    *event_mouse_click_request;
-  event_wimp_handler    *event_menu_selection;
+  event_wimp_handler   *event_redraw_window_request;
+  event_wimp_handler   *event_mouse_click_request;
+  event_wimp_handler   *event_menu_selection;
 };
 
 struct imageobwin_t
@@ -77,23 +77,23 @@ struct imageobwin_t
 
 /* Constructs a new imageobwin_factory_t. */
 error imageobwin_construct(imageobwin_factory_t  *self,
-                            const char            *name,
-                            window_open_at_flags   open_at,
-                            imageobwin_available  *available,
-                            imageobwin_alloc      *alloc,
-                            imageobwin_dealloc    *dealloc,
-                            imageobwin_compute    *compute,
-                            imageobwin_refresh    *refresh,
-                            event_wimp_handler    *redraw,
-                            event_wimp_handler    *click,
-                            event_wimp_handler    *menu);
+                           const char            *name,
+                           window_open_at_flags   open_at,
+                           imageobwin_available  *available,
+                           imageobwin_alloc      *alloc,
+                           imageobwin_dealloc    *dealloc,
+                           imageobwin_compute    *compute,
+                           imageobwin_refresh    *refresh,
+                           event_wimp_handler    *redraw,
+                           event_wimp_handler    *click,
+                           event_wimp_handler    *menu);
 
 void imageobwin_destruct(imageobwin_factory_t *doomed);
 
 /* Called to create and open a new image observer window. */
 error imageobwin_open(imageobwin_factory_t *factory,
-                       image_t              *image,
-                       const void           *config);
+                      image_t              *image,
+                      const void           *config);
 
 /* Compute then refresh the window. */
 void imageobwin_kick(imageobwin_t *obwin);

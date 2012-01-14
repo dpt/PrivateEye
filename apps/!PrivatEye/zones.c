@@ -14,8 +14,8 @@
 #include "oslib/osspriteop.h"
 #include "oslib/wimp.h"
 
-#include "appengine/vdu/sprite.h"
 #include "appengine/graphics/image.h"
+#include "appengine/vdu/sprite.h"
 
 #include "privateeye.h"
 #include "viewer.h"

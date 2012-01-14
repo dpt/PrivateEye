@@ -13,7 +13,11 @@
 
 #include "drawable-drawfile.h"
 
-static void drawfile_redraw(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
+static void drawfile_redraw(const drawable_choices *choices,
+                            wimp_draw              *draw,
+                            drawable_t             *drawable,
+                            int                     x,
+                            int                     y)
 {
   int                     flatness;
   const drawfile_diagram *diagram;
@@ -29,11 +33,11 @@ static void drawfile_redraw(const drawable_choices *choices, wimp_draw *draw, dr
   flatness = choices->drawfile.flatness;
 
   (void) xdrawfile_render((flatness == -1) ? 0 : drawfile_RENDER_GIVEN_FLATNESS,
-                          diagram,
-                          drawable->image->display.file_size,
-                          trfm,
-                         &draw->clip,
-                          flatness);
+                           diagram,
+                           drawable->image->display.file_size,
+                           trfm,
+                          &draw->clip,
+                           flatness);
 }
 
 void drawabledrawfile_export_methods(drawable_t *drawable)

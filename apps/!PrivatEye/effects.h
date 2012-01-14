@@ -9,9 +9,9 @@
 #include "appengine/base/errors.h"
 #include "appengine/graphics/image.h"
 
-error effects__init(void);
-void effects__fin(void);
-void effects__open(image_t *image);
-int effects__available(const image_t *image);
+error effects_init(void);
+void effects_fin(void);
+void effects_open(image_t *image);
+int effects_available(const image_t *image);
 
 #endif /* EFFECTS_H */

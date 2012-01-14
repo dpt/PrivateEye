@@ -77,10 +77,10 @@ viewer_t *viewer_find(wimp_w window_handle);
 viewer_t *viewer_find_by_attrs(const char *file_name, bits load, bits exec);
 int viewer_count_clones(viewer_t *viewer);
 
-typedef int (viewer_map_callback)(viewer_t *, void *arg);
+typedef int (viewer_map_callback)(viewer_t *, void *opaque);
 
-void viewer_map(viewer_map_callback *fn, void *arg);
-void viewer_map_for_image(image_t *image, viewer_map_callback *fn, void *arg);
+void viewer_map(viewer_map_callback *fn, void *opaque);
+void viewer_map_for_image(image_t *image, viewer_map_callback *fn, void *opaque);
 
 int viewer_get_count(void);
 void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box);

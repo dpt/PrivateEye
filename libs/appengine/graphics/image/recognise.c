@@ -28,9 +28,12 @@ int image_recognise(wimp_message *message)
   bits      file_type;
 
   /* read part of the file */
-  e = EC(xosfind_openinw(osfind_NO_PATH | osfind_ERROR_IF_ABSENT |
+  e = EC(xosfind_openinw(osfind_NO_PATH         |
+                         osfind_ERROR_IF_ABSENT |
                          osfind_ERROR_IF_DIR,
-                         message->data.data_xfer.file_name, NULL, &f));
+                         message->data.data_xfer.file_name,
+                         NULL,
+                        &f));
   if (e)
   {
     oserror_report_block(e);
@@ -65,10 +68,7 @@ int image_recognise(wimp_message *message)
 
     int i;
 
-    i = bsearch_uint(&map[0].magic,
-                      nelems,
-                      stride,
-   *((unsigned int *) buf));
+    i = bsearch_uint(&map[0].magic, nelems, stride, *((unsigned int *) buf));
     if (i >= 0)
       file_type = map[i].file_type;
   }

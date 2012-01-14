@@ -38,7 +38,7 @@ enum
 
 typedef struct dcs_t
 {
-  dialogue_t          dialogue; /* base class */
+  dialogue_t dialogue; /* base class */
 }
 dcs_t;
 
@@ -204,7 +204,9 @@ int dcs_quit_quit_query(const char *message, int count)
 
 /* ----------------------------------------------------------------------- */
 
-static int dcs_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int dcs_event_mouse_click(wimp_event_no event_no,
+                                 wimp_block   *block,
+                                 void         *handle)
 {
   wimp_pointer *pointer;
 

@@ -3,8 +3,11 @@
 
 #include "appengine/wimp/icon.h"
 
-void icon_group_set_flags(wimp_w w, const wimp_i *icons, int nicons,
-                          wimp_icon_flags eor, wimp_icon_flags clear)
+void icon_group_set_flags(wimp_w          w,
+                          const wimp_i   *icons,
+                          int             nicons,
+                          wimp_icon_flags eor,
+                          wimp_icon_flags clear)
 {
   wimp_icon_state state;
   int             i;

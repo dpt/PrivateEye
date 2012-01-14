@@ -10,9 +10,9 @@
 
 #include "viewer.h"
 
-error display__init(void);
-void display__fin(void);
-error display__set_handlers(viewer_t *viewer);
-void display__release_handlers(viewer_t *viewer);
+error display_init(void);
+void display_fin(void);
+error display_set_handlers(viewer_t *viewer);
+void display_release_handlers(viewer_t *viewer);
 
 #endif /* DISPLAY_H */

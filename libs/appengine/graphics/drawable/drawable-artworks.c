@@ -16,7 +16,11 @@
 
 #include "drawable-artworks.h"
 
-static void artworks_redraw(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
+static void artworks_redraw(const drawable_choices *choices,
+                            wimp_draw              *draw,
+                            drawable_t             *drawable,
+                            int                     x,
+                            int                     y)
 {
   os_trfm            *trfm;
   awrender_info_block info_block;

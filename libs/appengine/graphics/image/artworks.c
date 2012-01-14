@@ -28,13 +28,13 @@
 
 static int artworks_load(image_choices *choices, image_t *image)
 {
-  static osbool    have_renderer = FALSE;
+  static osbool   have_renderer = FALSE;
 
-  int              file_size;
-  artworks_handle  handle;
-  int              border_size;
-  os_box          *bbox;
-  os_error *e;
+  os_error       *e;
+  int             file_size;
+  artworks_handle handle;
+  int             border_size;
+  os_box         *bbox;
 
   if (have_renderer == FALSE)
   {
@@ -64,7 +64,8 @@ static int artworks_load(image_choices *choices, image_t *image)
     return TRUE; /* failure */
   }
 
-  if (flex_alloc((flex_ptr) &image->details.artworks.workspace, awrender_DefaultWorkSpace) == 0)
+  if (flex_alloc((flex_ptr) &image->details.artworks.workspace,
+                  awrender_DefaultWorkSpace) == 0)
   {
     oserror_report(1, "error.no.mem");
     flex_free((flex_ptr) &image->image);

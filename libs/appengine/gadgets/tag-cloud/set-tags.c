@@ -54,20 +54,20 @@ static void calc_scales(tag_cloud *tc)
   tc->scale.scale = scale;
 }
 
-error tag_cloud_set_tags(tag_cloud            *tc,
-                          const tag_cloud_tag *tags,
-                          int                   ntags)
+error tag_cloud_set_tags(tag_cloud           *tc,
+                         const tag_cloud_tag *tags,
+                         int                  ntags)
 {
-  error                 err;
-  atom_set_t           *dict        = NULL;
-  int                   totalcount;
+  error                err;
+  atom_set_t          *dict        = NULL;
+  int                  totalcount;
   const tag_cloud_tag *t;
   tag_cloud_entry     *entries     = NULL;
-  int                   e_used      = 0;
-  int                   e_allocated = 0;
-  void                 *newarr;
-  int                  *sorted;
-  int                   i;
+  int                  e_used      = 0;
+  int                  e_allocated = 0;
+  void                *newarr;
+  int                 *sorted;
+  int                  i;
 
   atom_destroy(tc->dict);
   tc->dict = NULL;
@@ -92,8 +92,10 @@ error tag_cloud_set_tags(tag_cloud            *tc,
   {
     atom_t index;
 
-    err = atom_new(dict, (const unsigned char *) t->name,
-                   strlen(t->name) + 1, &index);
+    err = atom_new(dict,
+                   (const unsigned char *) t->name,
+                   strlen(t->name) + 1,
+                  &index);
     if (err != error_ATOM_NAME_EXISTS && err)
       return err;
 
@@ -184,8 +186,11 @@ error tag_cloud_set_tags(tag_cloud            *tc,
   {
     /* set up the stats icon */
 
-    icon_printf(tc->toolbar_w, TAG_CLOUD_T_D_INFO,
-                message0("tagcloud.stats"), ntags, totalcount);
+    icon_printf(tc->toolbar_w,
+                TAG_CLOUD_T_D_INFO,
+                message0("tagcloud.stats"),
+                ntags,
+                totalcount);
   }
 
   return error_OK;

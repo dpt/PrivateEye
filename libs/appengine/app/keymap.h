@@ -17,16 +17,16 @@ typedef int keymap_action;
 
 typedef struct
 {
-  const char                   *name;
-  keymap_action                 action;
+  const char   *name;
+  keymap_action action;
 }
 keymap_name_to_action;
 
 typedef struct
 {
-  const char                   *name;
-  const keymap_name_to_action  *mappings;
-  int                           nmappings;
+  const char                  *name;
+  const keymap_name_to_action *mappings;
+  int                          nmappings;
 }
 keymap_section;
 
@@ -35,9 +35,9 @@ typedef struct T T;
 /* Uses the specified mapping to parse the keymap <filename> creating a
  * mapping between key numbers and operation codes. */
 error keymap_create(const char           *filename,
-                     const keymap_section *sections,
-                     int                   nsections,
-                     T                   **keymap);
+                    const keymap_section *sections,
+                    int                   nsections,
+                    T                   **keymap);
 
 /* Returns the operation associated with the specified key number. */
 int keymap_get_action(T *keymap, int section, wimp_key_no key_no);

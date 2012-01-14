@@ -89,10 +89,11 @@ void packer_set_margins(packer_t *packer, const os_box *margins)
     packer->margins.y1 = packer->margins.y0 + 1;
   }
 
-  debugf(("with margins: %d %d %d %d\n", packer->margins.x0,
-                                         packer->margins.y0,
-                                         packer->margins.x1,
-                                         packer->margins.y1));
+  debugf(("with margins: %d %d %d %d\n",
+          packer->margins.x0,
+          packer->margins.y0,
+          packer->margins.x1,
+          packer->margins.y1));
 }
 
 /* ----------------------------------------------------------------------- */
@@ -101,8 +102,11 @@ static error add_area(packer_t *packer, const os_box *area)
 {
   int i;
 
-  debugf(("add_area: %d %d %d %d\n", area->x0, area->y0,
-                                     area->x1, area->y1));
+  debugf(("add_area: %d %d %d %d\n",
+          area->x0,
+          area->y0,
+          area->x1,
+          area->y1));
 
   /* is the new 'area' entirely contained by an existing area? */
 
@@ -113,11 +117,11 @@ static error add_area(packer_t *packer, const os_box *area)
         continue;
 
     debugf(("add_area: contained by: %d <%d %d %d %d>\n",
-                                         i,
-                                         packer->areas[i].x0,
-                                         packer->areas[i].y0,
-                                         packer->areas[i].x1,
-                                         packer->areas[i].y1));
+            i,
+            packer->areas[i].x0,
+            packer->areas[i].y0,
+            packer->areas[i].x1,
+            packer->areas[i].y1));
 
     return error_OK; /* entirely contained */
   }
@@ -152,8 +156,11 @@ static error remove_area(packer_t *packer, const os_box *area)
   int   n;
   int   i;
 
-  debugf(("remove_area: %d %d %d %d\n", area->x0, area->y0,
-                                        area->x1, area->y1));
+  debugf(("remove_area: %d %d %d %d\n",
+          area->x0,
+          area->y0,
+          area->x1,
+          area->y1));
 
   /* now split up any free areas which overlap with 'area' */
 
@@ -241,8 +248,8 @@ static int compare_areas_##name(const void *va, const void *vb) \
   int           emptya, emptyb;                                 \
   int           v;                                              \
                                                                 \
-  emptya = box_is_empty(a);                                    \
-  emptyb = box_is_empty(b);                                    \
+  emptya = box_is_empty(a);                                     \
+  emptyb = box_is_empty(b);                                     \
                                                                 \
   /* place invalid boxes towards the end of the list */         \
                                                                 \
@@ -344,15 +351,16 @@ static const os_box *packer_next(packer_t *packer)
     }
 
     box_intersection(&packer->areas[packer->nextindex++],
-                      &packer->margins,
-                      &packer->nextarea);
+                     &packer->margins,
+                     &packer->nextarea);
   }
   while (box_is_empty(&packer->nextarea));
 
-  debugf(("next: %d %d %d %d\n", packer->nextarea.x0,
-                                 packer->nextarea.y0,
-                                 packer->nextarea.x1,
-                                 packer->nextarea.y1));
+  debugf(("next: %d %d %d %d\n",
+          packer->nextarea.x0,
+          packer->nextarea.y0,
+          packer->nextarea.x1,
+          packer->nextarea.y1));
 
   return &packer->nextarea;
 }
@@ -397,11 +405,11 @@ error packer_place_at(packer_t *packer, const os_box *area)
   return remove_area(packer, &b);
 }
 
-error packer_place_by(packer_t   *packer,
-                       packer_loc  loc,
-                       int         w,
-                       int         h,
-                 const os_box    **pos)
+error packer_place_by(packer_t  *packer,
+                      packer_loc loc,
+                      int        w,
+                      int        h,
+                const os_box   **pos)
 {
   error         err;
   const os_box *b;
@@ -527,7 +535,7 @@ error packer_clear(packer_t *packer, packer_cleardir clear)
 
 /* ----------------------------------------------------------------------- */
 
-error packer_map(packer_t *packer, packer_map_fn *fn, void *arg)
+error packer_map(packer_t *packer, packer_map_fn *fn, void *opaque)
 {
   error         err;
   const os_box *b;
@@ -536,7 +544,7 @@ error packer_map(packer_t *packer, packer_map_fn *fn, void *arg)
        b;
        b = packer_next(packer))
   {
-    err = fn(b, arg);
+    err = fn(b, opaque);
     if (err)
       return err;
   }

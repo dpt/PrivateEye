@@ -11,6 +11,6 @@
 #define md5_DIGESTSZ 16
 
 error md5_from_file(const char    *file_name,
-                     unsigned char  digest[md5_DIGESTSZ]);
+                    unsigned char  digest[md5_DIGESTSZ]);
 
 #endif /* APPENGINE_MD5_H */

@@ -22,7 +22,7 @@
 #include "tags-search.h"
 #include "viewer.h"
 
-static void selectionx(const wimp_selection *selection, void *opaque)
+static void selected(const wimp_selection *selection, void *opaque)
 {
   NOT_USED(opaque);
 
@@ -59,6 +59,19 @@ static void selectionx(const wimp_selection *selection, void *opaque)
 
 static void update(wimp_menu *menu, void *opaque)
 {
+  // FIXME: Perhaps, could use a structure like this:
+  //
+  // static const struct
+  // {
+  //   int index;  // menu entry
+  //   int (*valid)(void); // function returns zero if entry should be shaded
+  // }
+  // shade[] =
+  // {
+  //   { ICONBAR_CLOSE, viewer_get_count },
+  //   { ICONBAR_EMPTYCACHE, imagecache_get_count }
+  // };
+
   NOT_USED(opaque);
 
   /* Shade the "Close all" entry if there are no images open */
@@ -82,7 +95,7 @@ error eye_icon_bar_init(void)
   if (err)
     return err;
 
-  icon_bar_set_handlers(NULL, selectionx, update, NULL);
+  icon_bar_set_handlers(NULL, selected, update, NULL);
 
   return error_OK;
 }

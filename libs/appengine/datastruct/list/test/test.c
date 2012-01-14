@@ -15,11 +15,11 @@ typedef struct
 }
 node;
 
-static int printelement(list_t *e, void *arg)
+static int printelement(list_t *e, void *opaque)
 {
   node *n;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   n = (node *) e;
 

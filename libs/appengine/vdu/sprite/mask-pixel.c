@@ -123,12 +123,12 @@ void sprite_mask_pixel(osspriteop_area   *area,
 
   if ((mode & osspriteop_TYPE) == osspriteop_TYPE_OLD)
   {
-    int            log2bpp;
-    mktabfn        mktab;
-    unsigned char  lut[256];
-    unsigned int  *sp;
-    unsigned int  *mp;
-    int            xy;
+    int           log2bpp;
+    mktabfn       mktab;
+    unsigned char lut[256];
+    unsigned int *sp;
+    unsigned int *mp;
+    int           xy;
 
     os_read_mode_variable((os_mode) mode, os_MODEVAR_LOG2_BPP, &log2bpp);
 

@@ -36,7 +36,9 @@
 
 #include "png.h"
 
-static void png_read_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass)
+static void png_read_row_callback(png_structp png_ptr,
+                                  png_uint_32 row_number,
+                                  int         pass)
 {
   NOT_USED(pass);
 
@@ -379,7 +381,13 @@ static int png_load(image_choices *choices, image_t *image)
 #ifndef NDEBUG
   fprintf(stderr, "creating sprite; %d\n", (int) mode);
 #endif
-  osspriteop_create_sprite(osspriteop_NAME, area, "png", 0 /* unpaletted */, (int) width, (int) height, mode);
+  osspriteop_create_sprite(osspriteop_NAME,
+                           area,
+                          "png",
+                           0 /* unpaletted */,
+                     (int) width,
+                     (int) height,
+                           mode);
 
   header = sprite_select(area, 0);
 
@@ -387,7 +395,9 @@ static int png_load(image_choices *choices, image_t *image)
   {
     unsigned int *sprite_palette;
 
-    osspriteop_create_true_palette(osspriteop_PTR, area, (osspriteop_id) header);
+    osspriteop_create_true_palette(osspriteop_PTR,
+                                   area,
+                   (osspriteop_id) header);
     sprite_palette = (unsigned int *) (header + 1);
 
 #ifndef NDEBUG
@@ -404,7 +414,10 @@ static int png_load(image_choices *choices, image_t *image)
 
       for (i = num_palette - 1; i >= 0 ; i--)
         sprite_palette[i * 2 + 0] =
-        sprite_palette[i * 2 + 1] = (palette[i].blue << 24) | (palette[i].green << 16) | (palette[i].red << 8) | 16;
+        sprite_palette[i * 2 + 1] = (palette[i].blue  << 24) |
+                                    (palette[i].green << 16) |
+                                    (palette[i].red   << 8)  |
+                                    16;
     }
   }
 
@@ -412,7 +425,8 @@ static int png_load(image_choices *choices, image_t *image)
 
   /* load the image */
 
-  if (flex_alloc((flex_ptr) &row_pointers, (int) (sizeof(png_bytep) * height)) == 0)
+  if (flex_alloc((flex_ptr) &row_pointers,
+           (int) (sizeof(png_bytep) * height)) == 0)
     goto NoMem;
 
   /* we've just claimed memory, so the heap may have moved */

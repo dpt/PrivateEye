@@ -22,7 +22,11 @@
 #include "drawable-bitmap.h"
 #include "drawable-jpeg.h"
 
-static void jpeg_redraw(const drawable_choices *choices, wimp_draw *draw, drawable_t *drawable, int x, int y)
+static void jpeg_redraw(const drawable_choices *choices,
+                        wimp_draw              *draw,
+                        drawable_t             *drawable,
+                        int                     x,
+                        int                     y)
 {
   os_error         *e;
   const jpeg_image *jpeg;

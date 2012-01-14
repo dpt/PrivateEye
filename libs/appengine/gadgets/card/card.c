@@ -198,8 +198,8 @@ static void plot_edge(wimp_draw *redraw, int index, int x, int y)
                    (osspriteop_id) LOCALS.header[index],
                                    x0, y0,
                                    os_ACTION_OVERWRITE |
-                                    os_ACTION_USE_MASK |
-                                    osspriteop_GIVEN_WIDE_ENTRIES,
+                                   os_ACTION_USE_MASK  |
+                                   osspriteop_GIVEN_WIDE_ENTRIES,
                                   &LOCALS.factors,
                                    LOCALS.trans_tab);
       *xy += step;

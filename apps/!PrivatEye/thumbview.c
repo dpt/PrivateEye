@@ -71,7 +71,7 @@ enum
   InfoTextIndex_Resolution,
   InfoTextIndex_Depth,
   InfoTextIndex_Size,
-  InfoTextIndex__Limit,
+  InfoTextIndex__LIMIT,
 };
 
 typedef int element_index;
@@ -81,7 +81,7 @@ enum
   ElementIndex_Info,
   ElementIndex_Tags,
   ElementIndex_Filename,
-  ElementIndex__Limit,
+  ElementIndex__LIMIT,
 };
 
 /* ----------------------------------------------------------------------- */
@@ -95,8 +95,8 @@ enum
   thumbview_display_mode_FULL_INFO_VERTICAL,
 };
 
-static error thumbview__set_display_mode(thumbview              *tv,
-                                         thumbview_display_mode  mode);
+static error thumbview_set_display_mode(thumbview             *tv,
+                                         thumbview_display_mode mode);
 
 /* ----------------------------------------------------------------------- */
 
@@ -104,31 +104,31 @@ typedef struct thumbview_entry
 {
   image_t    *image;
   drawable_t *drawable;
-  atom_t      text[InfoTextIndex__Limit];
+  atom_t      text[InfoTextIndex__LIMIT];
 }
 thumbview_entry;
 
 struct thumbview
 {
-  list_t                  list; /* a thumbview is a linked list node */
+  list_t                 list; /* a thumbview is a linked list node */
 
-  thumbview_display_mode  mode;
+  thumbview_display_mode mode;
 
-  atom_set_t             *text; /* holds all strings */
+  atom_set_t            *text; /* holds all strings */
 
-  filerwin               *fw;   /* our 'filer' window */
+  filerwin              *fw;   /* our 'filer' window */
 
-  thumbview_entry        *entries;
-  int                     nentries;
-  int                     maxentries;
+  thumbview_entry       *entries;
+  int                    nentries;
+  int                    maxentries;
 
-  int                     thumb_w, thumb_h; /* dimensions of the thumbnail */
-  int                     item_w, item_h;   /* dimensions of the cards */
+  int                    thumb_w, thumb_h; /* dimensions of the thumbnail */
+  int                    item_w, item_h;   /* dimensions of the cards */
 
-  unsigned int            elements_present; /* layout elements presence */
+  unsigned int           elements_present; /* layout elements presence */
   struct
   {
-    os_box elements[ElementIndex__Limit];
+    os_box elements[ElementIndex__LIMIT];
   }
   layout;
 };
@@ -144,44 +144,49 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler thumbview__event_key_pressed,
-                          thumbview__event_menu_selection,
-                          thumbview__event_scroll_request;
+static event_wimp_handler thumbview_event_key_pressed,
+                          thumbview_event_menu_selection,
+                          thumbview_event_scroll_request;
 
-static event_message_handler thumbview__message_palette_change,
-                             thumbview__message_mode_change;
+static event_message_handler thumbview_message_palette_change,
+                             thumbview_message_mode_change;
 
-static void thumbview__menu_update(void);
+static void thumbview_menu_update(void);
 
 /* ----------------------------------------------------------------------- */
 
-typedef int (thumbview__map_callback)(thumbview *tv, void *arg);
+typedef int (thumbview_map_callback)(thumbview *tv, void *opaque);
 
 /* Call the specified function for every thumbview window. */
-static void thumbview__map(thumbview__map_callback *fn, void *arg)
+static void thumbview_map(thumbview_map_callback *fn, void *opaque)
 {
-  list_walk(&LOCALS.list_anchor, (list_walk_callback *) fn, arg);
+  list_walk(&LOCALS.list_anchor, (list_walk_callback *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static int close_all_callback(thumbview *tv, void *arg)
+static int close_all_callback(thumbview *tv, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   thumbview_destroy(tv);
 
   return 0;
 }
 
-void thumbview__close_all(void)
+void thumbview_close_all(void)
 {
-  thumbview__map(close_all_callback, NULL);
+  thumbview_map(close_all_callback, NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *arg)
+static void redraw(wimp_draw *redraw,
+                   int        x,
+                   int        y,
+                   int        index,
+                   int        sel,
+                   void      *opaque)
 {
   thumbview       *tv;
   thumbview_entry *e;
@@ -193,14 +198,13 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
 
   NOT_USED(sel);
 
-  tv = arg;
+  tv = opaque;
 
   e = tv->entries + index;
 
-
   card_draw(redraw, x, y, sel ? card_draw_flag_INVERT : 0);
 
-  for (i = 0; i < ElementIndex__Limit; i++)
+  for (i = 0; i < ElementIndex__LIMIT; i++)
   {
     os_box *b;
 
@@ -213,7 +217,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
     if (i == ElementIndex_Info)
       continue;
 
-    /* fill in the areas we're to draw over with a red colour */
+    /* temporary: fill in the areas we're to draw over with a red colour */
 
     colourtrans_set_gcol(0x8000 + 0x2000 * i,
                          colourtrans_SET_FG_GCOL,
@@ -242,8 +246,10 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
   /* The icon must be filled otherwise an inaccurate background colour is
    * used. */
 
-  icon.flags = wimp_ICON_FILLED | wimp_ICON_TEXT |
-               wimp_ICON_VCENTRED | wimp_ICON_INDIRECTED |
+  icon.flags = wimp_ICON_FILLED     |
+               wimp_ICON_TEXT       |
+               wimp_ICON_VCENTRED   |
+               wimp_ICON_INDIRECTED |
                (wimp_COLOUR_BLACK << wimp_ICON_FG_COLOUR_SHIFT) |
                (wimp_COLOUR_WHITE << wimp_ICON_BG_COLOUR_SHIFT);
 
@@ -265,7 +271,7 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
     icon.extent.y1 += workarea_y;
     icon.extent.y0 = icon.extent.y1 - HEIGHT;
 
-    for (i = InfoTextIndex_FileType; i < InfoTextIndex__Limit; i++)
+    for (i = InfoTextIndex_FileType; i < InfoTextIndex__LIMIT; i++)
     {
       s = (const char *) atom_get(tv->text, e->text[i], NULL);
 
@@ -307,7 +313,9 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
     icon.extent.x1 += workarea_x;
     icon.extent.y1 += workarea_y;
 
-    s = (const char *) atom_get(tv->text, e->text[InfoTextIndex_FileName], NULL);
+    s = (const char *) atom_get(tv->text,
+                                e->text[InfoTextIndex_FileName],
+                                NULL);
 
     icon.data.indirected_text.text       = (char *) s;
     icon.data.indirected_text.validation = "";
@@ -319,29 +327,29 @@ static void redraw(wimp_draw *redraw, int x, int y, int index, int sel, void *ar
 
 /* ----------------------------------------------------------------------- */
 
-static void close(wimp_close *close, void *arg)
+static void close(wimp_close *close, void *opaque)
 {
   thumbview *tv;
 
   NOT_USED(close);
 
-  tv = arg;
+  tv = opaque;
 
   thumbview_destroy(tv);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void pointer(wimp_pointer *pointer, void *arg)
+static void pointer(wimp_pointer *pointer, void *opaque)
 {
   thumbview *tv;
 //  wimp_menu *a;
 
-  tv = arg;
+  tv = opaque;
 
   LOCALS.last_tv = tv;
 
-  thumbview__menu_update();
+  thumbview_menu_update();
 
 //  a = GLOBALS.thumbview_m->entries[1].sub_menu;
 //  a->entries[0].sub_menu = tag_cloud_get_window_handle(tv->tc);
@@ -351,25 +359,27 @@ static void pointer(wimp_pointer *pointer, void *arg)
 
 /* ----------------------------------------------------------------------- */
 
-static void thumbview__reg(int reg, thumbview *tv)
+static void thumbview_reg(int reg, thumbview *tv)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_KEY_PRESSED,    thumbview__event_key_pressed    },
-    { wimp_SCROLL_REQUEST, thumbview__event_scroll_request },
+    { wimp_KEY_PRESSED,    thumbview_event_key_pressed    },
+    { wimp_SCROLL_REQUEST, thumbview_event_scroll_request },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            filerwin_get_window_handle(tv->fw), event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            filerwin_get_window_handle(tv->fw),
+                            event_ANY_ICON,
                             tv);
 }
 
-static error thumbview__set_handlers(thumbview *tv)
+static error thumbview_set_handlers(thumbview *tv)
 {
   error err;
 
-  thumbview__reg(1, tv);
+  thumbview_reg(1, tv);
 
   filerwin_set_handlers(tv->fw, redraw, close, pointer);
 
@@ -378,42 +388,46 @@ static error thumbview__set_handlers(thumbview *tv)
   return err;
 }
 
-static void thumbview__release_handlers(thumbview *tv)
+static void thumbview_release_handlers(thumbview *tv)
 {
   help_remove_window(filerwin_get_window_handle(tv->fw));
 
-  thumbview__reg(0, tv);
+  thumbview_reg(0, tv);
 }
 
-static void thumbview__set_single_handlers(int reg)
+static void thumbview_set_single_handlers(int reg)
 {
   /* menu_selection is 'vague' (we never know which menu it relates to) so
    * should only be registered once. */
 
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_MENU_SELECTION,    thumbview__event_menu_selection },
+    { wimp_MENU_SELECTION,    thumbview_event_menu_selection },
   };
   static const event_message_handler_spec message_handlers[] =
   {
-    { message_PALETTE_CHANGE, thumbview__message_palette_change },
-    { message_MODE_CHANGE,    thumbview__message_mode_change    },
+    { message_PALETTE_CHANGE, thumbview_message_palette_change },
+    { message_MODE_CHANGE,    thumbview_message_mode_change    },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             NULL);
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               event_ANY_WINDOW, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               event_ANY_WINDOW,
+                               event_ANY_ICON,
                                NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-error thumbview__init(void)
+error thumbview_init(void)
 {
   error err;
 
@@ -433,14 +447,13 @@ error thumbview__init(void)
 
   /* handlers */
 
-  thumbview__set_single_handlers(1);
+  thumbview_set_single_handlers(1);
 
   /* menu */
 
-  GLOBALS.thumbview_m = menu_create_from_desc(
-                                          message0("menu.thumbview"),
-                                          "(filename goes here)",
-                                          NULL);
+  GLOBALS.thumbview_m = menu_create_from_desc(message0("menu.thumbview"),
+                                             "(filename goes here)",
+                                              NULL);
 
   err = help_add_menu(GLOBALS.thumbview_m, "thumbview");
   if (err)
@@ -451,15 +464,15 @@ error thumbview__init(void)
   return error_OK;
 }
 
-void thumbview__fin(void)
+void thumbview_fin(void)
 {
-  thumbview__close_all();
+  thumbview_close_all();
 
   help_remove_menu(GLOBALS.thumbview_m);
 
   menu_destroy(GLOBALS.thumbview_m);
 
-  thumbview__set_single_handlers(0);
+  thumbview_set_single_handlers(0);
 
   viewer_keymap_fin();
   tag_cloud_fin();
@@ -468,13 +481,13 @@ void thumbview__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-static void thumbview__menu_update(void)
+static void thumbview_menu_update(void)
 {
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void thumbview__action(thumbview *tv, int op)
+static void thumbview_action(thumbview *tv, int op)
 {
   error     err = error_OK;
   filerwin *fw;
@@ -496,7 +509,8 @@ static void thumbview__action(thumbview *tv, int op)
         thumbview_display_mode_FULL_INFO_VERTICAL,
       };
 
-      err = thumbview__set_display_mode(tv, mode[op - Thumbview_LargeThumbs]);
+      err = thumbview_set_display_mode(tv,
+                                        mode[op - Thumbview_LargeThumbs]);
     }
     break;
 
@@ -525,7 +539,9 @@ static void thumbview__action(thumbview *tv, int op)
   error_report(err);
 }
 
-static int thumbview__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int thumbview_event_key_pressed(wimp_event_no event_no,
+                                        wimp_block   *block,
+                                        void         *handle)
 {
   wimp_key  *key;
   thumbview *tv;
@@ -543,12 +559,14 @@ static int thumbview__event_key_pressed(wimp_event_no event_no, wimp_block *bloc
     return event_HANDLED;
   }
 
-  thumbview__action(tv, op);
+  thumbview_action(tv, op);
 
   return event_HANDLED;
 }
 
-static int thumbview__event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int thumbview_event_menu_selection(wimp_event_no event_no,
+                                           wimp_block   *block,
+                                           void         *handle)
 {
 #define PACK(a,b) (((a & 0xff) << 8) | (b & 0xff))
 
@@ -597,13 +615,13 @@ static int thumbview__event_menu_selection(wimp_event_no event_no, wimp_block *b
     if (tv == NULL)
       return event_HANDLED;
 
-    thumbview__action(tv, map[i].op);
+    thumbview_action(tv, map[i].op);
   }
 
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
   {
-    thumbview__menu_update();
+    thumbview_menu_update();
     menu_reopen();
   }
 
@@ -612,7 +630,9 @@ static int thumbview__event_menu_selection(wimp_event_no event_no, wimp_block *b
 #undef PACK
 }
 
-static int thumbview__event_scroll_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int thumbview_event_scroll_request(wimp_event_no event_no,
+                                           wimp_block   *block,
+                                           void         *handle)
 {
   wimp_scroll *scroll;
   thumbview   *tv;
@@ -661,13 +681,13 @@ static int thumbview__event_scroll_request(wimp_event_no event_no, wimp_block *b
 
 /* ----------------------------------------------------------------------- */
 
-typedef unsigned int thumbview__update_flags;
-#define thumbview__UPDATE_COLOURS (1u << 0)
-#define thumbview__UPDATE_SCALING (1u << 1)
-#define thumbview__UPDATE_EXTENT  (1u << 2)
-#define thumbview__UPDATE_REDRAW  (1u << 3)
+typedef unsigned int thumbview_update_flags;
+#define thumbview_UPDATE_COLOURS (1u << 0)
+#define thumbview_UPDATE_SCALING (1u << 1)
+#define thumbview_UPDATE_EXTENT  (1u << 2)
+#define thumbview_UPDATE_REDRAW  (1u << 3)
 
-static void thumbview__update(thumbview *tv, thumbview__update_flags flags)
+static void thumbview_update(thumbview *tv, thumbview_update_flags flags)
 {
   int i;
 
@@ -677,7 +697,7 @@ static void thumbview__update(thumbview *tv, thumbview__update_flags flags)
 
     drawable = tv->entries[i].drawable;
 
-    if (flags & thumbview__UPDATE_COLOURS)
+    if (flags & thumbview_UPDATE_COLOURS)
     {
       if (drawable->methods.update_colours)
       {
@@ -685,7 +705,7 @@ static void thumbview__update(thumbview *tv, thumbview__update_flags flags)
       }
     }
 
-    if (flags & thumbview__UPDATE_SCALING)
+    if (flags & thumbview_UPDATE_SCALING)
     {
       if (drawable->methods.update_scaling)
       {
@@ -702,47 +722,51 @@ static void thumbview__update(thumbview *tv, thumbview__update_flags flags)
       }
     }
 
-    //if (flags & thumbview__UPDATE_EXTENT)
+    //if (flags & thumbview_UPDATE_EXTENT)
     //{
     //}
   }
 
   card_prepare(tv->item_w, tv->item_h);
 
-  if (flags & thumbview__UPDATE_REDRAW)
+  if (flags & thumbview_UPDATE_REDRAW)
     window_redraw(filerwin_get_window_handle(tv->fw));
 }
 
-static int update_all_callback(thumbview *tv, void *arg)
+static int update_all_callback(thumbview *tv, void *opaque)
 {
-  thumbview__update(tv, (unsigned int) arg);
+  thumbview_update(tv, (unsigned int) opaque);
 
   return 0;
 }
 
-static int thumbview__update_all(thumbview__update_flags flags)
+static int thumbview_update_all(thumbview_update_flags flags)
 {
-  thumbview__map(update_all_callback, (void *) flags);
+  thumbview_map(update_all_callback, (void *) flags);
 
   return 0;
 }
 
-static int thumbview__message_palette_change(wimp_message *message, void *handle)
+static int thumbview_message_palette_change(wimp_message *message,
+                                             void         *handle)
 {
   NOT_USED(message);
   NOT_USED(handle);
 
-  thumbview__update_all(thumbview__UPDATE_COLOURS | thumbview__UPDATE_REDRAW);
+  thumbview_update_all(thumbview_UPDATE_COLOURS |
+                        thumbview_UPDATE_REDRAW);
 
   return event_PASS_ON;
 }
 
-static int thumbview__message_mode_change(wimp_message *message, void *handle)
+static int thumbview_message_mode_change(wimp_message *message,
+                                          void         *handle)
 {
   NOT_USED(message);
   NOT_USED(handle);
 
-  thumbview__update_all(thumbview__UPDATE_COLOURS | thumbview__UPDATE_SCALING);
+  thumbview_update_all(thumbview_UPDATE_COLOURS |
+                        thumbview_UPDATE_SCALING);
 
   return event_PASS_ON;
 }
@@ -781,7 +805,7 @@ error thumbview_create(thumbview **new_tv)
 
   list_add_to_head(&LOCALS.list_anchor, &tv->list);
 
-  thumbview__set_handlers(tv);
+  thumbview_set_handlers(tv);
 
   *new_tv = tv;
 
@@ -818,7 +842,7 @@ void thumbview_destroy(thumbview *doomed)
 
   free(doomed->entries);
 
-  thumbview__release_handlers(doomed);
+  thumbview_release_handlers(doomed);
 
   list_remove(&LOCALS.list_anchor, &doomed->list);
 
@@ -840,24 +864,24 @@ void thumbview_open(thumbview *tv)
 
 static error layout(thumbview *tv)
 {
-  error           err;
+  error          err;
 
-  os_box          pagedims;
-  os_box          margins;
+  os_box         pagedims;
+  os_box         margins;
 
-  int             thumbw, thumbh;
-  int             infow, infoh;
-  int             tagsw, tagsh;
-  int             filew, fileh;
+  int            thumbw, thumbh;
+  int            infow, infoh;
+  int            tagsw, tagsh;
+  int            filew, fileh;
 
-  unsigned int    flags;
-  packer_t       *packer;
-  layout_spec     spec;
-  int             i;
-  layout_element  els[8];
-  os_box          boxes[8];
-  os_box          used;
-  int             y;
+  unsigned int   flags;
+  packer_t      *packer;
+  layout_spec    spec;
+  int            i;
+  layout_element els[8];
+  os_box         boxes[8];
+  os_box         used;
+  int            y;
 
   /* Choice values are multiplied by two to convert "pixels" to OS units. */
 
@@ -981,7 +1005,7 @@ static error layout(thumbview *tv)
 
   tv->elements_present = 0;
 
-  for (i = 0; i < ElementIndex__Limit; i++)
+  for (i = 0; i < ElementIndex__LIMIT; i++)
   {
     tv->layout.elements[i].x0 = INT_MAX;
     tv->layout.elements[i].y0 = INT_MAX;
@@ -1013,7 +1037,7 @@ static error layout(thumbview *tv)
 
   y = used.y0;
 
-  for (i = 0; i < ElementIndex__Limit; i++)
+  for (i = 0; i < ElementIndex__LIMIT; i++)
   {
     os_box *b;
 
@@ -1039,8 +1063,9 @@ static error layout(thumbview *tv)
 
   filerwin_set_nobjects(tv->fw, tv->nentries);
 
-  filerwin_set_padding(tv->fw, GLOBALS.choices.thumbview.padding_h,
-                                GLOBALS.choices.thumbview.padding_v);
+  filerwin_set_padding(tv->fw,
+                       GLOBALS.choices.thumbview.padding_h,
+                       GLOBALS.choices.thumbview.padding_v);
 
   filerwin_set_dimensions(tv->fw, tv->item_w, tv->item_h);
 
@@ -1054,10 +1079,10 @@ failure:
 
 static error load_directory_cb(const char          *obj_name,
                                osgbpb_info_stamped *info,
-                               void                *arg)
+                               void                *opaque)
 {
   error            err;
-  thumbview       *tv = arg;
+  thumbview       *tv = opaque;
   thumbview_entry *entry;
   image_t         *image;
   drawable_t      *drawable;
@@ -1071,7 +1096,7 @@ static error load_directory_cb(const char          *obj_name,
     void *newentries;
 
     newmaxentries = tv->maxentries * 2;
-    if (newmaxentries < 8)
+    if (newmaxentries < 8) // FIXME: Hoist growth constants.
       newmaxentries = 8;
 
     newentries = realloc(tv->entries, newmaxentries * sizeof(*tv->entries));
@@ -1131,8 +1156,11 @@ static error load_directory_cb(const char          *obj_name,
     else
       leaf = obj_name;
 
-    err = atom_new(tv->text, (const unsigned char *) leaf, strlen(leaf) + 1,
-                   &entry->text[0]);
+    // FIXME: String helpers for atoms would be nice here.
+    err = atom_new(tv->text,
+                   (const unsigned char *) leaf,
+                   strlen(leaf) + 1,
+                  &entry->text[0]);
     if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
@@ -1140,8 +1168,10 @@ static error load_directory_cb(const char          *obj_name,
 
     file_type_to_name(info->file_type, buf);
 
-    err = atom_new(tv->text, (const unsigned char *) buf, strlen(buf) + 1,
-                   &entry->text[1]);
+    err = atom_new(tv->text,
+                   (const unsigned char *) buf,
+                   strlen(buf) + 1,
+                  &entry->text[1]);
     if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
@@ -1155,8 +1185,10 @@ static error load_directory_cb(const char          *obj_name,
 
     sprintf(buf + 24, "%s x %s", buf, buf + 12);
 
-    err = atom_new(tv->text, (const unsigned char *) (buf + 24),
-                   strlen(buf + 24) + 1, &entry->text[2]);
+    err = atom_new(tv->text,
+                   (const unsigned char *) (buf + 24),
+                   strlen(buf + 24) + 1,
+                  &entry->text[2]);
     if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
@@ -1164,8 +1196,10 @@ static error load_directory_cb(const char          *obj_name,
 
     sprintf(buf, "%dbpp", image->source.dims.bm.bpp);
 
-    err = atom_new(tv->text, (const unsigned char *) buf, strlen(buf) + 1,
-                   &entry->text[3]);
+    err = atom_new(tv->text,
+                   (const unsigned char *) buf,
+                   strlen(buf) + 1,
+                  &entry->text[3]);
     if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
 
@@ -1173,8 +1207,10 @@ static error load_directory_cb(const char          *obj_name,
 
     comma_number(image->source.file_size, buf, 12);
 
-    err = atom_new(tv->text, (const unsigned char *) buf, strlen(buf) + 1,
-                   &entry->text[4]);
+    err = atom_new(tv->text,
+                   (const unsigned char *) buf,
+                   strlen(buf) + 1,
+                  &entry->text[4]);
     if (err && err != error_ATOM_NAME_EXISTS)
       goto Failure;
   }
@@ -1205,9 +1241,10 @@ void thumbview_load_dir(thumbview *tv, const char *dir_name)
   if (err)
     goto Failure;
 
-  thumbview__update(tv, thumbview__UPDATE_COLOURS |
-                        thumbview__UPDATE_SCALING |
-                        thumbview__UPDATE_EXTENT);
+  thumbview_update(tv,
+                    thumbview_UPDATE_COLOURS |
+                    thumbview_UPDATE_SCALING |
+                    thumbview_UPDATE_EXTENT);
 
   return;
 
@@ -1219,8 +1256,8 @@ Failure:
 
 /* ----------------------------------------------------------------------- */
 
-static error thumbview__set_display_mode(thumbview              *tv,
-                                         thumbview_display_mode  mode)
+static error thumbview_set_display_mode(thumbview             *tv,
+                                         thumbview_display_mode mode)
 {
   error err;
 
@@ -1230,7 +1267,7 @@ static error thumbview__set_display_mode(thumbview              *tv,
   if (err)
     return err;
 
-  thumbview__update(tv, thumbview__UPDATE_REDRAW);
+  thumbview_update(tv, thumbview_UPDATE_REDRAW);
 
   return err;
 }

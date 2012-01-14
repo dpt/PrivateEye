@@ -5,5 +5,6 @@
 
 int box_is_empty(const os_box *a)
 {
-  return (a->x0 >= a->x1) || (a->y0 >= a->y1);
+  return (a->x0 >= a->x1) ||
+         (a->y0 >= a->y1);
 }

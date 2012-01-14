@@ -75,9 +75,9 @@ error effects_clear_apply(osspriteop_area   *area,
                           osspriteop_header *dst,
                           os_colour          colour)
 {
-  int                        width, height;
-  osspriteop_mode_word       mode;
-  int                        log2bpp;
+  int                  width, height;
+  osspriteop_mode_word mode;
+  int                  log2bpp;
 
   sprite_info(area, src, &width, &height, NULL, (os_mode *) &mode, &log2bpp);
 

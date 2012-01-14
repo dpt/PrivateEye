@@ -57,8 +57,8 @@ void  stream_destroy(T *doomed);
 /* Returns the number of bytes remaining in the current buffer.
  * Will attempt to fill the buffer if it's found to be empty. */
 #define stream_remaining_and_fill(s) (stream_remaining(s) != 0 ? \
-                                       stream_remaining(s) : \
-                                       stream_fill(s))
+                                      stream_remaining(s) : \
+                                      stream_fill(s))
 
 #undef T
 

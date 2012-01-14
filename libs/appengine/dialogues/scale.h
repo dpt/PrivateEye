@@ -27,7 +27,9 @@ int scale_get(dialogue_t *d);
 
 typedef unsigned int scale_type;
 
-typedef void (scale_scale_handler)(dialogue_t *d, scale_type type, int scale);
+typedef void (scale_scale_handler)(dialogue_t *d,
+                                   scale_type  type,
+                                   int         scale);
 void scale_set_scale_handler(dialogue_t *d, scale_scale_handler *handler);
 
 #endif /* APPENGINE_DIALOGUE_SCALE_H */

@@ -233,14 +233,18 @@ static void blend_888(blender *args)
 
 error blender_create(blender *b, osspriteop_area *area)
 {
-  osspriteop_header    *header;
-  osspriteop_mode_word  mode;
-  int                   log2bpp;
+  osspriteop_header   *header;
+  osspriteop_mode_word mode;
+  int                  log2bpp;
 
   header = sprite_select(area, 0);
 
-  sprite_info(area, header,
-             &b->width, &b->height, NULL, (os_mode *) &mode, &log2bpp);
+  sprite_info(area,
+              header,
+             &b->width, &b->height,
+              NULL,
+ (os_mode *) &mode,
+             &log2bpp);
 
   switch (log2bpp)
   {

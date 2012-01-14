@@ -22,13 +22,13 @@ typedef unsigned int scroll_list_event_type;
 typedef struct
 {
   scroll_list_event_type type;
-  int                     index;
+  int                    index;
   union
   {
     struct
     {
-      wimp_pointer       *pointer;
-      os_box              box;
+      wimp_pointer      *pointer;
+      os_box             box;
     }
     drag;
   }
@@ -44,21 +44,23 @@ void scroll_list_destroy(T *sl);
 
 /* x and y are work area coordinates. */
 typedef void (scroll_list_redrawfn)(wimp_draw *redraw,
-                                     int x, int y,
-                                     int i, int sel);
+                                    int        x,
+                                    int        y,
+                                    int        i,
+                                    int        sel);
 
 typedef void (scroll_list_eventfn)(scroll_list_event *event);
 
-void scroll_list_set_handlers(T *sl,
-                               scroll_list_redrawfn *redraw_elem,
-                               scroll_list_redrawfn *redraw_lead,
-                               scroll_list_eventfn  *event);
+void scroll_list_set_handlers(T                    *sl,
+                              scroll_list_redrawfn *redraw_elem,
+                              scroll_list_redrawfn *redraw_lead,
+                              scroll_list_eventfn  *event);
 
 wimp_w scroll_list_get_window_handle(T *sl);
 
-void scroll_list_set_row_height(T *sl,
-                                 int height,
-                                 int leading);
+void scroll_list_set_row_height(T  *sl,
+                                int height,
+                                int leading);
 
 void scroll_list_refresh_row(T *sl, int row);
 void scroll_list_refresh_all_rows(T *sl);

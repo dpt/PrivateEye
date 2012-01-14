@@ -17,11 +17,11 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/wimp/event.h"
-#include "appengine/databases/filename-db.h"
-#include "appengine/wimp/help.h"
 #include "appengine/base/os.h"
+#include "appengine/databases/filename-db.h"
 #include "appengine/databases/tag-db.h"
+#include "appengine/wimp/event.h"
+#include "appengine/wimp/help.h"
 
 #include "globals.h"
 #include "iconnames.h"
@@ -33,9 +33,9 @@
 
 typedef struct
 {
-  int       *indices;
-  int        nindices;
-  int        allocated;
+  int *indices;
+  int  nindices;
+  int  allocated;
 }
 Indices;
 
@@ -49,14 +49,12 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static error tag(tag_cloud *tc,
-                 int        index,
-                 void      *arg)
+static error tag(tag_cloud *tc, int index, void *opaque)
 {
   error    err;
   Indices *ind = &LOCALS.indices;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   /* make space */
 
@@ -66,7 +64,7 @@ static error tag(tag_cloud *tc,
     int  newallocated;
 
     newallocated = ind->allocated * 2;
-    if (newallocated < 8)
+    if (newallocated < 8) // FIXME: Hoist growth constants.
       newallocated = 8;
 
     newindices = realloc(ind->indices,
@@ -114,16 +112,14 @@ static error tag(tag_cloud *tc,
   return error_OK;
 }
 
-static error detag(tag_cloud *tc,
-                   int        index,
-                   void      *arg)
+static error detag(tag_cloud *tc, int index, void *opaque)
 {
   error    err;
   Indices *ind = &LOCALS.indices;
   int      i;
   int      shift;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   for (i = 0; i < ind->nindices && ind->indices[i] < index; i++)
     ;
@@ -160,14 +156,16 @@ static void tags_search_set_handlers(int reg)
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            LOCALS.tags_search_w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            LOCALS.tags_search_w,
+                            event_ANY_ICON,
                             NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void tags_search_properfin(int force);
+static void tags_search_lazyfin(int force);
 
 /* ----------------------------------------------------------------------- */
 
@@ -185,7 +183,7 @@ error tags_search_init(void)
     if (err)
       return err;
 
-    err = tags_common__init();
+    err = tags_common_init();
     if (err)
       return err;
 
@@ -207,13 +205,13 @@ void tags_search_fin(void)
   {
     free(LOCALS.indices.indices);
 
-    tags_search_properfin(1); /* force shutdown */
+    tags_search_lazyfin(1); /* force shutdown */
 
     help_remove_window(LOCALS.tags_search_w);
 
     tags_search_set_handlers(0);
 
-    tags_common__fin();
+    tags_common_fin();
 
     help_fin();
   }
@@ -221,20 +219,20 @@ void tags_search_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-/* The 'proper' init/fin functions provide lazy initialisation. */
+/* The 'lazy' init/fin functions provide lazy initialisation. */
 
-static int tags_search_properrefcount = 0;
+static int tags_search_lazyrefcount = 0;
 
-static error tags_search_properinit(void)
+static error tags_search_lazyinit(void)
 {
   error err;
 
-  if (tags_search_properrefcount++ == 0)
+  if (tags_search_lazyrefcount++ == 0)
   {
-    tag_cloud_config  conf;
-    tag_cloud         *tc = NULL;
+    tag_cloud_config conf;
+    tag_cloud       *tc = NULL;
 
-    err = tags_common__properinit();
+    err = tags_common_lazyinit();
     if (err)
       goto Failure;
 
@@ -251,19 +249,19 @@ static error tags_search_properinit(void)
     }
 
     tag_cloud_set_handlers(tc,
-                            tags_common__add_tag,
-                            tags_common__delete_tag,
-                            tags_common__rename_tag,
-                            tag,
-                            detag,
-                            tags_common__tagfile,
-                            tags_common__detagfile,
-                            tags_common__event,
-                            tags_common__get_db());
+                           tags_common_add_tag,
+                           tags_common_delete_tag,
+                           tags_common_rename_tag,
+                           tag,
+                           detag,
+                           tags_common_tagfile,
+                           tags_common_detagfile,
+                           tags_common_event,
+                           tags_common_get_db());
 
     /* tag_cloud_set_key_handler(tc, keyhandler, db); */
 
-    err = tags_common__set_tags(tc);
+    err = tags_common_set_tags(tc);
     if (err)
       goto Failure;
 
@@ -278,19 +276,19 @@ Failure:
   return err;
 }
 
-static void tags_search_properfin(int force)
+static void tags_search_lazyfin(int force)
 {
-  if (tags_search_properrefcount == 0)
+  if (tags_search_lazyrefcount == 0)
     return;
 
   if (force)
-    tags_search_properrefcount = 1;
+    tags_search_lazyrefcount = 1;
 
-  if (--tags_search_properrefcount == 0)
+  if (--tags_search_lazyrefcount == 0)
   {
     tag_cloud_destroy(LOCALS.tc);
 
-    tags_common__properfin(0); /* don't pass 'force' in */
+    tags_common_lazyfin(0); /* don't pass 'force' in */
   }
 }
 
@@ -304,7 +302,7 @@ static error tags_search_search(void)
   char          buf[256];
   filenamedb_t *fdb;
 
-  fdb = tags_common__get_filename_db();
+  fdb = tags_common_get_filename_db();
 
   /* no mode switch yet (any/all) */
 
@@ -312,12 +310,11 @@ static error tags_search_search(void)
   do
   {
     /* this function matches all tags */
-    err = tagdb_enumerate_ids_by_tags(tags_common__get_db(),
+    err = tagdb_enumerate_ids_by_tags(tags_common_get_db(),
                         (tagdb_tag *) LOCALS.indices.indices,
-                                       LOCALS.indices.nindices,
-                                      &cont,
-                                       buf,
-                                       sizeof(buf));
+                                      LOCALS.indices.nindices,
+                                     &cont,
+                                      buf, sizeof(buf));
     if (err)
       return err;
 
@@ -353,7 +350,9 @@ static error tags_search_search(void)
 
 /* ----------------------------------------------------------------------- */
 
-static int tags_search_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tags_search_event_mouse_click(wimp_event_no event_no,
+                                         wimp_block   *block,
+                                         void         *handle)
 {
   wimp_pointer *pointer;
 
@@ -374,7 +373,8 @@ static int tags_search_event_mouse_click(wimp_event_no event_no, wimp_block *blo
         break;
     }
 
-    if (pointer->i == TAGS_SEARCH_B_SEARCH || pointer->i == TAGS_SEARCH_B_CANCEL)
+    if (pointer->i == TAGS_SEARCH_B_SEARCH ||
+        pointer->i == TAGS_SEARCH_B_CANCEL)
     {
 #if 0
       if (pointer->buttons & wimp_CLICK_SELECT)
@@ -460,7 +460,7 @@ error tags_search_open(void)
 
   /* load the databases, create tag cloud, etc. */
 
-  err = tags_search_properinit();
+  err = tags_search_lazyinit();
   if (err)
     return err;
 

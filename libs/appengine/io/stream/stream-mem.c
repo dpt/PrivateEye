@@ -58,8 +58,8 @@ static int stream_mem_length(stream *s)
 }
 
 error stream_mem_create(const unsigned char *block,
-                         size_t               length,
-                         stream             **s)
+                        size_t               length,
+                        stream             **s)
 {
   stream_mem *sf;
 

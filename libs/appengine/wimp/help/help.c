@@ -59,8 +59,10 @@ static void register_event_handlers(int reg)
   };
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               event_ANY_WINDOW, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               event_ANY_WINDOW,
+                               event_ANY_ICON,
                                NULL);
 }
 
@@ -133,7 +135,7 @@ static error add_element(help_array *arr, unsigned int obj, const char *name)
     void *newentries;
 
     n = (int) power2gt(arr->allocated); /* doubling strategy */
-    if (n < 8)
+    if (n < 8) // FIXME: Hoist growth constants.
       n = 8;
 
     newentries = realloc(arr->entries, n * sizeof(*arr->entries));
@@ -240,8 +242,10 @@ static int help_message_help_request(wimp_message *message, void *handle)
 
   if (partial_token == NULL) /* not a window - check for menu */
   {
-    wimp_get_menu_state(wimp_GIVEN_WINDOW_AND_ICON, &selection,
-                        request->w, request->i);
+    wimp_get_menu_state(wimp_GIVEN_WINDOW_AND_ICON,
+                       &selection,
+                        request->w,
+                        request->i);
 
     if (selection.items[0] == -1)
       return event_NOT_HANDLED; /* not found */

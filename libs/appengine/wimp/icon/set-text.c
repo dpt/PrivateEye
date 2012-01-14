@@ -99,8 +99,12 @@ void icon_set_text(wimp_w w, wimp_i i, const char *text)
       if (caret.index >= oldlen) /* was it at the end of the old text? */
         index = newlen;
 
-      wimp_set_caret_position(w, i, caret.pos.x, caret.pos.y,
-                              caret.height, index);
+      wimp_set_caret_position(w,
+                              i,
+                              caret.pos.x,
+                              caret.pos.y,
+                              caret.height,
+                              index);
     }
   }
 

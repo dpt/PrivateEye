@@ -20,13 +20,13 @@
 
 static struct
 {
-  dialogue_t                 *proginfo;
-  wimp_menu                  *iconbar_m;
+  dialogue_t                *proginfo;
+  wimp_menu                 *iconbar_m;
   icon_bar_menu_pointerfn   *ptrfn;
   icon_bar_menu_selectionfn *selfn;
   icon_bar_menu_updatefn    *updfn;
-  void                       *opaque;
-  int                         menu_height; /* in entries */
+  void                      *opaque;
+  int                        menu_height; /* in entries */
 }
 LOCALS;
 
@@ -46,8 +46,10 @@ static void icon_bar_internal_set_handlers(int reg)
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            wimp_ICON_BAR, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            wimp_ICON_BAR,
+                            event_ANY_ICON,
                             NULL);
 }
 
@@ -105,9 +107,9 @@ void icon_bar_fin(void)
 }
 
 void icon_bar_set_handlers(icon_bar_menu_pointerfn   *pointer,
-                            icon_bar_menu_selectionfn *select,
-                            icon_bar_menu_updatefn    *update,
-                            void                       *opaque)
+                           icon_bar_menu_selectionfn *select,
+                           icon_bar_menu_updatefn    *update,
+                           void                      *opaque)
 {
   LOCALS.ptrfn  = pointer;
   LOCALS.selfn  = select;
@@ -123,7 +125,9 @@ static void icon_bar_menu_update(void)
     LOCALS.updfn(LOCALS.iconbar_m, LOCALS.opaque);
 }
 
-static int icon_bar_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int icon_bar_event_mouse_click(wimp_event_no event_no,
+                                      wimp_block   *block,
+                                      void         *handle)
 {
   wimp_pointer *pointer;
 
@@ -149,7 +153,9 @@ static int icon_bar_event_mouse_click(wimp_event_no event_no, wimp_block *block,
   return event_HANDLED;
 }
 
-static int icon_bar_event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int icon_bar_event_menu_selection(wimp_event_no event_no,
+                                         wimp_block   *block,
+                                         void         *handle)
 {
   wimp_selection *selection;
   wimp_menu      *last;

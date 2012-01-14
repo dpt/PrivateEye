@@ -40,12 +40,12 @@ static const struct
 }
 TypesData_map[] =
 {
-  { /* 0x695 */ gif_FILE_TYPE,      gif_export_methods       },
-  { /* 0xaff */ osfile_TYPE_DRAW,   drawfile_export_methods  },
-  { /* 0xb60 */ png_FILE_TYPE,      png_export_methods       },
-  { /* 0xc85 */ jpeg_FILE_TYPE,     jpeg_export_methods      },
-  { /* 0xd94 */ artworks_FILE_TYPE, artworks_export_methods  },
-  { /* 0xff9 */ osfile_TYPE_SPRITE, sprite_export_methods    }
+  { /* 0x695 */ gif_FILE_TYPE,      gif_export_methods      },
+  { /* 0xaff */ osfile_TYPE_DRAW,   drawfile_export_methods },
+  { /* 0xb60 */ png_FILE_TYPE,      png_export_methods      },
+  { /* 0xc85 */ jpeg_FILE_TYPE,     jpeg_export_methods     },
+  { /* 0xd94 */ artworks_FILE_TYPE, artworks_export_methods },
+  { /* 0xff9 */ osfile_TYPE_SPRITE, sprite_export_methods   }
 };
 
 static const size_t TypesData_stride = sizeof(TypesData_map[0]);
@@ -64,7 +64,9 @@ osbool image_is_loadable(bits file_type)
   return filetype_to_index(file_type) >= 0;
 }
 
-osbool loader_export_methods(image_choices *choices, image_t *image, bits file_type)
+osbool loader_export_methods(image_choices *choices,
+                             image_t       *image,
+                             bits           file_type)
 {
   int i;
 

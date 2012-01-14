@@ -16,11 +16,11 @@
 #include "oslib/osfscontrol.h"
 
 #include "appengine/types.h"
-#include "appengine/base/messages.h"
 #include "appengine/base/errors.h"
+#include "appengine/base/messages.h"
 #include "appengine/base/strings.h"
-#include "appengine/databases/tag-db.h"
 #include "appengine/databases/digest-db.h"
+#include "appengine/databases/tag-db.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
@@ -46,26 +46,22 @@ LOCALS;
 /* ----------------------------------------------------------------------- */
 
 /* Delete 'index'. */
-static error deletetag(tag_cloud *tc,
-                       int        index,
-                       void      *arg)
+static error deletetag(tag_cloud *tc, int index, void *opaque)
 {
   error err;
 
-  err = tags_common__delete_tag(tc, index, arg);
+  err = tags_common_delete_tag(tc, index, opaque);
   if (err)
     return err;
 
-  err = tags_common__set_highlights(tc, LOCALS.image);
+  err = tags_common_set_highlights(tc, LOCALS.image);
   if (err)
     return err;
 
   return error_OK;
 }
 
-static error tag(tag_cloud *tc,
-                 int        index,
-                 void      *arg)
+static error tag(tag_cloud *tc, int index, void *opaque)
 {
   error         err;
   unsigned char digest[16];
@@ -77,21 +73,22 @@ static error tag(tag_cloud *tc,
   if (err)
     return err;
 
-  err = tags_common__tag(tc, index, (char *) digest, LOCALS.image->file_name,
-                         arg);
+  err = tags_common_tag(tc,
+                         index,
+                (char *) digest,
+                         LOCALS.image->file_name,
+                         opaque);
   if (err)
     return err;
 
-  err = tags_common__set_highlights(tc, LOCALS.image);
+  err = tags_common_set_highlights(tc, LOCALS.image);
   if (err)
     return err;
 
   return error_OK;
 }
 
-static error detag(tag_cloud *tc,
-                   int        index,
-                   void      *arg)
+static error detag(tag_cloud *tc, int index, void *opaque)
 {
   error         err;
   unsigned char digest[16];
@@ -103,11 +100,11 @@ static error detag(tag_cloud *tc,
   if (err)
     return err;
 
-  err = tags_common__detag(tc, index, (char *) digest, arg);
+  err = tags_common_detag(tc, index, (char *) digest, opaque);
   if (err)
     return err;
 
-  err = tags_common__set_highlights(tc, LOCALS.image);
+  err = tags_common_set_highlights(tc, LOCALS.image);
   if (err)
     return err;
 
@@ -116,12 +113,11 @@ static error detag(tag_cloud *tc,
 
 /* ----------------------------------------------------------------------- */
 
-static tag_cloud_event keyhandler(wimp_key_no  key_no,
-                                   void        *arg)
+static tag_cloud_event keyhandler(wimp_key_no key_no, void *opaque)
 {
   int op;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   op = viewer_keymap_op(viewer_keymap_SECTION_TAG_CLOUD, key_no);
 
@@ -154,10 +150,10 @@ static tag_cloud_event keyhandler(wimp_key_no  key_no,
 
 /* ----------------------------------------------------------------------- */
 
-static void tags__image_changed_callback(image_t              *image,
-                                         imageobserver_change  change,
-                                         imageobserver_data   *data,
-                                         void                 *opaque)
+static void tags_image_changed_callback(image_t             *image,
+                                         imageobserver_change change,
+                                         imageobserver_data  *data,
+                                         void                *opaque)
 {
   error err;
 
@@ -176,7 +172,7 @@ static void tags__image_changed_callback(image_t              *image,
       char        title[256];
 
       /* set its title, including the leafname of the image */
-
+      // FIXME: Hoist this and common code below to a subroutine.
       sprintf(scratch, "tagcloud.title");
       leaf = str_leaf(image->file_name);
       sprintf(title, message0(scratch), leaf);
@@ -184,7 +180,7 @@ static void tags__image_changed_callback(image_t              *image,
 
       tag_cloud_shade(LOCALS.tc, 0);
 
-      err = tags_common__set_highlights(LOCALS.tc, image);
+      err = tags_common_set_highlights(LOCALS.tc, image);
       if (err)
         goto failure;
 
@@ -216,7 +212,7 @@ static void tags__image_changed_callback(image_t              *image,
 
       LOCALS.image = NULL;
 
-      tags_common__clear_highlights(LOCALS.tc);
+      tags_common_clear_highlights(LOCALS.tc);
 
       tag_cloud_shade(LOCALS.tc, 1);
     }
@@ -235,11 +231,11 @@ failure:
 
 /* ----------------------------------------------------------------------- */
 
-error tags__choices_updated(const choices_group *g)
+error tags_choices_updated(const choices_group *group)
 {
   tag_cloud_config c;
 
-  NOT_USED(g);
+  NOT_USED(group);
 
   if (LOCALS.tc == NULL)
     return error_OK;
@@ -256,15 +252,15 @@ error tags__choices_updated(const choices_group *g)
 
 /* ----------------------------------------------------------------------- */
 
-static void tags__properfin(int force);
+static void tags_lazyfin(int force);
 
 /* ----------------------------------------------------------------------- */
 
-static int tags__refcount = 0;
+static int tags_refcount = 0;
 
-error tags__init(void)
+error tags_init(void)
 {
-  if (tags__refcount++ == 0)
+  if (tags_refcount++ == 0)
   {
     error err;
 
@@ -274,7 +270,7 @@ error tags__init(void)
     if (err)
       return err;
 
-    err = tags_common__init();
+    err = tags_common_init();
     if (err)
       return err;
   }
@@ -282,13 +278,13 @@ error tags__init(void)
   return error_OK;
 }
 
-void tags__fin(void)
+void tags_fin(void)
 {
-  if (--tags__refcount == 0)
+  if (--tags_refcount == 0)
   {
-    tags__properfin(1); /* force shutdown */
+    tags_lazyfin(1); /* force shutdown */
 
-    tags_common__fin();
+    tags_common_fin();
 
     viewer_keymap_fin();
   }
@@ -296,21 +292,21 @@ void tags__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-/* The 'proper' init/fin functions provide lazy initialisation. */
+/* The 'lazy' init/fin functions provide lazy initialisation. */
 
-static int tags__properrefcount = 0;
+static int tags_lazyrefcount = 0;
 
-static error tags__properinit(void)
+static error tags_lazyinit(void)
 {
   error err;
 
-  if (tags__properrefcount++ == 0)
+  if (tags_lazyrefcount++ == 0)
   {
-    tag_cloud_config  conf;
-    tag_cloud         *tc = NULL;
-    tagdb             *db = NULL;
+    tag_cloud_config conf;
+    tag_cloud       *tc = NULL;
+    tagdb           *db = NULL;
 
-    err = tags_common__properinit();
+    err = tags_common_lazyinit();
     if (err)
       return err;
 
@@ -326,20 +322,20 @@ static error tags__properinit(void)
       goto Failure;
     }
 
-    imageobserver_register_greedy(tags__image_changed_callback, NULL);
+    imageobserver_register_greedy(tags_image_changed_callback, NULL);
 
-    db = tags_common__get_db(); /* FIXME: Feels a bit grotty. */
+    db = tags_common_get_db(); /* FIXME: Feels a bit grotty. */
 
     tag_cloud_set_handlers(tc,
-                            tags_common__add_tag,
-                            deletetag,
-                            tags_common__rename_tag,
-                            tag,
-                            detag,
-                            tags_common__tagfile,
-                            tags_common__detagfile,
-                            tags_common__event,
-                            db);
+                           tags_common_add_tag,
+                           deletetag,
+                           tags_common_rename_tag,
+                           tag,
+                           detag,
+                           tags_common_tagfile,
+                           tags_common_detagfile,
+                           tags_common_event,
+                           db);
 
     tag_cloud_set_key_handler(tc, keyhandler, db);
 
@@ -358,34 +354,34 @@ Failure:
 }
 
 /* This is only ever called with force set true at the moment. */
-static void tags__properfin(int force)
+static void tags_lazyfin(int force)
 {
-  if (tags__properrefcount == 0)
+  if (tags_lazyrefcount == 0)
     return;
 
   if (force)
-    tags__properrefcount = 1;
+    tags_lazyrefcount = 1;
 
-  if (--tags__properrefcount == 0)
+  if (--tags_lazyrefcount == 0)
   {
-    imageobserver_deregister_greedy(tags__image_changed_callback, NULL);
+    imageobserver_deregister_greedy(tags_image_changed_callback, NULL);
 
     tag_cloud_destroy(LOCALS.tc);
 
-    tags_common__properfin(0); /* don't pass 'force' in */
+    tags_common_lazyfin(0); /* don't pass 'force' in */
   }
 }
 
 /* ----------------------------------------------------------------------- */
 
-error tags__open(image_t *image)
+error tags_open(image_t *image)
 {
   error             err;
   wimp_window_state state;
 
   /* load the databases, create tag cloud, install image observer */
 
-  err = tags__properinit();
+  err = tags_lazyinit();
   if (err)
     return err;
 
@@ -407,6 +403,7 @@ error tags__open(image_t *image)
 
     /* set its title, including the leafname of the image */
 
+    // FIXME: Hoist to tags_set_title. See above.
     sprintf(scratch, "tagcloud.title");
     leaf = str_leaf(image->file_name);
     sprintf(title, message0(scratch), leaf);
@@ -414,12 +411,12 @@ error tags__open(image_t *image)
 
     /* opening for the first(?) time */
 
-    err = tags_common__set_tags(LOCALS.tc);
+    err = tags_common_set_tags(LOCALS.tc);
     if (err)
       goto failure;
 
-    /* FIXME: This duplicates code in tags__image_changed_callback. */
-    err = tags_common__set_highlights(LOCALS.tc, image);
+    /* FIXME: This duplicates code in tags_image_changed_callback. */
+    err = tags_common_set_highlights(LOCALS.tc, image);
     if (err)
       goto failure;
 

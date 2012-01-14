@@ -3,8 +3,11 @@
 
 #include "appengine/wimp/icon.h"
 
-void icon_range_set_flags(wimp_w w, wimp_i i_low, wimp_i i_high,
-                          wimp_icon_flags eor, wimp_icon_flags clear)
+void icon_range_set_flags(wimp_w          w,
+                          wimp_i          i_low,
+                          wimp_i          i_high,
+                          wimp_icon_flags eor,
+                          wimp_icon_flags clear)
 {
   wimp_icon_state state;
   wimp_i          i;

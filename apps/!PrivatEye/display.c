@@ -3,6 +3,11 @@
  * Purpose: Displays
  * ----------------------------------------------------------------------- */
 
+// TODO
+// - split out the sub-modules like dragcancel, zoombox, to their own source
+// files
+// - cut down the #includes
+
 #include "kernel.h"
 #include "swis.h"
 
@@ -15,12 +20,12 @@
 #include "fortify/fortify.h"
 
 #include "oslib/types.h"
-#include "oslib/os.h"
 #include "oslib/colourtrans.h"
 #include "oslib/filer.h"
 #include "oslib/fileswitch.h"
 #include "oslib/hourglass.h"
 #include "oslib/jpeg.h"
+#include "oslib/os.h"
 #include "oslib/osbyte.h"
 #include "oslib/osfile.h"
 #include "oslib/osfind.h"
@@ -31,24 +36,23 @@
 
 #include "appengine/types.h"
 #include "appengine/app/choices.h"
-#include "appengine/dialogues/dcs-quit.h"
-#include "appengine/wimp/dialogue.h"
+#include "appengine/base/bsearch.h"
 #include "appengine/base/errors.h"
+#include "appengine/base/messages.h"
+#include "appengine/base/os.h"
+#include "appengine/base/oserror.h"
+#include "appengine/base/strings.h"
+#include "appengine/dialogues/dcs-quit.h"
+#include "appengine/gadgets/hist.h"
+#include "appengine/gadgets/metadata.h"
+#include "appengine/vdu/screen.h"
+#include "appengine/wimp/dialogue.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/filer.h"
 #include "appengine/wimp/help.h"
 #include "appengine/wimp/menu.h"
-#include "appengine/base/messages.h"
-#include "appengine/base/os.h"
-#include "appengine/base/oserror.h"
 #include "appengine/wimp/pointer.h"
-#include "appengine/vdu/screen.h"
-#include "appengine/base/strings.h"
-#include "appengine/base/bsearch.h"
-#include "appengine/gadgets/hist.h"
-#include "appengine/gadgets/metadata.h"
 
-#include "privateeye.h"
 #include "actions.h"
 #include "choicesdat.h"
 #include "clipboard.h"
@@ -58,6 +62,7 @@
 #include "info.h"
 #include "keymap.h"
 #include "menunames.h"          /* not generated */
+#include "privateeye.h"
 #include "rotate.h"
 #include "save.h"
 #include "scale.h"
@@ -66,77 +71,79 @@
 #include "viewer.h"
 #include "zones.h"
 
-#include "actions.h"
-
 #include "display.h"
 
 /* ---------------------------------------------------------------------- */
 
-static event_wimp_handler display__event_redraw_window_request,
-                          display__event_close_window_request,
-                          display__event_mouse_click,
-                          display__event_key_pressed,
-                          display__event_menu_selection,
-                          display__event_scroll_request,
-                          display__event_lose_caret,
-                          display__event_gain_caret;
+static event_wimp_handler display_event_redraw_window_request,
+                          display_event_close_window_request,
+                          display_event_mouse_click,
+                          display_event_key_pressed,
+                          display_event_menu_selection,
+                          display_event_scroll_request,
+                          display_event_lose_caret,
+                          display_event_gain_caret;
 
 /* ----------------------------------------------------------------------- */
 
-static void display__reg(int reg, viewer_t *viewer)
+static void display_reg(int reg, viewer_t *viewer)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_REDRAW_WINDOW_REQUEST,   display__event_redraw_window_request },
-    { wimp_CLOSE_WINDOW_REQUEST,    display__event_close_window_request  },
-    { wimp_MOUSE_CLICK,             display__event_mouse_click           },
-    { wimp_KEY_PRESSED,             display__event_key_pressed           },
-    { wimp_SCROLL_REQUEST,          display__event_scroll_request        },
-    { wimp_LOSE_CARET,              display__event_lose_caret            },
-    { wimp_GAIN_CARET,              display__event_gain_caret            },
+    { wimp_REDRAW_WINDOW_REQUEST, display_event_redraw_window_request },
+    { wimp_CLOSE_WINDOW_REQUEST,  display_event_close_window_request  },
+    { wimp_MOUSE_CLICK,           display_event_mouse_click           },
+    { wimp_KEY_PRESSED,           display_event_key_pressed           },
+    { wimp_SCROLL_REQUEST,        display_event_scroll_request        },
+    { wimp_LOSE_CARET,            display_event_lose_caret            },
+    { wimp_GAIN_CARET,            display_event_gain_caret            },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            viewer->main_w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            viewer->main_w,
+                            event_ANY_ICON,
                             viewer);
 }
 
-error display__set_handlers(viewer_t *viewer)
+error display_set_handlers(viewer_t *viewer)
 {
   error err;
 
-  display__reg(1, viewer);
+  display_reg(1, viewer);
 
   err = help_add_window(viewer->main_w, "display");
 
   return err;
 }
 
-void display__release_handlers(viewer_t *viewer)
+void display_release_handlers(viewer_t *viewer)
 {
   help_remove_window(viewer->main_w);
 
-  display__reg(0, viewer);
+  display_reg(0, viewer);
 }
 
-static void display__set_single_handlers(int reg)
+static void display_set_single_handlers(int reg)
 {
   /* menu_selection is 'vague' so should only be registered once */
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_MENU_SELECTION, display__event_menu_selection },
+    { wimp_MENU_SELECTION, display_event_menu_selection },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-error display__init(void)
+error display_init(void)
 {
   error err;
 
@@ -157,14 +164,14 @@ error display__init(void)
 #endif
 
 #ifdef EYE_TAGS
-  err = tags__init();
+  err = tags_init();
   if (err)
     return err;
 #endif
 
   /* handlers */
 
-  display__set_single_handlers(1);
+  display_set_single_handlers(1);
 
   GLOBALS.display_w = window_create("display");
 
@@ -198,7 +205,7 @@ error display__init(void)
   return error_OK;
 }
 
-void display__fin(void)
+void display_fin(void)
 {
   help_remove_menu(GLOBALS.image_m);
 
@@ -209,10 +216,10 @@ void display__fin(void)
   viewer_scaledlg_fin();
   viewer_savedlg_fin();
 
-  display__set_single_handlers(0);
+  display_set_single_handlers(0);
 
 #ifdef EYE_TAGS
-  tags__fin();
+  tags_fin();
 #endif
 #ifdef EYE_META
   metadata_fin();
@@ -223,7 +230,9 @@ void display__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-static int display__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_redraw_window_request(wimp_event_no event_no,
+                                               wimp_block   *block,
+                                               void         *handle)
 {
   wimp_draw *redraw;
   viewer_t  *viewer;
@@ -237,7 +246,9 @@ static int display__event_redraw_window_request(wimp_event_no event_no, wimp_blo
   if (viewer->background.prepare)
     viewer->background.prepare(viewer);
 
-  for (more = wimp_redraw_window(redraw); more; more = wimp_get_rectangle(redraw))
+  for (more = wimp_redraw_window(redraw);
+       more;
+       more = wimp_get_rectangle(redraw))
   {
     int x,y;
 
@@ -266,38 +277,40 @@ static int display__event_redraw_window_request(wimp_event_no event_no, wimp_blo
 
 /* ----------------------------------------------------------------------- */
 
-typedef void (dragcancel_handler)(void *arg);
+typedef void (dragcancel_handler)(void *opaque);
 
-static dragcancel_handler *dragcancelfn;
-static void               *dragcancelarg;
+static dragcancel_handler *dragcancelhandler;
+static void               *dragcancelopaque;
 
-static void dragcancel__set_handler(int reg, dragcancel_handler *cancelfn, void *arg)
+static void dragcancel_set_handler(int                 reg,
+                                   dragcancel_handler *handler,
+                                   void               *opaque)
 {
   if (reg)
   {
-    dragcancelfn  = cancelfn;
-    dragcancelarg = arg;
+    dragcancelhandler = handler;
+    dragcancelopaque  = opaque;
   }
   else
   {
-    dragcancelfn  = NULL;
-    dragcancelarg = NULL;
+    dragcancelhandler = NULL;
+    dragcancelopaque  = NULL;
   }
 }
 
 static int dragcancel_dragging(void)
 {
-  return dragcancelfn != NULL;
+  return dragcancelhandler != NULL;
 }
 
 static void dragcancel_cancel(void)
 {
-  if (dragcancelfn)
+  if (dragcancelhandler)
   {
     wimp_drag_box((wimp_drag *) -1); /* cancel */
-    dragcancelfn(dragcancelarg);
-    dragcancelfn  = NULL;
-    dragcancelarg = NULL;
+    dragcancelhandler(dragcancelopaque);
+    dragcancelhandler = NULL;
+    dragcancelopaque  = NULL;
   }
 }
 
@@ -305,26 +318,28 @@ static void dragcancel_cancel(void)
 
 enum { ScrollingScale = 256 };
 
-static event_wimp_handler scrolling__event_null_reason_code;
+static event_wimp_handler scrolling_event_null_reason_code;
 
-static void scrolling__set_handlers(int reg, viewer_t *viewer)
+static void scrolling_set_handlers(int reg, viewer_t *viewer)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_NULL_REASON_CODE, scrolling__event_null_reason_code },
+    { wimp_NULL_REASON_CODE, scrolling_event_null_reason_code },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             viewer);
 
   event_set_interval(0);
 }
 
-static int scrolling__event_null_reason_code(wimp_event_no  event_no,
-                                             wimp_block    *block,
-                                             void          *handle)
+static int scrolling_event_null_reason_code(wimp_event_no event_no,
+                                            wimp_block   *block,
+                                            void         *handle)
 {
   viewer_t           *viewer;
   union
@@ -332,7 +347,7 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
     wimp_window_state state;
     wimp_open         open;
   }
-  bleh;
+  u;
   int                 x, y, s;
 
   NOT_USED(event_no);
@@ -344,12 +359,12 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
 
   if (viewer->scrolling.count-- == 0)
   {
-    scrolling__set_handlers(0, viewer);
+    scrolling_set_handlers(0, viewer);
     return event_HANDLED;
   }
 
-  bleh.state.w = viewer->main_w;
-  wimp_get_window_state(&bleh.state);
+  u.state.w = viewer->main_w;
+  wimp_get_window_state(&u.state);
 
   x = viewer->scrolling.pos_x     + viewer->scrolling.dest_x;
   y = viewer->scrolling.pos_y     + viewer->scrolling.dest_y;
@@ -364,10 +379,10 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
 
   /* 'viewer' is possibly stale here now */
 
-  bleh.open.xscroll = x / ScrollingScale;
-  bleh.open.yscroll = y / ScrollingScale;
+  u.open.xscroll = x / ScrollingScale;
+  u.open.yscroll = y / ScrollingScale;
 
-  wimp_open_window(&bleh.open);
+  wimp_open_window(&u.open);
 
   /* now test whether where we've opened is the final resting position, if
    * so cancel any further work */
@@ -375,8 +390,12 @@ static int scrolling__event_null_reason_code(wimp_event_no  event_no,
   return event_HANDLED;
 }
 
-static void scrolling_start(viewer_t *viewer, int dx, int dy, int ds,
-                            int delta, int steps)
+static void scrolling_start(viewer_t *viewer,
+                            int       dx,
+                            int       dy,
+                            int       ds,
+                            int       delta,
+                            int       steps)
 {
   wimp_window_info info;
   int              vw, vh;     /* visible */
@@ -428,9 +447,9 @@ static void scrolling_start(viewer_t *viewer, int dx, int dy, int ds,
 
   /* force an immediate scroll */
   /* poll block isn't used so can safely be set to NULL */
-  scrolling__event_null_reason_code(wimp_NULL_REASON_CODE, NULL, viewer);
+  scrolling_event_null_reason_code(wimp_NULL_REASON_CODE, NULL, viewer);
 
-  scrolling__set_handlers(1, viewer);
+  scrolling_set_handlers(1, viewer);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -519,40 +538,44 @@ static void step(viewer_t *viewer, int direction)
 
 /* ---------------------------------------------------------------------- */
 
-static event_wimp_handler grab__event_user_drag_box,
-                          grab__event_pollword_non_zero;
+static event_wimp_handler grab_event_user_drag_box,
+                          grab_event_pollword_non_zero;
 
 static int grabx, graby;
 static int grabminx, grabminy;
 
-static void grab__set_handlers(int reg)
+static void grab_set_handlers(int reg)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_USER_DRAG_BOX,     grab__event_user_drag_box     },
-    { wimp_POLLWORD_NON_ZERO, grab__event_pollword_non_zero },
+    { wimp_USER_DRAG_BOX,     grab_event_user_drag_box     },
+    { wimp_POLLWORD_NON_ZERO, grab_event_pollword_non_zero },
   };
 
-/*  printf("grab__set_handlers %d\n", reg); */
+/*  printf("grab_set_handlers %d\n", reg); */
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             NULL);
 }
 
-static void grab__end(void *arg)
+static void grab_end(void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
-/*  printf("grab__end\n"); */
+/*  printf("grab_end\n"); */
 
   restore_pointer_shape();
 
-  grab__set_handlers(0);
+  grab_set_handlers(0);
 }
 
-static int grab__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int grab_event_mouse_click(wimp_event_no event_no,
+                                  wimp_block   *block,
+                                  void         *handle)
 {
   wimp_pointer    *pointer;
   viewer_t        *viewer;
@@ -563,7 +586,7 @@ static int grab__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
   int              xscr,yscr;
   int              xext,yext;
 
-/*  printf("grab__event_mouse_click\n"); */
+/*  printf("grab_event_mouse_click\n"); */
 
   NOT_USED(event_no);
 
@@ -606,8 +629,13 @@ static int grab__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
   drag.bbox.y1 = y + (- yvis + yscr       );
 
   drag.handle = event_get_pollword();
-  _swi(0x4D942 /* AppEngine_WindowOp */, _IN(0)|_OUTR(0,2),
-       8, &drag.draw, &drag.undraw, &drag.redraw);
+
+  _swi(0x4D942 /* AppEngine_WindowOp */,
+       _IN(0)|_OUTR(0,2),
+       8,
+       &drag.draw,
+       &drag.undraw,
+       &drag.redraw);
 
   wimp_drag_box(&drag);
 
@@ -615,29 +643,33 @@ static int grab__event_mouse_click(wimp_event_no event_no, wimp_block *block, vo
 
   set_pointer_shape("ptr_grab", 4, 4);
 
-  grab__set_handlers(1);
+  grab_set_handlers(1);
 
-  dragcancel__set_handler(1, grab__end, NULL);
+  dragcancel_set_handler(1, grab_end, NULL);
 
   return event_HANDLED;
 }
 
-static int grab__event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int grab_event_user_drag_box(wimp_event_no event_no,
+                                    wimp_block   *block,
+                                    void         *handle)
 {
   NOT_USED(event_no);
   NOT_USED(block);
   NOT_USED(handle);
 
-/*  printf("grab__event_user_drag_box\n"); */
+/*  printf("grab_event_user_drag_box\n"); */
 
-  dragcancel__set_handler(0, grab__end, NULL);
+  dragcancel_set_handler(0, grab_end, NULL);
 
-  grab__end(NULL);
+  grab_end(NULL);
 
   return event_HANDLED;
 }
 
-static int grab__event_pollword_non_zero(wimp_event_no event_no, wimp_block *block, void *handle)
+static int grab_event_pollword_non_zero(wimp_event_no event_no,
+                                        wimp_block   *block,
+                                        void         *handle)
 {
   wimp_pointer        pointer;
   union
@@ -645,7 +677,7 @@ static int grab__event_pollword_non_zero(wimp_event_no event_no, wimp_block *blo
     wimp_window_state state;
     wimp_open         open;
   }
-  bleh;
+  u;
 
   NOT_USED(event_no);
   NOT_USED(block);
@@ -655,20 +687,22 @@ static int grab__event_pollword_non_zero(wimp_event_no event_no, wimp_block *blo
 
   wimp_get_pointer_info(&pointer);
 
-  bleh.state.w = GLOBALS.dragging_viewer->main_w;
-  wimp_get_window_state(&bleh.state);
+  u.state.w = GLOBALS.dragging_viewer->main_w;
+  wimp_get_window_state(&u.state);
 
-  bleh.open.xscroll = grabminx + grabx - pointer.pos.x;
-  bleh.open.yscroll = grabminy + graby - pointer.pos.y;
+  u.open.xscroll = grabminx + grabx - pointer.pos.x;
+  u.open.yscroll = grabminy + graby - pointer.pos.y;
 
-  wimp_open_window(&bleh.open);
+  wimp_open_window(&u.open);
 
   return event_HANDLED;
 }
 
 /* ---------------------------------------------------------------------- */
 
-static int display__event_close_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_close_window_request(wimp_event_no event_no,
+                                              wimp_block   *block,
+                                              void         *handle)
 {
   wimp_close  *close;
   viewer_t    *viewer;
@@ -757,31 +791,35 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
 
 /* ---------------------------------------------------------------------- */
 
-static event_wimp_handler embed__event_user_drag_box;
+static event_wimp_handler embed_event_user_drag_box;
 
-static void embed__set_handlers(int reg)
+static void embed_set_handlers(int reg)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_USER_DRAG_BOX, embed__event_user_drag_box },
+    { wimp_USER_DRAG_BOX, embed_event_user_drag_box },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             NULL);
 }
 
-static void embed__end(void *arg)
+static void embed_end(void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   restore_pointer_shape();
 
-  embed__set_handlers(0);
+  embed_set_handlers(0);
 }
 
-static int embed__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int embed_event_mouse_click(wimp_event_no event_no,
+                                   wimp_block   *block,
+                                   void         *handle)
 {
   wimp_pointer    *pointer;
   viewer_t        *viewer;
@@ -808,14 +846,16 @@ static int embed__event_mouse_click(wimp_event_no event_no, wimp_block *block, v
 
   set_pointer_shape("ptr_embed", 0, 0);
 
-  embed__set_handlers(1);
+  embed_set_handlers(1);
 
-  dragcancel__set_handler(1, embed__end, NULL);
+  dragcancel_set_handler(1, embed_end, NULL);
 
   return event_HANDLED;
 }
 
-static int embed__event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int embed_event_user_drag_box(wimp_event_no event_no,
+                                     wimp_block   *block,
+                                     void         *handle)
 {
   wimp_pointer     pointer;
   wimp_w           parent;
@@ -825,9 +865,9 @@ static int embed__event_user_drag_box(wimp_event_no event_no, wimp_block *block,
   NOT_USED(block);
   NOT_USED(handle);
 
-  dragcancel__set_handler(0, embed__end, NULL);
+  dragcancel_set_handler(0, embed_end, NULL);
 
-  embed__end(NULL);
+  embed_end(NULL);
 
   wimp_get_pointer_info(&pointer);
 
@@ -848,22 +888,24 @@ static int embed__event_user_drag_box(wimp_event_no event_no, wimp_block *block,
 
 /* ---------------------------------------------------------------------- */
 
-static event_wimp_handler zoombox__event_user_drag_box;
+static event_wimp_handler zoombox_event_user_drag_box;
 
-static void zoombox__set_handlers(int reg, viewer_t *viewer)
+static void zoombox_set_handlers(int reg, viewer_t *viewer)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_USER_DRAG_BOX, zoombox__event_user_drag_box },
+    { wimp_USER_DRAG_BOX, zoombox_event_user_drag_box },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             viewer);
 }
 
-static void zoombox__end(void *arg)
+static void zoombox_end(void *opaque)
 {
   /* Turn off autoscrolling */
   if (GLOBALS.wimp_version >= 399) // should 399 be wimp_VERSION_RO40?
@@ -871,10 +913,12 @@ static void zoombox__end(void *arg)
 
   restore_pointer_shape();
 
-  zoombox__set_handlers(0, arg);
+  zoombox_set_handlers(0, opaque);
 }
 
-static int zoombox__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int zoombox_event_mouse_click(wimp_event_no event_no,
+                                     wimp_block   *block,
+                                     void         *handle)
 {
   wimp_pointer    *pointer;
   viewer_t        *viewer;
@@ -919,20 +963,20 @@ static int zoombox__event_mouse_click(wimp_event_no event_no, wimp_block *block,
 
   if (GLOBALS.wimp_version >= 399)
   {
-    wimp_auto_scroll_info info;
+    wimp_auto_scroll_info scrinfo;
 
-    info.w = pointer->w;
-    info.pause_zone_sizes.x0 =
-    info.pause_zone_sizes.y0 =
-    info.pause_zone_sizes.x1 =
-    info.pause_zone_sizes.y1 = 16;
-    info.pause_duration = 0; /* don't pause */
-    info.state_change = wimp_AUTO_SCROLL_NO_HANDLER; /* using own pointer */
-    /* info.handle = 0; N/A */
+    scrinfo.w = pointer->w;
+    scrinfo.pause_zone_sizes.x0 =
+    scrinfo.pause_zone_sizes.y0 =
+    scrinfo.pause_zone_sizes.x1 =
+    scrinfo.pause_zone_sizes.y1 = 16;
+    scrinfo.pause_duration      = 0; /* don't pause */
+    scrinfo.state_change        = wimp_AUTO_SCROLL_NO_HANDLER; /* using own pointer */
+    /* scrinfo.handle = 0; N/A */
 
     wimp_auto_scroll(wimp_AUTO_SCROLL_ENABLE_HORIZONTAL |
                      wimp_AUTO_SCROLL_ENABLE_VERTICAL,
-                    &info);
+                    &scrinfo);
 
     wimp_drag_box_with_flags(&drag,
                               wimp_DRAG_BOX_KEEP_IN_LINE |
@@ -945,14 +989,16 @@ static int zoombox__event_mouse_click(wimp_event_no event_no, wimp_block *block,
 
   set_pointer_shape("ptr_mag", 10, 9);
 
-  zoombox__set_handlers(1, viewer);
+  zoombox_set_handlers(1, viewer);
 
-  dragcancel__set_handler(1, zoombox__end, viewer);
+  dragcancel_set_handler(1, zoombox_end, viewer);
 
   return event_HANDLED;
 }
 
-static int zoombox__event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int zoombox_event_user_drag_box(wimp_event_no event_no,
+                                       wimp_block   *block,
+                                       void         *handle)
 {
   wimp_dragged    *dragged;
   viewer_t        *viewer;
@@ -968,9 +1014,9 @@ static int zoombox__event_user_drag_box(wimp_event_no event_no, wimp_block *bloc
   dragged = &block->dragged;
   viewer  = handle;
 
-  dragcancel__set_handler(0, zoombox__end, viewer);
+  dragcancel_set_handler(0, zoombox_end, viewer);
 
-  zoombox__end(viewer);
+  zoombox_end(viewer);
 
   /* Read the window coordinates */
   info.w = GLOBALS.current_display_w;
@@ -1032,7 +1078,7 @@ static void disable(wimp_menu *m, int entry, int available)
                       wimp_ICON_SHADED);
 }
 
-/*
+/* idea for more generic menu setup
 
 typedef struct menutest_entry
 {
@@ -1056,9 +1102,9 @@ menutest_entry misc_entries[] = { NULL,
                                   NULL };
 
 static
-menutest_entry edit_entries[] = { effects__available,
-                                  rotate__available,
-                                  to_spr__available,
+menutest_entry edit_entries[] = { effects_available,
+                                  rotate_available,
+                                  to_spr_available,
                                   NULL,
                                   NULL };
 
@@ -1083,7 +1129,7 @@ for (i = 0; i < NELEMS(menus); i++)
 
 */
 
-static void display__menu_update(void)
+static void display_menu_update(void)
 {
   viewer_t        *viewer;
   image_t         *image;
@@ -1115,20 +1161,22 @@ static void display__menu_update(void)
   m = entries[IMAGE_EDIT].sub_menu;
 
   /* Shade the "Effects" entry if effects module says "no" */
-  disable(m, EDIT_EFFECTS, effects__available(image));
+  disable(m, EDIT_EFFECTS, effects_available(image));
 
   /* Shade the "Rotate" entry if rotate module says "no" */
-  disable(m, EDIT_ROTATE,  rotate__available(image));
+  disable(m, EDIT_ROTATE,  rotate_available(image));
 
   /* Shade the "Convert to Sprite" entry if to_spr module says "no" */
-  disable(m, EDIT_CONVERT_TO_SPRITE, to_spr__available(image));
+  disable(m, EDIT_CONVERT_TO_SPRITE, to_spr_available(image));
 
   /* Shade the "Release clipboard" entry if we don't own the clipboard */
   disable(m, EDIT_RELEASE, clipboard_own());
 }
 
 
-static int display__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_mouse_click(wimp_event_no event_no,
+                                     wimp_block   *block,
+                                     void         *handle)
 {
 #define KeyNone         0
 #define KeyShift        1
@@ -1164,7 +1212,7 @@ static int display__event_mouse_click(wimp_event_no event_no, wimp_block *block,
 
   if (pointer->buttons & wimp_CLICK_MENU)
   {
-    display__menu_update();
+    display_menu_update();
 
     menu_open(GLOBALS.image_m, pointer->pos.x - 64, pointer->pos.y);
   }
@@ -1172,34 +1220,56 @@ static int display__event_mouse_click(wimp_event_no event_no, wimp_block *block,
   {
     switch (keys)
     {
-      case KeyShift: zoom_to_point(pointer, viewer); break;
-      case KeyCtrl: pan_to_point(pointer, viewer); break;
-      default: break;
+      case KeyShift:
+        zoom_to_point(pointer, viewer);
+        break;
+
+      case KeyCtrl:
+        pan_to_point(pointer, viewer);
+        break;
+
+      default:
+        break;
     }
   }
   else if (pointer->buttons & wimp_CLICK_ADJUST)
   {
     switch (keys)
     {
-      case KeyShift: zoom_to_point(pointer, viewer); break;
-      default: break;
+      case KeyShift:
+        zoom_to_point(pointer, viewer);
+        break;
+
+      default:
+        break;
     }
   }
   else if (pointer->buttons & wimp_DRAG_SELECT)
   {
     switch (keys)
     {
-      case KeyNone: grab__event_mouse_click(event_no, block, handle); break;
-      case KeyShiftCtrl: embed__event_mouse_click(event_no, block, handle); break;
-      default: break;
+      case KeyNone:
+        grab_event_mouse_click(event_no, block, handle);
+        break;
+
+      case KeyShiftCtrl:
+        embed_event_mouse_click(event_no, block, handle);
+        break;
+
+      default:
+        break;
     }
   }
   else if (pointer->buttons & wimp_DRAG_ADJUST)
   {
     switch (keys)
     {
-      case KeyNone: zoombox__event_mouse_click(event_no, block, handle); break;
-      default: break;
+      case KeyNone:
+        zoombox_event_mouse_click(event_no, block, handle);
+        break;
+
+      default:
+        break;
     }
   }
 
@@ -1253,7 +1323,7 @@ static void action_pan(viewer_t *viewer, int op)
   if (viewer->scrolling.count > 0)
   {
     /* already scrolling - force an update */
-    scrolling__event_null_reason_code(wimp_NULL_REASON_CODE, NULL, viewer);
+    scrolling_event_null_reason_code(wimp_NULL_REASON_CODE, NULL, viewer);
   }
   else
   {
@@ -1391,7 +1461,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Rotate:
-    rotate__open(viewer->drawable->image);
+    rotate_open(viewer->drawable->image);
     break;
 
   case Scale:
@@ -1400,7 +1470,7 @@ static void action(viewer_t *viewer, int op)
 
 #ifdef EYE_TAGS
   case Tags:
-    error_report(tags__open(viewer->drawable->image));
+    error_report(tags_open(viewer->drawable->image));
     break;
 #endif
 
@@ -1425,15 +1495,15 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Effects:
-    effects__open(viewer->drawable->image);
+    effects_open(viewer->drawable->image);
     break;
 
   case MetaData:
 #ifdef EYE_META
     metadata_open(viewer->drawable->image,
-                   GLOBALS.choices.metadata.bgcolour,
-                   GLOBALS.choices.metadata.wrapwidth,
-                   GLOBALS.choices.metadata.line_height);
+                  GLOBALS.choices.metadata.bgcolour,
+                  GLOBALS.choices.metadata.wrapwidth,
+                  GLOBALS.choices.metadata.line_height);
 #endif
     break;
 
@@ -1443,7 +1513,9 @@ static void action(viewer_t *viewer, int op)
   }
 }
 
-static int display__event_key_pressed(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_key_pressed(wimp_event_no event_no,
+                                     wimp_block   *block,
+                                     void         *handle)
 {
   wimp_key *key;
   viewer_t *viewer;
@@ -1485,7 +1557,9 @@ static int display__event_key_pressed(wimp_event_no event_no, wimp_block *block,
   return event_HANDLED;
 }
 
-static int display__event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_menu_selection(wimp_event_no event_no,
+                                        wimp_block   *block,
+                                        void         *handle)
 {
 #define PACK(a,b) (((a) << 8) | (b))
 
@@ -1497,18 +1571,18 @@ static int display__event_menu_selection(wimp_event_no event_no, wimp_block *blo
   map[] =
   {
 #ifdef EYE_META
-    { PACK(IMAGE_FILE, FILE_METADATA),            MetaData  },
+    { PACK(IMAGE_FILE, FILE_METADATA),          MetaData  },
 #endif
-    { PACK(IMAGE_FILE, FILE_HIST),                Hist      },
+    { PACK(IMAGE_FILE, FILE_HIST),              Hist      },
 #ifdef EYE_TAGS
-    { PACK(IMAGE_FILE, FILE_TAGS),                Tags      },
+    { PACK(IMAGE_FILE, FILE_TAGS),              Tags      },
 #endif
-    { PACK(IMAGE_FILE, FILE_NEWVIEW),             NewView   },
-    { PACK(IMAGE_EDIT, EDIT_EFFECTS),             Effects   },
-    { PACK(IMAGE_EDIT, EDIT_ROTATE),              Rotate    },
-    { PACK(IMAGE_EDIT, EDIT_CONVERT_TO_SPRITE),   ConvToSpr },
-    { PACK(IMAGE_EDIT, EDIT_CLAIM),               Copy      },
-    { PACK(IMAGE_EDIT, EDIT_RELEASE),             Release   },
+    { PACK(IMAGE_FILE, FILE_NEWVIEW),           NewView   },
+    { PACK(IMAGE_EDIT, EDIT_EFFECTS),           Effects   },
+    { PACK(IMAGE_EDIT, EDIT_ROTATE),            Rotate    },
+    { PACK(IMAGE_EDIT, EDIT_CONVERT_TO_SPRITE), ConvToSpr },
+    { PACK(IMAGE_EDIT, EDIT_CLAIM),             Copy      },
+    { PACK(IMAGE_EDIT, EDIT_RELEASE),           Release   },
   };
 
   const size_t stride = sizeof(map[0]);
@@ -1545,7 +1619,7 @@ static int display__event_menu_selection(wimp_event_no event_no, wimp_block *blo
   wimp_get_pointer_info(&p);
   if (p.buttons & wimp_CLICK_ADJUST)
   {
-    display__menu_update();
+    display_menu_update();
     menu_reopen();
   }
 
@@ -1554,7 +1628,9 @@ static int display__event_menu_selection(wimp_event_no event_no, wimp_block *blo
 #undef PACK
 }
 
-static int display__event_scroll_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_scroll_request(wimp_event_no event_no,
+                                        wimp_block   *block,
+                                        void         *handle)
 {
   wimp_scroll *scroll;
   viewer_t    *viewer;
@@ -1610,7 +1686,9 @@ static int display__event_scroll_request(wimp_event_no event_no, wimp_block *blo
   return event_HANDLED;
 }
 
-static int display__event_lose_caret(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_lose_caret(wimp_event_no event_no,
+                                    wimp_block   *block,
+                                    void         *handle)
 {
   viewer_t *viewer;
 
@@ -1624,8 +1702,9 @@ static int display__event_lose_caret(wimp_event_no event_no, wimp_block *block, 
   return event_HANDLED;
 }
 
-
-static int display__event_gain_caret(wimp_event_no event_no, wimp_block *block, void *handle)
+static int display_event_gain_caret(wimp_event_no event_no,
+                                    wimp_block   *block,
+                                    void         *handle)
 {
   viewer_t *viewer;
 

@@ -24,12 +24,12 @@ static char *my_strdup(const char *s)
   return d;
 }
 
-static int my_walk_fn(const void *key, const void *value, void *arg)
+static int my_walk_fn(const void *key, const void *value, void *opaque)
 {
   const char *sk = key;
   const char *sv = value;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   printf("walk '%s':'%s'...\n", sk, sv);
 

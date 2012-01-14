@@ -24,8 +24,7 @@ error effects_sharpen_apply(osspriteop_area   *area,
                             osspriteop_header *dst,
                             int                amount)
 {
-  static const float kernel[] = { 1.5f,
-                                 -0.25f };
+  static const float kernel[] = { 1.5f, -0.25f };
 
   error         err;
   convolve_lut *lut;

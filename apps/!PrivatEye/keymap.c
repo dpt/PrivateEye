@@ -106,17 +106,18 @@ static const keymap_section sections[] =
 
 static keymap_t *keymap;
 
-static int viewer_keymap__refcount = 0;
+static int viewer_keymap_refcount = 0;
 
 error viewer_keymap_init(void)
 {
   error err;
 
-  if (viewer_keymap__refcount++ == 0)
+  if (viewer_keymap_refcount++ == 0)
   {
     err = keymap_create("Choices:" APPNAME ".Keys",
-                         sections, NELEMS(sections),
-                        &keymap);
+                        sections,
+                        NELEMS(sections),
+                       &keymap);
 
     return err;
   }
@@ -126,19 +127,17 @@ error viewer_keymap_init(void)
 
 void viewer_keymap_fin(void)
 {
-  if (--viewer_keymap__refcount == 0)
-  {
+  if (--viewer_keymap_refcount == 0)
     keymap_destroy(keymap);
-  }
 }
 
 int viewer_keymap_op(viewer_keymap_section section, wimp_key_no key_no)
 {
-  keymap_action a;
+  keymap_action act;
 
-  a = keymap_get_action(keymap, section, key_no);
-  if (a >= 0 || section == viewer_keymap_SECTION_COMMON)
-    return a;
+  act = keymap_get_action(keymap, section, key_no);
+  if (act >= 0 || section == viewer_keymap_SECTION_COMMON)
+    return act;
 
   return viewer_keymap_op(viewer_keymap_SECTION_COMMON, key_no);
 }

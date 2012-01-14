@@ -41,11 +41,11 @@ error filenamedb_commit(T *db);
 /* ----------------------------------------------------------------------- */
 
 error filenamedb_add(T          *db,
-                      const char *id,
-                      const char *filename);
+                     const char *id,
+                     const char *filename);
 
 const char *filenamedb_get(T          *db,
-                            const char *id);
+                           const char *id);
 
 /* ----------------------------------------------------------------------- */
 

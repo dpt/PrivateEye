@@ -55,12 +55,12 @@ typedef void (hash_destroy_value)(void *value);
  *
  * \return Error indication.
  */
-error hash_create(int                  nbins,
-                   hash_fn            *fn,
-                   hash_compare       *compare,
-                   hash_destroy_key   *destroy_key,
-                   hash_destroy_value *destroy_value,
-                   T                  **hash);
+error hash_create(int                 nbins,
+                  hash_fn            *fn,
+                  hash_compare       *compare,
+                  hash_destroy_key   *destroy_key,
+                  hash_destroy_value *destroy_value,
+                  T                 **hash);
 
 /**
  * Destroy a hash.
@@ -112,8 +112,8 @@ void hash_remove(T *hash, const void *key);
  * Return a negative value to halt the walk operation.
  */
 typedef int (hash_walk_callback)(const void *key,
-                                  const void *value,
-                                  void       *opaque);
+                                 const void *value,
+                                 void       *opaque);
 
 /**
  * Walk the hash, calling the specified routine for every element.
@@ -142,9 +142,9 @@ int hash_walk(T *hash, hash_walk_callback *cb, void *opaque);
  * \retval -1 Invalid continuation value.
  */
 int hash_walk_continuation(T           *hash,
-                            int          continuation,
-                            const void **key,
-                            const void **value);
+                           int          continuation,
+                           const void **key,
+                           const void **value);
 
 /* ----------------------------------------------------------------------- */
 

@@ -27,22 +27,22 @@
 
 typedef struct stream_packbits_decomp
 {
-  stream         base;
-  stream        *input;
+  stream        base;
+  stream       *input;
 
-  int            bufsz;
-  unsigned char  buffer[UNKNOWN]; /* The buffer size needs to be at least
-                                   * that of the longest run which the
-                                   * PackBits algorithm can generate,
-                                   * i.e. at least 128 bytes. */
+  int           bufsz;
+  unsigned char buffer[UNKNOWN]; /* The buffer size needs to be at least
+                                  * that of the longest run which the
+                                  * PackBits algorithm can generate, i.e. at
+                                  * least 128 bytes. */
 }
 stream_packbits_decomp;
 
 static int stream_packbits_decomp_get(stream *s)
 {
   stream_packbits_decomp *sm = (stream_packbits_decomp *) s;
-  unsigned char        *p;
-  unsigned char        *end;
+  unsigned char          *p;
+  unsigned char          *end;
 
   /* are we only called when buffer empty? */
   assert(sm->base.buf == sm->base.end);

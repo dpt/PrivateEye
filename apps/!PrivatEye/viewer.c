@@ -13,35 +13,35 @@
 #include "fortify/fortify.h"
 
 #include "oslib/colourtrans.h"
+#include "oslib/drawfile.h"
 #include "oslib/hourglass.h"
+#include "oslib/jpeg.h"
 #include "oslib/os.h"
 #include "oslib/osfile.h"
-#include "oslib/drawfile.h"
-#include "oslib/jpeg.h"
 
+#include "appengine/app/choices.h"
+#include "appengine/base/errors.h"
+#include "appengine/base/messages.h"
+#include "appengine/base/oserror.h"
+#include "appengine/base/strings.h"
 #include "appengine/datastruct/array.h"
 #include "appengine/dialogues/dcs-quit.h"
 #include "appengine/geom/box.h"
-#include "appengine/app/choices.h"
 #include "appengine/graphics/drawable.h"
-#include "appengine/base/errors.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
-#include "appengine/base/messages.h"
-#include "appengine/base/oserror.h"
 #include "appengine/vdu/screen.h"
-#include "appengine/base/strings.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/wimp/window.h"
 
 #include "display.h"
 #include "globals.h"
+#include "imagecache.h"
 #include "privateeye.h"
 #include "save.h"
 #include "scale.h"
 #include "viewer.h"
 #include "zones.h"
-#include "imagecache.h"
 
 /* Viewers are stored in a linked list. */
 static list_t list_anchor = { NULL };
@@ -55,7 +55,9 @@ static void set_view_title(viewer_t *viewer)
   char buf[256];
   int  nclones;
 
-  sprintf(file_name, "%.*s", (int) sizeof(file_name), viewer->image->file_name);
+  sprintf(file_name, "%.*s",
+    (int) sizeof(file_name),
+          viewer->image->file_name);
   sprintf(percentage, "%d%%", viewer->scale.cur);
   sprintf(buf, message0("display.title"), file_name, percentage);
 
@@ -76,9 +78,9 @@ static void set_view_title(viewer_t *viewer)
 
 /* ----------------------------------------------------------------------- */
 
-static int refresh_all_titles_callback(viewer_t *viewer, void *arg)
+static int refresh_all_titles_callback(viewer_t *viewer, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   set_view_title(viewer);
 
@@ -126,7 +128,7 @@ error viewer_create(viewer_t **new_viewer)
   else
     v->scale.cur = v->scale.prev = GLOBALS.choices.viewer.scale;
 
-  err = display__set_handlers(v);
+  err = display_set_handlers(v);
   if (err)
     goto Failure;
 
@@ -182,7 +184,7 @@ void viewer_destroy(viewer_t *doomed)
 {
   viewer_reset(doomed);
 
-  display__release_handlers(doomed);
+  display_release_handlers(doomed);
 
   list_remove(&list_anchor, &doomed->list);
 
@@ -218,13 +220,13 @@ typedef struct
 }
 find_by_attrs_args;
 
-static int find_by_attrs_callback(list_t *e, void *arg)
+static int find_by_attrs_callback(list_t *e, void *opaque)
 {
   find_by_attrs_args *args;
   viewer_t           *v;
   image_t            *i;
 
-  args = arg;
+  args = opaque;
 
   v = (viewer_t *) e;
 
@@ -279,17 +281,19 @@ int viewer_count_clones(viewer_t *v)
 /* ----------------------------------------------------------------------- */
 
 /* Call the specified function for every viewer window. */
-void viewer_map(viewer_map_callback *fn, void *arg)
+void viewer_map(viewer_map_callback *fn, void *opaque)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list_walk(&list_anchor, (list_walk_callback *) fn, arg);
+  list_walk(&list_anchor, (list_walk_callback *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */
 
 /* Like viewer_map, but for a specific image. */
-void viewer_map_for_image(image_t *image, viewer_map_callback *fn, void *arg)
+void viewer_map_for_image(image_t             *image,
+                          viewer_map_callback *fn,
+                          void                *opaque)
 {
   list_t *e;
   list_t *next;
@@ -305,7 +309,7 @@ void viewer_map_for_image(image_t *image, viewer_map_callback *fn, void *arg)
     v = (viewer_t *) e;
 
     if (v->drawable->image == image)
-      fn(v, arg);
+      fn(v, opaque);
   }
 }
 
@@ -341,8 +345,14 @@ static void fill_redraw_rect(wimp_draw *draw, viewer_t *viewer, int x, int y)
   {
     _kernel_oserror *e;
 
-    e = _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
-              viewer->background.header, x, y, 32, 32, 0x3C);
+    e = _swix(Tinct_PlotScaled,
+              _INR(2,6)|_IN(7),
+              viewer->background.header,
+              x,
+              y,
+              32,
+              32,
+              0x3C);
     if (e == NULL)
       return;
   }
@@ -506,7 +516,8 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box)
     viewer->background.prepare = fill_redraw_rect_prepare;
     viewer->background.draw    = fill_redraw_rect;
   }
-  else if (minimum_size || GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
+  else if (minimum_size ||
+           GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
   {
     viewer->background.prepare = fill_redraw_rect_prepare;
     viewer->background.draw    = draw_edges_only;
@@ -587,9 +598,9 @@ void viewer_update(viewer_t *viewer, viewer_update_flags flags)
 
 /* ----------------------------------------------------------------------- */
 
-static int update_all_callback(viewer_t *viewer, void *arg)
+static int update_all_callback(viewer_t *viewer, void *opaque)
 {
-  viewer_update(viewer, (unsigned int) arg);
+  viewer_update(viewer, (unsigned int) opaque);
 
   return 0;
 }
@@ -603,7 +614,8 @@ void viewer_update_all(viewer_update_flags flags)
 
 void viewer_open(viewer_t *viewer)
 {
-  window_restore(viewer->main_w, &viewer->capture,
+  window_restore(viewer->main_w,
+                &viewer->capture,
                  GLOBALS.choices.viewer.cover_icon_bar);
 }
 
@@ -614,38 +626,40 @@ struct update_image_args
   viewer_update_flags flags;
 };
 
-static int update_image_callback(viewer_t *viewer, void *arg)
+static int update_image_callback(viewer_t *viewer, void *opaque)
 {
-  struct update_image_args *args = arg;
+  struct update_image_args *args = opaque;
 
   viewer_update(viewer, args->flags);
 
   return 0;
 }
 
-static int capture_position_callback(viewer_t *viewer, void *arg)
+static int capture_position_callback(viewer_t *viewer, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
-  window_capture(viewer->main_w, &viewer->capture,
+  window_capture(viewer->main_w,
+                &viewer->capture,
                  GLOBALS.choices.viewer.cover_icon_bar);
 
   return 0;
 }
 
-static int restore_position_callback(viewer_t *viewer, void *arg)
+static int restore_position_callback(viewer_t *viewer, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
-  window_restore(viewer->main_w, &viewer->capture,
+  window_restore(viewer->main_w,
+                &viewer->capture,
                  GLOBALS.choices.viewer.cover_icon_bar);
 
   return 0;
 }
 
-static int reset_callback(viewer_t *viewer, void *arg)
+static int reset_callback(viewer_t *viewer, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   viewer_dispose(viewer);
 
@@ -653,10 +667,10 @@ static int reset_callback(viewer_t *viewer, void *arg)
 }
 
 /* Called by imageobserver when a registered image changes. */
-static void image_changed_callback(image_t              *image,
-                                   imageobserver_change  change,
-                                   imageobserver_data   *data,
-                                   void                 *opaque)
+static void image_changed_callback(image_t             *image,
+                                   imageobserver_change change,
+                                   imageobserver_data  *data,
+                                   void                *opaque)
 {
   struct update_image_args args;
 
@@ -769,7 +783,9 @@ error viewer_clone_from_window(wimp_w w, viewer_t **pviewer)
   /* Note that zones can validly be NULL (e.g. for vectors). */
 
   /* Watch for changes. */
-  imageobserver_register(newv->drawable->image, image_changed_callback, NULL);
+  imageobserver_register(newv->drawable->image,
+                         image_changed_callback,
+                         NULL);
 
   *pviewer = newv;
 
@@ -808,7 +824,8 @@ osbool viewer_load(viewer_t   *viewer,
   hourglass_on();
 
   /* Remember current window position for when we position window later. */
-  window_capture(viewer->main_w, &viewer->capture,
+  window_capture(viewer->main_w,
+                &viewer->capture,
                  GLOBALS.choices.viewer.cover_icon_bar);
 
   /* Get rid of any previous stuff. */
@@ -939,9 +956,9 @@ int viewer_query_unload(viewer_t *viewer)
 
 /* ----------------------------------------------------------------------- */
 
-static int close_all_callback(viewer_t *viewer, void *arg)
+static int close_all_callback(viewer_t *viewer, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   viewer_unload(viewer);
   viewer_destroy(viewer);
@@ -960,9 +977,9 @@ void viewer_close_all(void)
 
 /* ----------------------------------------------------------------------- */
 
-static void count_edited_callback(image_t *image, void *arg)
+static void count_edited_callback(image_t *image, void *opaque)
 {
-  int *nedited = arg;
+  int *nedited = opaque;
 
   if (image->flags & image_FLAG_MODIFIED)
     (*nedited)++;
@@ -982,9 +999,9 @@ int viewer_count_edited(void)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_choices_updated(const choices_group *g)
+error viewer_choices_updated(const choices_group *group)
 {
-  NOT_USED(g);
+  NOT_USED(group);
 
   viewer_update_all(viewer_UPDATE_ALL);
 

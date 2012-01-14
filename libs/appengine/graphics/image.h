@@ -36,29 +36,29 @@ typedef struct
 {
   struct
   {
-    int               border;
+    int                 border;
   }
   artworks;
 
   struct
   {
-    int               border;
+    int                 border;
   }
   drawfile;
 
   struct
   {
     image_jpeg_cleaning cleaning;
-    osbool            sprite;   /* convert to sprite */
-    osbool            trim;     /* trim when rotating */
+    osbool              sprite;   /* convert to sprite */
+    osbool              trim;     /* trim when rotating */
   }
   jpeg;
 
   struct
   {
-    osbool            ignore_gamma;
-    osbool            ignore_scale;
-    osbool            ignore_transparency;
+    osbool              ignore_gamma;
+    osbool              ignore_scale;
+    osbool              ignore_transparency;
   }
   png;
 }
@@ -255,9 +255,9 @@ int image_recognise(wimp_message *message);
 
 /* ----------------------------------------------------------------------- */
 
-typedef void (image_map_callback)(T *, void *arg);
+typedef void (image_map_callback)(T *, void *opaque);
 
-void image_map(image_map_callback *fn, void *arg);
+void image_map(image_map_callback *fn, void *opaque);
 
 /* ----------------------------------------------------------------------- */
 

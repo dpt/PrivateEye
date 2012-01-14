@@ -3,6 +3,11 @@
  * Purpose: Effects dialogue
  * ----------------------------------------------------------------------- */
 
+// TODO
+// Presently this is coded as a singleton - if you open up an effects windows
+// for another image then the first effects instance vanishes.
+// Should refactor it to allow multiple effects windows to be open.
+
 #include "swis.h"
 
 #include <limits.h>
@@ -20,23 +25,23 @@
 #include "oslib/wimp.h"
 
 #include "appengine/types.h"
-#include "appengine/graphics/colour.h"
-#include "appengine/wimp/dialogue.h"
+#include "appengine/base/bsearch.h"
 #include "appengine/base/errors.h"
-#include "appengine/wimp/event.h"
-#include "appengine/wimp/help.h"
-#include "appengine/wimp/icon.h"
-#include "appengine/graphics/image-observer.h"
-#include "appengine/graphics/image.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"
 #include "appengine/gadgets/scroll-list.h"
 #include "appengine/gadgets/slider.h"
-#include "appengine/graphics/sprite-effects.h"
-#include "appengine/vdu/sprite.h"
 #include "appengine/gadgets/tonemap-gadget.h"
+#include "appengine/graphics/colour.h"
+#include "appengine/graphics/image-observer.h"
+#include "appengine/graphics/image.h"
+#include "appengine/graphics/sprite-effects.h"
 #include "appengine/graphics/tonemap.h"
-#include "appengine/base/bsearch.h"
+#include "appengine/vdu/sprite.h"
+#include "appengine/wimp/dialogue.h"
+#include "appengine/wimp/event.h"
+#include "appengine/wimp/help.h"
+#include "appengine/wimp/icon.h"
 
 #include "globals.h"
 #include "iconnames.h"          /* generated */
@@ -45,9 +50,9 @@
 
 #include "effects.h"
 
-#define HEIGHT     44
-#define ICONWIDTH  44
-#define TEXTWIDTH 460 /* assuming 512 wide window */
+#define HEIGHT    44
+#define ICONWIDTH 44
+#define TEXTWIDTH 460 /* assuming a 512 pixel wide window */
 
 /* ---------------------------------------------------------------------- */
 
@@ -115,9 +120,9 @@ effect_blur;
 
 typedef struct
 {
-  tonemap          *map;
-  tonemap_channels  channels;
-  tonemap_spec      spec;
+  tonemap         *map;
+  tonemap_channels channels;
+  tonemap_spec     spec;
 }
 effect_tone;
 
@@ -146,6 +151,7 @@ effect_array;
 
 /* ----------------------------------------------------------------------- */
 
+// FIXME: These need wrapping up in a struct, possibly embedded in LOCAL.
 static effect_array    effects;
 static effect_element *editing_element;
 static scroll_list    *sl;
@@ -161,22 +167,27 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static void effects__close(void);
-static void effects__apply(void);
-static void effects__cancel(void);
+static void effects_close(void);
+static void effects_apply(void);
+static void effects_cancel(void);
 
 /* ---------------------------------------------------------------------- */
 
+// FIXME: Inconsistent naming. Should be effects_editor etc.
 typedef int (*Editor)(effect_element *e, int x, int y);
 typedef error (*SetDefaults)(effect_element *e);
-typedef error (*Apply)(osspriteop_area *area, osspriteop_header *src, osspriteop_header *dst, effect_element *e);
+typedef error (*Apply)(osspriteop_area   *area,
+                       osspriteop_header *src,
+                       osspriteop_header *dst,
+                       effect_element    *e);
 
 /* ---------------------------------------------------------------------- */
 
-static error clear_apply(osspriteop_area *area, osspriteop_header *src, osspriteop_header *dst, effect_element *e)
+static error clear_apply(osspriteop_area   *area,
+                         osspriteop_header *src,
+                         osspriteop_header *dst,
+                         effect_element    *e)
 {
-  NOT_USED(src);
-
   return effects_clear_apply(area, src, dst, e->args.clear.colour);
 }
 
@@ -187,7 +198,10 @@ static error clear_defaults(effect_element *e)
   return error_OK;
 }
 
-static error tone_apply(osspriteop_area *area, osspriteop_header *src, osspriteop_header *dst, effect_element *e)
+static error tone_apply(osspriteop_area   *area,
+                        osspriteop_header *src,
+                        osspriteop_header *dst,
+                        effect_element    *e)
 {
   return effects_tonemap_apply(area, src, dst, e->args.tone.map);
 }
@@ -225,8 +239,10 @@ static error tone_defaults(effect_element *e)
   return error_OK;
 }
 
-static error grey_apply(osspriteop_area *area, osspriteop_header *src,
-                        osspriteop_header *dst, effect_element *e)
+static error grey_apply(osspriteop_area   *area,
+                        osspriteop_header *src,
+                        osspriteop_header *dst,
+                        effect_element    *e)
 {
   NOT_USED(e);
 
@@ -241,41 +257,54 @@ static error blur_defaults(effect_element *e)
   return error_OK;
 }
 
-static error blur_apply(osspriteop_area *area, osspriteop_header *src,
-                        osspriteop_header *dst, effect_element *e)
+static error blur_apply(osspriteop_area   *area,
+                        osspriteop_header *src,
+                        osspriteop_header *dst,
+                        effect_element    *e)
 {
   NOT_USED(e);
 
-  return effects_blur_apply(area, src, dst,
-                            e->args.blur.method, e->args.blur.level);
+  return effects_blur_apply(area,
+                            src,
+                            dst,
+                            e->args.blur.method,
+                            e->args.blur.level);
 }
 
-static error sharpen_apply(osspriteop_area *area, osspriteop_header *src,
-                           osspriteop_header *dst, effect_element *e)
+static error sharpen_apply(osspriteop_area   *area,
+                           osspriteop_header *src,
+                           osspriteop_header *dst,
+                           effect_element    *e)
 {
   NOT_USED(e);
 
   return effects_sharpen_apply(area, src, dst, 0 /* unused */);
 }
 
-static error expand_apply(osspriteop_area *area, osspriteop_header *src,
-                          osspriteop_header *dst, effect_element *e)
+static error expand_apply(osspriteop_area   *area,
+                          osspriteop_header *src,
+                          osspriteop_header *dst,
+                          effect_element    *e)
 {
   NOT_USED(e);
 
   return effects_expand_apply(area, src, dst, 0 /* threshold */);
 }
 
-static error equalise_apply(osspriteop_area *area, osspriteop_header *src,
-                            osspriteop_header *dst, effect_element *e)
+static error equalise_apply(osspriteop_area   *area,
+                            osspriteop_header *src,
+                            osspriteop_header *dst,
+                            effect_element    *e)
 {
   NOT_USED(e);
 
   return effects_equalise_apply(area, src, dst);
 }
 
-static error emboss_apply(osspriteop_area *area, osspriteop_header *src,
-                          osspriteop_header *dst, effect_element *e)
+static error emboss_apply(osspriteop_area   *area,
+                          osspriteop_header *src,
+                          osspriteop_header *dst,
+                          effect_element    *e)
 {
   NOT_USED(area);
   NOT_USED(src);
@@ -288,6 +317,7 @@ static error emboss_apply(osspriteop_area *area, osspriteop_header *src,
 /* ---------------------------------------------------------------------- */
 
 /* editors */
+// FIXME: Do  static Editor clear_edit, blur_edit, tone_edit;  instead.
 static int clear_edit(effect_element *effect, int x, int y);
 static int blur_edit(effect_element *effect, int x, int y);
 static int tone_edit(effect_element *effect, int x, int y);
@@ -311,6 +341,8 @@ editors[] =
 };
 
 /* ---------------------------------------------------------------------- */
+
+// FIXME: Hoist this out to a utility library.
 
 #define AppAcc_Status 0x58982
 #define AppAcc_Copy   0x58985
@@ -697,6 +729,7 @@ static event_message_handler clear_message_colour_picker_colour_choice;
 
 /* ----------------------------------------------------------------------- */
 
+// FIXME: Introduce a typedef for this form of function?
 static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel);
 static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel);
 static void scroll_list_event_callback(scroll_list_event *event);
@@ -717,8 +750,10 @@ static error init_main(void)
     return err;
 
   event_register_wimp_group(1,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            GLOBALS.effects_w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            GLOBALS.effects_w,
+                            event_ANY_ICON,
                             NULL);
 
   sl = scroll_list_create(GLOBALS.effects_w, EFFECTS_I_PANE_PLACEHOLDER);
@@ -726,7 +761,10 @@ static error init_main(void)
     return error_OOM; // potentially inaccurate
 
   scroll_list_set_row_height(sl, HEIGHT, 4);
-  scroll_list_set_handlers(sl, redraw_element, redraw_leader, scroll_list_event_callback);
+  scroll_list_set_handlers(sl,
+                           redraw_element,
+                           redraw_leader,
+                           scroll_list_event_callback);
 
   err = help_add_window(scroll_list_get_window_handle(sl), "effects_list");
   if (err)
@@ -760,8 +798,10 @@ static error init_add(void)
     return err;
 
   event_register_wimp_group(1,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            GLOBALS.effects_add_w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            GLOBALS.effects_add_w,
+                            event_ANY_ICON,
                             NULL);
 
   return error_OK;
@@ -787,15 +827,17 @@ static error init_blur(void)
 {
   error err;
 
-  err = dialogue_construct(&GLOBALS.effects_blr_d, "effects_blr",
-                            EFFECTS_BLR_B_APPLY, EFFECTS_BLR_B_CANCEL);
+  err = dialogue_construct(&GLOBALS.effects_blr_d,
+                            "effects_blr",
+                            EFFECTS_BLR_B_APPLY,
+                            EFFECTS_BLR_B_CANCEL);
   if (err)
     return err;
 
   dialogue_set_handlers(&GLOBALS.effects_blr_d,
-                          blur_event_mouse_click,
-                          NULL,
-                          NULL);
+                         blur_event_mouse_click,
+                         NULL,
+                         NULL);
 
   return error_OK;
 }
@@ -815,15 +857,17 @@ static error init_tone(void)
 
   error err;
 
-  GLOBALS.effects_crv_w  = window_create("effects_crv");
+  GLOBALS.effects_crv_w = window_create("effects_crv");
 
   err = help_add_window(GLOBALS.effects_crv_w, "effects_crv");
   if (err)
     return err;
 
   event_register_wimp_group(1,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            GLOBALS.effects_crv_w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            GLOBALS.effects_crv_w,
+                            event_ANY_ICON,
                             NULL);
 
   return error_OK;
@@ -834,7 +878,7 @@ static void fin_tone(void)
   help_remove_window(GLOBALS.effects_crv_w);
 }
 
-error effects__init(void)
+error effects_init(void)
 {
   error err;
 
@@ -855,7 +899,7 @@ error effects__init(void)
   return error_OK;
 }
 
-void effects__fin(void)
+void effects_fin(void)
 {
   /* modules */
 
@@ -872,9 +916,9 @@ void effects__fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-#define blendslider_MIN     -65536
-#define blendslider_MAX      131071
-#define blendslider_DEFAULT  65535
+#define blendslider_MIN    -65536
+#define blendslider_MAX     131071
+#define blendslider_DEFAULT 65535
 
 static void main_slider_update(wimp_i i, int val)
 {
@@ -891,13 +935,18 @@ static void main_update_dialogue(void)
 
   LOCALS.blendval = blendslider_DEFAULT;
 
-  slider_set(GLOBALS.effects_w, EFFECTS_S_BLEND_PIT,
-             LOCALS.blendval, blendslider_MIN, blendslider_MAX);
+  slider_set(GLOBALS.effects_w,
+             EFFECTS_S_BLEND_PIT,
+             LOCALS.blendval,
+             blendslider_MIN,
+             blendslider_MAX);
 
   apply_blend(LOCALS.blendval);
 }
 
-static int main_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int main_event_mouse_click(wimp_event_no event_no,
+                                  wimp_block   *block,
+                                  void         *handle)
 {
   wimp_pointer *pointer;
 
@@ -911,28 +960,29 @@ static int main_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
     switch (pointer->i)
     {
     case EFFECTS_B_APPLY:
-      effects__apply();
+      effects_apply();
       break;
 
     case EFFECTS_B_CANCEL:
-      effects__cancel();
+      effects_cancel();
       break;
 
     case EFFECTS_B_ADD:
-    {
-      wimp_window_state state;
-      int               x,y;
+      {
+        wimp_window_state state;
+        int               x,y;
 
-      state.w = scroll_list_get_window_handle(sl);
-      wimp_get_window_state(&state);
+        state.w = scroll_list_get_window_handle(sl);
+        wimp_get_window_state(&state);
 
-      x = state.visible.x0;
-      y = state.visible.y0 - 2;
+        x = state.visible.x0;
+        y = state.visible.y0 - 2;
 
-      // FIXME: Want to open the palette win so it avoids covering the pane.
+        // FIXME: Want to open the palette win so it avoids covering the
+        // pane.
 
-      window_open_as_menu_here(GLOBALS.effects_add_w, x, y);
-    }
+        window_open_as_menu_here(GLOBALS.effects_add_w, x, y);
+      }
       break;
 
     case EFFECTS_B_EDIT:
@@ -945,8 +995,10 @@ static int main_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
 
     case EFFECTS_S_BLEND_FOREGROUND:
     case EFFECTS_S_BLEND_BACKGROUND:
-      slider_start(pointer, main_slider_update,
-                   blendslider_MIN, blendslider_MAX);
+      slider_start(pointer,
+                   main_slider_update,
+                   blendslider_MIN,
+                   blendslider_MAX);
       break;
     }
   }
@@ -954,7 +1006,7 @@ static int main_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
   if (pointer->i == EFFECTS_B_APPLY || pointer->i == EFFECTS_B_CANCEL)
   {
     if (pointer->buttons & wimp_CLICK_SELECT)
-      effects__close();
+      effects_close();
     else
       main_update_dialogue();
   }
@@ -976,10 +1028,10 @@ static void draw_element(effect_element *e, int x, int y, int highlight)
   icon.extent.x1 = x + ICONWIDTH;
   icon.extent.y1 = y + HEIGHT;
 
-  icon.flags = wimp_ICON_SPRITE |
-               wimp_ICON_HCENTRED |
-               wimp_ICON_VCENTRED |
-               wimp_ICON_FILLED |
+  icon.flags = wimp_ICON_SPRITE     |
+               wimp_ICON_HCENTRED   |
+               wimp_ICON_VCENTRED   |
+               wimp_ICON_FILLED     |
                wimp_ICON_INDIRECTED |
                (wimp_COLOUR_BLACK << wimp_ICON_FG_COLOUR_SHIFT) |
                (wimp_COLOUR_WHITE << wimp_ICON_BG_COLOUR_SHIFT);
@@ -993,16 +1045,17 @@ static void draw_element(effect_element *e, int x, int y, int highlight)
   icon.data.indirected_sprite.area = window_get_sprite_area();
   icon.data.indirected_sprite.size = strlen(name);
 
+  // FIXME: Not using OSLib here because...
   _swi(Wimp_PlotIcon, _INR(1,5), &icon, 0, 0, 0, 0);
 
   /* text */
 
-  icon.extent.x0  = icon.extent.x1;
+  icon.extent.x0 = icon.extent.x1;
   icon.extent.x1 += TEXTWIDTH;
 
-  icon.flags = wimp_ICON_TEXT |
-               wimp_ICON_VCENTRED |
-               wimp_ICON_FILLED |
+  icon.flags = wimp_ICON_TEXT       |
+               wimp_ICON_VCENTRED   |
+               wimp_ICON_FILLED     |
                wimp_ICON_INDIRECTED |
                (wimp_COLOUR_BLACK << wimp_ICON_FG_COLOUR_SHIFT) |
                (wimp_COLOUR_WHITE << wimp_ICON_BG_COLOUR_SHIFT);
@@ -1053,18 +1106,20 @@ static void drageffect_set_handlers(int reg)
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             NULL);
 
   scroll_list_autoscroll(sl, reg);
 }
 
-static void drageffect_renderer(void *args)
+static void drageffect_renderer(void *opaque)
 {
   effect_element e;
 
-  e.effect = (effect_effect) args;
+  e.effect = (effect_effect) opaque;
 
   draw_element(&e, 0, 0, 0);
 }
@@ -1087,8 +1142,7 @@ static int drageffect_event_null_reason_code(wimp_event_no event_no,
   if (pointer.w != scroll_list_get_window_handle(sl))
     return event_HANDLED;
 
-  if (pointer.pos.x == lastx &&
-      pointer.pos.y == lasty)
+  if (pointer.pos.x == lastx && pointer.pos.y == lasty)
     return event_HANDLED;
 
   index = scroll_list_where_to_insert(sl, &pointer);
@@ -1101,13 +1155,9 @@ static int drageffect_event_null_reason_code(wimp_event_no event_no,
   {
     if (index == drageffect_state.effect ||
         index == drageffect_state.effect + 1)
-    {
       scroll_list_clear_marker(sl);
-    }
     else
-    {
       scroll_list_set_marker(sl, index);
-    }
   }
   else
   {
@@ -1169,15 +1219,19 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
     new_effects();
   }
 
-  // FIXME this is invalid now (drag may start anywhere, not just a pop-up panel)
+  // FIXME This is invalid now (drag may start anywhere, not just a pop-up
+  // panel)
   if (drageffect_state.buttons & wimp_CLICK_SELECT) /* buttons from start of drag */
     wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
 
   return event_HANDLED;
 }
 
-// called to drag virtual icons, those without actual icons
-static void drageffect_box(wimp_pointer *pointer, int effect, int moving, const os_box *box)
+/* called to drag virtual icons, those without actual icons */
+static void drageffect_box(wimp_pointer *pointer,
+                           int           effect,
+                           int           moving,
+                           const os_box *box)
 {
   drageffect_state.buttons = pointer->buttons;
   drageffect_state.effect  = effect;
@@ -1186,17 +1240,18 @@ static void drageffect_box(wimp_pointer *pointer, int effect, int moving, const 
   drageffect_set_handlers(1);
 
   if (moving)
-  {
-    // turn this index into an effect number
-    effect = effects.entries[effect].effect; // holy crap
-  }
+    /* turn this index into an effect number */
+    effect = effects.entries[effect].effect;
 
-  drag_object_box(pointer->w, box, pointer->pos.x, pointer->pos.y,
-                  drageffect_renderer, (void *) effect);
+  drag_object_box(pointer->w, box,
+                  pointer->pos.x,
+                  pointer->pos.y,
+                  drageffect_renderer,
+         (void *) effect);
 }
 
-// if not moving: effect is the number? of the new effect
-// if moving: effect is the index of the existing effect
+/* if not moving: effect is the number? of the new effect
+ * if moving: effect is the index of the existing effect */
 static void drageffect_icon(wimp_pointer *pointer, int effect, int moving)
 {
   drageffect_state.buttons = pointer->buttons;
@@ -1205,17 +1260,25 @@ static void drageffect_icon(wimp_pointer *pointer, int effect, int moving)
 
   drageffect_set_handlers(1);
 
-  // needs if (moving) code from above; but it's not used atm
+  // FIXME: This needs if (moving) code from above; but it's not used atm
 
-  drag_object(pointer->w, pointer->i, pointer->pos.x, pointer->pos.y,
-              drageffect_renderer, (void *) effect);
+  drag_object(pointer->w,
+              pointer->i,
+              pointer->pos.x,
+              pointer->pos.y,
+              drageffect_renderer,
+     (void *) effect);
 }
 
 /* ----------------------------------------------------------------------- */
 
 /* scroll list stuff */
 
-static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel)
+static void redraw_element(wimp_draw *redraw,
+                           int        wax,
+                           int        way,
+                           int        i,
+                           int        sel)
 {
   effect_element *e;
 
@@ -1226,7 +1289,11 @@ static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel)
   draw_element(e, wax, way, sel);
 }
 
-static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel)
+static void redraw_leader(wimp_draw *redraw,
+                          int        wax,
+                          int        way,
+                          int        i,
+                          int        sel)
 {
   int x,y;
 
@@ -1264,7 +1331,9 @@ static void scroll_list_event_callback(scroll_list_event *event)
 
 /* ----------------------------------------------------------------------- */
 
-static int add_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int add_event_mouse_click(wimp_event_no event_no,
+                                 wimp_block   *block,
+                                 void         *handle)
 {
   wimp_pointer *pointer;
 
@@ -1300,8 +1369,10 @@ static void clear_set_handlers(int reg)
   };
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               event_ANY_WINDOW, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               event_ANY_WINDOW,
+                               event_ANY_ICON,
                                NULL);
 }
 
@@ -1330,11 +1401,12 @@ static int clear_edit(effect_element *e, int x, int y)
   return 0;
 }
 
-static int clear_message_colour_picker_colour_choice(wimp_message *message, void *handle)
+static int clear_message_colour_picker_colour_choice(wimp_message *message,
+                                                     void         *opaque)
 {
   colourpicker_message_colour_choice *choice;
 
-  NOT_USED(handle);
+  NOT_USED(opaque);
 
   choice = (colourpicker_message_colour_choice *) &message->data;
 
@@ -1366,9 +1438,7 @@ static effect_tone tone; /* transient effect_tone for editing */
 
 static void tone_set_values_and_redraw(void)
 {
-  tonemap_set(tone.map,
-              tone.channels,
-             &tone.spec);
+  tonemap_set(tone.map, tone.channels, &tone.spec);
 
   tonemapgadget_update(tone.map, GLOBALS.effects_crv_w, EFFECTS_CRV_D_CURVE);
 }
@@ -1428,9 +1498,7 @@ static void tone_reset_dialogue(void)
 
   /* reset tone.* to values from tonemap */
 
-  tonemap_get_values(tone.map,
-                     tone.channels,
-                    &tone.spec);
+  tonemap_get_values(tone.map, tone.channels, &tone.spec);
 
   /* set radio buttons */
 
@@ -1442,8 +1510,10 @@ static void tone_reset_dialogue(void)
 
   /* disable 'alpha' if required */
 
-  icon_set_flags(GLOBALS.effects_crv_w, EFFECTS_CRV_R_ALPHA,
-                 (LOCALS.image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED, wimp_ICON_SHADED);
+  icon_set_flags(GLOBALS.effects_crv_w,
+                 EFFECTS_CRV_R_ALPHA,
+                 (LOCALS.image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
+                 wimp_ICON_SHADED);
 
   /* set slider values */
 
@@ -1495,7 +1565,9 @@ static int tone_edit(effect_element *e, int x, int y)
   return 0;
 }
 
-static int tone_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tone_event_redraw_window_request(wimp_event_no event_no,
+                                            wimp_block   *block,
+                                            void         *handle)
 {
   wimp_draw *redraw;
 
@@ -1505,13 +1577,16 @@ static int tone_event_redraw_window_request(wimp_event_no event_no, wimp_block *
   NOT_USED(handle);
 
   tonemapgadget_redraw(tone.map,
-                       GLOBALS.effects_crv_w, EFFECTS_CRV_D_CURVE,
+                       GLOBALS.effects_crv_w,
+                       EFFECTS_CRV_D_CURVE,
                        redraw);
 
   return event_HANDLED;
 }
 
-static int tone_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int tone_event_mouse_click(wimp_event_no event_no,
+                                  wimp_block   *block,
+                                  void         *handle)
 {
   wimp_pointer *pointer;
 
@@ -1595,9 +1670,7 @@ static int tone_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
 
         tone.channels = new_channels;
 
-        tonemap_get_values(tone.map,
-                           tone.channels,
-                          &tone.spec);
+        tonemap_get_values(tone.map, tone.channels, &tone.spec);
 
         tone_reset_dialogue();
         kick = 1;
@@ -1667,7 +1740,7 @@ static const slider_rec blur_sliders[] =
 static void blur_slider_update(wimp_i i, int val)
 {
   const slider_rec *r;
-  int               min,max;
+  int               min, max;
   int              *pval;
 
   NOT_USED(i);
@@ -1682,7 +1755,9 @@ static void blur_slider_update(wimp_i i, int val)
 
   *pval = val;
 
-  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL, val);
+  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d),
+               EFFECTS_BLR_W_VAL,
+               val);
 
   //blur_set_values_and_redraw();
 }
@@ -1714,9 +1789,15 @@ static void blur_reset_dialogue(void)
   /* set slider values */
 
   r = &blur_sliders[0];
-  slider_set(dialogue_get_window(&GLOBALS.effects_blr_d), r->icon, *r->pval, r->min, r->max);
+  slider_set(dialogue_get_window(&GLOBALS.effects_blr_d),
+             r->icon,
+            *r->pval,
+             r->min,
+             r->max);
 
-  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL, *r->pval);
+  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d),
+               EFFECTS_BLR_W_VAL,
+              *r->pval);
 }
 
 static void blur_start_editing(void)
@@ -1741,7 +1822,9 @@ static int blur_edit(effect_element *e, int x, int y)
   return 0;
 }
 
-static int blur_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int blur_event_mouse_click(wimp_event_no event_no,
+                                  wimp_block   *block,
+                                  void         *handle)
 {
   wimp_pointer *pointer;
   int           val;
@@ -1764,7 +1847,8 @@ static int blur_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
       switch (pointer->i)
       {
       case EFFECTS_BLR_B_APPLY:
-        val = icon_get_int(dialogue_get_window(&GLOBALS.effects_blr_d), EFFECTS_BLR_W_VAL);
+        val = icon_get_int(dialogue_get_window(&GLOBALS.effects_blr_d),
+                           EFFECTS_BLR_W_VAL);
         blur.level = CLAMP(val, 2, 24);
 
         editing_element->args.blur = blur;
@@ -1782,6 +1866,7 @@ static int blur_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
         case EFFECTS_BLR_R_BOX:
           blur.method = effects_blur_BOX;
           break;
+
         case EFFECTS_BLR_R_BELL:
           blur.method = effects_blur_GAUSSIAN;
           break;
@@ -1789,6 +1874,7 @@ static int blur_event_mouse_click(wimp_event_no event_no, wimp_block *block, voi
 
         if (pointer->buttons == wimp_CLICK_ADJUST)
           icon_set_radio(pointer->w, pointer->i);
+
         break;
       }
     }
@@ -1891,10 +1977,10 @@ static int delete_images(void)
   return 0;
 }
 
-static void image_changed_callback(image_t              *image,
-                                   imageobserver_change  change,
-                                   imageobserver_data   *data,
-                                   void                 *opaque)
+static void image_changed_callback(image_t             *image,
+                                   imageobserver_change change,
+                                   imageobserver_data  *data,
+                                   void                *opaque)
 {
   NOT_USED(image);
   NOT_USED(data);
@@ -1904,12 +1990,12 @@ static void image_changed_callback(image_t              *image,
   {
   case imageobserver_CHANGE_HIDDEN:
   case imageobserver_CHANGE_ABOUT_TO_DESTROY:
-    effects__close();
+    effects_close();
     break;
   }
 }
 
-void effects__open(image_t *image)
+void effects_open(image_t *image)
 {
   error err;
 
@@ -1919,7 +2005,7 @@ void effects__open(image_t *image)
     return;
   }
 
-  if (!effects__available(image))
+  if (!effects_available(image))
   {
     beep();
     return;
@@ -1928,7 +2014,7 @@ void effects__open(image_t *image)
   if (LOCALS.open && LOCALS.image != image)
   {
     /* opened for a different image */
-    effects__close();
+    effects_close();
   }
 
   if (LOCALS.open)
@@ -1958,7 +2044,7 @@ void effects__open(image_t *image)
   main_update_dialogue();
 }
 
-static void effects__close(void)
+static void effects_close(void)
 {
   /* this kicks apply_effects, so is doing more work than necessary */
   remove_all_effects();
@@ -1979,7 +2065,7 @@ static void effects__close(void)
 }
 
 /* Make the effects permanent, overwriting source. */
-static void effects__apply(void)
+static void effects_apply(void)
 {
   image_t         *image;
   osspriteop_area *area;
@@ -1998,12 +2084,12 @@ static void effects__apply(void)
   remove_all_effects();
 }
 
-static void effects__cancel(void)
+static void effects_cancel(void)
 {
   remove_all_effects();
 }
 
-int effects__available(const image_t *image)
+int effects_available(const image_t *image)
 {
   const osspriteop_area *area;
   osspriteop_header     *header;

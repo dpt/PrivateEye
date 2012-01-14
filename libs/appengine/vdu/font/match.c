@@ -128,12 +128,12 @@ static int score(font_attrs a, font_attrs b)
  */
 static font_attrs splitname(const char *fontname, char *family)
 {
-  char         tokenised[128];
-  char        *tokens[16];
-  int          c;
-  font_attrs  attrs;
-  int          highest_contiguous_unrecognised_token;
-  int          i;
+  char       tokenised[128];
+  char      *tokens[16];
+  int        c;
+  font_attrs attrs;
+  int        highest_contiguous_unrecognised_token;
+  int        i;
 
   c = tokenise(fontname, tokenised, tokens);
 
@@ -180,10 +180,10 @@ static font_attrs splitname(const char *fontname, char *family)
   return attrs;
 }
 
-error font_select(const char  *wantname,
-                   font_attrs  wantattrs,
-                   char        *selected,
-                   int          selected_size)
+error font_select(const char *wantname,
+                  font_attrs  wantattrs,
+                  char       *selected,
+                  int         selected_size)
 {
   char              wantfamily[128];
   font_list_context context;
@@ -202,16 +202,19 @@ error font_select(const char  *wantname,
 
   for (;;)
   {
-    char        fontname[128];
-    char        family[128];
+    char       fontname[128];
+    char       family[128];
     font_attrs attrs;
-    int         sc;
+    int        sc;
 
     context = font_list_fonts((byte *) fontname,
-                              context, sizeof(fontname),
-                              NULL, 0,
-                              NULL,
-                              NULL, NULL);
+                               context,
+                               sizeof(fontname),
+                               NULL,
+                               0,
+                               NULL,
+                               NULL,
+                               NULL);
     if (context == -1)
       break;
 

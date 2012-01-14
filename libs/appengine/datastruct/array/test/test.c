@@ -47,9 +47,9 @@ int array_test(void)
   printf("test: delete element\n");
 
   array_delete_element(delelem1,
-                        sizeof(delelem1[0]),
-                        NELEMS(delelem1),
-                        4);
+                       sizeof(delelem1[0]),
+                       NELEMS(delelem1),
+                       4);
 
   t = 0;
   for (i = 0; i < 9 - 1; i++)
@@ -65,9 +65,9 @@ int array_test(void)
   printf("test: delete elements\n");
 
   array_delete_elements(delelem2,
-                         sizeof(delelem2[0]),
-                         NELEMS(delelem2),
-                         3, 5 /* inclusive */);
+                        sizeof(delelem2[0]),
+                        NELEMS(delelem2),
+                        3, 5 /* inclusive */);
 
   t = 0;
   for (i = 0; i < 9 - 3; i++)

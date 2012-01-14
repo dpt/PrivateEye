@@ -59,8 +59,10 @@ static void register_event_handlers(int reg)
   };
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               event_ANY_WINDOW, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               event_ANY_WINDOW,
+                               event_ANY_ICON,
                                NULL);
 }
 
@@ -170,7 +172,10 @@ int main(void)
     flex_set_budge(1);
   }
 
-  GLOBALS.task_handle = wimp_initialise(wimp_VERSION_RO38, message0("task"), (const wimp_message_list *) &messages, &GLOBALS.wimp_version);
+  GLOBALS.task_handle = wimp_initialise(wimp_VERSION_RO38,
+                                        message0("task"),
+           (const wimp_message_list *) &messages,
+                                       &GLOBALS.wimp_version);
 
   /* Event handling */
   event_initialise();

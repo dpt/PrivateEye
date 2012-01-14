@@ -48,19 +48,21 @@ static void register_event_handlers(int reg)
   };
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               event_ANY_WINDOW, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               event_ANY_WINDOW,
+                               event_ANY_ICON,
                                NULL);
 }
 
-error dataxfer__init(void)
+error dataxfer_init(void)
 {
   register_event_handlers(1);
 
   return error_OK;
 }
 
-void dataxfer__fin(void)
+void dataxfer_fin(void)
 {
   register_event_handlers(0);
 }
@@ -108,13 +110,11 @@ static int message_data_save(wimp_message *message, void *handle)
   message->data.data_xfer.est_size = -1; /* Let the sender know that the data
                                           * is unsafe (not saved to disc.) */
 
+  message->size     = wimp_SIZEOF_MESSAGE_HEADER((
+                        offsetof(wimp_message_data_xfer, file_name) +
+                        strlen(message->data.data_xfer.file_name) + 1 + 3) & ~3);
   message->your_ref = message->my_ref;
-  message->action = message_DATA_SAVE_ACK;
-
-  message->size = wimp_SIZEOF_MESSAGE_HEADER((
-                    offsetof(wimp_message_data_xfer, file_name) +
-                    strlen(message->data.data_xfer.file_name) + 1 + 3) & ~3);
-
+  message->action   = message_DATA_SAVE_ACK;
   wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
 
   return event_HANDLED;
@@ -136,8 +136,7 @@ static int message_data_save_ack(wimp_message *message, void *handle)
     return event_HANDLED; /* failure */
 
   message->your_ref = message->my_ref;
-  message->action = message_DATA_LOAD;
-
+  message->action   = message_DATA_LOAD;
   wimp_send_message(wimp_USER_MESSAGE_RECORDED, message, message->sender);
 
   if (save_should_close_menu())
@@ -178,8 +177,8 @@ static int message_data_load(wimp_message *message, void *handle)
     thumbview_open(tv);
 
     /* acknowledge - even if we fail, we still tried to load it */
-    message->action   = message_DATA_LOAD_ACK;
     message->your_ref = message->my_ref;
+    message->action   = message_DATA_LOAD_ACK;
     wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
 
     return event_HANDLED;
@@ -205,8 +204,8 @@ static int message_data_load(wimp_message *message, void *handle)
   }
 
   /* acknowledge - even if we fail, we still tried to load it */
-  message->action   = message_DATA_LOAD_ACK;
   message->your_ref = message->my_ref;
+  message->action   = message_DATA_LOAD_ACK;
   wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
 
   if (ffg)
@@ -317,8 +316,8 @@ static int message_data_open(wimp_message *message, void *handle)
     return event_NOT_HANDLED;
 
   /* acknowledge - even if we fail, we still tried to load it */
-  message->action   = message_DATA_LOAD_ACK;
   message->your_ref = message->my_ref;
+  message->action   = message_DATA_LOAD_ACK;
   wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
 
   osfile_read_no_path(message->data.data_xfer.file_name,

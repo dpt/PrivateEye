@@ -10,10 +10,10 @@
 
 struct vector_t
 {
-  size_t  width;     /* width of an element */
-  int     used;      /* space used */
-  int     allocated; /* space allocated */
-  void   *base;      /* vector itself */
+  size_t width;     /* width of an element */
+  int    used;      /* space used */
+  int    allocated; /* space allocated */
+  void  *base;      /* vector itself */
 };
 
 #endif /* IMPL_H */

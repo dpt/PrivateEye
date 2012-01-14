@@ -5,9 +5,9 @@
 #include "appengine/datastruct/array.h"
 
 void array_delete_element(void  *array,
-                           size_t elemsize,
-                           int    nelems,
-                           int    doomed)
+                          size_t elemsize,
+                          int    nelems,
+                          int    doomed)
 {
   /* alternative:
      array_delete_elements(array, elemsize, nelems, doomed, doomed); */

@@ -28,7 +28,8 @@ error atom_ensure_loc_space(atom_set_t *s)
   /* if there are pools allocated and there is space in the last allocated
    * pool, then there's space */
 
-  if (s->l_used > 0 && s->locpools[s->l_used - 1].used + 1 <= (1 << s->log2locpoolsz))
+  if (s->l_used > 0 &&
+      s->locpools[s->l_used - 1].used + 1 <= (1 << s->log2locpoolsz))
     return error_OK;
 
   /* otherwise the last allocated pool is full or there are no pools
@@ -84,7 +85,8 @@ error atom_ensure_blk_space(atom_set_t *s, size_t length)
   /* if there are pools allocated and there is space in the last allocated
    * pool, then there's space */
 
-  if (s->b_used > 0 && s->blkpools[s->b_used - 1].used + length <= (1 << s->log2blkpoolsz))
+  if (s->b_used > 0 &&
+      s->blkpools[s->b_used - 1].used + length <= (1 << s->log2blkpoolsz))
     return error_OK;
 
   /* otherwise the last allocated pool is full or there are no pools

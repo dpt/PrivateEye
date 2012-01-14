@@ -55,8 +55,10 @@ void tagdb_remove(T *db, tagdb_tag tag);
 error tagdb_rename(T *db, tagdb_tag tag, const char *name);
 
 /* enumerate tags with counts */
-error tagdb_enumerate_tags(T *db, int *continuation,
-                            tagdb_tag *tag, int *count);
+error tagdb_enumerate_tags(T         *db,
+                           int       *continuation,
+                           tagdb_tag *tag,
+                           int       *count);
 
 /* convert a tag to a name */
 /* 'buf' may be NULL if bufsz is 0 */
@@ -77,24 +79,31 @@ error tagdb_untagid(T *db, const char *id, tagdb_tag tag);
 /* queries */
 
 /* query tags for id */
-error tagdb_get_tags_for_id(T *db, const char *id,
-                             int *continuation, tagdb_tag *tag);
+error tagdb_get_tags_for_id(T          *db,
+                            const char *id,
+                            int        *continuation,
+                            tagdb_tag  *tag);
 
 /* enumerate ids */
-error tagdb_enumerate_ids(T *db,
-                           int *continuation,
-                           char *buf, size_t bufsz);
+error tagdb_enumerate_ids(T     *db,
+                          int   *continuation,
+                          char  *buf,
+                          size_t bufsz);
 
 /* enumerate ids by tag */
-error tagdb_enumerate_ids_by_tag(T *db, tagdb_tag tag,
-                                  int *continuation,
-                                  char *buf, size_t bufsz);
+error tagdb_enumerate_ids_by_tag(T        *db,
+                                 tagdb_tag tag,
+                                 int      *continuation,
+                                 char     *buf,
+                                 size_t    bufsz);
 
 /* enumerate ids which match all specified tags */
-error tagdb_enumerate_ids_by_tags(T *db,
-                                   const tagdb_tag *tags, int ntags,
-                                   int *continuation,
-                                   char *buf, size_t bufsz);
+error tagdb_enumerate_ids_by_tags(T               *db,
+                                  const tagdb_tag *tags,
+                                  int              ntags,
+                                  int             *continuation,
+                                  char            *buf,
+                                  size_t           bufsz);
 
 /* ----------------------------------------------------------------------- */
 

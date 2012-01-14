@@ -14,6 +14,7 @@
 #include "event-wimp.h"
 #include "event-message.h"
 
+// FIXME: Group into a LOCALS struct.
 static wimp_poll_flags event_mask     = 0;
 static void           *event_pollword;
 static os_t            event_interval = 0;

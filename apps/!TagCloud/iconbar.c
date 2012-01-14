@@ -17,7 +17,7 @@
 #include "makecloud.h"
 #include "menunames.h"
 
-static void pointerx(const wimp_pointer *pointer, void *opaque)
+static void clicked(const wimp_pointer *pointer, void *opaque)
 {
   NOT_USED(opaque);
 
@@ -27,7 +27,7 @@ static void pointerx(const wimp_pointer *pointer, void *opaque)
   }
 }
 
-static void selectionx(const wimp_selection *selection, void *opaque)
+static void selected(const wimp_selection *selection, void *opaque)
 {
   NOT_USED(opaque);
 
@@ -47,7 +47,7 @@ error tag_icon_bar_init(void)
   if (err)
     return err;
 
-  icon_bar_set_handlers(pointerx, selectionx, NULL, NULL);
+  icon_bar_set_handlers(clicked, selected, NULL, NULL);
 
   return error_OK;
 }

@@ -48,7 +48,9 @@ image_t *image_create(void)
   return i;
 }
 
-image_t *image_create_from_file(image_choices *choices, const char *file_name, bits file_type)
+image_t *image_create_from_file(image_choices *choices,
+                          const char          *file_name,
+                                bits           file_type)
 {
   image_t *i;
 
@@ -194,18 +196,18 @@ void image_select(image_t *i, int index)
 
 /* ----------------------------------------------------------------------- */
 
-void image_map(image_map_callback *fn, void *arg)
+void image_map(image_map_callback *fn, void *opaque)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list_walk(&list_anchor, (list_walk_callback *) fn, arg);
+  list_walk(&list_anchor, (list_walk_callback *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */
 
-static void count_callback(image_t *image, void *arg)
+static void count_callback(image_t *image, void *opaque)
 {
-  int *i = arg;
+  int *i = opaque;
 
   NOT_USED(image);
 
@@ -223,9 +225,9 @@ int image_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
-static error destroy_metadata_callback(ntree_t *t, void *arg)
+static error destroy_metadata_callback(ntree_t *t, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   free(ntree_get_data(t));
 
@@ -237,10 +239,10 @@ void image_destroy_metadata(ntree_t *metadata)
   error err;
 
   err = ntree_walk(metadata,
-                    ntree_WALK_POST_ORDER | ntree_WALK_ALL,
-                    0,
-                    destroy_metadata_callback,
-                    NULL);
+                   ntree_WALK_POST_ORDER | ntree_WALK_ALL,
+                   0,
+                   destroy_metadata_callback,
+                   NULL);
 
   ntree_delete(metadata);
 }

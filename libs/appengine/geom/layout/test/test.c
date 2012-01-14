@@ -22,13 +22,13 @@ int layout_test(void)
     { layout_BOX, { .box = { 1, INT_MAX, 2 } } },
   };
 
-  error        err;
-  packer_t    *packer;
-  layout_spec  spec;
-  os_box       boxes[3];
-  int          i;
-  os_box       used;
-  txtscr_t    *scr;
+  error       err;
+  packer_t   *packer;
+  layout_spec spec;
+  os_box      boxes[3];
+  int         i;
+  os_box      used;
+  txtscr_t   *scr;
 
   packer = packer_create(&dims);
   if (packer == NULL)
@@ -41,10 +41,10 @@ int layout_test(void)
   spec.leading = 2;
 
   err = layout_place(&spec,
-                       elements,
-                       NELEMS(elements),
-                       boxes,
-                       NELEMS(boxes));
+                      elements,
+                      NELEMS(elements),
+                      boxes,
+                      NELEMS(boxes));
   if (err)
     goto failure;
 

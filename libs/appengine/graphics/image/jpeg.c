@@ -20,12 +20,12 @@
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
-#include "appengine/base/oserror.h"
-#include "appengine/graphics/jpegtran.h"
 #include "appengine/base/messages.h"
-#include "appengine/datastruct/ntree.h"
-#include "appengine/vdu/sprite.h"
+#include "appengine/base/oserror.h"
 #include "appengine/base/utils.h"
+#include "appengine/datastruct/ntree.h"
+#include "appengine/graphics/jpegtran.h"
+#include "appengine/vdu/sprite.h"
 
 #include "generic.h"
 #include "bitmap.h"
@@ -38,13 +38,13 @@ static int jpeg_to_spr_common(image_t *image);
 
 static int jpeg_load(image_choices *choices, image_t *image)
 {
-  os_error        *e;
-  unsigned char   *data;
-  size_t           file_size;
-  jpeg_info_flags  flags;
-  int              width, height;
-  int              xdpi, ydpi;
-  int              bpp;
+  os_error       *e;
+  unsigned char  *data;
+  size_t          file_size;
+  jpeg_info_flags flags;
+  int             width, height;
+  int             xdpi, ydpi;
+  int             bpp;
 
   /* init any fields used by the unload fn */
   image->image = NULL;
@@ -93,13 +93,13 @@ static int jpeg_load(image_choices *choices, image_t *image)
     }
 
     e = EC(xjpeginfo_dimensions((jpeg_image *) data,
-                                file_size,
-                               &flags,
-                               &width,
-                               &height,
-                               &xdpi,
-                               &ydpi,
-                                NULL));
+                                 file_size,
+                                &flags,
+                                &width,
+                                &height,
+                                &xdpi,
+                                &ydpi,
+                                 NULL));
   }
 
   if (e)
@@ -327,8 +327,9 @@ static int jpeg_to_spr_common(image_t *image)
 
     unsigned int *palette;
 
-    osspriteop_create_true_palette(osspriteop_PTR, area,
-                                   (osspriteop_id) header);
+    osspriteop_create_true_palette(osspriteop_PTR,
+                                   area,
+                   (osspriteop_id) header);
 
     palette = (unsigned int *) (header + 1);
 

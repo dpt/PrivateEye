@@ -79,9 +79,9 @@ typedef struct print_data
 }
 print_data;
 
-static error concat(ntree_t *t, void *arg)
+static error concat(ntree_t *t, void *opaque)
 {
-  print_data *data = arg;
+  print_data *data = opaque;
   char       *s;
 
   s = ntree_get_data(t);
@@ -144,12 +144,12 @@ Failure:
   return err;
 }
 
-static error dup_data(void *data, void *arg, void **newdata)
+static error dup_data(void *data, void *opaque, void **newdata)
 {
   size_t len;
   char  *cpy;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   len = strlen(data);
   cpy = malloc(len + 1);
@@ -161,9 +161,9 @@ static error dup_data(void *data, void *arg, void **newdata)
   return error_OK;
 }
 
-static error free_data(ntree_t *t, void *arg)
+static error free_data(ntree_t *t, void *opaque)
 {
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   free(ntree_get_data(t));
 

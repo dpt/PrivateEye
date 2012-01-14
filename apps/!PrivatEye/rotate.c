@@ -66,22 +66,22 @@ typedef unsigned int RotateFlags;
 
 static struct
 {
-  wimp_w        rotate_w;
+  wimp_w           rotate_w;
 
-  image_t     *image;
+  image_t         *image;
 
-  RotateFlags  flags;
-  int          rotation;       /* basic / final rotation */
+  RotateFlags      flags;
+  int              rotation;       /* basic / final rotation */
 
-  int          start;          /* start angle of current rotate op */
-  int          delta;          /* angle of current rotate op */
+  int              start;          /* start angle of current rotate op */
+  int              delta;          /* angle of current rotate op */
 
-  RotateFlags  drawn_flags;
-  int          drawn_rotation; /* rotation last drawn */
+  RotateFlags      drawn_flags;
+  int              drawn_rotation; /* rotation last drawn */
 
-  int          extent;         /* largest dimension (x/y same) */
-  int          cx,cy;          /* centre of rotation */
-  os_box       redraw_area;
+  int              extent;         /* largest dimension (x/y same) */
+  int              cx,cy;          /* centre of rotation */
+  os_box           redraw_area;
 
   osspriteop_area *thumbnail;
 
@@ -97,40 +97,44 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler rotate__event_redraw_window_request,
-                          rotate__event_mouse_click,
-                          rotate__event_user_drag_box,
-                          rotate__event_pollword_non_zero;
+static event_wimp_handler rotate_event_redraw_window_request,
+                          rotate_event_mouse_click,
+                          rotate_event_user_drag_box,
+                          rotate_event_pollword_non_zero;
 
-static event_message_handler rotate__message_menus_deleted;
+static event_message_handler rotate_message_menus_deleted;
 
 /* ----------------------------------------------------------------------- */
 
-static void rotate__set_handlers(int reg)
+static void rotate_set_handlers(int reg)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_REDRAW_WINDOW_REQUEST, rotate__event_redraw_window_request },
-    { wimp_MOUSE_CLICK,           rotate__event_mouse_click           },
+    { wimp_REDRAW_WINDOW_REQUEST, rotate_event_redraw_window_request },
+    { wimp_MOUSE_CLICK,           rotate_event_mouse_click           },
   };
 
   static const event_message_handler_spec message_handlers[] =
   {
-    { message_MENUS_DELETED, rotate__message_menus_deleted },
+    { message_MENUS_DELETED, rotate_message_menus_deleted },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            LOCALS.rotate_w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            LOCALS.rotate_w,
+                            event_ANY_ICON,
                             NULL);
 
   event_register_message_group(reg,
-                               message_handlers, NELEMS(message_handlers),
-                               LOCALS.rotate_w, event_ANY_ICON,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                               LOCALS.rotate_w,
+                               event_ANY_ICON,
                                NULL);
 }
 
-error rotate__init(void)
+error rotate_init(void)
 {
   error err;
 
@@ -142,7 +146,7 @@ error rotate__init(void)
 
   LOCALS.rotate_w = window_create("rotate");
 
-  rotate__set_handlers(1);
+  rotate_set_handlers(1);
 
   err = help_add_window(LOCALS.rotate_w, "rotate");
   if (err)
@@ -151,26 +155,28 @@ error rotate__init(void)
   return error_OK;
 }
 
-void rotate__fin(void)
+void rotate_fin(void)
 {
   help_remove_window(LOCALS.rotate_w);
 
-  rotate__set_handlers(0);
+  rotate_set_handlers(0);
 
   help_fin();
 }
 
-static void rotate__set_drag_handlers(int reg)
+static void rotate_set_drag_handlers(int reg)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
-    { wimp_USER_DRAG_BOX,     rotate__event_user_drag_box     },
-    { wimp_POLLWORD_NON_ZERO, rotate__event_pollword_non_zero },
+    { wimp_USER_DRAG_BOX,     rotate_event_user_drag_box     },
+    { wimp_POLLWORD_NON_ZERO, rotate_event_pollword_non_zero },
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            event_ANY_WINDOW, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            event_ANY_WINDOW,
+                            event_ANY_ICON,
                             NULL);
 }
 
@@ -188,6 +194,7 @@ static void shift_buttons(const os_box *box)
     { ROTATE_B_ROTATE, ROTATEX, ROTATEY },
     { ROTATE_B_CANCEL, CANCELX, CANCELY }
   };
+
   int x,y;
   int i;
 
@@ -195,12 +202,10 @@ static void shift_buttons(const os_box *box)
   y = box->y0;
 
   for (i = 0; i < NELEMS(offsets); i++)
-  {
     move_icon(LOCALS.rotate_w,
               offsets[i].i,
               x + offsets[i].x,
               y + offsets[i].y);
-  }
 }
 
 static error make_trans_tab(const osspriteop_area *area,
@@ -241,7 +246,7 @@ static error make_trans_tab(const osspriteop_area *area,
   return error_OK;
 }
 
-static void rotate__close_dialogue(void)
+static void rotate_close_dialogue(void)
 {
   wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
 
@@ -250,18 +255,18 @@ static void rotate__close_dialogue(void)
 }
 
 /* build stuff necessary for rotate dialogue */
-static void rotate__update_dialogue(void)
+static void rotate_update_dialogue(void)
 {
-  error             err;
-  int               w,h;
-  int               d;
-  int               extent;
-  osbool            mask;
-  os_mode           mode;
-  int               xeig,yeig;
-  os_box            box;
-  int               cx,cy;
-  int               r;
+  error   err;
+  int     w,h;
+  int     d;
+  int     extent;
+  osbool  mask;
+  os_mode mode;
+  int     xeig,yeig;
+  os_box  box;
+  int     cx,cy;
+  int     r;
 
   /* ensure we have a thumbnail ready */
 
@@ -333,8 +338,8 @@ static void rotate__update_dialogue(void)
   }
 
   err = make_trans_tab(LOCALS.thumbnail,
-       (osspriteop_id) "thumbnail",
-                       &LOCALS.trans_tab);
+      (osspriteop_id) "thumbnail",
+                      &LOCALS.trans_tab);
   if (err)
     goto Failure;
 
@@ -346,7 +351,7 @@ static void rotate__update_dialogue(void)
   }
 
   err = make_trans_tab((osspriteop_area *) window_get_sprite_area(),
-                           (osspriteop_id) "rt-0",
+                          (osspriteop_id) "rt-0",
                                            &LOCALS.indicator.trans_tab);
   if (err)
     goto Failure;
@@ -383,9 +388,16 @@ static void draw_indicator(int x, int y)
 {
   static const char *sprites[] =
   {
-    "rt-0", "rt-90a", "rt-180", "rt-90c",
-    "rt-fliph", "rt-transp", "rt-flipv", "rt-transv"
+    "rt-0",
+    "rt-90a",
+    "rt-180",
+    "rt-90c",
+    "rt-fliph",
+    "rt-transp",
+    "rt-flipv",
+    "rt-transv"
   };
+
   int a;
 
   a = LOCALS.drawn_rotation / 65536 + 360;
@@ -408,22 +420,22 @@ static void draw_indicator(int x, int y)
 
 static void redraw_guts(wimp_draw *draw, osbool (*redraw_fn)(wimp_draw *))
 {
-  int              more;
-  int              w,h;
-  osbool           mask;
-  os_mode          mode;
-  int              xeig,yeig;
-  os_trfm          t;
+  int     more;
+  int     w,h;
+  osbool  mask;
+  os_mode mode;
+  int     xeig,yeig;
+  os_trfm t;
 
   /* FIXME: Try to factor these calls out - the values shouldn't change
    *        across a rotate 'session'. */
 
   osspriteop_read_sprite_info(osspriteop_USER_AREA,
                               LOCALS.thumbnail,
-              (osspriteop_id) "thumbnail",
-                              &w, &h,
-                              &mask,
-                              &mode);
+             (osspriteop_id) "thumbnail",
+                             &w,&h,
+                             &mask,
+                             &mode);
 
   read_mode_vars(mode, &xeig, &yeig, NULL);
 
@@ -457,15 +469,14 @@ static void redraw_guts(wimp_draw *draw, osbool (*redraw_fn)(wimp_draw *))
     y = draw->box.y1 - draw->yscroll;
 
     t2 = t;
-    trfm_translate(&t2, x + LOCALS.extent / 2,
-                        y - LOCALS.extent / 2);
+    trfm_translate(&t2, x + LOCALS.extent / 2, y - LOCALS.extent / 2);
 
     t2.entries[2][0] *= 256;
     t2.entries[2][1] *= 256;
 
     osspriteop_put_sprite_trfm(osspriteop_USER_AREA,
                                LOCALS.thumbnail,
-               (osspriteop_id) "thumbnail",
+              (osspriteop_id) "thumbnail",
                                0, /* osspriteop_trfm_flags */
                                NULL, /* os_box const *source_rect */
                                mask ? osspriteop_USE_MASK : 0,
@@ -476,7 +487,9 @@ static void redraw_guts(wimp_draw *draw, osbool (*redraw_fn)(wimp_draw *))
   }
 }
 
-static int rotate__event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int rotate_event_redraw_window_request(wimp_event_no event_no,
+                                               wimp_block   *block,
+                                               void         *handle)
 {
   wimp_draw *draw;
 
@@ -497,6 +510,7 @@ static int get_angle(int x, int y)
   double angle;
 
   if (x != 0 || y != 0)
+    // FIXME: Definition for TWICEPI already exists in degs-to-rads code.
     angle = (atan2(y, x) / (2 * 3.14159265)) * 360.0 - 90.0;
   else
     angle = 0.0;
@@ -530,10 +544,11 @@ static int get_nearest_orthogonal_angle(int angle, int snap) /* aka 'snap' */
 
 static void refresh(void)
 {
-  wimp_force_redraw(LOCALS.rotate_w, LOCALS.redraw_area.x0,
-                                     LOCALS.redraw_area.y0,
-                                     LOCALS.redraw_area.x1,
-                                     LOCALS.redraw_area.y1);
+  wimp_force_redraw(LOCALS.rotate_w,
+                    LOCALS.redraw_area.x0,
+                    LOCALS.redraw_area.y0,
+                    LOCALS.redraw_area.x1,
+                    LOCALS.redraw_area.y1);
 
   /*draw.w       = LOCALS.rotate_w;
   draw.box.x0  = 0;
@@ -546,13 +561,16 @@ static void refresh(void)
 
   /* redraw indicator */
 
-  wimp_force_redraw(LOCALS.rotate_w, + 8,
-                                     - 8 - 32,
-                                     + 8 + 32,
-                                     - 8);
+  wimp_force_redraw(LOCALS.rotate_w,
+                    + 8,
+                    - 8 - 32,
+                    + 8 + 32,
+                    - 8);
 }
 
-static int rotate__event_pollword_non_zero(wimp_event_no event_no, wimp_block *block, void *handle)
+static int rotate_event_pollword_non_zero(wimp_event_no event_no,
+                                           wimp_block   *block,
+                                           void         *handle)
 {
   wimp_pointer pointer;
   int          rotation;
@@ -576,15 +594,13 @@ static int rotate__event_pollword_non_zero(wimp_event_no event_no, wimp_block *b
   LOCALS.delta = rotation - LOCALS.rotation;
 
   if (LOCALS.drawn_rotation != rotation ||
-      LOCALS.drawn_flags != LOCALS.flags)
-  {
+      LOCALS.drawn_flags    != LOCALS.flags)
     refresh();
-  }
 
   return event_HANDLED;
 }
 
-static int rotate__message_menus_deleted(wimp_message *message, void *handle)
+static int rotate_message_menus_deleted(wimp_message *message, void *handle)
 {
   wimp_message_menus_deleted *deleted;
 
@@ -622,7 +638,7 @@ static void rotate_internal(image_t *image, int angle, int hflip)
 
 void rotate(image_t *image, int angle, int hflip)
 {
-  if (!rotate__available(image))
+  if (!rotate_available(image))
   {
     beep();
     return;
@@ -631,7 +647,9 @@ void rotate(image_t *image, int angle, int hflip)
   rotate_internal(image, angle, hflip);
 }
 
-static int rotate__event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int rotate_event_mouse_click(wimp_event_no event_no,
+                                    wimp_block    *block,
+                                    void          *handle)
 {
   wimp_pointer *pointer;
 
@@ -686,7 +704,7 @@ static int rotate__event_mouse_click(wimp_event_no event_no, wimp_block *block, 
 
       wimp_drag_box(&drag);
 
-      rotate__set_drag_handlers(1);
+      rotate_set_drag_handlers(1);
     }
       break;
 
@@ -700,16 +718,18 @@ static int rotate__event_mouse_click(wimp_event_no event_no, wimp_block *block, 
     if (pointer->i == ROTATE_B_ROTATE || pointer->i == ROTATE_B_CANCEL)
     {
       if (pointer->buttons & wimp_CLICK_SELECT)
-        rotate__close_dialogue();
+        rotate_close_dialogue();
       else
-        rotate__update_dialogue();
+        rotate_update_dialogue();
     }
   }
 
   return event_HANDLED;
 }
 
-static int rotate__event_user_drag_box(wimp_event_no event_no, wimp_block *block, void *handle)
+static int rotate_event_user_drag_box(wimp_event_no event_no,
+                                       wimp_block   *block,
+                                       void         *handle)
 {
   NOT_USED(event_no);
   NOT_USED(block);
@@ -717,7 +737,7 @@ static int rotate__event_user_drag_box(wimp_event_no event_no, wimp_block *block
 
   restore_pointer_shape();
 
-  rotate__set_drag_handlers(0);
+  rotate_set_drag_handlers(0);
 
   LOCALS.rotation = (LOCALS.rotation + LOCALS.delta) % (360 << 16);
   LOCALS.delta = 0; /* stop any further movement in redraw */
@@ -730,9 +750,9 @@ static int rotate__event_user_drag_box(wimp_event_no event_no, wimp_block *block
   return event_HANDLED;
 }
 
-void rotate__open(image_t *image)
+void rotate_open(image_t *image)
 {
-  if (!rotate__available(image))
+  if (!rotate_available(image))
   {
     beep();
     return;
@@ -742,13 +762,13 @@ void rotate__open(image_t *image)
 
   image_start_editing(LOCALS.image);
 
-  rotate__update_dialogue();
+  rotate_update_dialogue();
   window_open_as_menu(LOCALS.rotate_w);
 }
 
-int rotate__available(const image_t *image)
+int rotate_available(const image_t *image)
 {
   return image &&
-         !image_is_editing(image) &&
+        !image_is_editing(image) &&
          image->flags & image_FLAG_CAN_ROT;
 }

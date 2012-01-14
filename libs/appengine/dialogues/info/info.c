@@ -80,7 +80,10 @@ void info_construct(info_t *s, const char *template)
 
   /* discover the handle of the file type icon */
 
-  flags = wimp_ICON_TEXT | wimp_ICON_SPRITE | wimp_ICON_BORDER | wimp_ICON_INDIRECTED;
+  flags = wimp_ICON_TEXT   |
+          wimp_ICON_SPRITE |
+          wimp_ICON_BORDER |
+          wimp_ICON_INDIRECTED;
   wimp_which_icon(w, which, flags, flags);
   s->file_type_icon = which[0];
   /* if there's no file type icon, this will be -1 */
@@ -116,7 +119,9 @@ void info_destruct(info_t *s)
 /* ----------------------------------------------------------------------- */
 
 /* This isn't really used yet. */
-static int info_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int info_event_mouse_click(wimp_event_no event_no,
+                                  wimp_block   *block,
+                                  void         *handle)
 {
   wimp_pointer *pointer;
   info_t       *s;
@@ -225,12 +230,14 @@ static int get_sprite_width(const char *validation)
   icon_sprite_name(validation, buf);
 
   err = xwimpspriteop_read_sprite_info(buf, &width, NULL, NULL, &mode);
-  if (err)
-  {
+  if (err) // FIXME: Ought to be a specific error number tested here.
     err = xosspriteop_read_sprite_info(osspriteop_NAME,
                    (osspriteop_area *) window_get_sprite_area(),
-                       (osspriteop_id) buf, &width, NULL, NULL, &mode);
-  }
+                       (osspriteop_id) buf,
+                                      &width,
+                                       NULL,
+                                       NULL,
+                                      &mode);
 
   if (err)
     return 68; /* default */

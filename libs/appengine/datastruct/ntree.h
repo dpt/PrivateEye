@@ -75,8 +75,11 @@ typedef unsigned int ntree_walk_flags;
 typedef error (ntree_walk_fn)(T *t, void *opaque);
 
 /* max_depth of 0 means 'walk all', 1..N just walk level 1..N */
-error ntree_walk(T *t, ntree_walk_flags flags, int max_depth,
-                  ntree_walk_fn *fn, void *opaque);
+error ntree_walk(T               *t,
+                 ntree_walk_flags flags,
+                 int              max_depth,
+                 ntree_walk_fn   *fn,
+                 void            *opaque);
 
 /* ----------------------------------------------------------------------- */
 

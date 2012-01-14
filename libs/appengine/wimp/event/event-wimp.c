@@ -90,12 +90,10 @@ static void calculate_mask(void)
   flags = 0;
 
   for (i = 0; i < NELEMS(tests); i++)
-  {
     if (client_handler_arrays[tests[i].event_no].nentries > 0)
       flags |= tests[i].yes;
     else
       flags |= tests[i].no;
-  }
 
    event_wimp_poll_mask = flags;
 }
@@ -132,10 +130,8 @@ static int wimp_handler_vague(wimp_event_no event_no,
   v = &client_handler_arrays[event_no];
 
   for (e = v->entries; e < v->entries + v->nentries; e++)
-  {
     if (e->handler(event_no, block, e->handle))
       return event_HANDLED;
-  }
 
   return event_NOT_HANDLED;
 }
@@ -153,13 +149,9 @@ static int wimp_handler_window(wimp_event_no event_no,
   w = block->redraw.w; /* all window handles are at the same offset */
 
   for (e = v->entries; e < v->entries + v->nentries; e++)
-  {
     if (e->w == event_ANY_WINDOW || e->w == w)
-    {
       if (e->handler(event_no, block, e->handle))
         return event_HANDLED;
-    }
-  }
 
   switch (event_no)
   {
@@ -212,14 +204,10 @@ static int wimp_handler_window_and_icon(wimp_event_no event_no,
   }
 
   for (e = v->entries; e < v->entries + v->nentries; e++)
-  {
     if ((e->w == event_ANY_WINDOW || e->w == w) &&
         (e->i == event_ANY_ICON   || e->i == i))
-    {
       if (e->handler(event_no, block, e->handle))
         return event_HANDLED;
-    }
-  }
 
   return event_NOT_HANDLED;
 }
@@ -229,7 +217,7 @@ static int wimp_handler_window_and_icon(wimp_event_no event_no,
 typedef int (wimp_handler)(wimp_event_no event_no,
                            wimp_block   *block);
 
-static wimp_handler * const wimp_handlers[MAX_WIMP_HANDLERS] =
+static wimp_handler *const wimp_handlers[MAX_WIMP_HANDLERS] =
 {
   /* wimp_NULL_REASON_CODE         */ wimp_handler_vague,
   /* wimp_REDRAW_WINDOW_REQUEST    */ wimp_handler_window,
@@ -291,16 +279,12 @@ int event_register_wimp_handler(wimp_event_no       event_no,
   /* check for an already registered handler */
 
   for (e = v->entries, end = v->entries + v->nentries; e < end; e++)
-  {
     if (e->event_no == event_no &&
         e->w        == w        &&
         e->i        == i        &&
         e->handler  == handler  &&
         e->handle   == handle)
-    {
       return 1; /* failure: already registered */
-    }
-  }
 
   /* create a new entry */
 
@@ -313,7 +297,7 @@ int event_register_wimp_handler(wimp_event_no       event_no,
     /* doubling strategy */
 
     n = v->allocated * 2;
-    if (n < 8)
+    if (n < 8) // FIXME: Hoist out growth constants.
       n = 8;
 
     newentries = realloc(v->entries, sizeof(*v->entries) * n);
@@ -344,6 +328,8 @@ static void delete_wimp_handler_element(wimp_handler_array   *v,
 {
   size_t n;
 
+  // FIXME: is there an array_ util function to do this?
+
   n = (v->entries + v->nentries) - (e + 1);
 
   if (n)
@@ -367,16 +353,12 @@ int event_deregister_wimp_handler(wimp_event_no       event_no,
   /* find the handler */
 
   for (e = v->entries, end = v->entries + v->nentries; e < end; e++)
-  {
     if (e->event_no == event_no &&
         e->w        == w        &&
         e->i        == i        &&
         e->handler  == handler  &&
         e->handle   == handle)
-    {
       break;
-    }
-  }
 
   /* if it exists, delete it */
 
@@ -409,7 +391,8 @@ int event_deregister_wimp_handlers_for_window(wimp_w w)
     v = &client_handler_arrays[i];
 
     /* If we delete an element then the subsequent elements, if any, will be
-     * shifted down over it. The entry pointer will remain the same so don't      * automatically increment it. */
+     * shifted down over it. The entry pointer will remain the same so don't
+     * automatically increment it. */
 
     for (e = v->entries; e < v->entries + v->nentries; )
       if (e->w == w)

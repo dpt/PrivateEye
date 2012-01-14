@@ -106,16 +106,10 @@ static int event_message(wimp_event_no event_no,
   }
 
   for (e = v->entries; e < v->entries + v->nentries; e++)
-  {
     if (e->msg_no == block->message.action)
-    {
       if (e->w == event_ANY_WINDOW || e->w == w)
-      {
         if (e->handler(&block->message, e->handle))
           return event_HANDLED;
-      }
-    }
-  }
 
   /* client handlers haven't handled it so ... */
 
@@ -222,16 +216,12 @@ static int register_message_handler(bits                   msg_no,
   /* check for an already registered handler */
 
   for (e = v->entries, end = v->entries + v->nentries; e < end; e++)
-  {
     if (e->msg_no  == msg_no  &&
         e->w       == w       &&
         e->i       == i       &&
         e->handler == handler &&
         e->handle  == handle)
-    {
       return 1; /* failure: already registered */
-    }
-  }
 
   /* create a new entry */
 
@@ -272,7 +262,9 @@ static int register_message_handler(bits                   msg_no,
   /* sort the entries so that more specific handlers come before less
    * specific ones */
 
-  qsort(v->entries, v->nentries, sizeof(*v->entries),
+  qsort(v->entries,
+        v->nentries,
+        sizeof(*v->entries),
         compare_message_handler_elements);
 
   return 0; /* success */
@@ -284,8 +276,12 @@ int event_register_message_handler(bits                   msg_no,
                                    event_message_handler *handler,
                                    const void            *handle)
 {
-  return register_message_handler(msg_no, w, i, handler, handle,
-                                  &usermsg_handlers);
+  return register_message_handler(msg_no,
+                                  w,
+                                  i,
+                                  handler,
+                                  handle,
+                                 &usermsg_handlers);
 }
 
 int event_register_messageack_handler(bits                   msg_no,
@@ -294,8 +290,12 @@ int event_register_messageack_handler(bits                   msg_no,
                                       event_message_handler *handler,
                                       const void            *handle)
 {
-  return register_message_handler(msg_no, w, i, handler, handle,
-                                  &usermsgack_handlers);
+  return register_message_handler(msg_no,
+                                  w,
+                                  i,
+                                  handler,
+                                  handle,
+                                 &usermsgack_handlers);
 }
 
 static void delete_message_handler_element(message_handler_array   *v,
@@ -324,16 +324,12 @@ static int deregister_message_handler(bits                   msg_no,
   /* find the handler */
 
   for (e = v->entries, end = v->entries + v->nentries; e < end; e++)
-  {
     if (e->msg_no  == msg_no  &&
         e->w       == w       &&
         e->i       == i       &&
         e->handler == handler &&
         e->handle  == handle)
-    {
       break;
-    }
-  }
 
   /* if it exists, delete it */
 
@@ -353,8 +349,12 @@ int event_deregister_message_handler(bits                   msg_no,
                                      event_message_handler *handler,
                                      const void            *handle)
 {
-  return deregister_message_handler(msg_no, w, i, handler, handle,
-                                    &usermsg_handlers);
+  return deregister_message_handler(msg_no,
+                                    w,
+                                    i,
+                                    handler,
+                                    handle,
+                                   &usermsg_handlers);
 }
 
 int event_deregister_messageack_handler(bits                   msg_no,
@@ -363,6 +363,10 @@ int event_deregister_messageack_handler(bits                   msg_no,
                                         event_message_handler *handler,
                                         const void            *handle)
 {
-  return deregister_message_handler(msg_no, w, i, handler, handle,
-                                    &usermsgack_handlers);
+  return deregister_message_handler(msg_no,
+                                    w,
+                                    i,
+                                    handler,
+                                    handle,
+                                   &usermsgack_handlers);
 }

@@ -9,13 +9,13 @@
 
 #include "impl.h"
 
-static error ntree_count_func(ntree_t *t, void *arg)
+static error ntree_count_func(ntree_t *t, void *opaque)
 {
   int *n;
 
   NOT_USED(t);
 
-  n = arg;
+  n = opaque;
 
   (*n)++;
 
@@ -28,8 +28,11 @@ int ntree_n_nodes(ntree_t *t)
 
   n = 0;
 
-  ntree_walk(t, ntree_WALK_IN_ORDER | ntree_WALK_ALL, 0,
-              ntree_count_func, (void *) &n);
+  ntree_walk(t,
+             ntree_WALK_IN_ORDER | ntree_WALK_ALL,
+             0,
+             ntree_count_func,
+   (void *) &n);
 
   return n;
 }

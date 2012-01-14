@@ -50,18 +50,18 @@ span;
 
 struct txtfmt_t
 {
-  char          *s;             /* the string we're formatting */
-  int            length;        /* string length excluding terminator */
+  char *s;             /* the string we're formatting */
+  int   length;        /* string length excluding terminator */
 
-  span          *spans;
-  int            nspans;
-  int            allocated;
+  span *spans;
+  int   nspans;
+  int   allocated;
 
-  int            width;         /* requested width */
+  int   width;         /* requested width */
 
-  int            wrapped_width; /* actual minimum width after formatting */
+  int   wrapped_width; /* actual minimum width after formatting */
 
-  int            line_height;   /* OS units */
+  int   line_height;   /* OS units */
 };
 
 enum
@@ -272,12 +272,12 @@ error txtfmt_wrap(txtfmt_t *tx, int width)
 /* ----------------------------------------------------------------------- */
 
 static error txtfmt_plot_text(const txtfmt_t *tx,
-                               const char     *s,
-                               int             length,
-                               int             x0,
-                               int             x1,
-                               int             y0,
-                               wimp_colour     bgcolour)
+                              const char     *s,
+                              int             length,
+                              int             x0,
+                              int             x1,
+                              int             y0,
+                              wimp_colour     bgcolour)
 {
   char      buf[length + 1];
   wimp_icon icon;

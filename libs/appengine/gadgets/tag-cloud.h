@@ -43,14 +43,14 @@ tag_cloud_config;
 typedef unsigned int tag_cloud_create_flags;
 
 T *tag_cloud_create(tag_cloud_create_flags  flags,
-                     const tag_cloud_config *config);
+                    const tag_cloud_config *config);
 
 void tag_cloud_destroy(T *doomed);
 
 /* ----------------------------------------------------------------------- */
 
-error tag_cloud_set_config(T                       *tc,
-                            const tag_cloud_config *config);
+error tag_cloud_set_config(T                      *tc,
+                           const tag_cloud_config *config);
 
 /* ----------------------------------------------------------------------- */
 
@@ -82,50 +82,50 @@ tag_cloud_event;
 /* Create a new tag. */
 // must client call settags again?
 typedef error (tag_cloud_newtagfn)(T          *tc,
-                                    const char *name,
-                                    int         length,
-                                    void       *arg);
+                                   const char *name,
+                                   int         length,
+                                   void       *opaque);
 
 /* Delete 'index'. */
 typedef error (tag_cloud_deletetagfn)(T    *tc,
-                                       int   index,
-                                       void *arg);
+                                      int   index,
+                                      void *opaque);
 
 /* Rename 'index' to 'name'. */
 typedef error (tag_cloud_renametagfn)(T          *tc,
-                                       int         index,
-                                       const char *name,
-                                       int         length,
-                                       void       *arg);
+                                      int         index,
+                                      const char *name,
+                                      int         length,
+                                      void       *opaque);
 
 /* Tag or detag the current file with 'index'.
  * Called when the user clicks on a tag in the the window. */
 typedef error (tag_cloud_tagfn)(T    *tc,
-                                 int   index,
-                                 void *arg);
+                                int   index,
+                                void *opaque);
 
 /* Tag or detag the file 'filename' with 'index'.
  * Called when files are dropped in the window. */
-typedef error (tag_cloud_tagfilefn)(T  *tc,
-                                     const char *filename,
-                                     int         index,
-                                     void       *arg);
+typedef error (tag_cloud_tagfilefn)(T          *tc,
+                                    const char *filename,
+                                    int         index,
+                                    void       *opaque);
 
 /* Some other sort of event. */
 typedef error (tag_cloud_eventfn)(T                *tc,
-                                   tag_cloud_event  event,
-                                   void             *arg);
+                                  tag_cloud_event  event,
+                                  void             *opaque);
 
-void tag_cloud_set_handlers(T                      *tc,
-                             tag_cloud_newtagfn    *newtag,
-                             tag_cloud_deletetagfn *deletetag,
-                             tag_cloud_renametagfn *renametag,
-                             tag_cloud_tagfn       *tag,
-                             tag_cloud_tagfn       *detag,
-                             tag_cloud_tagfilefn   *tagfile,
-                             tag_cloud_tagfilefn   *detagfile,
-                             tag_cloud_eventfn     *event,
-                             void                   *arg);
+void tag_cloud_set_handlers(T                     *tc,
+                            tag_cloud_newtagfn    *newtag,
+                            tag_cloud_deletetagfn *deletetag,
+                            tag_cloud_renametagfn *renametag,
+                            tag_cloud_tagfn       *tag,
+                            tag_cloud_tagfn       *detag,
+                            tag_cloud_tagfilefn   *tagfile,
+                            tag_cloud_tagfilefn   *detagfile,
+                            tag_cloud_eventfn     *event,
+                            void                  *opaque);
 
 /* ----------------------------------------------------------------------- */
 
@@ -136,9 +136,9 @@ typedef struct tag_cloud_tag
 }
 tag_cloud_tag;
 
-error tag_cloud_set_tags(T                    *tc,
-                          const tag_cloud_tag *tags,
-                          int                   ntags);
+error tag_cloud_set_tags(T                   *tc,
+                         const tag_cloud_tag *tags,
+                         int                  ntags);
 
 /* ----------------------------------------------------------------------- */
 
@@ -196,12 +196,12 @@ wimp_w tag_cloud_get_window_handle(T *tc);
 
 /* Tag Cloud asks what to do with the specified key.
  * Return the event to perform. Return -1 if you don't know. */
-typedef tag_cloud_event (tag_cloud_key_handler_fn)(wimp_key_no  key_no,
-                                                     void        *arg);
+typedef tag_cloud_event (tag_cloud_key_handler_fn)(wimp_key_no key_no,
+                                                   void       *opaque);
 
-void tag_cloud_set_key_handler(T                         *tc,
-                                tag_cloud_key_handler_fn *key,
-                                void                      *arg);
+void tag_cloud_set_key_handler(T                        *tc,
+                               tag_cloud_key_handler_fn *key,
+                               void                     *opaque);
 
 /* ----------------------------------------------------------------------- */
 

@@ -17,7 +17,8 @@ void icon_set_radio(wimp_w w, wimp_i i)
 
   /* find the previously selected icon wih the same ESG */
 
-  wimp_which_icon(w, all,
+  wimp_which_icon(w,
+                  all,
                   wimp_ICON_SELECTED | wimp_ICON_ESG,
                   wimp_ICON_SELECTED | (state.icon.flags & wimp_ICON_ESG));
 

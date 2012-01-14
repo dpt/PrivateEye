@@ -7,9 +7,9 @@
 
 #include "oslib/os.h"
 
-#include "appengine/wimp/dialogue.h"
-#include "appengine/graphics/drawable.h"
 #include "appengine/dialogues/scale.h"
+#include "appengine/graphics/drawable.h"
+#include "appengine/wimp/dialogue.h"
 
 #include "globals.h"
 #include "viewer.h"
@@ -65,12 +65,12 @@ void viewer_scaledlg_set(viewer_t *viewer, int scale, int redraw)
 
 /* ----------------------------------------------------------------------- */
 
-static void viewer_scaledlg_fillout(dialogue_t *d, void *arg)
+static void viewer_scaledlg_fillout(dialogue_t *d, void *opaque)
 {
   viewer_t *viewer;
   image_t  *image;
 
-  NOT_USED(arg);
+  NOT_USED(opaque);
 
   viewer = viewer_find(GLOBALS.current_display_w);
   if (viewer == NULL)
@@ -78,7 +78,7 @@ static void viewer_scaledlg_fillout(dialogue_t *d, void *arg)
 
   image = viewer->drawable->image;
 
-  scale_set_bounds(d, image->scale.min, image->scale.max);
+  scale_set_range(d, image->scale.min, image->scale.max);
 
   scale_set(d, viewer->scale.cur);
 }
@@ -98,8 +98,8 @@ static void viewer_scaledlg_set_fit_screen(dialogue_t *d, viewer_t *viewer)
 static void viewer_scaledlg_set_fit_window(dialogue_t *d, viewer_t *viewer)
 {
   wimp_window_state state;
-  int ww,wh;
-  int s;
+  int               ww,wh;
+  int               s;
 
   state.w = viewer->main_w;
   wimp_get_window_state(&state);
@@ -112,7 +112,9 @@ static void viewer_scaledlg_set_fit_window(dialogue_t *d, viewer_t *viewer)
   scale_set(d, s);
 }
 
-static void viewer_scaledlg_handler(dialogue_t *d, scale_type type, int scale)
+static void viewer_scaledlg_handler(dialogue_t *d,
+                                    scale_type  type,
+                                    int         scale)
 {
   viewer_t *viewer;
 
@@ -152,8 +154,9 @@ error viewer_scaledlg_init(void)
     return error_OOM;
 
   dialogue_set_fillout_handler(scale, viewer_scaledlg_fillout, NULL);
-  scale_set_steppings(scale, GLOBALS.choices.scale.step,
-                              GLOBALS.choices.scale.mult);
+  scale_set_steppings(scale,
+                      GLOBALS.choices.scale.step,
+                      GLOBALS.choices.scale.mult);
   scale_set_scale_handler(scale, viewer_scaledlg_handler);
 
   viewer_scaledlg = scale;

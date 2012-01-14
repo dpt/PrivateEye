@@ -9,13 +9,13 @@
 
 #include "oslib/wimp.h"
 
-wimp_i iconbar_create_icon(const char    *sprite,
-                           wimp_w         w,
-                           wimp_priority  priority);
+wimp_i iconbar_create_icon(const char   *sprite,
+                           wimp_w        w,
+                           wimp_priority priority);
 
-wimp_i iconbar_create_device_icon(const char    *sprite,
-                                  const char    *text,
-                                  wimp_w         w,
-                                  wimp_priority  priority);
+wimp_i iconbar_create_device_icon(const char   *sprite,
+                                  const char   *text,
+                                  wimp_w        w,
+                                  wimp_priority priority);
 
 #endif /* APPENGINE_ICONBAR_H */

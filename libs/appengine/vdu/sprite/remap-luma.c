@@ -13,15 +13,19 @@ error sprite_remap_luma(osspriteop_area   *area,
                         osspriteop_header *dst,
                         sprite_lut        *lut)
 {
-  int                   width, height;
-  osspriteop_mode_word  mode;
-  int                   log2bpp;
-  unsigned int         *sp;
-  unsigned int         *dp;
-  int                   xy;
+  int                  width, height;
+  osspriteop_mode_word mode;
+  int                  log2bpp;
+  unsigned int        *sp;
+  unsigned int        *dp;
+  int                  xy;
 
-  sprite_info(area, src,
-             &width, &height, NULL, (os_mode *) &mode, &log2bpp);
+  sprite_info(area,
+              src,
+             &width, &height,
+              NULL,
+ (os_mode *) &mode,
+             &log2bpp);
 
   switch (log2bpp)
   {

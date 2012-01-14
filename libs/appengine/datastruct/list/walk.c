@@ -1,9 +1,7 @@
 
 #include "appengine/datastruct/list.h"
 
-void list_walk(list_t              *anchor,
-                list_walk_callback  cb,
-                void                *cbarg)
+void list_walk(list_t *anchor, list_walk_callback cb, void *opaque)
 {
   list_t *e;
   list_t *next;
@@ -15,7 +13,7 @@ void list_walk(list_t              *anchor,
   for (e = anchor->next; e != NULL; e = next)
   {
     next = e->next;
-    if (cb(e, cbarg) < 0)
+    if (cb(e, opaque) < 0)
       break;
   }
 }

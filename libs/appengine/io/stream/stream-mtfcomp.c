@@ -70,7 +70,7 @@ static void update_current(MTFState *s, int c)
 }
 
 /* this yields a byte at a time */
-static int compress(MTFState *s, int (*cb)(void *arg), void *arg)
+static int compress(MTFState *s, int (*cb)(void *opaque), void *opaque)
 {
   unsigned int buf;
   int          used;
@@ -85,7 +85,7 @@ static int compress(MTFState *s, int (*cb)(void *arg), void *arg)
 
     /* less than a byte buffered: do a compress */
 
-    c = cb(arg);
+    c = cb(opaque);
     if (c == EOF)
     {
       DBUG(("compress EOF\n"));
@@ -121,7 +121,7 @@ static int compress(MTFState *s, int (*cb)(void *arg), void *arg)
 }
 
 /* this yields a byte at a time */
-static int decompress(MTFState *s, int (*cb)(void *arg), void *arg)
+static int decompress(MTFState *s, int (*cb)(void *opaque), void *opaque)
 {
   unsigned int buf;
   int          used;
@@ -135,7 +135,7 @@ static int decompress(MTFState *s, int (*cb)(void *arg), void *arg)
   if (used < 4)
   {
     DBUG(("{read 1}"));
-    c = cb(arg);
+    c = cb(opaque);
     if (c == EOF)
     {
       DBUG(("decompress EOF case 1\n"));
@@ -165,7 +165,7 @@ static int decompress(MTFState *s, int (*cb)(void *arg), void *arg)
     if (used < 8)
     {
       DBUG(("{read 2}"));
-      c = cb(arg);
+      c = cb(opaque);
       if (c == EOF)
       {
         DBUG(("decompress EOF case 2\n"));
@@ -196,18 +196,18 @@ static int decompress(MTFState *s, int (*cb)(void *arg), void *arg)
 
 typedef struct stream_mtfcomp
 {
-  stream         base;
-  stream        *input;
-  MTFState       compressor;
+  stream        base;
+  stream       *input;
+  MTFState      compressor;
 
-  int            bufsz;
-  unsigned char  buffer[UNKNOWN];
+  int           bufsz;
+  unsigned char buffer[UNKNOWN];
 }
 stream_mtfcomp;
 
-static int comp_fetch_byte_callback(void *arg)
+static int comp_fetch_byte_callback(void *opaque)
 {
-  stream_mtfcomp *sm = arg;
+  stream_mtfcomp *sm = opaque;
 
   return stream_getc(sm->input);
 }
@@ -215,7 +215,7 @@ static int comp_fetch_byte_callback(void *arg)
 static int stream_mtfcomp_get(stream *s)
 {
   stream_mtfcomp *sm = (stream_mtfcomp *) s;
-  unsigned char *p;
+  unsigned char  *p;
 
   assert(s->buf == s->end); /* are we only called when buffer empty? */
 
@@ -285,18 +285,18 @@ error stream_mtfcomp_create(stream *input, int bufsz, stream **s)
 
 typedef struct stream_mtfdecomp
 {
-  stream         base;
-  stream        *input;
-  MTFState       decompressor;
+  stream        base;
+  stream       *input;
+  MTFState      decompressor;
 
-  int            bufsz;
-  unsigned char  buffer[UNKNOWN];
+  int           bufsz;
+  unsigned char buffer[UNKNOWN];
 }
 stream_mtfdecomp;
 
-static int decomp_fetch_byte_callback(void *arg)
+static int decomp_fetch_byte_callback(void *opaque)
 {
-  stream_mtfdecomp *sm = arg;
+  stream_mtfdecomp *sm = opaque;
 
   return stream_getc(sm->input);
 }
@@ -304,7 +304,7 @@ static int decomp_fetch_byte_callback(void *arg)
 static int stream_mtfdecomp_get(stream *s)
 {
   stream_mtfdecomp *sm = (stream_mtfdecomp *) s;
-  unsigned char *p;
+  unsigned char    *p;
 
   assert(s->buf == s->end); /* are we only called when buffer empty? */
 

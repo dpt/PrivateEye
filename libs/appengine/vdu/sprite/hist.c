@@ -96,13 +96,17 @@ error sprite_get_histograms(osspriteop_area   *area,
                             osspriteop_header *header,
                             sprite_histograms *hists)
 {
-  int                   width, height;
-  osspriteop_mode_word  mode;
-  int                   log2bpp;
-  void                (*fn)(osspriteop_header *, int, int, sprite_histograms *);
+  int                  width, height;
+  osspriteop_mode_word mode;
+  int                  log2bpp;
+  void               (*fn)(osspriteop_header *, int, int, sprite_histograms *);
 
-  sprite_info(area, header,
-             &width, &height, NULL, (os_mode *) &mode, &log2bpp);
+  sprite_info(area,
+              header,
+             &width, &height,
+              NULL,
+ (os_mode *) &mode,
+             &log2bpp);
 
   switch (log2bpp)
   {

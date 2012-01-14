@@ -5,16 +5,15 @@
 
 // TODO
 //
-// don't yet know how to deal with extracting metadata from a jpeg
-// which has been converted to a sprite
+// don't yet know how to deal with extracting metadata from a jpeg which has
+// been converted to a sprite
 // go look in source file, or cache it when converting?
-
-    // all this mallocing looks painful, might want to use a separate buffer
-    // and use offsets instead of pointers in the tree
-
-      // instead of iterating over the file (NELEMS(map)) times we could
-      // walk over it once and get the segments displayed in file order
-
+//
+// all this mallocing looks painful, might want to use a separate buffer and
+// use offsets instead of pointers in the tree
+//
+// instead of iterating over the file (NELEMS(map)) times we could walk over
+// it once and get the segments displayed in file order
 
 #include <stdlib.h>
 
@@ -30,12 +29,12 @@
 #include "appengine/types.h"
 #include "appengine/base/bsearch.h"
 #include "appengine/base/bytesex.h"
+#include "appengine/base/messages.h"
 #include "appengine/base/oserror.h"
 #include "appengine/base/pack.h"
-#include "appengine/datastruct/list.h"
-#include "appengine/base/messages.h"
-#include "appengine/datastruct/ntree.h"
 #include "appengine/base/strings.h"
+#include "appengine/datastruct/list.h"
+#include "appengine/datastruct/ntree.h"
 
 #include "jpeg.h"
 
@@ -120,7 +119,9 @@ Failure:
   return err;
 }
 
-static error jpeg_meta_exif_prop(struct exifprop *list, int lvl, ntree_t *root)
+static error jpeg_meta_exif_prop(struct exifprop *list,
+                                 int              lvl,
+                                 ntree_t         *root)
 {
   error err;
 
@@ -287,21 +288,21 @@ Failure:
 
 #define EIGHTBIM 0x4d494238 /* "8BIM" */
 
-#define ADOBE_ID_MACINTOSH_PRINT_MANAGER_INFO           0x03E9
-#define ADOBE_ID_RESOLUTION_INFO                        0x03ED
-#define ADOBE_ID_PRINT_FLAGS                            0x03F3
-#define ADOBE_ID_COLOUR_HALFTONING_INFORMATION          0x03F5
-#define ADOBE_ID_IPTC_NAA_RECORD                        0x0404
-#define ADOBE_ID_JPEG_QUALITY                           0x0406
-#define ADOBE_ID_GRID_AND_GUIDES_INFORMATION            0x0408
-#define ADOBE_ID_COPYRIGHT_FLAG                         0x040A
-#define ADOBE_ID_THUMBNAIL_RESOURCE                     0x040C
-#define ADOBE_ID_GLOBAL_ANGLE                           0x040D
-#define ADOBE_ID_DOCUMENT_SPECIFIC_IDS_SEED_NUMBER      0x0414
-#define ADOBE_ID_GLOBAL_ALTITUDE                        0x0419
-#define ADOBE_ID_CAPTION_DIGEST                         0x0425
-#define ADOBE_ID_PRINT_SCALE                            0x0426
-#define ADOBE_ID_PRINT_FLAGS_INFORMATION                0x2710
+#define ADOBE_ID_MACINTOSH_PRINT_MANAGER_INFO      0x03E9
+#define ADOBE_ID_RESOLUTION_INFO                   0x03ED
+#define ADOBE_ID_PRINT_FLAGS                       0x03F3
+#define ADOBE_ID_COLOUR_HALFTONING_INFORMATION     0x03F5
+#define ADOBE_ID_IPTC_NAA_RECORD                   0x0404
+#define ADOBE_ID_JPEG_QUALITY                      0x0406
+#define ADOBE_ID_GRID_AND_GUIDES_INFORMATION       0x0408
+#define ADOBE_ID_COPYRIGHT_FLAG                    0x040A
+#define ADOBE_ID_THUMBNAIL_RESOURCE                0x040C
+#define ADOBE_ID_GLOBAL_ANGLE                      0x040D
+#define ADOBE_ID_DOCUMENT_SPECIFIC_IDS_SEED_NUMBER 0x0414
+#define ADOBE_ID_GLOBAL_ALTITUDE                   0x0419
+#define ADOBE_ID_CAPTION_DIGEST                    0x0425
+#define ADOBE_ID_PRINT_SCALE                       0x0426
+#define ADOBE_ID_PRINT_FLAGS_INFORMATION           0x2710
 
 #define IPTC_SEGMENT_MARKER 0x021C // byteswap?
 
@@ -352,9 +353,13 @@ static const iptc_record application_record[] =
 
 // 183, 240 seen but not understood
 
-typedef error (*adobe_handler)(const unsigned char *buf, size_t length, ntree_t *root);
+typedef error (*adobe_handler)(const unsigned char *buf,
+                               size_t               length,
+                               ntree_t             *root);
 
-static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf, size_t length, ntree_t *root)
+static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf,
+                                             size_t               length,
+                                             ntree_t             *root)
 {
   error                err;
   const unsigned char *p;
@@ -420,7 +425,9 @@ Failure:
   return err;
 }
 
-static error jpeg_meta_adobe_default_handler(const unsigned char *buf, size_t length, ntree_t *root)
+static error jpeg_meta_adobe_default_handler(const unsigned char *buf,
+                                             size_t               length,
+                                             ntree_t             *root)
 {
   NOT_USED(buf);
   NOT_USED(length);
@@ -431,13 +438,14 @@ static error jpeg_meta_adobe_default_handler(const unsigned char *buf, size_t le
   return error_OK;
 }
 
-static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf, size_t length)
+static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf,
+                                      size_t               length)
 {
   static const struct
   {
-    unsigned int   id;
-    const char    *desc; /* message token */
-    adobe_handler  fn;
+    unsigned int  id;
+    const char   *desc; /* message token */
+    adobe_handler fn;
   }
   map[] =
   {

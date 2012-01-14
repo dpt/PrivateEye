@@ -123,8 +123,10 @@ void metadata_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-void metadata_open(image_t *image,
-                    os_colour bgcolour, int wrapwidth, int lineheight)
+void metadata_open(image_t  *image,
+                   os_colour bgcolour,
+                   int       wrapwidth,
+                   int       lineheight)
 {
   metadata_config config;
 
@@ -144,7 +146,7 @@ int metadata_available(const image_t *image)
 /* ----------------------------------------------------------------------- */
 
 static error metadata_alloc(const void    *opaque_config,
-                             imageobwin_t **obwin)
+                            imageobwin_t **obwin)
 {
   metadata_window       *self;
   const metadata_config *config = opaque_config;
@@ -233,7 +235,9 @@ static void metadata_refresh(imageobwin_t *obwin)
 
 /* ----------------------------------------------------------------------- */
 
-static int metadata_event_redraw_window_request(wimp_event_no event_no, wimp_block *block, void *handle)
+static int metadata_event_redraw_window_request(wimp_event_no event_no,
+                                                wimp_block   *block,
+                                                void         *handle)
 {
   metadata_window *self;
   wimp_draw       *draw;
@@ -250,7 +254,9 @@ static int metadata_event_redraw_window_request(wimp_event_no event_no, wimp_blo
   return event_HANDLED;
 }
 
-static int metadata_event_mouse_click(wimp_event_no event_no, wimp_block *block, void *handle)
+static int metadata_event_mouse_click(wimp_event_no event_no,
+                                      wimp_block   *block,
+                                      void         *handle)
 {
   metadata_window *self;
   wimp_pointer    *pointer;
@@ -294,12 +300,14 @@ static int metadata_event_mouse_click(wimp_event_no event_no, wimp_block *block,
   return event_HANDLED;
 }
 
-static int metadata_event_menu_selection(wimp_event_no event_no, wimp_block *block, void *handle)
+static int metadata_event_menu_selection(wimp_event_no event_no,
+                                         wimp_block   *block,
+                                         void         *handle)
 {
   metadata_window *self;
   wimp_selection  *selection;
   wimp_menu       *last;
-  treeview_mark   mark;
+  treeview_mark    mark;
   wimp_pointer     p;
 
   NOT_USED(event_no);

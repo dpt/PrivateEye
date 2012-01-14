@@ -15,7 +15,10 @@
 #include "appengine/base/strings.h"
 #include "appengine/wimp/icon.h"
 
-void icon_set_flags(wimp_w w, wimp_i i, wimp_icon_flags eor, wimp_icon_flags clear)
+void icon_set_flags(wimp_w          w,
+                    wimp_i          i,
+                    wimp_icon_flags eor,
+                    wimp_icon_flags clear)
 {
   wimp_icon_state state;
 

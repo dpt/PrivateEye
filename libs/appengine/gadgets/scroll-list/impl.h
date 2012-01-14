@@ -12,13 +12,13 @@
 
 struct scroll_list
 {
-  wimp_w                 w;
-  int                    width;
-  int                    height;
-  int                    leading;
-  int                    rows;
-  int                    selection;
-  int                    marker;
+  wimp_w                w;
+  int                   width;
+  int                   height;
+  int                   leading;
+  int                   rows;
+  int                   selection;
+  int                   marker;
   scroll_list_redrawfn *redraw_elem;
   scroll_list_redrawfn *redraw_lead;
   scroll_list_eventfn  *event;

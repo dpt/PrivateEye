@@ -20,7 +20,10 @@ wimp_i iconbar_create_icon(const char    *sprite,
   int              xeig, yeig;
   wimp_icon_create create;
 
-  if (EC(xwimpspriteop_read_sprite_info(sprite, &width, &height, NULL, &mode)))
+  if (EC(xwimpspriteop_read_sprite_info(sprite,
+                                       &width, &height,
+                                        NULL,
+                                       &mode)))
   {
     /* FIXME: should check error number really */
     width  = 34;

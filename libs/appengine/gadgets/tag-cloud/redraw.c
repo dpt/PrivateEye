@@ -30,14 +30,16 @@ static void claim_nulls(int reg, tag_cloud *tc)
   };
 
   event_register_wimp_group(reg,
-                            wimp_handlers, NELEMS(wimp_handlers),
-                            tc->main_w, event_ANY_ICON,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            tc->main_w,
+                            event_ANY_ICON,
                             tc);
 }
 
-static int tag_cloud_redraw_event_null_reason_code(wimp_event_no  event_no,
-                                                    wimp_block    *block,
-                                                    void          *handle)
+static int tag_cloud_redraw_event_null_reason_code(wimp_event_no event_no,
+                                                   wimp_block   *block,
+                                                   void         *handle)
 {
   tag_cloud *tc;
   wimp_window_state state;
