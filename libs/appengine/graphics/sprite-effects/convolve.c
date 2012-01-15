@@ -31,7 +31,9 @@ typedef unsigned int Pixel888;
 
 /* ----------------------------------------------------------------------- */
 
-#define MAXLUTS 8
+/* Controls the biggest size of blur achievable.
+ * 1 is a 5-pt kernel. 16 is a 95-pt kernel. N gives an (N*6-1)-pt kernel. */
+#define MAXLUTS 16
 
 struct convolve_lut
 {
@@ -168,8 +170,7 @@ static error convolve_8(const convolve_lut *lut,
 
     break;
 
-  case 2: /* 11-pt kernel */
-  case 3: /* 17-pt kernel */
+  default:
     return error_SPRITEFX_UNSUPP_EFFECT;
   }
 
@@ -568,6 +569,14 @@ static error convolve_888(const convolve_lut *lut,
   case 6: /* 35-pt kernel */
   case 7: /* 41-pt kernel */
   case 8: /* 47-pt kernel */
+  case 9: /* (stages*2-1)-pt kernels */
+  case 10:
+  case 11:
+  case 12:
+  case 13:
+  case 14:
+  case 15:
+  case 16:
     fn = convolve_888_Nstage;
     break;
 

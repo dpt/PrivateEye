@@ -1725,11 +1725,14 @@ static int tone_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
+#define BLURMIN  2 /*  5-pt kernel */
+#define BLURMAX 48 /* 95-pt kernel */
+
 static effect_blur blur; /* transient effect_blur for editing */
 
 static const slider_rec blur_sliders[] =
 {
-  { EFFECTS_BLR_S_EFFECT_PIT, 2, 24, 2, &blur.level },
+  { EFFECTS_BLR_S_EFFECT_PIT, BLURMIN, BLURMAX, 2, &blur.level },
 };
 
 //static void blur_set_values_and_redraw(void)
@@ -1840,7 +1843,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
     if (EFFECTS_BLR_S_EFFECT_BACKGROUND == pointer->i ||
         EFFECTS_BLR_S_EFFECT_FOREGROUND == pointer->i)
     {
-      slider_start(pointer, blur_slider_update, 2, 24);
+      slider_start(pointer, blur_slider_update, BLURMIN, BLURMAX);
     }
     else
     {
@@ -1849,7 +1852,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
       case EFFECTS_BLR_B_APPLY:
         val = icon_get_int(dialogue_get_window(&GLOBALS.effects_blr_d),
                            EFFECTS_BLR_W_VAL);
-        blur.level = CLAMP(val, 2, 24);
+        blur.level = CLAMP(val, BLURMIN, BLURMAX);
 
         editing_element->args.blur = blur;
 

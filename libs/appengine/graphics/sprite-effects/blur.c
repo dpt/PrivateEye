@@ -18,8 +18,8 @@
 
 #include "appengine/graphics/sprite-effects.h"
 
-#define MINAMT  2
-#define MAXAMT 24
+#define MINAMT  2 /*  5-pt kernel */
+#define MAXAMT 48 /* 95-pt kernel */
 
 static void make_kernel(effects_blur_method method, int width, float *kernel)
 {
