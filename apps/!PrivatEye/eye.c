@@ -116,7 +116,7 @@ static error initialise_subsystems(void)
     hist_init,      /* in AppEngine */
     eye_icon_bar_init,
     rotate_init,
-    rotate_init,
+    effects_init,
 #ifdef EYE_TAGS
     tags_search_init,
 #endif
@@ -156,7 +156,7 @@ static void finalise_subsystems(void)
 #ifdef EYE_TAGS
     tags_search_fin,
 #endif
-    rotate_fin,
+    effects_fin,
     rotate_fin,
     eye_icon_bar_fin,
     hist_fin,
