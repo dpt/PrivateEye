@@ -1,4 +1,4 @@
-WimpSlot -min 8M
+WimpSlot -min 4000K
 Dir <Obey$Dir>
 CDir o
 CDir om
