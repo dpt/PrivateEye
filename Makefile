@@ -18,6 +18,9 @@ normal:	utils
 	Dir ^.^.apps.!PrivatEye
 	amu $@
 	Dir ^.^
+	Dir ^.^.apps.!TagCloud
+	amu $@
+	Dir ^.^
 
 debug:	utils
 	Dir libs.appengine
@@ -37,6 +40,9 @@ debug:	utils
 	Dir ^.^.apps.!PrivatEye
 	amu $@
 	Dir ^.^
+	Dir ^.^.apps.!TagCloud
+	amu $@
+	Dir ^.^
 
 all:	normal debug
 
@@ -45,21 +51,24 @@ utils:
 	amu normal
 	Dir ^.^
 
-clean:	utils
+clean:
+	Dir utils.templheader
+	-amu $@
+	Dir ^.^
 	Dir libs.appengine
-	amu $@
+	-amu $@
 	Dir ^.^.libs.exiftags
-	amu $@
+	-amu $@
 	Dir ^.^.libs.fortify
-	amu -f MakefileRO $@
+	-amu -f MakefileRO $@
 	Dir ^.^.libs.jpeg
-	amu -f MakefileRO $@
+	-amu -f MakefileRO $@
 	Dir ^.^.libs.md5
-	amu $@
+	-amu $@
 	Dir ^.^.libs.png
-	amu -f MakefileRO $@
+	-amu -f MakefileRO $@
 	Dir ^.^.libs.zlib
-	amu -f MakefileRO $@
+	-amu -f MakefileRO $@
 	Dir ^.^.apps.!PrivatEye
-	amu $@
+	-amu $@
 	Dir ^.^
