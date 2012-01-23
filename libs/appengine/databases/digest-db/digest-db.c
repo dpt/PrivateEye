@@ -94,8 +94,7 @@ int digestdb_compare(const void *a, const void *b)
 
 /* ----------------------------------------------------------------------- */
 
-/* FIXME No input validation. */
-void digestdb_decode(unsigned char *bytes, const char *text)
+error digestdb_decode(unsigned char *bytes, const char *text)
 {
 #define _ 255
 
@@ -120,11 +119,22 @@ void digestdb_decode(unsigned char *bytes, const char *text)
   };
 
   const char *end;
+  int         lo,hi;
 
   for (end = text + digestdb_DIGESTSZ * 2; text < end; text += 2)
-    *bytes++ = (tab[text[0]] << 4) | tab[text[1]];
+  {
+    hi = tab[text[0]];
+    lo = tab[text[1]];
+
+    if (lo == _ || hi == _)
+      return error_BAD_ARG;
+
+    *bytes++ = (hi << 4) | lo;
+  }
 
 #undef _
+
+  return error_OK;
 }
 
 void digestdb_encode(char *text, const unsigned char *bytes)

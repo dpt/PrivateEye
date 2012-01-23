@@ -580,15 +580,7 @@ error tags_common_lazyinit(void)
       goto failure;
     }
 
-    err = tagdb_create(TAGDB_FILE);
-    if (err)
-      goto failure;
-
     err = tagdb_open(TAGDB_FILE, &db);
-    if (err)
-      goto failure;
-
-    err = filenamedb_create(FILENAMEDB_FILE);
     if (err)
       goto failure;
 

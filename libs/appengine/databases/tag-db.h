@@ -16,6 +16,7 @@
 #include <stddef.h>
 
 #include "appengine/base/errors.h"
+#include "appengine/databases/pickle.h"
 
 #define T tagdb
 
@@ -26,8 +27,7 @@ void tagdb_fin(void);
 
 /* ----------------------------------------------------------------------- */
 
-error tagdb_create(const char *filename);
-void tagdb_delete(const char *filename);
+#define tagdb_delete pickle_delete
 
 /* ----------------------------------------------------------------------- */
 

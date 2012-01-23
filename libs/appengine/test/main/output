@@ -283,6 +283,8 @@ walk 'gaff':'n/a'...
 cont = 330000
 walk 'sebastian':'jf'...
 cont = 5e0000
+walk 'pris':'n/a'...
+cont = ffffffff
 test: remove
 test: destroy
 
@@ -296,13 +298,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-0001fae4: sebastian
-0001fac0: pris
-0001fa9c: bryant
-0001fa78: gaff
-0001fa54: rachael
-0001fa30: batty
-0001fa0c: deckard
+000213d8: sebastian
+000213b4: pris
+00021390: bryant
+0002136c: gaff
+00021348: rachael
+00021324: batty
+00021300: deckard
 
 >> ntree tests
 test: build tree
@@ -547,7 +549,6 @@ test: destroy
 
 >> tagdb tests
 test: init
-test: create
 test: open
 test: add tags
 adding 'marty'...is tag 0
@@ -646,7 +647,6 @@ getting tags for id '4'... id not found (0 tags)
 test: close
 test: delete
 test: bash
-bash: create
 bash: open
 bash: setup
 bash: starting loop 0
@@ -2399,7 +2399,6 @@ test: filing: dirscan
 @.databases
 @.datastruct
 @.dialogues
-@.diff
 @.gadgets
 @.geom
 @.GNUmakefile
@@ -2417,10 +2416,12 @@ test: filing: dirscan
 @.objs-normal
 @.odf
 @.om
+@.output
 @.TemplateMF
 @.TemplateMFG
 @.test
-@.test/main/output
+@.testpickle1
+@.testpickle2
 @.text
 @.thumbnail-diff
 @.vdu
@@ -2429,15 +2430,15 @@ test: filing: dirscan
 >> font tests
 test: select
 Matching for 'Homerton' with attrs 403
-font__select says: Use 'Homerton.Light'.
+font_select says: Use 'Homerton.Light'.
 Matching for 'Goudy' with attrs 406
-font__select says: No good match.
+font_select says: No good match.
 Matching for 'eric' with attrs 206
-font__select says: Use 'ERIC.COND.BOLD'.
+font_select says: Use 'ERIC.COND.BOLD'.
 Matching for 'eric.cond.bold' with attrs 402
-font__select says: Use 'ERIC.LIGHT'.
+font_select says: Use 'ERIC.LIGHT'.
 Matching for 'goudy.oldstyle.italic' with attrs 403
-font__select says: No good match.
+font_select says: No good match.
 
 >> lang tests
 test: 0
@@ -2522,8 +2523,8 @@ add_area: 0 20 10 25
 add_area: 40 20 50 25
 add_area: 10 0 40 20
 
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 20 10 25
 40 20 50 25
 10 0 40 20
@@ -2564,13 +2565,13 @@ next: none left
 ..........111111111111111111111111111111..........
 start: list is 3 long
 next: 0 20 10 25
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 0 22 3 25
 add_area: 3 20 10 25
 add_area: 0 20 10 22
 0 placed at: {0 22 3 25}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 3 20 10 25
 40 20 50 25
 0 20 10 22
@@ -2614,14 +2615,14 @@ next: none left
 ..........111111111111111111111111111111..........
 start: list is 4 long
 next: 3 20 10 25
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 3 22 6 25
 add_area: 6 20 10 25
 add_area: 3 20 10 22
 add_area: contained by: 2 <0 20 10 22>
 1 placed at: {3 22 6 25}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 6 20 10 25
 40 20 50 25
 0 20 10 22
@@ -2665,14 +2666,14 @@ next: none left
 ..........111111111111111111111111111111..........
 start: list is 4 long
 next: 6 20 10 25
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 6 22 9 25
 add_area: 9 20 10 25
 add_area: 6 20 10 22
 add_area: contained by: 2 <0 20 10 22>
 2 placed at: {6 22 9 25}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 40 20 50 25
 0 20 10 22
@@ -2717,13 +2718,13 @@ next: none left
 start: list is 4 long
 next: 9 20 10 25
 next: 40 20 50 25
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 40 22 43 25
 add_area: 43 20 50 25
 add_area: 40 20 50 22
 3 placed at: {40 22 43 25}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 43 20 50 25
 0 20 10 22
@@ -2771,14 +2772,14 @@ next: none left
 start: list is 5 long
 next: 9 20 10 25
 next: 43 20 50 25
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 43 22 46 25
 add_area: 46 20 50 25
 add_area: 43 20 50 22
 add_area: contained by: 3 <40 20 50 22>
 4 placed at: {43 22 46 25}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 46 20 50 25
 0 20 10 22
@@ -2826,14 +2827,14 @@ next: none left
 start: list is 5 long
 next: 9 20 10 25
 next: 46 20 50 25
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 46 22 49 25
 add_area: 49 20 50 25
 add_area: 46 20 50 22
 add_area: contained by: 3 <40 20 50 22>
 5 placed at: {46 22 49 25}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 49 20 50 25
 0 20 10 22
@@ -2884,13 +2885,13 @@ next: 49 20 50 25
 next: 0 20 10 22
 next: 40 20 50 22
 next: 10 0 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 10 17 13 20
 add_area: 13 0 40 20
 add_area: 10 0 40 17
 6 placed at: {10 17 13 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 49 20 50 25
 0 20 10 22
@@ -2944,14 +2945,14 @@ next: 49 20 50 25
 next: 0 20 10 22
 next: 40 20 50 22
 next: 13 0 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 13 17 16 20
 add_area: 16 0 40 20
 add_area: 13 0 40 17
 add_area: contained by: 5 <10 0 40 17>
 7 placed at: {13 17 16 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 49 20 50 25
 0 20 10 22
@@ -3005,14 +3006,14 @@ next: 49 20 50 25
 next: 0 20 10 22
 next: 40 20 50 22
 next: 16 0 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 16 17 19 20
 add_area: 19 0 40 20
 add_area: 16 0 40 17
 add_area: contained by: 5 <10 0 40 17>
 8 placed at: {16 17 19 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 49 20 50 25
 0 20 10 22
@@ -3066,14 +3067,14 @@ next: 49 20 50 25
 next: 0 20 10 22
 next: 40 20 50 22
 next: 19 0 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 19 17 22 20
 add_area: 22 0 40 20
 add_area: 19 0 40 17
 add_area: contained by: 5 <10 0 40 17>
 9 placed at: {19 17 22 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 9 20 10 25
 49 20 50 25
 0 20 10 22
@@ -3121,19 +3122,19 @@ next: none left
 ..........111111111111222222222222222222..........
 ..........111111111111222222222222222222..........
 ..........111111111111222222222222222222..........
-packer__clear
+packer_clear
 start: list is 6 long
 next: 9 20 10 25
 next: 49 20 50 25
 next: 0 20 10 22
-packer__clear: invalidate area
+packer_clear: invalidate area
 remove_area: 0 22 50 25
 add_area: 9 20 10 22
 add_area: contained by: 2 <0 20 10 22>
 add_area: 49 20 50 22
 add_area: contained by: 3 <40 20 50 22>
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 20 10 22
 40 20 50 22
 22 0 40 20
@@ -3202,8 +3203,8 @@ add_area: 10 0 40 20
 add_area: 10 22 40 25
 add_area: contained by: 9 <0 22 50 25>
 
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3250,13 +3251,13 @@ start: list is 7 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 10 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 10 17 13 20
 add_area: 13 0 40 20
 add_area: 10 0 40 17
 0 placed at: {10 17 13 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3306,14 +3307,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 13 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 13 17 16 20
 add_area: 16 0 40 20
 add_area: 13 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 1 placed at: {13 17 16 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3363,14 +3364,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 16 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 16 17 19 20
 add_area: 19 0 40 20
 add_area: 16 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 2 placed at: {16 17 19 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3420,14 +3421,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 19 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 19 17 22 20
 add_area: 22 0 40 20
 add_area: 19 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 3 placed at: {19 17 22 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3477,14 +3478,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 22 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 22 17 25 20
 add_area: 25 0 40 20
 add_area: 22 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 4 placed at: {22 17 25 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3534,14 +3535,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 25 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 25 17 28 20
 add_area: 28 0 40 20
 add_area: 25 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 5 placed at: {25 17 28 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3591,14 +3592,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 28 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 28 17 31 20
 add_area: 31 0 40 20
 add_area: 28 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 6 placed at: {28 17 31 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3648,14 +3649,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 31 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 31 17 34 20
 add_area: 34 0 40 20
 add_area: 31 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 7 placed at: {31 17 34 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3705,14 +3706,14 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 34 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 34 17 37 20
 add_area: 37 0 40 20
 add_area: 34 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 8 placed at: {34 17 37 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3762,13 +3763,13 @@ start: list is 8 long
 next: 5 20 10 22
 next: 40 20 45 22
 next: 37 3 40 20
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 37 17 40 20
 add_area: 37 0 40 17
 add_area: contained by: 6 <10 0 40 17>
 9 placed at: {37 17 40 20}
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 20 10 25
 0 0 5 25
@@ -3811,10 +3812,10 @@ next: none left
 ..................................................
 ..................................................
 ..................................................
-packer__clear
+packer_clear
 start: list is 7 long
 next: 5 20 10 22
-packer__clear: invalidate area
+packer_clear: invalidate area
 remove_area: 5 22 45 22
 add_area: 0 20 5 25
 add_area: contained by: 2 <0 0 5 25>
@@ -3826,8 +3827,8 @@ add_area: contained by: 4 <45 0 50 25>
 add_area: 40 20 50 22
 add_area: 40 22 50 25
 add_area: contained by: 0 <0 22 50 25>
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 22 50 25
 0 0 5 25
 45 0 50 25
@@ -3965,15 +3966,15 @@ can place from 0 to 2 on this line
 place element
 start: list is 1 long
 next: 2 2 98 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 2 8 28 34
 add_area: 0 0 2 36
 add_area: 28 0 100 36
 add_area: 0 0 100 8
 add_area: 0 34 100 36
 place horizontal padding
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 28 0 100 36
@@ -3982,7 +3983,7 @@ packer__sort: trimming
 trimming to 4 long
 start: list is 4 long
 next: 28 2 98 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 28 6 30 34
 add_area: 30 0 100 36
 add_area: 28 0 100 6
@@ -3994,8 +3995,8 @@ add_area: 30 0 100 8
 add_area: contained by: 4 <30 0 100 36>
 add_area: 0 0 100 6
 place element
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 30 0 100 36
@@ -4005,7 +4006,7 @@ packer__sort: trimming
 trimming to 5 long
 start: list is 5 long
 next: 30 2 98 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 30 6 56 34
 add_area: 56 0 100 36
 add_area: 30 0 100 6
@@ -4013,8 +4014,8 @@ add_area: contained by: 4 <0 0 100 6>
 add_area: 30 34 100 36
 add_area: contained by: 0 <0 34 100 36>
 place horizontal padding
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 56 0 100 36
@@ -4024,15 +4025,15 @@ packer__sort: trimming
 trimming to 5 long
 start: list is 5 long
 next: 56 2 98 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 56 8 58 34
 add_area: 58 0 100 36
 add_area: 56 0 100 8
 add_area: 56 34 100 36
 add_area: contained by: 0 <0 34 100 36>
 place element
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 58 0 100 36
@@ -4043,7 +4044,7 @@ packer__sort: trimming
 trimming to 6 long
 start: list is 6 long
 next: 58 2 98 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 58 8 84 34
 add_area: 84 0 100 36
 add_area: 58 0 100 8
@@ -4051,9 +4052,9 @@ add_area: contained by: 4 <56 0 100 8>
 add_area: 58 34 100 36
 add_area: contained by: 0 <0 34 100 36>
 *** won't fit on this line (only 18 left, but need 28)
-packer__clear
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_clear
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 84 0 100 36
@@ -4065,7 +4066,7 @@ trimming to 6 long
 start: list is 6 long
 next: 84 2 98 34
 next: 2 2 28 8
-packer__clear: invalidate area
+packer_clear: invalidate area
 remove_area: 2 8 98 34
 add_area: 98 0 100 36
 add_area: 84 0 100 8
@@ -4073,8 +4074,8 @@ add_area: contained by: 4 <56 0 100 8>
 add_area: 84 34 100 36
 add_area: contained by: 0 <0 34 100 36>
 loop: i=3
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 98 0 100 36
@@ -4093,7 +4094,7 @@ start: list is 6 long
 next: 2 2 28 8
 next: 56 2 98 8
 next: 2 2 98 6
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 2 4 98 6
 add_area: 0 0 2 8
 add_area: contained by: 1 <0 0 2 36>
@@ -4112,8 +4113,8 @@ add_area: contained by: 2 <98 0 100 36>
 add_area: 0 0 100 4
 add_area: growing list to 16
 place element
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 98 0 100 36
@@ -4124,14 +4125,14 @@ packer__sort: trimming
 trimming to 6 long
 start: list is 6 long
 next: 2 6 28 8
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 2 6 28 8
 add_area: 0 6 2 8
 add_area: contained by: 1 <0 0 2 36>
 *** won't fit on this line (only 0 left, but need 26)
-packer__clear
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_clear
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 98 0 100 36
@@ -4142,12 +4143,12 @@ trimming to 5 long
 start: list is 5 long
 next: 56 6 98 8
 next: 2 2 98 4
-packer__clear: invalidate area
+packer_clear: invalidate area
 remove_area: 2 4 98 34
 add_area: 98 6 100 8
 add_area: contained by: 2 <98 0 100 36>
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 98 0 100 36
@@ -4277,7 +4278,7 @@ next: none left
 ....................................................................................................
 ....................................................................................................
 loop: i=0
-packer__sort: trimming
+packer_sort: trimming
 0 0 100 36
 start: list is 1 long
 next: 2 2 98 34
@@ -4289,15 +4290,15 @@ can place from 0 to 2 on this line
 place element
 start: list is 1 long
 next: 2 2 98 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 72 8 98 34
 add_area: 0 0 72 36
 add_area: 98 0 100 36
 add_area: 0 0 100 8
 add_area: 0 34 100 36
 place horizontal padding
-packer__sort: sorting areas to 1
-packer__sort: trimming
+packer_sort: sorting areas to 1
+packer_sort: trimming
 0 34 100 36
 98 0 100 36
 0 0 72 36
@@ -4306,7 +4307,7 @@ packer__sort: trimming
 trimming to 4 long
 start: list is 4 long
 next: 2 2 72 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 70 6 72 34
 add_area: 0 0 70 36
 add_area: 0 0 72 6
@@ -4318,8 +4319,8 @@ add_area: contained by: 4 <0 0 70 36>
 add_area: 72 0 100 8
 add_area: 0 0 100 6
 place element
-packer__sort: sorting areas to 1
-packer__sort: trimming
+packer_sort: sorting areas to 1
+packer_sort: trimming
 0 34 100 36
 98 0 100 36
 0 0 70 36
@@ -4329,7 +4330,7 @@ packer__sort: trimming
 trimming to 5 long
 start: list is 5 long
 next: 2 2 70 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 44 6 70 34
 add_area: 0 0 44 36
 add_area: 0 0 70 6
@@ -4337,8 +4338,8 @@ add_area: contained by: 4 <0 0 100 6>
 add_area: 0 34 70 36
 add_area: contained by: 0 <0 34 100 36>
 place horizontal padding
-packer__sort: sorting areas to 1
-packer__sort: trimming
+packer_sort: sorting areas to 1
+packer_sort: trimming
 0 34 100 36
 98 0 100 36
 0 0 44 36
@@ -4348,15 +4349,15 @@ packer__sort: trimming
 trimming to 5 long
 start: list is 5 long
 next: 2 2 44 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 42 8 44 34
 add_area: 0 0 42 36
 add_area: 0 0 44 8
 add_area: 0 34 44 36
 add_area: contained by: 0 <0 34 100 36>
 place element
-packer__sort: sorting areas to 1
-packer__sort: trimming
+packer_sort: sorting areas to 1
+packer_sort: trimming
 0 34 100 36
 98 0 100 36
 0 0 42 36
@@ -4367,7 +4368,7 @@ packer__sort: trimming
 trimming to 6 long
 start: list is 6 long
 next: 2 2 42 34
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 16 8 42 34
 add_area: 0 0 16 36
 add_area: 0 0 42 8
@@ -4375,9 +4376,9 @@ add_area: contained by: 4 <0 0 44 8>
 add_area: 0 34 42 36
 add_area: contained by: 0 <0 34 100 36>
 *** won't fit on this line (only 18 left, but need 28)
-packer__clear
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_clear
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 16 36
 98 0 100 36
@@ -4390,7 +4391,7 @@ start: list is 6 long
 next: 2 2 16 34
 next: 2 2 44 8
 next: 72 2 98 8
-packer__clear: invalidate area
+packer_clear: invalidate area
 remove_area: 2 8 98 34
 add_area: 0 0 2 36
 add_area: 0 0 16 8
@@ -4398,8 +4399,8 @@ add_area: contained by: 3 <0 0 44 8>
 add_area: 0 34 16 36
 add_area: contained by: 0 <0 34 100 36>
 loop: i=3
-packer__sort: sorting areas to 1
-packer__sort: trimming
+packer_sort: sorting areas to 1
+packer_sort: trimming
 0 34 100 36
 98 0 100 36
 0 0 2 36
@@ -4418,7 +4419,7 @@ start: list is 6 long
 next: 72 2 98 8
 next: 2 2 44 8
 next: 2 2 98 6
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 2 4 98 6
 add_area: 98 0 100 8
 add_area: contained by: 1 <98 0 100 36>
@@ -4437,8 +4438,8 @@ add_area: contained by: 1 <98 0 100 36>
 add_area: 0 0 100 4
 add_area: growing list to 16
 place element
-packer__sort: sorting areas to 1
-packer__sort: trimming
+packer_sort: sorting areas to 1
+packer_sort: trimming
 0 34 100 36
 98 0 100 36
 0 0 2 36
@@ -4449,14 +4450,14 @@ packer__sort: trimming
 trimming to 6 long
 start: list is 6 long
 next: 72 6 98 8
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 72 6 98 8
 add_area: 98 6 100 8
 add_area: contained by: 1 <98 0 100 36>
 *** won't fit on this line (only 0 left, but need 26)
-packer__clear
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_clear
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 98 0 100 36
@@ -4467,12 +4468,12 @@ trimming to 5 long
 start: list is 5 long
 next: 2 6 44 8
 next: 2 2 98 4
-packer__clear: invalidate area
+packer_clear: invalidate area
 remove_area: 2 4 98 34
 add_area: 0 6 2 8
 add_area: contained by: 1 <0 0 2 36>
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 34 100 36
 0 0 2 36
 98 0 100 36
@@ -4565,62 +4566,62 @@ start: list is 1 long
 next: 0 0 8 8
 start: list is 1 long
 next: 0 0 8 8
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 0 6 2 8
 add_area: 2 0 8 8
 add_area: 0 0 8 6
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 2 0 8 8
 0 0 8 6
 0 0 0 0
 trimming to 2 long
 start: list is 2 long
 next: 2 0 8 8
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 2 6 4 8
 add_area: 4 0 8 8
 add_area: 2 0 8 6
 add_area: contained by: 1 <0 0 8 6>
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 4 0 8 8
 0 0 8 6
 0 0 0 0
 trimming to 2 long
 start: list is 2 long
 next: 4 0 8 8
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 4 6 6 8
 add_area: 6 0 8 8
 add_area: 4 0 8 6
 add_area: contained by: 1 <0 0 8 6>
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 6 0 8 8
 0 0 8 6
 0 0 0 0
 trimming to 2 long
 start: list is 2 long
 next: 6 0 8 8
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 6 6 8 8
 add_area: 6 0 8 6
 add_area: contained by: 1 <0 0 8 6>
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_sort: sorting areas to 0
+packer_sort: trimming
 0 0 8 6
 0 0 0 0
 trimming to 1 long
 start: list is 1 long
 next: 0 0 8 6
-packer__place_by: fits
+packer_place_by: fits
 remove_area: 0 4 4 6
 add_area: 4 0 8 6
 add_area: 0 0 8 4
-packer__clear
-packer__sort: sorting areas to 0
-packer__sort: trimming
+packer_clear
+packer_sort: sorting areas to 0
+packer_sort: trimming
 4 0 8 6
 0 0 8 4
 0 0 0 0
@@ -4628,7 +4629,7 @@ trimming to 2 long
 start: list is 2 long
 next: 4 0 8 6
 next: 0 0 8 4
-packer__clear: invalidate area
+packer_clear: invalidate area
 remove_area: 0 4 8 8
 add_area: 4 0 8 4
 add_area: contained by: 1 <0 0 8 4>
@@ -4650,12 +4651,46 @@ test: pack and unpack
 test: unpack (array mode)
 test: pack (array mode)
 
+>> pickle tests
+test: pickle test 1
+test: create hash
+test: insert
+adding 'deckard':'rick'...
+adding 'batty':'roy'...
+adding 'tyrell':'rachael'...
+adding 'gaff':'n/a'...
+adding 'bryant':'n/a'...
+adding 'pris':'n/a'...
+adding 'sebastian':'jf'...
+test: destroy hash
+test: pickle test 2
+test: create hash
+test: insert
+adding 'Caerphilly'...
+adding 'Cheddar'...
+adding 'Lanark Blue'...
+adding 'Red Leicester'...
+adding 'Stilton'...
+adding 'Wensleydale'...
+test: pickle
+test: destroy hash
+test: create hash
+test: unpickle
+test: iterate
+walk 'Cheddar':'England Somerset Cow None Pasteurised 3'...
+walk 'Lanark Blue':'Scotland Lanarkshire Sheep None Unpasteurised 3'...
+walk 'Red Leicester':'England Leicestershire Cow None Pasteurised 6'...
+walk 'Caerphilly':'Wales MidGlamorgan Cow None Pasteurised 2'...
+walk 'Stilton':'England Derbyshire Cow None Pasteurised 2'...
+walk 'Wensleydale':'England Yorkshire Cow Ewe Pasteurised 3'...
+test: destroy hash
 
-Tests completed: 17/17 tests passed.
 
-Fortify: Statistics at test.main.c.main.140
+Tests completed: 18/18 tests passed.
+
+Fortify: Statistics at test.main.c.main.142
          Memory currently allocated: 0 bytes in 0 blocks
-         Maximum memory allocated at one time: 56120 bytes in 156 blocks
-         There have been 987 allocations and 987 deallocations
-         There was a total of 107152 bytes allocated
-         The average allocation was 108 bytes
+         Maximum memory allocated at one time: 55868 bytes in 156 blocks
+         There have been 1038 allocations and 1038 deallocations
+         There was a total of 104678 bytes allocated
+         The average allocation was 100 bytes

@@ -6,15 +6,13 @@
 /* filenamedb maps md5 digests to filenames so that we can search for files
  * and retrieve filenames */
 
-// this should be refactored into a 'serialisable hash' base class
-
+#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "fortify/fortify.h"
 
-//#include "oslib/osargs.h"
 #include "oslib/osfile.h"
 #include "oslib/osfind.h"
 #include "oslib/osfscontrol.h"
@@ -22,10 +20,13 @@
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/atom.h"
-#include "appengine/datastruct/hash.h"
 #include "appengine/base/strings.h"
 #include "appengine/databases/digest-db.h"
+#include "appengine/databases/pickle-reader-hash.h"
+#include "appengine/databases/pickle-writer-hash.h"
+#include "appengine/databases/pickle.h"
+#include "appengine/datastruct/atom.h"
+#include "appengine/datastruct/hash.h"
 
 #include "appengine/databases/filename-db.h"
 
@@ -37,18 +38,11 @@
 /* Long enough to hold any database line. */
 #define READBUFSZ 1024
 
-/* Size of buffer used when writing out the database. */
-#define WRITEBUFSZ 1024
-
 /* Size of pools used for atom storage. */
 #define ATOMBUFSZ 32768
 
 /* Estimated filename length. */
 #define ESTATOMLEN 80
-
-/* ----------------------------------------------------------------------- */
-
-static const char signature[] = "1";
 
 /* ----------------------------------------------------------------------- */
 
@@ -76,212 +70,79 @@ void filenamedb_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-/* write out a version numbered header */
-static error filenamedb_write_header(os_fw f)
-{
-  static const char comments[] = "# Filenames";
-
-  static const struct
-  {
-    const char *line;
-    size_t      length;
-  }
-  lines[] =
-  {
-    { comments,  sizeof(comments)  - 1 },
-    { signature, sizeof(signature) - 1 },
-  };
-
-  int i;
-
-  for (i = 0; i < NELEMS(lines); i++)
-  {
-    osgbpb_writew(f, (const byte *) lines[i].line, lines[i].length);
-    os_bput('\n', f);
-  }
-
-  return error_OK;
-}
-
-error filenamedb_create(const char *filename)
-{
-  error                  err;
-  fileswitch_object_type object_type;
-
-  /* write out an empty db, if it doesn't already exist */
-
-  object_type = osfile_read_no_path(filename, NULL, NULL, NULL, NULL);
-  if (object_type == fileswitch_NOT_FOUND)
-  {
-    os_fw f;
-
-    f = osfind_openoutw(osfind_NO_PATH, filename, NULL);
-    if (f == 0)
-      return error_FILENAMEDB_COULDNT_OPEN_FILE;
-
-    err = filenamedb_write_header(f);
-
-    osfind_close(f);
-
-    xosfile_set_type(filename, osfile_TYPE_TEXT);
-
-    if (err)
-      goto Failure;
-  }
-
-  return error_OK;
-
-
-Failure:
-
-  return err;
-}
-
-void filenamedb_delete(const char *filename)
-{
-  osfile_delete(filename, NULL, NULL, NULL, NULL);
-}
-
-/* ----------------------------------------------------------------------- */
-
 struct filenamedb_t
 {
   char       *filename;
 
   atom_set_t *filenames;
   hash_t     *hash;
-
-  struct
-  {
-    error (*fn)(filenamedb_t *, char *);
-  }
-  parse;
 };
 
-static error filenamedb_parse_line(filenamedb_t *db, char *buf)
+/* ----------------------------------------------------------------------- */
+
+/* This is identical to tagdb.c's unformat_key... */
+static error unformat_key(const char *buf,
+                          size_t      len,
+                          void      **key,
+                          void       *opaque)
 {
-  error  err;
-  char  *sp;
+  error         err;
+  unsigned char hash[digestdb_DIGESTSZ];
+  int           kindex;
 
-  sp = strchr(buf, ' ');
-  if (!sp)
-    return error_FILENAMEDB_SYNTAX_ERROR;
+  NOT_USED(len);
+  NOT_USED(opaque);
 
-  *sp++ = '\0'; /* skip space */
+  // if (len != 32) then complain
 
-  err = filenamedb_add(db, buf, sp);
+  /* convert ID from ASCII hex to binary */
+  err = digestdb_decode(hash, buf);
   if (err)
     return err;
 
-  return error_OK;
-}
+  err = digestdb_add(hash, &kindex);
+  if (err)
+    return err;
 
-static error filenamedb_parse_first_line(filenamedb_t *db, char *buf)
-{
-  /* validate the db signature */
-
-  if (strcmp(buf, signature) != 0)
-    return error_FILENAMEDB_INCOMPATIBLE;
-
-  db->parse.fn = filenamedb_parse_line;
+  *key = (void *) digestdb_get(kindex); /* must cast away const */
 
   return error_OK;
 }
 
-// exactly the same as in tagdb
-static error filenamedb_read_db(filenamedb_t *db)
+static error unformat_value(const char *buf,
+                            size_t      len,
+                            void      **value,
+                            void       *opaque)
 {
-  error   err;
-  size_t  bufsz;
-  char   *buf;
-  os_fw   f = 0;
-  int     occupied;
-  int     used;
+  error         err;
+  filenamedb_t *db = opaque;
+  atom_t        vindex;
 
-  bufsz = READBUFSZ;
-  buf = malloc(bufsz);
-  if (buf == NULL)
-    return error_OOM;
+  NOT_USED(len);
 
-  f = osfind_openinw(osfind_NO_PATH, db->filename, NULL);
-  if (f == 0)
-    return error_FILENAMEDB_COULDNT_OPEN_FILE;
+  err = atom_new(db->filenames,
+                 (const unsigned char *) buf,
+                 strlen(buf) + 1, // use 'len'?
+                &vindex);
+  if (err == error_ATOM_NAME_EXISTS)
+    err = error_OK;
+  else if (err)
+    return err;
 
-  db->parse.fn = filenamedb_parse_first_line;
+  *value = (void *) atom_get(db->filenames, vindex, NULL); // casting away const
 
-  occupied = 0;
-  used     = 0;
-
-  for (;;)
-  {
-    int unread;
-
-    /* try to fill buffer */
-
-    unread = osgbpb_readw(f, (byte *) buf + occupied, bufsz - occupied);
-    occupied = bufsz - unread;
-    if (occupied == 0)
-      break; /* nothing left */
-
-    for (;;)
-    {
-      char *nl;
-
-      nl = memchr(buf + used, '\n', occupied - used);
-      if (!nl)
-      {
-        if (used == 0)
-        {
-          /* couldn't find a \n in the whole buffer - and used is 0, so we
-           * have the whole buffer in which to look */
-          err = error_FILENAMEDB_SYNTAX_ERROR;
-          goto Failure;
-        }
-        else
-        {
-          /* make space in the buffer, then get it refilled */
-
-          memmove(buf, buf + used, occupied - used);
-          occupied -= used;
-          used      = 0;
-
-          break; /* need more bytes */
-        }
-      }
-
-      *nl = '\0'; /* terminate */
-
-      if (buf[used] != '#') /* skip comments */
-      {
-        err = db->parse.fn(db, buf + used);
-        if (err)
-          goto Failure;
-      }
-
-      used = (nl + 1) - buf;
-      if (occupied - used <= 0)
-        break;
-    }
-  }
-
-  err = error_OK;
-
-  /* FALLTHROUGH */
-
-Failure:
-
-  if (f)
-    osfind_closew(f);
-
-  free(buf);
-
-  return err;
+  return error_OK;
 }
 
-static void no_destroy(void *string)
+static const pickle_unformat_methods unformat_methods =
 {
-  NOT_USED(string);
-}
+  " ", /* split string */
+  1,   /* split string length */
+  unformat_key,
+  unformat_value
+};
+
+/* ----------------------------------------------------------------------- */
 
 error filenamedb_open(const char *filename, filenamedb_t **pdb)
 {
@@ -290,6 +151,9 @@ error filenamedb_open(const char *filename, filenamedb_t **pdb)
   atom_set_t   *filenames    = NULL;
   hash_t       *hash         = NULL;
   filenamedb_t *db           = NULL;
+
+  assert(filename);
+  assert(pdb);
 
   filenamecopy = str_dup(filename);
   if (filenamecopy == NULL)
@@ -306,11 +170,11 @@ error filenamedb_open(const char *filename, filenamedb_t **pdb)
   }
 
   err = hash_create(HASHSIZE,
-                     digestdb_hash,
-                     digestdb_compare,
-                     no_destroy,
-                     no_destroy,
-                     &hash);
+                    digestdb_hash,
+                    digestdb_compare,
+                    hash_no_destroy_key,
+                    hash_no_destroy_value,
+                   &hash);
   if (err)
     goto Failure;
 
@@ -326,8 +190,12 @@ error filenamedb_open(const char *filename, filenamedb_t **pdb)
   db->hash        = hash;
 
   /* read the database in */
-  err = filenamedb_read_db(db);
-  if (err)
+  err = pickle_unpickle(filename,
+                        db->hash,
+                       &pickle_writer_hash,
+                       &unformat_methods,
+                        db);
+  if (err && err != error_PICKLE_COULDNT_OPEN_FILE)
     goto Failure;
 
   *pdb = db;
@@ -362,78 +230,60 @@ void filenamedb_close(filenamedb_t *db)
 
 /* ----------------------------------------------------------------------- */
 
-struct commit_state
+static error format_key(const void *vkey,
+                        char       *buf,
+                        size_t      len,
+                        void       *opaque)
 {
-  filenamedb_t *db;
-  char         *buf;
-  size_t        bufsz;
-  os_fw         f;
+  NOT_USED(opaque);
+
+  if (len < digestdb_DIGESTSZ * 2 + 1)
+    return error_FILENAMEDB_BUFF_OVERFLOW;
+
+  digestdb_encode(buf, vkey);
+  buf[digestdb_DIGESTSZ * 2] = '\0';
+
+  return error_OK;
+}
+
+static error format_value(const void *vvalue,
+                          char       *buf,
+                          size_t      len,
+                          void       *opaque)
+{
+  NOT_USED(len);
+  NOT_USED(opaque);
+
+  strcpy(buf, vvalue);
+
+  return error_OK;
+}
+
+static const pickle_format_methods format_methods =
+{
+  "Filenames",
+  NELEMS("Filenames") - 1,
+  " ",
+  1,
+  format_key,
+  format_value
 };
 
-static int commit_cb(const void *key, const void *value, void *opaque)
-{
-  struct commit_state *state = opaque;
-  const unsigned char *k;
-  const char          *v;
-  char                 ktext[digestdb_DIGESTSZ * 2 + 1];
-  int                  c;
-
-  k = key;
-  v = value;
-
-  digestdb_encode(ktext, k);
-  ktext[digestdb_DIGESTSZ * 2] = '\0';
-
-  c = sprintf(state->buf, "%s %s\n", ktext, v);
-
-  /* 'c' does not include the terminator */
-
-  osgbpb_writew(state->f, (byte *) state->buf, c);
-
-  return 0;
-}
+/* ----------------------------------------------------------------------- */
 
 error filenamedb_commit(filenamedb_t *db)
 {
-  error               err;
-  struct commit_state state;
+  error err;
 
-  state.db = db;
-  state.f  = 0;
-
-  state.buf = malloc(WRITEBUFSZ);
-  if (state.buf == NULL)
-  {
-    err = error_OOM;
-    goto Failure;
-  }
-
-  state.bufsz = WRITEBUFSZ;
-
-  state.f = osfind_openoutw(osfind_NO_PATH, db->filename, NULL);
-  if (state.f == 0)
-    return error_FILENAMEDB_COULDNT_OPEN_FILE;
-
-  err = filenamedb_write_header(state.f);
+  err = pickle_pickle(db->filename,
+                      db->hash,
+                     &pickle_reader_hash,
+                     &format_methods,
+                      db);
   if (err)
-    goto Failure;
+    return err;
 
-  hash_walk(db->hash, commit_cb, &state);
-
-  err = error_OK;
-
-  /* FALLTHROUGH */
-
-Failure:
-
-  if (state.f)
-    osfind_closew(state.f);
-
-  xosfile_set_type(db->filename, osfile_TYPE_TEXT);
-
-  free(state.buf);
-
-  return err;
+  return error_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -443,16 +293,12 @@ error filenamedb_add(filenamedb_t *db,
                      const char   *filename)
 {
   error                err;
-  unsigned char        hash[16];
   int                  kindex;
   atom_t               vindex;
   const unsigned char *key;
   const char          *value;
 
-  /* convert ID from ASCII hex to binary */
-  digestdb_decode(hash, id);
-
-  err = digestdb_add(hash, &kindex);
+  err = digestdb_add((const unsigned char *) id, &kindex);
   if (err)
     return err;
 

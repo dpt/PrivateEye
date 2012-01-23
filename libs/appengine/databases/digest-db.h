@@ -31,8 +31,9 @@ int digestdb_compare(const void *a, const void *b);
 
 /* ----------------------------------------------------------------------- */
 
-/* Decode 32 characters of ASCII hex to 16 bytes. */
-void digestdb_decode(unsigned char *digest, const char *text);
+/* Decode 32 characters of ASCII hex to 16 bytes.
+ * Returns error_BAD_ARG if nonhex data is encountered. */
+error digestdb_decode(unsigned char *digest, const char *text);
 
 /* Encode 16 bytes to 32 characters of ASCII hex. */
 void digestdb_encode(char *text, const unsigned char *digest);

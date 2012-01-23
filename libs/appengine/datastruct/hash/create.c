@@ -7,6 +7,8 @@
 
 #include "fortify/fortify.h"
 
+#include "oslib/types.h"
+
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/primes.h"
@@ -57,6 +59,18 @@ static int string_compare(const void *a, const void *b)
 static void string_destroy(void *string)
 {
   free(string);
+}
+
+/* ----------------------------------------------------------------------- */
+
+void hash_no_destroy_key(void *string)
+{
+  NOT_USED(string);
+}
+
+void hash_no_destroy_value(void *string)
+{
+  NOT_USED(string);
 }
 
 /* ----------------------------------------------------------------------- */

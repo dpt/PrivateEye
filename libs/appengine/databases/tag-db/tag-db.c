@@ -24,11 +24,14 @@
 #include "appengine/types.h"
 #include "appengine/base/bitwise.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/bitvec.h"
-#include "appengine/datastruct/atom.h"
-#include "appengine/datastruct/hash.h"
 #include "appengine/base/strings.h"
 #include "appengine/databases/digest-db.h"
+#include "appengine/databases/pickle-reader-hash.h"
+#include "appengine/databases/pickle-writer-hash.h"
+#include "appengine/databases/pickle.h"
+#include "appengine/datastruct/atom.h"
+#include "appengine/datastruct/bitvec.h"
+#include "appengine/datastruct/hash.h"
 
 #include "appengine/databases/tag-db.h"
 
@@ -43,21 +46,11 @@
 /* Maximum number of tokens we expect on a single line. */
 #define MAXTOKENS 64
 
-/* Long enough to hold any database line. */
-#define READBUFSZ (MAXIDLEN + MAXTOKENS * 12)
-
-/* Size of buffer used when writing out the database. */
-#define WRITEBUFSZ 1024
-
 /* Size of pools used for atom storage. */
 #define ATOMBUFSZ 1536
 
 /* Estimated tag length. */
 #define ESTATOMLEN 9
-
-/* ----------------------------------------------------------------------- */
-
-static const char signature[] = "1";
 
 /* ----------------------------------------------------------------------- */
 
@@ -85,78 +78,6 @@ void tagdb_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-/* write out a version numbered header */
-static error tagdb_write_header(os_fw f)
-{
-  static const char comments[] = "# Tags";
-
-  static const struct
-  {
-    const char *line;
-    size_t      length;
-  }
-  lines[] =
-  {
-    { comments,  sizeof(comments)  - 1 },
-    { signature, sizeof(signature) - 1 },
-  };
-
-  int i;
-
-  for (i = 0; i < NELEMS(lines); i++)
-  {
-    osgbpb_writew(f, (const byte *) lines[i].line, lines[i].length);
-    os_bput('\n', f);
-  }
-
-  return error_OK;
-}
-
-error tagdb_create(const char *filename)
-{
-  error                  err;
-  fileswitch_object_type object_type;
-
-  assert(filename);
-
-  /* write out an empty db, if it doesn't already exist */
-
-  object_type = osfile_read_no_path(filename, NULL, NULL, NULL, NULL);
-  if (object_type == fileswitch_NOT_FOUND)
-  {
-    os_fw f;
-
-    f = osfind_openoutw(osfind_NO_PATH, filename, NULL);
-    if (f == 0)
-      return error_TAGDB_COULDNT_OPEN_FILE;
-
-    err = tagdb_write_header(f);
-
-    osfind_close(f);
-
-    xosfile_set_type(filename, osfile_TYPE_TEXT);
-
-    if (err)
-      goto Failure;
-  }
-
-  return error_OK;
-
-
-Failure:
-
-  return err;
-}
-
-void tagdb_delete(const char *filename)
-{
-  assert(filename);
-
-  xosfile_delete(filename, NULL, NULL, NULL, NULL, NULL);
-}
-
-/* ----------------------------------------------------------------------- */
-
 struct tagdb
 {
   char                   *filename;
@@ -168,39 +89,63 @@ struct tagdb
   int                     c_allocated;
 
   hash_t                 *hash; /* maps ids to bitvecs holding tag indices */
-
-  struct
-  {
-    error (*fn)(tagdb *, char *);
-  }
-  parse;
 };
 
-static void destroy_hash_value(void *value)
+static void tagdb__taginc(tagdb *db, tagdb_tag tag);
+//static void tagdb__tagdec(tagdb *db, tagdb_tag tag);
+
+/* ----------------------------------------------------------------------- */
+
+static error unformat_key(const char *buf,
+                          size_t      len,
+                          void      **key,
+                          void       *opaque)
 {
-  bitvec_destroy(value);
+  error         err;
+  unsigned char hash[digestdb_DIGESTSZ];
+  int           kindex;
+
+  NOT_USED(len);
+  NOT_USED(opaque);
+
+  // if (len != 32) then complain
+
+  /* convert ID from ASCII hex to binary */
+  err = digestdb_decode(hash, buf);
+  if (err)
+    return err;
+
+  err = digestdb_add(hash, &kindex);
+  if (err)
+    return err;
+
+  *key = (void *) digestdb_get(kindex); /* must cast away const */
+
+  return error_OK;
 }
 
-static error tagdb_parse_line(tagdb *db, char *buf)
+static error unformat_value(const char *inbuf,
+                            size_t      len,
+                            void      **value,
+                            void       *opaque)
 {
-  error          err;
-  char          *p;
-  int            t;
-  const char    *tokens[MAXTOKENS];
-  unsigned char  id[digestdb_DIGESTSZ];
-  int            i;
+  error       err;
+  char        buf[1024];
+  char       *p;
+  int         t;
+  const char *tokens[MAXTOKENS];
+  bitvec_t   *v;
+  int         i;
+  tagdb      *db = opaque;
+
+  /* copy the buffer so that we can terminate each token as it's found */
+  memcpy(buf, inbuf, len);
 
   p = buf;
 
-  for (t = 0; t < MAXTOKENS; t++)
+  for (t = 0; t < MAXTOKENS;)
   {
-    p = strchr(p, ' '); /* split at space */
-    if (p == NULL)
-      break; /* end of string */
-
-    *p++ = '\0'; /* terminate previous token */
-
-    /* skip any further spaces */
+    /* skip initial spaces */
     while (*p == ' ')
       p++;
 
@@ -208,14 +153,21 @@ static error tagdb_parse_line(tagdb *db, char *buf)
       break; /* hit end of string */
 
     /* token */
-    tokens[t] = p;
+    tokens[t++] = p;
+
+    p = strchr(p, ' '); /* split at space */
+    if (p == NULL)
+      break; /* end of string */
+
+    *p++ = '\0'; /* terminate token */
   }
 
   if (t < 1)
     return error_TAGDB_SYNTAX_ERROR; /* no tokens found */
 
-  /* convert ID from ASCII format  hex to binary */
-  digestdb_decode(id, buf);
+  v = bitvec_create(1);
+  if (v == NULL)
+    return error_OOM;
 
   for (i = 0; i < t; i++)
   {
@@ -225,118 +177,29 @@ static error tagdb_parse_line(tagdb *db, char *buf)
     if (err)
       return err;
 
-    err = tagdb_tagid(db, (char *) id, tag);
-    if (err)
-      return err;
+    bitvec_set(v, tag);
+
+    tagdb__taginc(db, tag);
   }
+
+  *value = v;
 
   return error_OK;
 }
 
-static error tagdb_parse_first_line(tagdb *db, char *buf)
+static const pickle_unformat_methods unformat_methods =
 {
-  /* validate the db signature */
+  " ", /* split string */
+  1,   /* split string length */
+  unformat_key,
+  unformat_value
+};
 
-  if (strcmp(buf, signature) != 0)
-    return error_TAGDB_INCOMPATIBLE;
+/* ----------------------------------------------------------------------- */
 
-  db->parse.fn = tagdb_parse_line;
-
-  return error_OK;
-}
-
-static error tagdb_read_db(tagdb *db)
+static void destroy_hash_value(void *value)
 {
-  error   err;
-  size_t  bufsz;
-  char   *buf;
-  os_fw   f = 0;
-  int     occupied;
-  int     used;
-
-  bufsz = READBUFSZ;
-  buf = malloc(bufsz);
-  if (buf == NULL)
-    return error_OOM;
-
-  f = osfind_openinw(osfind_NO_PATH, db->filename, NULL);
-  if (f == 0)
-    return error_TAGDB_COULDNT_OPEN_FILE;
-
-  db->parse.fn = tagdb_parse_first_line;
-
-  occupied = 0;
-  used     = 0;
-
-  for (;;)
-  {
-    int unread;
-
-    /* try to fill buffer */
-
-    unread = osgbpb_readw(f, (byte *) buf + occupied, bufsz - occupied);
-    occupied = bufsz - unread;
-    if (occupied == 0)
-      break; /* nothing left */
-
-    for (;;)
-    {
-      char *nl;
-
-      nl = memchr(buf + used, '\n', occupied - used);
-      if (!nl)
-      {
-        if (used == 0)
-        {
-          /* couldn't find a \n in the whole buffer - and used is 0, so we
-           * have the whole buffer in which to look */
-          err = error_FILENAMEDB_SYNTAX_ERROR;
-          goto Failure;
-        }
-        else
-        {
-          /* make space in the buffer, then get it refilled */
-
-          memmove(buf, buf + used, occupied - used);
-          occupied -= used;
-          used      = 0;
-
-          break; /* need more bytes */
-        }
-      }
-
-      *nl = '\0'; /* terminate */
-
-      if (buf[used] != '#') /* skip comments */
-      {
-        err = db->parse.fn(db, buf + used);
-        if (err)
-          goto Failure;
-      }
-
-      used = (nl + 1) - buf;
-      if (occupied - used <= 0)
-        break;
-    }
-  }
-
-  err = error_OK;
-
-  /* FALLTHROUGH */
-
-Failure:
-
-  if (f)
-    osfind_closew(f);
-
-  free(buf);
-
-  return err;
-}
-
-static void no_destroy(void *string) /* FIXME move into hash lib */
-{
-  NOT_USED(string);
+  bitvec_destroy(value);
 }
 
 error tagdb_open(const char *filename, tagdb **pdb)
@@ -367,7 +230,7 @@ error tagdb_open(const char *filename, tagdb **pdb)
   err = hash_create(HASHSIZE,
                     digestdb_hash,
                     digestdb_compare,
-                    no_destroy,
+                    hash_no_destroy_key,
                     destroy_hash_value,
                    &hash);
   if (err)
@@ -388,8 +251,12 @@ error tagdb_open(const char *filename, tagdb **pdb)
   db->hash        = hash;
 
   /* read the database in */
-  err = tagdb_read_db(db);
-  if (err)
+  err = pickle_unpickle(filename,
+                        db->hash,
+                       &pickle_writer_hash,
+                       &unformat_methods,
+                        db);
+  if (err && err != error_PICKLE_COULDNT_OPEN_FILE)
     goto Failure;
 
   *pdb = db;
@@ -425,34 +292,37 @@ void tagdb_close(tagdb *db)
 
 /* ----------------------------------------------------------------------- */
 
-struct commit_state
+static error format_key(const void *vkey,
+                        char       *buf,
+                        size_t      len,
+                        void       *opaque)
 {
-  tagdb  *db;
-  char   *buf;
-  size_t  bufsz;
-  os_fw   f;
-};
+  NOT_USED(opaque);
 
-static int commit_cb(const void *key, const void *value, void *opaque)
+  if (len < digestdb_DIGESTSZ * 2 + 1)
+    return error_TAGDB_BUFF_OVERFLOW;
+
+  digestdb_encode(buf, vkey);
+  buf[digestdb_DIGESTSZ * 2] = '\0';
+
+  return error_OK;
+}
+
+static error format_value(const void *vvalue,
+                          char       *buf,
+                          size_t      len,
+                          void       *opaque)
 {
-  struct commit_state *state = opaque;
-  error                err;
-  const unsigned char *k;
-  const bitvec_t      *v;
-  char                 ktext[digestdb_DIGESTSZ * 2 + 1];
-  int                  c;
-  int                  ntags;
-  int                  index;
+  error           err;
+  tagdb          *db = opaque;
+  const bitvec_t *v  = vvalue;
+  int             c;
+  int             index;
 
-  k = key;
-  v = value;
+  NOT_USED(len);
 
-  digestdb_encode(ktext, k);
-  ktext[digestdb_DIGESTSZ * 2] = '\0';
+  c = 0;
 
-  c = sprintf(state->buf, "%s ", ktext);
-
-  ntags = 0;
   index = -1;
   for (;;)
   {
@@ -460,8 +330,7 @@ static int commit_cb(const void *key, const void *value, void *opaque)
     if (index < 0)
       break;
 
-    err = tagdb_tagtoname(state->db, index,
-                          state->buf + c, state->bufsz - c);
+    err = tagdb_tagtoname(db, index, buf + c, len - c);
     if (err)
       return -1;
 
@@ -469,66 +338,43 @@ static int commit_cb(const void *key, const void *value, void *opaque)
     // better if it prepared a list of quoted tags in advance outside of
     // this loop
 
-    c += strlen(state->buf + c);
-    state->buf[c++] = ' ';
-
-    ntags++;
+    c += strlen(buf + c);
+    buf[c++] = ' ';
   }
 
-  if (ntags > 0)
-  {
-    state->buf[c - 1] = '\n'; /* overwrite final space */
-    osgbpb_writew(state->f, (byte *) state->buf, c);
-  }
+  if (c > 0)
+    buf[c - 1] = '\0'; /* overwrite final space */
 
-  return 0;
+  /* If no tokens were encoded then return error_PICKLE_SKIP to avoid writing
+   * out this empty entry. */
+  return (c > 0) ? error_OK : error_PICKLE_SKIP;
 }
+
+static const pickle_format_methods format_methods =
+{
+  "Tags",
+  NELEMS("Tags") - 1,
+  " ",
+  1,
+  format_key,
+  format_value
+};
+
+/* ----------------------------------------------------------------------- */
 
 error tagdb_commit(tagdb *db)
 {
-  error               err;
-  struct commit_state state;
+  error err;
 
-  assert(db);
-
-  state.db = db;
-
-  state.buf = malloc(WRITEBUFSZ);
-  if (state.buf == NULL)
-  {
-    err = error_OOM;
-    goto Failure;
-  }
-
-  state.bufsz = WRITEBUFSZ;
-
-  state.f = osfind_openoutw(osfind_NO_PATH, db->filename, NULL);
-  if (state.f == 0)
-  {
-    err = error_TAGDB_COULDNT_OPEN_FILE;
-    goto Failure;
-  }
-
-  err = tagdb_write_header(state.f);
+  err = pickle_pickle(db->filename,
+                      db->hash,
+                     &pickle_reader_hash,
+                     &format_methods,
+                      db);
   if (err)
-    goto Failure;
+    return err;
 
-  hash_walk(db->hash, commit_cb, &state);
-
-  err = error_OK;
-
-  /* FALLTHROUGH */
-
-Failure:
-
-  if (state.f)
-    osfind_closew(state.f);
-
-  xosfile_set_type(db->filename, osfile_TYPE_TEXT);
-
-  free(state.buf);
-
-  return err;
+  return error_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -753,6 +599,17 @@ error tagdb_tagtoname(tagdb *db, tagdb_tag tag, char *buf, size_t bufsz)
 
 /* ----------------------------------------------------------------------- */
 
+static void tagdb__taginc(tagdb *db, tagdb_tag tag)
+{
+  db->counts[tag].count++;
+}
+
+static void tagdb__tagdec(tagdb *db, tagdb_tag tag)
+{
+  db->counts[tag].count--;
+}
+
+/* This tags and inserts. */
 error tagdb_tagid(tagdb *db, const char *id, tagdb_tag tag)
 {
   error     err;
@@ -800,7 +657,7 @@ error tagdb_tagid(tagdb *db, const char *id, tagdb_tag tag)
   }
 
   if (inc)
-    db->counts[tag].count++;
+    tagdb__taginc(db, tag);
 
   return error_OK;
 }
@@ -821,7 +678,7 @@ error tagdb_untagid(tagdb *db, const char *id, tagdb_tag tag)
 
   bitvec_clear(val, tag);
 
-  db->counts[tag].count--;
+  tagdb__tagdec(db, tag);
 
   return error_OK;
 }
@@ -1083,7 +940,6 @@ error tagdb_enumerate_ids_by_tags(tagdb           *db,
       err = state.err;
       goto Failure;
     }
-
     l = digestdb_DIGESTSZ;
 
     if (bufsz < l)

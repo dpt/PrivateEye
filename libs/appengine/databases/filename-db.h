@@ -15,6 +15,7 @@
 #include <stddef.h>
 
 #include "appengine/base/errors.h"
+#include "appengine/databases/pickle.h"
 
 #define T filenamedb_t
 
@@ -25,8 +26,7 @@ void filenamedb_fin(void);
 
 /* ----------------------------------------------------------------------- */
 
-error filenamedb_create(const char *filename);
-void filenamedb_delete(const char *filename);
+#define filenamedb_delete pickle_delete
 
 /* ----------------------------------------------------------------------- */
 

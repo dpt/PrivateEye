@@ -101,8 +101,8 @@ int hash_test(void)
 
       printf("cont = %x\n", cont);
 
-      cont = hash_walk_continuation(d, cont, &key, &value);
-      if (cont <= 0)
+      err = hash_walk_continuation(d, cont, &cont, &key, &value);
+      if (err == error_HASH_END)
         break;
 
       printf("walk '%s':'%s'...\n", key, value);

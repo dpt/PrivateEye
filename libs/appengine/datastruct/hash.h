@@ -44,6 +44,16 @@ typedef void (hash_destroy_key)(void *key);
 typedef void (hash_destroy_value)(void *value);
 
 /**
+ * A no-op function for use where a hash_destroy_key is expected.
+ */
+hash_destroy_key hash_no_destroy_key;
+
+/**
+ * A no-op function for use where a hash_destroy_value is expected.
+ */
+hash_destroy_value hash_no_destroy_value;
+
+/**
  * Create a hash.
  *
  * \param      nbins         Suggested number of hash bins to allocate.
@@ -132,19 +142,21 @@ int hash_walk(T *hash, hash_walk_callback *cb, void *opaque);
 /**
  * Walk the hash, returning each element in turn.
  *
- * \param      hash         Hash.
- * \param      continuation Continuation value. Zero for the initial call.
- * \param[out] key          Pointer to receive key.
- * \param[out] value        Pointer to receive value.
+ * \param      hash             Hash.
+ * \param      continuation     Continuation value. Zero for initial call.
+ * \param[out] nextcontinuation Next continuation value.
+ * \param[out] key              Pointer to receive key.
+ * \param[out] value            Pointer to receive value.
  *
- * \return Next continuation value.
- * \retval  0 No more elements.
- * \retval -1 Invalid continuation value.
+ * \return Error indication.
+ * \retval error_OK       If an element was found.
+ * \retval error_HASH_END If no elements remain.
  */
-int hash_walk_continuation(T           *hash,
-                           int          continuation,
-                           const void **key,
-                           const void **value);
+error hash_walk_continuation(T           *hash,
+                             int          continuation,
+                             int         *nextcontinuation,
+                             const void **key,
+                             const void **value);
 
 /* ----------------------------------------------------------------------- */
 

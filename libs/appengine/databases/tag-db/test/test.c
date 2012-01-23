@@ -81,19 +81,6 @@ State;
 
 /* ----------------------------------------------------------------------- */
 
-static error test_create(State *state)
-{
-  error err;
-
-  NOT_USED(state);
-
-  tagdb_delete(FILENAME);
-
-  err = tagdb_create(FILENAME);
-
-  return err;
-}
-
 static error test_open(State *state)
 {
   error err;
@@ -563,12 +550,6 @@ static error test_bash(State *state)
 
   srand(0x6487ED51);
 
-  printf("bash: create\n");
-
-  err = tagdb_create(FILENAME);
-  if (err)
-    goto failure;
-
   printf("bash: open\n");
 
   err = tagdb_open(FILENAME, &state->db);
@@ -847,8 +828,6 @@ int tagdb_test(void)
 {
   static const Test tests[] =
   {
-    { test_create,
-      "create" },
     { test_open,
       "open" },
     { test_add_tags,

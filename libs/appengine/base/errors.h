@@ -25,6 +25,8 @@ typedef unsigned long int error;
 #define error_BASE_LAYOUT                       0x0C00
 #define error_BASE_THUMBNAIL                    0x0D00
 #define error_BASE_STREAM                       0x0E00
+#define error_BASE_PICKLE                       0x0F00
+#define error_BASE_HASH                         0x1000
 #define error_BASE_PRIVATEEYE                   0xFF00
 
 #define error_OK                                (error_BASE_GENERAL     + 0)
@@ -68,6 +70,7 @@ typedef unsigned long int error;
 #define error_FILENAMEDB_INCOMPATIBLE           (error_BASE_FILENAMEDB  + 0)
 #define error_FILENAMEDB_COULDNT_OPEN_FILE      (error_BASE_FILENAMEDB  + 1)
 #define error_FILENAMEDB_SYNTAX_ERROR           (error_BASE_FILENAMEDB  + 2)
+#define error_FILENAMEDB_BUFF_OVERFLOW          (error_BASE_FILENAMEDB  + 3)
 
 #define error_PACKER_DIDNT_FIT                  (error_BASE_PACKER      + 0)
 #define error_PACKER_EMPTY                      (error_BASE_PACKER      + 1)
@@ -79,6 +82,15 @@ typedef unsigned long int error;
 #define error_STREAM_UNKNOWN_OP                 (error_BASE_STREAM      + 0)
 #define error_STREAM_CANT_SEEK                  (error_BASE_STREAM      + 1)
 #define error_STREAM_BAD_SEEK                   (error_BASE_STREAM      + 2)
+
+#define error_PICKLE_END                        (error_BASE_PICKLE      + 0)
+#define error_PICKLE_SKIP                       (error_BASE_PICKLE      + 1)
+#define error_PICKLE_INCOMPATIBLE               (error_BASE_PICKLE      + 2)
+#define error_PICKLE_COULDNT_OPEN_FILE          (error_BASE_PICKLE      + 3)
+#define error_PICKLE_SYNTAX_ERROR               (error_BASE_PICKLE      + 4)
+
+#define error_HASH_END                          (error_BASE_HASH        + 0)
+#define error_HASH_BAD_CONT                     (error_BASE_HASH        + 1)
 
 #define error_PRIVATEEYE_VIEWER_NOT_FOUND       (error_BASE_PRIVATEEYE  + 0)
 #define error_PRIVATEEYE_HIST_UNSUPP_FUNC       (error_BASE_PRIVATEEYE  + 1)
