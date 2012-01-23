@@ -115,9 +115,9 @@ clean:;			$(every) "@...o @...odf @...omc" -d "$(wipe) %0 $(wipeflags)"
 iconnames.h: 		Resources.UK.Templates
 			$(templheadr) Resources.UK.Templates $@
 
-$(objs_normal):		iconnames.h Makefile
-$(objs_debug):		iconnames.h Makefile
-$(objs_memcheck):	iconnames.h Makefile
+$(objs_normal):		iconnames.h
+$(objs_debug):		iconnames.h
+$(objs_memcheck):	iconnames.h
 
 # Rule Patterns
 
