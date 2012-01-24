@@ -12,6 +12,7 @@
 #include "oslib/types.h"
 #include "oslib/osfile.h"
 
+#include "appengine/datastruct/list.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/io/md5.h"
 

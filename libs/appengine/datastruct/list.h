@@ -33,7 +33,7 @@ void list_remove(T *anchor, T *doomed);
 
 typedef int (list_walk_callback)(T *, void *);
 
-void list_walk(T *anchor, list_walk_callback *cb, void *opaque);
+int list_walk(T *anchor, list_walk_callback *cb, void *opaque);
 
 /* Searches the linked list looking for a key. The key is specified as an
  * offset from the start of the linked list element. It is an int-sized unit.
