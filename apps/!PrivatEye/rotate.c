@@ -709,9 +709,9 @@ static int rotate_event_mouse_click(wimp_event_no event_no,
       break;
 
     case ROTATE_B_ROTATE:
-      rotate_internal(LOCALS.image,
-                      LOCALS.rotation,
-                     (LOCALS.drawn_flags & RotateFlag_HorzFlip) != 0);
+      rotate__internal(LOCALS.image,
+                       LOCALS.rotation,
+                      (LOCALS.drawn_flags & RotateFlag_HorzFlip) != 0);
       break;
     }
 

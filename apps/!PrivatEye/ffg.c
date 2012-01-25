@@ -6,9 +6,11 @@
 /* TODO
  *
  * There's no way to prioritise which converters are chosen, or which formats
- * are available. Some transloaders offer both sprite and DrawFile output,
+ * are available. If a transloader offers both sprite and DrawFile output,
  * we'll choose the first in the list.
  */
+
+/* TransTIFF+ gives corrupt reply refs... I can't use them. */
 
 #include "kernel.h"
 
@@ -21,28 +23,34 @@
 
 #include "fortify/fortify.h"
 
-#include "appengine/wimp/event.h"
-
 #include "oslib/types.h"
 #include "oslib/os.h"
+#include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
+#include "appengine/types.h"
+#include "appengine/datastruct/list.h"
+#include "appengine/wimp/event.h"
+
 #include "globals.h"
+
 #include "ffg.h"
+
+static list_t list_anchor = { NULL };
+static int    my_ref;
+static wimp_t ffg_task;
 
 /* ----------------------------------------------------------------------- */
 
-/* Linked list of Translators. */
-// FIXME: Use linked list library for this.
 typedef struct Translator
 {
-  struct Translator *next;
-  char               unique_name[16];
-  char              *cmd;
-  int                ntypes;
+  list_t list;
+  char   unique_name[16];
+  char  *cmd;
+  int    ntypes;
   struct
   {
-    bits             from, to;
+    bits from, to;
   }
   types[1];
 }
@@ -50,13 +58,12 @@ Translator;
 
 /* ----------------------------------------------------------------------- */
 
-static Translator *first_ffg = NULL;
+typedef osbool (ffg__loadable)(bits file_type);
 
 /* ----------------------------------------------------------------------- */
 
-// FIXME: Introduce a typedef for loadable_fn.
-static void read_translators(const char *wildcard,
-                             osbool    (*loadable_fn)(bits))
+static void read_translators(const char    *wildcard,
+                             ffg__loadable *loadable_fn)
 {
   enum { MaxTypes = 8 }; /* FIXME: Hard limit. */
 
@@ -185,30 +192,49 @@ static void read_translators(const char *wildcard,
 
     ffg->ntypes = i;
 
-    /* link it in */
-    ffg->next = first_ffg;
-    first_ffg = ffg;
+    list_add_to_head(&list_anchor, &ffg->list);
   }
+}
+
+typedef union
+{
+  bits              file_type;
+  const Translator *t;
+}
+get_converter_args;
+
+static int get_converter_callback(list_t *list, void *opaque)
+{
+  const Translator   *t    = (const Translator *) list;
+  get_converter_args *args = opaque;
+  int                 i;
+
+  for (i = 0; i < t->ntypes; i++)
+    if (t->types[i].from == args->file_type)
+    {
+      args->t = t;
+      return -1; /* found */
+    }
+
+  return 0; /* not found */
 }
 
 static const Translator *get_converter(bits src_file_type)
 {
-  const Translator *f;
-  int               i;
+  get_converter_args args;
 
-  for (f = first_ffg; f != NULL; f = f->next)
-    for (i = 0; i < f->ntypes; i++)
-      if (f->types[i].from == src_file_type)
-        return f;
+  args.file_type = src_file_type;
 
-  return NULL;
+  return list_walk(&list_anchor, get_converter_callback, &args) ?
+         args.t : NULL;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static event_message_handler messageack_translate_ffg;
+static event_message_handler message_translate_ffg_ack,
+                             messageack_translate_ffg;
 
-void ffg_initialise(osbool (*loadable_fn)(bits))
+void ffg_initialise(ffg__loadable *loadable_fn)
 {
   static const char *vars[] =
   {
@@ -219,9 +245,14 @@ void ffg_initialise(osbool (*loadable_fn)(bits))
 
   int i;
 
-  // FIXME: Use NELEMS macro.
-  for (i = 0; i < (int) (sizeof(vars) / sizeof(vars[0])); i++)
+  for (i = 0; i < NELEMS(vars); i++)
     read_translators(vars[i], loadable_fn);
+
+  event_register_message_handler(message_TRANSLATE_FFG_ACK,
+                                 event_ANY_WINDOW,
+                                 event_ANY_ICON,
+                                 message_translate_ffg_ack,
+                                 NULL);
 
   event_register_messageack_handler(message_TRANSLATE_FFG,
                                     event_ANY_WINDOW,
@@ -230,30 +261,43 @@ void ffg_initialise(osbool (*loadable_fn)(bits))
                                     NULL);
 }
 
+static int ffg__finalise_callback(list_t *list, void *opaque)
+{
+  Translator *t = (Translator *) list;
+
+  NOT_USED(opaque);
+
+  free(t->cmd);
+  free(t);
+
+  return 0;
+}
+
 void ffg_finalise(void)
 {
-  Translator *f;
-  Translator *next;
-
   event_deregister_messageack_handler(message_TRANSLATE_FFG,
                                       event_ANY_WINDOW,
                                       event_ANY_ICON,
                                       messageack_translate_ffg,
                                       NULL);
 
-  for (f = first_ffg; f != NULL; f = next)
-  {
-    next = f->next;
+  event_deregister_message_handler(message_TRANSLATE_FFG_ACK,
+                                   event_ANY_WINDOW,
+                                   event_ANY_ICON,
+                                   message_translate_ffg_ack,
+                                   NULL);
 
-    free(f->cmd);
-    free(f);
-  }
+  list_walk(&list_anchor, ffg__finalise_callback, NULL);
 }
+
+/* ----------------------------------------------------------------------- */
 
 osbool ffg_is_loadable(bits src_file_type)
 {
   return get_converter(src_file_type) != NULL;
 }
+
+/* ----------------------------------------------------------------------- */
 
 typedef struct
 {
@@ -325,11 +369,29 @@ osbool ffg_convert(const wimp_message *message)
   (wimp_message *) &msg,
                     wimp_BROADCAST);
 
+  my_ref = msg.my_ref;
+
+  ffg_task = 0;
+
   return 0;
 }
 
+/* ----------------------------------------------------------------------- */
+
+/* message_TRANSLATE_FFG_ACK was received. */
+static int message_translate_ffg_ack(wimp_message *message, void *handle)
+{
+  NOT_USED(handle);
+
+  ffg_task = message->sender;
+
+  return event_HANDLED;
+}
+
+/* An acknowlegement of message_TRANSLATE_FFG was received. */
 static int messageack_translate_ffg(wimp_message *message, void *handle)
 {
+  NOT_USED(message);
   NOT_USED(handle);
 
   /* " The wimp will return Message_TranslateFFG if the translator failed to
@@ -337,8 +399,25 @@ static int messageack_translate_ffg(wimp_message *message, void *handle)
    *   report an error 'translator died'. "
    */
 
-  if (message->sender != GLOBALS.task_handle)
-    oserror_report(12345, "error.ffg.died");
+  oserror_report(12345, "error.ffg.died");
 
-  return 1; // FIXME: Use relevant event return code.
+  return event_HANDLED;
+}
+
+/* ----------------------------------------------------------------------- */
+
+int ffg_apposite(const wimp_message *message)
+{
+  return message->sender == ffg_task;
+}
+
+void ffg_complete(const wimp_message *message)
+{
+  /* Transloaders don't always set a correct file type of the file they've
+   * converted. Set it here to the value in the messsage so that viewer_load
+   * can work. */
+  xosfile_set_type(message->data.data_xfer.file_name,
+                   message->data.data_xfer.file_type);
+
+  ffg_task = 0;
 }

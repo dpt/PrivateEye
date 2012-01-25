@@ -149,7 +149,9 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
 static int message_data_load(wimp_message *message, void *handle)
 {
-  osbool    ffg;
+  error     err;
+  osbool    its_ffg;
+  osbool    try_ffg;
   viewer_t *viewer;
   bits      load_addr;
   bits      exec_addr;
@@ -187,19 +189,26 @@ static int message_data_load(wimp_message *message, void *handle)
 #endif /* EYE_THUMBVIEW */
   }
 
-  ffg = 0;
-
-  if (!image_is_loadable(message->data.data_xfer.file_type))
+  if ((its_ffg = ffg_apposite(message)) != FALSE)
   {
-    /* try file content (in case it's not filetyped properly) */
-    /* this updates message->data.data_xfer.file_type (icky) */
-    if (image_recognise(message) != 0)
+    try_ffg = 0;
+  }
+  else
+  {
+    try_ffg = 0;
+
+    if (!image_is_loadable(message->data.data_xfer.file_type))
     {
-      /* try transloaders */
-      if (ffg_is_loadable(message->data.data_xfer.file_type))
-        ffg = 1;
-      else
-        return event_NOT_HANDLED;
+      /* try file content (in case it's not filetyped properly) */
+      /* this updates message->data.data_xfer.file_type (icky) */
+      if (image_recognise(message) != 0)
+      {
+        /* try transloaders */
+        if (ffg_is_loadable(message->data.data_xfer.file_type))
+          try_ffg = 1;
+        else
+          return event_NOT_HANDLED;
+      }
     }
   }
 
@@ -208,7 +217,11 @@ static int message_data_load(wimp_message *message, void *handle)
   message->action   = message_DATA_LOAD_ACK;
   wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
 
-  if (ffg)
+  if (its_ffg)
+  {
+    ffg_complete(message);
+  }
+  else if (try_ffg)
   {
     ffg_convert(message);
     return event_HANDLED;
@@ -217,8 +230,6 @@ static int message_data_load(wimp_message *message, void *handle)
   viewer = viewer_find(message->data.data_xfer.w);
   if (viewer == NULL)
   {
-    error err;
-
     /* a new display */
     err = viewer_create(&viewer);
     if (err != error_OK)
