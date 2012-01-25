@@ -617,7 +617,7 @@ static int rotate_message_menus_deleted(wimp_message *message, void *handle)
 
 /* ----------------------------------------------------------------------- */
 
-static void rotate_internal(image_t *image, int angle, int hflip)
+static void rotate__internal(image_t *image, int angle, int hflip)
 {
   angle = angle / 65536;
   while (angle < 0) /* safety */
@@ -644,7 +644,7 @@ void rotate(image_t *image, int angle, int hflip)
     return;
   }
 
-  rotate_internal(image, angle, hflip);
+  rotate__internal(image, angle, hflip);
 }
 
 static int rotate_event_mouse_click(wimp_event_no event_no,
