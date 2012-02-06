@@ -1,0 +1,13 @@
+Print using PS driver and convert to PDF using GhostScript, PrintPDF, or
+Acrobat.
+
+Optimise the PDF using Acrobat Professional. Use JPEG images to get the size
+down to less than 400K.
+
+Check the PDF in !Pdf. Ensure that the pages are rotated correctly.
+
+
+Sat 04th February 2012
+
+Dropped use of Fontin Sans and Delicious fonts as they were corrupting the
+PostScript output. Now using EFF Straight.

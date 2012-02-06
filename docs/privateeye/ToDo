@@ -1,5 +1,5 @@
 seem to have had some data loss when tagging
-- extended the tagdb test for thiso
+- extended the tagdb test for this
 
 
 
@@ -9,8 +9,6 @@ seem to have had two tags confused ('london' tag became 'nuts')
 re-check currently-loaded image when tags modified by a drop on the window
 
 check file types before tagging
-
-set default sort in tagcloud
 
 (1bpp pngs going mad - geminus bug)
 
@@ -65,8 +63,6 @@ re-open failing (fixed ish)
 
 unused tags will vanish when db saved/reloaded -- needs to be documented
 
-tag sort isn't stable
-
 file type checking
 
 heap usage higher than expected
@@ -81,8 +77,6 @@ layout scale changes need a call to tag_cloud__set_display for the effect to
 set
 
 in-RAM data transfers
-
-huge blurs
 
 done
 ~~~~
@@ -143,6 +137,12 @@ update callbacks to be called (e.g. all windows won't refresh if you alter
 something which doesn't impact them).
 
 move histogram out to appengine
+
+tag sort isn't stable
+
+huge blurs
+
+set default sort in tagcloud
 
 later
 ~~~~~

@@ -54,24 +54,35 @@
 
 /* ----------------------------------------------------------------------- */
 
-static int tagdb_refcount = 0;
+static unsigned int tagdb_refcount = 0;
 
 error tagdb_init(void)
 {
-  if (tagdb_refcount++ == 0)
+  error err;
+
+  if (tagdb_refcount == 0)
   {
     /* dependencies */
 
-    digestdb_init();
+    err = digestdb_init();
+    if (err)
+      return err;
   }
+
+  tagdb_refcount++;
 
   return error_OK;
 }
 
 void tagdb_fin(void)
 {
+  if (tagdb_refcount == 0)
+    return;
+
   if (--tagdb_refcount == 0)
   {
+    /* dependencies */
+
     digestdb_fin();
   }
 }

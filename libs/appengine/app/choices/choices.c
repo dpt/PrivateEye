@@ -78,34 +78,35 @@ static event_message_handler choices_message_menus_deleted,
 
 /* ----------------------------------------------------------------------- */
 
-static int choices_refcount = 0;
+static unsigned int choices_refcount = 0;
 
 error choices_init(void)
 {
   error err;
 
-  if (choices_refcount++ == 0)
+  if (choices_refcount == 0)
   {
     /* dependencies */
 
     err = help_init();
     if (err)
-      goto failure;
+      return err;
   }
 
+  choices_refcount++;
+
   return error_OK;
-
-failure:
-
-  choices_fin();
-
-  return err;
 }
 
 void choices_fin(void)
 {
+  if (choices_refcount == 0)
+    return;
+
   if (--choices_refcount == 0)
   {
+    /* dependencies */
+
     help_fin();
   }
 }

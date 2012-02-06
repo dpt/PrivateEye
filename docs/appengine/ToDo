@@ -1,8 +1,1 @@
 TODO
-
-choices:
-
-- rename all choices_x to choices__x
-- prefix static functions too
-- use FIXMEs rather than //
-

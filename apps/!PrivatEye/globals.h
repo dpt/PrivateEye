@@ -30,7 +30,9 @@ extern struct PrivateEyeGlobals
   Flags            flags;
 
   wimp_w           display_w;
+#ifdef EYE_THUMBVIEW
   wimp_w           thumbview_w;
+#endif
 
   wimp_w           effects_w;
   wimp_w           effects_add_w;
@@ -40,7 +42,9 @@ extern struct PrivateEyeGlobals
   wimp_w           current_display_w;
 
   wimp_menu       *image_m;
+#ifdef EYE_THUMBVIEW
   wimp_menu       *thumbview_m;
+#endif
 
   eye_choices      choices, proposed_choices;
 

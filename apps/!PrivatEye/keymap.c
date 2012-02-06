@@ -48,9 +48,9 @@ static const keymap_name_to_action viewer[] =
   { "SourceInfo",       SourceInfo              },
   { "StepBackwards",    StepBackwards           },
   { "StepForwards",     StepForwards            },
-//#ifdef EYE_TAGS
+#ifdef EYE_TAGS
   { "Tags",             Tags                    },
-//#endif
+#endif
   { "VertFlip",         VertFlip                },
   { "ZoomIn",           ZoomIn                  },
   { "ZoomOut",          ZoomOut                 },
@@ -106,29 +106,42 @@ static const keymap_section sections[] =
 
 static keymap_t *keymap;
 
-static int viewer_keymap_refcount = 0;
+static unsigned int viewer_keymap_refcount = 0;
 
 error viewer_keymap_init(void)
 {
   error err;
 
-  if (viewer_keymap_refcount++ == 0)
+  if (viewer_keymap_refcount == 0)
   {
+    /* initialise */
+
     err = keymap_create("Choices:" APPNAME ".Keys",
                         sections,
                         NELEMS(sections),
                        &keymap);
-
-    return err;
+    if (err)
+      return err;
   }
+
+  viewer_keymap_refcount++;
 
   return error_OK;
 }
 
 void viewer_keymap_fin(void)
 {
-  if (--viewer_keymap_refcount == 0)
+  if (viewer_keymap_refcount == 0)
+    return;
+
+  if (viewer_keymap_refcount == 1)
+  {
+    /* finalise */
+
     keymap_destroy(keymap);
+  }
+
+  viewer_keymap_refcount--;
 }
 
 int viewer_keymap_op(viewer_keymap_section section, wimp_key_no key_no)

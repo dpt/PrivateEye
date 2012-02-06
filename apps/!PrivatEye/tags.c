@@ -256,14 +256,14 @@ static void tags_lazyfin(int force);
 
 /* ----------------------------------------------------------------------- */
 
-static int tags_refcount = 0;
+static unsigned int tags_refcount = 0;
 
 error tags_init(void)
 {
-  if (tags_refcount++ == 0)
-  {
-    error err;
+  error err;
 
+  if (tags_refcount == 0)
+  {
     /* dependencies */
 
     err = viewer_keymap_init();
@@ -275,14 +275,23 @@ error tags_init(void)
       return err;
   }
 
+  tags_refcount++;
+
   return error_OK;
 }
 
 void tags_fin(void)
 {
+  if (tags_refcount == 0)
+    return;
+
   if (--tags_refcount == 0)
   {
+    /* finalise */
+
     tags_lazyfin(1); /* force shutdown */
+
+    /* dependencies */
 
     tags_common_fin();
 

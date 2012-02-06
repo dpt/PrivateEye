@@ -106,13 +106,13 @@ static void dcs_destroy(dialogue_t *d)
 
 /* ----------------------------------------------------------------------- */
 
-static int dcs_quit_refcount = 0;
+static unsigned int dcs_quit_refcount = 0;
 
 error dcs_quit_init(void)
 {
   error err;
 
-  if (dcs_quit_refcount++ == 0)
+  if (dcs_quit_refcount == 0)
   {
     /* dependencies */
 
@@ -120,7 +120,7 @@ error dcs_quit_init(void)
     if (err)
       goto failure;
 
-    /* init */
+    /* initialise */
 
     err = dcs_create("dcs",  &LOCALS.dcs_w);
     if (err)
@@ -131,19 +131,25 @@ error dcs_quit_init(void)
       goto failure;
   }
 
+  dcs_quit_refcount++;
+
   return error_OK;
 
-failure:
 
-  dcs_quit_fin();
+failure:
 
   return err;
 }
 
 void dcs_quit_fin(void)
 {
+  if (dcs_quit_refcount == 0)
+    return;
+
   if (--dcs_quit_refcount == 0)
   {
+    /* finalise */
+
     dcs_destroy(LOCALS.quit_w);
     dcs_destroy(LOCALS.dcs_w);
 
@@ -151,6 +157,8 @@ void dcs_quit_fin(void)
 
     LOCALS.dcs_w  = NULL;
     LOCALS.quit_w = NULL;
+
+    /* dependencies */
 
     help_fin();
   }

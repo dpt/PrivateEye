@@ -1774,8 +1774,8 @@ static void blur_reset_dialogue(void)
   }
   map[] =
   {
-    { effects_blur_BOX,      EFFECTS_BLR_R_BOX  },
-    { effects_blur_GAUSSIAN, EFFECTS_BLR_R_BELL },
+    { effects_blur_BOX,      EFFECTS_BLR_R_BOX      },
+    { effects_blur_GAUSSIAN, EFFECTS_BLR_R_GAUSSIAN },
   };
 
   const slider_rec *r;
@@ -1863,14 +1863,14 @@ static int blur_event_mouse_click(wimp_event_no event_no,
         break;
 
       case EFFECTS_BLR_R_BOX:
-      case EFFECTS_BLR_R_BELL:
+      case EFFECTS_BLR_R_GAUSSIAN:
         switch (pointer->i)
         {
         case EFFECTS_BLR_R_BOX:
           blur.method = effects_blur_BOX;
           break;
 
-        case EFFECTS_BLR_R_BELL:
+        case EFFECTS_BLR_R_GAUSSIAN:
           blur.method = effects_blur_GAUSSIAN;
           break;
         }

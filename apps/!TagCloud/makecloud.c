@@ -260,13 +260,13 @@ static tag_cloud_event keyhandler(wimp_key_no  key_no,
 
 /* ----------------------------------------------------------------------- */
 
-static int makecloud_refcount = 0;
+static unsigned int makecloud_refcount = 0;
 
 error makecloud_init(void)
 {
   error err;
 
-  if (makecloud_refcount++ == 0)
+  if (makecloud_refcount == 0)
   {
     tag_cloud_config  conf;
     tag_cloud         *tc = NULL;
@@ -299,7 +299,10 @@ error makecloud_init(void)
     LOCALS.tc = tc;
   }
 
+  makecloud_refcount++;
+
   return error_OK;
+
 
 Failure:
 

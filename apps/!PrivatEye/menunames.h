@@ -13,7 +13,9 @@ enum
   ICONBAR_INFO          = 0,
   ICONBAR_CLOSE,
   ICONBAR_EMPTYCACHE,
+#ifdef EYE_TAGS
   ICONBAR_SEARCHTAGS,
+#endif
   ICONBAR_CHOICES,
   ICONBAR_QUIT,
   ICONBAR__LIMIT,
@@ -25,9 +27,13 @@ enum
 
   FILE_INFO             = 0,
   FILE_SOURCE,
+#ifdef EYE_META
   FILE_METADATA,
+#endif
   FILE_HIST,
+#ifdef EYE_TAGS
   FILE_TAGS,
+#endif
   FILE_NEWVIEW,
 
   EDIT_EFFECTS          = 0,
@@ -45,6 +51,7 @@ enum
   EFFECTS_EQUALISE,
   EFFECTS_EMBOSS,
 
+#ifdef EYE_THUMBVIEW
   THUMBVIEW_DISPLAY     = 0,
   THUMBVIEW_IMAGE,
   THUMBVIEW_SELECT_ALL,
@@ -58,6 +65,7 @@ enum
 
   TIMAGE_TAG            = 0,
   TIMAGE_ROTATE
+#endif
 };
 
 #endif /* MENUNAMES_H */

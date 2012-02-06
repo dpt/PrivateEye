@@ -31,12 +31,14 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static int tag_cloud_refcount = 0;
+static unsigned int tag_cloud_refcount = 0;
 
 error tag_cloud_init(void)
 {
-  if (tag_cloud_refcount++ == 0)
+  if (tag_cloud_refcount == 0)
   {
+    /* initialise */
+
     LOCALS.main_w      = window_create("tag_cloud");
     LOCALS.toolbar_w   = window_create("tag_cloud_t");
     LOCALS.newtag_d    = name_create("tag_new");
@@ -45,13 +47,20 @@ error tag_cloud_init(void)
     info_set_padding(LOCALS.taginfo_d, 128); /* 64 on either side */
   }
 
+  tag_cloud_refcount++;
+
   return error_OK;
 }
 
 void tag_cloud_fin(void)
 {
+  if (tag_cloud_refcount == 0)
+    return;
+
   if (--tag_cloud_refcount == 0)
   {
+    /* finalise */
+
     info_destroy(LOCALS.taginfo_d);
     name_destroy(LOCALS.renametag_d);
     name_destroy(LOCALS.newtag_d);

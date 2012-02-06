@@ -68,14 +68,16 @@ static void register_event_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-static int help_refcount = 0;
+static unsigned int help_refcount = 0;
 
 error help_init(void)
 {
   error err;
 
-  if (help_refcount++ == 0)
+  if (help_refcount == 0)
   {
+    /* initialise */
+
     register_event_handlers(1);
 
     windows.atoms = atom_create();
@@ -93,7 +95,10 @@ error help_init(void)
     }
   }
 
+  help_refcount++;
+
   return error_OK;
+
 
 failure:
 
@@ -102,8 +107,13 @@ failure:
 
 void help_fin(void)
 {
+  if (help_refcount == 0)
+    return;
+
   if (--help_refcount == 0)
   {
+    /* finalise */
+
     free(windows.entries);
     atom_destroy(windows.atoms);
 

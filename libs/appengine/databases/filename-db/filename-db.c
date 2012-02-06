@@ -46,24 +46,35 @@
 
 /* ----------------------------------------------------------------------- */
 
-static int filenamedb_refcount = 0;
+static unsigned int filenamedb_refcount = 0;
 
 error filenamedb_init(void)
 {
-  if (filenamedb_refcount++ == 0)
+  error err;
+
+  if (filenamedb_refcount == 0)
   {
     /* dependencies */
 
-    digestdb_init();
+    err = digestdb_init();
+    if (err)
+      return err;
   }
+
+  filenamedb_refcount++;
 
   return error_OK;
 }
 
 void filenamedb_fin(void)
 {
+  if (filenamedb_refcount == 0)
+    return;
+
   if (--filenamedb_refcount == 0)
   {
+    /* dependencies */
+
     digestdb_fin();
   }
 }

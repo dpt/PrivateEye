@@ -38,11 +38,11 @@ static void selected(const wimp_selection *selection, void *opaque)
     imagecache_empty();
     break;
 
-  case ICONBAR_SEARCHTAGS:
 #ifdef EYE_TAGS
+  case ICONBAR_SEARCHTAGS:
     tags_search_open();
-#endif
     break;
+#endif
 
   case ICONBAR_CHOICES:
     /* Choices... */

@@ -30,9 +30,13 @@ static struct
 
   wimp_w       choices_w;
   wimp_w       choices_vwr_w;
+#ifdef EYE_THUMBVIEW
   wimp_w       choices_thm_w;
+#endif
   wimp_w       choices_col_w;
+#ifdef EYE_TAGS
   wimp_w       choices_tag_w;
+#endif
   wimp_w       choices_spr_w;
   wimp_w       choices_jpg_w;
   wimp_w       choices_gif_w;
@@ -54,14 +58,37 @@ static const choices_pane_handlers colours_handlers =
   colour_choicepane_redraw,
 };
 
+enum
+{
+  choicepane_vwr,
+#ifdef EYE_THUMBVIEW
+  choicepane_thm,
+#endif
+  choicepane_col,
+#ifdef EYE_TAGS
+  choicepane_tag,
+#endif
+  choicepane_spr,
+  choicepane_jpg,
+  choicepane_gif,
+  choicepane_png,
+  choicepane_drw,
+  choicepane_art,
+  choicepane__LIMIT
+};
+
 /* If you alter these then the various pane indices below will also need
  * updating. */
-static const choices_pane panes[] =
+static const choices_pane panes[choicepane__LIMIT] =
 {
   { &W.choices_vwr_w, "vwr", CHOICES_R_VWR, NULL,             },
+#ifdef EYE_THUMBVIEW
   { &W.choices_thm_w, "thm", CHOICES_R_THM, NULL,             },
+#endif
   { &W.choices_col_w, "col", CHOICES_R_COL, &colours_handlers },
+#ifdef EYE_TAGS
   { &W.choices_tag_w, "tag", CHOICES_R_TAG, NULL,             },
+#endif
   { &W.choices_spr_w, "spr", CHOICES_R_SPR, NULL,             },
   { &W.choices_jpg_w, "jpg", CHOICES_R_JPG, NULL,             },
   { &W.choices_gif_w, "gif", CHOICES_R_GIF, NULL,             },
@@ -93,9 +120,14 @@ static const choices_stringset viewerchoices_size =
 
 static const choices_stringset_vals viewerchoices_scale_vals[] =
 {
-  { SCALE_100PC / 2 }, /* 50% */
-  { SCALE_100PC },
-  { SCALE_100PC * 2 }, /* 200% */
+  { SCALE_100PC * 1 / 4 }, /*  25% */
+  { SCALE_100PC * 2 / 4 }, /*  50% */
+  { SCALE_100PC * 3 / 4 }, /*  75% */
+  { SCALE_100PC * 4 / 4 }, /* 100% */
+  { SCALE_100PC * 5 / 4 }, /* 125% */
+  { SCALE_100PC * 6 / 4 }, /* 150% */
+  { SCALE_100PC * 7 / 4 }, /* 175% */
+  { SCALE_100PC * 8 / 4 }, /* 200% */
   { viewerscale_FIT_TO_SCREEN },
   /* { viewerscale_FIT_TO_WINDOW }, */
   { viewerscale_PRESERVE }
@@ -182,7 +214,7 @@ static const choices_group viewerchoices_group =
   "viewer",
   NELEMS(viewerchoices),
   viewerchoices,
-  0, /* pane index */
+  choicepane_vwr,
   &viewerchoices_handlers,
 };
 
@@ -212,7 +244,7 @@ static const choices_group cache_group =
   "cache",
   NELEMS(cache),
   cache,
-  0, /* pane index */
+  choicepane_vwr,
   NULL, /* callbacks */
 };
 
@@ -334,7 +366,7 @@ static const choices_group thumbview_group =
   "thumbview",
   NELEMS(thumbview),
   thumbview,
-  1, /* pane index */
+  choicepane_thm,
   NULL, /* callbacks */
 };
 
@@ -409,7 +441,7 @@ static const choices_group colour_group =
   "colour",
   NELEMS(colour),
   colour,
-  2, /* pane index */
+  choicepane_col,
   NULL, /* callbacks */
 };
 
@@ -548,7 +580,7 @@ static const choices_group tagcloud_group =
   "tagcloud",
   NELEMS(tagcloud),
   tagcloud,
-  3, /* pane index */
+  choicepane_tag,
   &tagcloud_handlers,
 };
 
@@ -618,7 +650,7 @@ static const choices_group sprite_group =
   "sprite",
   NELEMS(sprite),
   sprite,
-  4, /* pane index */
+  choicepane_spr,
   &viewerchoices_handlers, /* update viewers */
 };
 
@@ -719,7 +751,7 @@ static const choices_group jpeg_group =
   "jpeg",
   NELEMS(jpeg),
   jpeg,
-  5, /* pane index */
+  choicepane_jpg,
   &viewerchoices_handlers, /* update viewers */
 };
 
@@ -755,7 +787,7 @@ static const choices_group gif_group =
   "gif",
   NELEMS(gif),
   gif,
-  6, /* pane index */
+  choicepane_gif,
   &viewerchoices_handlers, /* update viewers */
 };
 
@@ -791,7 +823,7 @@ static const choices_group png_group =
   "png",
   NELEMS(png),
   png,
-  7, /* pane index */
+  choicepane_png,
   &viewerchoices_handlers, /* update viewers */
 };
 
@@ -860,7 +892,7 @@ static const choices_group drawfile_group =
   "drawfile",
   NELEMS(drawfile),
   drawfile,
-  8, /* pane index */
+  choicepane_drw,
   &viewerchoices_handlers, /* update viewers */
 };
 
@@ -929,7 +961,7 @@ static const choices_group artworks_group =
   "artworks",
   NELEMS(artworks),
   artworks,
-  9, /* pane index */
+  choicepane_art,
   &viewerchoices_handlers, /* update viewers */
 };
 

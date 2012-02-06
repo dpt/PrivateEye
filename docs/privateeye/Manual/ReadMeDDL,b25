@@ -1,5 +1,5 @@
 //->ReadMeDDL
-// Produced by OvationPro at 11:45pm 13th December 2011
+// Produced by OvationPro at 3:18pm 4th February 2012
 //
 //
 
@@ -53,17 +53,15 @@ TEXTPREF={textpref
 
 // Text styles etc. 
 
-FONT_f8b={font "FontinSans.Regular"}
-FONT_18a7={font "Trinity.Bold.Italic.SmallCaps"}
-FONT_599e={font "FontinSans.SmallCaps"}
-FONT_8b58={font "FontinSans.Italic"}
-FONT_8b6a={font "FontinSans.Bold.Italic"}
+FONT_45b7={font "STRAIGHT.BLACK.ITALIC"}
+FONT_5eaf={font "STRAIGHT.BOLD"}
+FONT_7633={font "STRAIGHT.ITALIC"}
 FONT_8f3b={font "Trinity.Medium"}
 FONT_948e={font "Trinity.Bold"}
 FONT_9d7f={font "Corpus.Medium"}
-FONT_d948={font "Delicious.Heavy"}
-FONT_ee2d={font "FontinSans.Bold"}
-FONT_f929={font "Delicious.Bold"}
+FONT_a1da={font "STRAIGHT"}
+FONT_b5b1={font "STRAIGHT.ULTRABLACK"}
+FONT_ba57={font "Sidney"}
 
 
 STYLE_01={style "Bodytext"
@@ -77,7 +75,7 @@ STYLE_01={style "Bodytext"
 {strikeout 0 {type 1} {thickness 1310} {colourvalue COL_03 0x10000 0}}
 {verticalrule {leftrule 0 0} {rightrule 0 0} {thickness 0} {colourvalue COL_01 0x10000 0}}
 {horizontalrule {aboverule 0 0} {belowrule 0 0} {thickness 0} {colourvalue COL_01 0x10000 0}}
- FONT_f8b 
+ FONT_a1da 
 {foreground COL_01 0x10000 0}
 {background COL_03 0x10000 0}
 {textsize 10000}
@@ -118,10 +116,9 @@ STYLE_10={style "Heading1"
 {scope 1}
 {bold 0}
 {italic 0}
- FONT_d948 
-{textsize 24000}
-{scale 0x10000}
-{track 0x1333}
+ FONT_b5b1 
+{textsize 36000}
+{track 0x51f}
 {align 1}
 {leftindent 1 0}
 {firstindent 0}
@@ -130,7 +127,8 @@ STYLE_10={style "Heading1"
 STYLE_11={style "Footer"
 {keypress ""}
 {scope 1}
-{italic 1}
+ FONT_a1da 
+{foreground COL_01 0xcccd 0}
 {textsize 9000}
 {leftindent 1 0}
 {firstindent 0}
@@ -142,7 +140,7 @@ STYLE_12={style "Heading2"
 {scope 1}
 {bold 1}
 {italic 0}
- FONT_f929 
+ FONT_5eaf 
 {textsize 20000}
 {align 0}
 {leftindent 1 0}
@@ -175,7 +173,7 @@ STYLE_15={style "Heading3"
 {scope 1}
 {bold 1}
 {italic 0}
- FONT_f929 
+ FONT_5eaf 
 {textsize 14000}
 {align 0}
 {leftindent 1 0}
@@ -195,8 +193,8 @@ STYLE_17={style "Key"
 {scope 0}
 {bold 0}
 {italic 0}
- FONT_599e 
-{track 0xfffffae1}
+{textsize 9000}
+{case 2}
 }
 
 STYLE_18={style "Heading4"
@@ -223,7 +221,9 @@ STYLE_19={style "Bullets2"
 STYLE_1a={style "Aside"
 {keypress ""}
 {scope 1}
-{italic 1}
+{bold 0}
+{italic 0}
+ FONT_7633 
 {leftindent 1 11339}
 {rightindent 1 0}
 }
@@ -231,13 +231,17 @@ STYLE_1a={style "Aside"
 STYLE_1b={style "Terminology"
 {keypress ""}
 {scope 0}
-{italic 1}
+{bold 0}
+{italic 0}
+ FONT_7633 
 }
 
 STYLE_1c={style "UI"
 {keypress ""}
 {scope 0}
 {bold 1}
+{textsize 9000}
+{case 2}
 }
 
 STYLE_1d={style "Emphasis"
@@ -249,13 +253,15 @@ STYLE_1d={style "Emphasis"
 STYLE_1e={style "Name"
 {keypress ""}
 {scope 0}
-{italic 1}
+{bold 0}
+{italic 0}
+ FONT_7633 
 }
 
 STYLE_1f={style "Acronym"
 {keypress ""}
 {scope 0}
-{textsize 8000}
+{textsize 9000}
 }
 
 STYLE_20={style "URL"
@@ -273,6 +279,12 @@ STYLE_21={style "Numbers1"
 {bullet 1 {bulletbefore ""} {bulletafter "."} {bulletstyle ""} {bullettab 1} {bulletstart 1}{bulletformat 0}}
 {tabruler {tableader ""} }
 
+}
+
+STYLE_22={style "Symbol"
+{keypress ""}
+{scope 0}
+ FONT_ba57 
 }
 
 
@@ -306,83 +318,54 @@ TEXT_10f={textframe
 {skew 0x0}
 }
 
-TEXT_112={textframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
-{vertalign 0}
-{firstline 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 19842}
-{y 391181}
-{w 270707}
-{h 14173}
-}}
-{angle 0x0}
-{skew 0x0}
-}
+PAGE_112={page}
 
-STORY_113={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_11}
-"PrivateEye"
-{endoftext}
-}
-
-TEXT_115={textframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
-{vertalign 0}
-{firstline 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 304724}
-{y 391181}
-{w 270707}
-{h 14173}
-}}
-{angle 0x0}
-{skew 0x0}
-}
-
-STORY_116={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
-"Page "
-{pageno}{endoftext}
-}
-
-PAGE_118={page}
-
-TEXT_119={textframe
+TEXT_113={textframe
 {master TEXT_10f}{local 0}
 }
 
-STORY_11a={story 
+STORY_114={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_10}
-"PrivateEye"
+"Private"
+"Eye"
 {newpara}{remuserstyle STYLE_10}{align 1}
 "Image Viewer"
 {newline}
-"by David Thomas, © 1999ó2010"
+"by David Thomas, © 1999ó2012"
 {newline}
-"version 3.00 (xx xxx 2010)"
-{newpage}{adduserstyle STYLE_12}{align}
+"version 2.99 (05 Feb 2012)"
+{newpage}{adduserstyle STYLE_18}{adduserstyle STYLE_12}{align}
 "Welcome"
-{newpara}{remuserstyle STYLE_12}
-"PrivateEye is a freeware image viewer for RISC†OS."
+{newpara}{remuserstyle STYLE_18}{remuserstyle STYLE_12}
+"PrivateEye is an image viewer for "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+"."
 {newpara}
-"It requires RISC†OS 3.6 or later and a Boot sequence with the Nested Wimp "
-"and a 32-bit Shared C Library."
+"It requires "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+" 3.6 or later and a Boot sequence with the Nested Wimp and a 32-bit Shared C "
+"Library."
 {newpara}{adduserstyle STYLE_15}
 "Features"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_14}
-"Loads and displays both bitmap and vector images"
+"Loads and displays bitmap and vector images"
 {newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_19}
-"Sprites, JPEGs, GIFs and PNGs"
-{newpara}
+"Sprites, "
+{remuserstyle STYLE_19}{adduserstyle STYLE_1f}{adduserstyle STYLE_19}
+"JPEGs"
+{remuserstyle STYLE_1f}{remuserstyle STYLE_19}{adduserstyle STYLE_19}
+", "
+{remuserstyle STYLE_19}{adduserstyle STYLE_1f}{adduserstyle STYLE_19}
+"GIFs"
+{remuserstyle STYLE_1f}{remuserstyle STYLE_19}{adduserstyle STYLE_19}
+" and "
+{remuserstyle STYLE_19}{adduserstyle STYLE_1f}{adduserstyle STYLE_19}
+"PNGs"
+{remuserstyle STYLE_1f}{remuserstyle STYLE_19}{adduserstyle STYLE_19}{newpara}
 "DrawFiles and ArtWorks"
 {newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_14}
 "Bitmap effects"
@@ -397,37 +380,51 @@ STORY_11a={story
 {newpara}
 "Bitmap rotation with interactive preview"
 {newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_19}
-"Rotation is lossless for JPEGs"
-{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_14}
-"Native JPEG display using SpriteExtend"
+"Rotation is lossless for "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_14}
+"Native "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" display using SpriteExtend"
 {newpara}{adduserstyle STYLE_19}
-"Inbuilt lossless îcleaningï transparently loads progressive JPEGs"
-{newpara}{remuserstyle STYLE_19}
-"JFIF, Exif and Adobe metadata information"
+"Inbuilt lossless îcleaningï transparently loads progressive "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_1f}
+"JFIF"
+{remuserstyle STYLE_1f}
+", Exif and Adobe metadata information display"
 {newpara}
 "Multiple-channel histogram"
 {newpara}
 "Display images may be saved"
 {newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_19}
-"Convert JPEGs, GIFs and PNGs to into Sprites"
+"Convert "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+", "
+{adduserstyle STYLE_1f}
+"GIFs "
+{remuserstyle STYLE_1f}
+"and "
+{adduserstyle STYLE_1f}
+"PNGs "
+{remuserstyle STYLE_1f}
+"to into Sprites"
 {newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_14}
 "Any number of images may be open concurrently"
 {newpara}
 "Customisable key map"
 {newpara}
-"Interactive help (use it!)"
+"Lots of interactive help (use it!)"
 {remuserstyle STYLE_14}{endoftext}
 }
 
-TEXT_11c={textframe
-{master TEXT_112}{local 0}
-}
-
-TEXT_11f={textframe
-{master TEXT_115}{local 0}
-}
-
-PICT_122={pictframe
+PICT_116={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_03 0x10000 0}
 {radius 0}
@@ -441,7 +438,7 @@ PICT_122={pictframe
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -455,20 +452,20 @@ PICT_122={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_123={picture
+PICTURE_418={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.logo"}
 }
 
-CHAP_125={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
-{omitheader 0} {omitfooter 0}
+CHAP_119={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+{omitheader 1} {omitfooter 1}
 {chapternumber 2}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_126={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_11a={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_127={textframe
+TEXT_11b={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -487,7 +484,7 @@ TEXT_127={textframe
 {skew 0x0}
 }
 
-TEXT_12a={textframe
+TEXT_11e={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -505,13 +502,13 @@ TEXT_12a={textframe
 {skew 0x0}
 }
 
-STORY_12b={story 
+STORY_11f={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Supported Image Formats"
 {endoftext}
 }
 
-TEXT_12d={textframe
+TEXT_121={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -529,89 +526,160 @@ TEXT_12d={textframe
 {skew 0x0}
 }
 
-STORY_12e={story 
+STORY_122={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_130={page}
+PAGE_124={page}
 
-TEXT_131={textframe
-{master TEXT_127}{local 0}
+TEXT_125={textframe
+{master TEXT_11b}{local 0}
 }
 
-STORY_132={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"Supported Image Formats"
-{newpara}{remuserstyle STYLE_12}
-"Loaded images are converted where necessary into a RISC†OS-native format. "
-"This means that GIFs, PNGs and (optionally) JPEGs are converted into Sprite "
-"format when they are loaded."
+STORY_126={story 
+{adduserstyle STYLE_01}
+"PrivateEye converts images as necessary into a "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+"-native format. This means that "
+{adduserstyle STYLE_1f}
+"GIFs"
+{remuserstyle STYLE_1f}
+", "
+{adduserstyle STYLE_1f}
+"PNGs"
+{remuserstyle STYLE_1f}
+" and (optionally) "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+" are converted into Sprite format when they are loaded."
 {newpara}
 "The converted image is referred to as the "
 {adduserstyle STYLE_1b}
 "display image"
 {remuserstyle STYLE_1b}
-". Editing operations such as saving, rotation and the effects system operate "
-"on the display image only."
+". Operations such as saving, rotation and the effects system operate on the "
+"display image only."
 {newpara}{adduserstyle STYLE_15}
 "Sprites"
 {newpara}{remuserstyle STYLE_15}
 "All varieties of Sprite are loaded and displayed so long as the OS "
-"understands them. For example, RISC†OS†5 will be unable to load the "
-"alpha-blended and CMYK format Sprites native to RISC†OS Select."
+"understands them. For example, "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+"†5 will be unable to load the alpha-blended and "
+{adduserstyle STYLE_1f}
+"CMYK"
+{remuserstyle STYLE_1f}
+" format Sprites native to "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+" Select."
 {newpara}
-"16 millon colour Sprites are checked for alpha channel data and rendered "
-"with transparency, if any is found. The alpha data is expected to reside in "
-"the top byte of each 32-bit pixel. This is the same format used by Tinct, "
-"Composition, Variations, etc. but different to the format used by "
-"RISC†OS†Select."
+"16 millon colour format Sprites are checked for alpha channel data and "
+"rendered with transparency if found. The alpha data is expected to reside in "
+"the top byte of each 32-bit pixel. This is the same format used by "
+{adduserstyle STYLE_1e}
+"Tinct"
+{remuserstyle STYLE_1e}
+", "
+{adduserstyle STYLE_1e}
+"Composition"
+{remuserstyle STYLE_1e}
+" and"
+" "
+{adduserstyle STYLE_1e}
+"Variations"
+{remuserstyle STYLE_1e}
+" but different to the format used by "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+"†Select which stores the alpha in the mask data."
 {newpara}
 "Multiple Sprite files will only show the first Sprite in the file."
 {newpara}{adduserstyle STYLE_15}{newpage}
 "JPEGs"
-{newpara}{remuserstyle STYLE_15}
-"The SpriteExtend module, version 0.99 or later, is used to directly display "
-"JPEGs. This allows images larger than available free memory to be displayed "
-"by decompressing and plotting on the fly."
+{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_1f}
+"RISC OSës"
+{remuserstyle STYLE_1f}
+" SpriteExtend module, version 0.99 or later, is used to directly display "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+". This allows images larger than available free memory to be displayed by "
+"decompressing and plotting on the fly."
 {newpara}
-"Progressive (multiple scan) JPEGs are supported. PrivateEye has a inbuilt "
-"version of "
+"Progressive (multiple scan) "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+" are supported. PrivateEye has an inbuilt version of "
 {adduserstyle STYLE_1e}
 "jpegtran"
 {remuserstyle STYLE_1e}
-" which automatically converts JPEGs into a baseline format that SpriteExtend "
-"is happy with."
-{newpara}
-"JPEGs may be optionally be converted to Sprite on loading (see the Choices "
+" which automatically converts "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+" into a baseline format that SpriteExtend can render."
+{newpara}{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+" may be optionally be converted to Sprite when loaded (see the Choices "
 "window.)"
 {newpara}{adduserstyle STYLE_15}
-"GIF"
-{newpara}{remuserstyle STYLE_15}
-"GIFs are converted into Sprite format on loading."
+"GIFs"
+{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_1f}
+"GIFs"
+{remuserstyle STYLE_1f}
+" are converted into Sprite format when loaded."
 {newpara}
-"Animated GIFs will only show the first frame."
-{newpara}{adduserstyle STYLE_15}
-"PNG"
-{newpara}{remuserstyle STYLE_15}
-"PNGs are converted into Sprite format on loading."
+"Animated "
+{adduserstyle STYLE_1f}
+"GIFs"
+{remuserstyle STYLE_1f}
+" will only show the first frame."
+{newpara}{adduserstyle STYLE_15}{newpage}
+"PNGs"
+{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_1f}
+"PNGs"
+{remuserstyle STYLE_1f}
+" are converted into Sprite format when loaded."
 {newpara}
 "Where possible, simple on/off transparency is retained as a Sprite mask. If "
 "the transparency is not simple then a 32bpp image with an alpha mask is "
 "created."
+{newpara}{adduserstyle STYLE_1f}
+"PNGs"
+{remuserstyle STYLE_1f}
+" with 16 bits per component will be truncated to 8 bits, as there is no "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+" format capable of holding that level of detail."
 {newpara}
-"PNGs with 16 bits per component will be truncated to 8 bits, as there is no "
-"RISC†OS format capable of holding that level of detail."
-{newpara}
-"Where present, the bKND chunk is used to set the colour of the window "
-"background."
+"Where present, the "
+{adduserstyle STYLE_1b}
+"bKND"
+{remuserstyle STYLE_1b}
+" chunk is used to set the colour of the window background."
 {newpara}{adduserstyle STYLE_15}
 "DrawFiles"
 {newpara}{remuserstyle STYLE_15}
 "The DrawFile module is used to display DrawFiles."
 {newpara}
-"A border of 16 OS units is added in display."
+"A border of 16 "
+{adduserstyle STYLE_1f}
+"OS"
+{remuserstyle STYLE_1f}
+" units is added in display."
 {newpara}{adduserstyle STYLE_15}
 "ArtWorks "
 {newpara}{remuserstyle STYLE_15}
@@ -627,7 +695,15 @@ STORY_132={story
 {italic 0}
 "AWViewer"
 {italic}
-". All RISC†OS machines since the Risc†PC have been shipped with a copy of "
+". All "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+" machines since the "
+{adduserstyle STYLE_1f}
+"Risc†PC"
+{remuserstyle STYLE_1f}
+" have shipped with a copy of "
 {italic 0}
 "AWViewer "
 {italic}
@@ -635,28 +711,36 @@ STORY_132={story
 {newpara}{adduserstyle STYLE_15}
 "Unrecognised Formats"
 {newpara}{remuserstyle STYLE_15}
-"If the file type is not recognised PrivateEye will first inspect the "
-"contents of the file to see if it is a format that is understood. If so, it "
-"will set the file type appropriately and then load the file."
+"If the file type is not recognised PrivateEye will inspect the contents of "
+"the file to see if it is a format that is understood. If so, it will set the "
+"file type appropriately and then load the file."
 {newpara}
-"Otherwise, it will use the Computer Conceptsë FFG protocol to load images it "
-"does not natively understand. For this to work you must have "
-{italic 1}
+"Otherwise, it will use Computer Conceptsë "
+{adduserstyle STYLE_1f}
+"FFG"
+{remuserstyle STYLE_1f}
+" protocol to load images it does not natively understand. For this to work "
+"you must have "
+{adduserstyle STYLE_1e}
 "TransFSI"
-{italic}
+{remuserstyle STYLE_1e}
+", "
+{adduserstyle STYLE_1e}
+"TranTIFF+"
+{remuserstyle STYLE_1e}
 ", or similar, installed."
 {newpara}{endoftext}
 }
 
-TEXT_134={textframe
-{master TEXT_12a}{local 0}
+TEXT_128={textframe
+{master TEXT_11e}{local 0}
 }
 
-TEXT_137={textframe
-{master TEXT_12d}{local 0}
+TEXT_12b={textframe
+{master TEXT_121}{local 0}
 }
 
-TEXT_38e={textframe
+TEXT_12e={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -665,49 +749,50 @@ TEXT_38e={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304724}
+{fcurve {box {x 19843}
 {y 19843}
-{w 270705}
+{w 555586}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_38f={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_12f={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Supported Image Formats"
+{remuserstyle STYLE_12}{endoftext}
 }
 
-PAGE_13a={page}
+PAGE_131={page}
 
-TEXT_13b={textframe
-{master TEXT_127}{local 0}
+TEXT_132={textframe
+{master TEXT_11b}{local 0}
 }
 
-TEXT_13c={textframe
-{master TEXT_12a}{local 0}
+TEXT_133={textframe
+{master TEXT_11e}{local 0}
 }
 
-TEXT_13f={textframe
-{master TEXT_12d}{local 0}
+TEXT_136={textframe
+{master TEXT_121}{local 0}
 }
 
-CHAIN_132={textchain
-TEXT_131
-TEXT_13b
+CHAIN_126={textchain
+TEXT_125
+TEXT_132
 }
 
-CHAP_143={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_13a={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 3}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_144={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_13b={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_145={textframe
+TEXT_13c={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -726,7 +811,7 @@ TEXT_145={textframe
 {skew 0x0}
 }
 
-TEXT_148={textframe
+TEXT_13f={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -744,13 +829,13 @@ TEXT_148={textframe
 {skew 0x0}
 }
 
-STORY_149={story 
+STORY_140={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: The Viewer Window"
 {endoftext}
 }
 
-TEXT_14b={textframe
+TEXT_142={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -768,29 +853,29 @@ TEXT_14b={textframe
 {skew 0x0}
 }
 
-STORY_14c={story 
+STORY_143={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_14e={page}
+PAGE_145={page}
 
-PICT_14f={pictframe
+PICT_146={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 36635}
-{y 78676}
+{y 76690}
 {w 251343}
 {h 171632}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -804,27 +889,27 @@ PICT_14f={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_150={picture
+PICTURE_41b={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.viewerwin"}
 }
 
-PICT_151={pictframe
+PICT_148={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 34015}
-{y 68676}
+{y 141476}
 {w 251343}
 {h 65229}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
-{autoscale 0}
+{autoscale 1}
 {hide 0}
 {bottomleft 0}
 {x 81271}
@@ -836,25 +921,25 @@ PICT_151={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_152={picture
+PICTURE_420={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.scalewin"}
 }
 
-PICT_153={pictframe
+PICT_14a={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 114676}
+{y 170676}
 {w 251347}
 {h 155636}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -868,24 +953,22 @@ PICT_153={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_154={picture
+PICTURE_421={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.zoombox"}
 }
 
-TEXT_155={textframe
-{master TEXT_145}{local 0}
+TEXT_14c={textframe
+{master TEXT_13c}{local 0}
 }
 
-STORY_156={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"The Viewer Window"
-{newpara}{remuserstyle STYLE_12}
+STORY_14d={story 
+{adduserstyle STYLE_01}
 "The "
 {adduserstyle STYLE_1b}
 "viewer window"
 {remuserstyle STYLE_1b}
 " is PrivateEyeës main interface."
-{newpara}{align 1}{embed PICT_14f}{newpara}{adduserstyle STYLE_15}{align}
+{newpara}{align 1}{embed PICT_146}{newpara}{adduserstyle STYLE_15}{align}
 "Loading Images"
 {newpara}{remuserstyle STYLE_15}
 "To view an image, drag it from a directory display to the icon bar icon. You "
@@ -898,48 +981,58 @@ STORY_156={story
 {newpara}{adduserstyle STYLE_15}
 "Input Focus"
 {newpara}{remuserstyle STYLE_15}
-"When you click in a viewer window, it gains the input focus. You can then "
-"use the keys detailed below to scroll, scale, etc."
+"When you click in a viewer window it gains the input focus. You can then use "
+"the keys detailed below to scroll, scale, etc."
 {newpara}{adduserstyle STYLE_15}
 "Scrolling Around"
 {newpara}{remuserstyle STYLE_15}
 "If parts of the image are not visible, you can scroll around either by "
-"dragging within the window using SELECTòthe "
+"dragging within the window using "
+{adduserstyle STYLE_17}
+"SELECT"
+{remuserstyle STYLE_17}
+"òthe "
 {adduserstyle STYLE_1b}
 "grab"
 {remuserstyle STYLE_1b}
 " toolòor by using the cursor keys."
 {newpara}
-"On suitable OS versions, the mouse scroll wheel may also be used to scroll "
-"vertically."
+"On suitable "
+{adduserstyle STYLE_1f}
+"OS"
+{remuserstyle STYLE_1f}
+" versions, the mouse scroll wheel may also be used to scroll vertically."
 {newpara}
 "You can scroll to a specific point by holding "
 {adduserstyle STYLE_17}
-"Ctrl"
+"CTRL"
 {remuserstyle STYLE_17}
-" and clicking "
+" "
+"and clicking "
 {adduserstyle STYLE_17}
 "SELECT"
 {remuserstyle STYLE_17}
 " at the desired position."
-{newpara}{adduserstyle STYLE_15}
+{newpara}{adduserstyle STYLE_15}{newpage}
 "Scaling The View"
 {newpara}{remuserstyle STYLE_15}
-"You may need to scale the image to fit the screen, or to view an area in "
-"detail. There are a number of controls for this."
+"You may need to scale the image to fit it to the screen, or to view an area "
+"in detail. There are a number of controls for this."
 {newpara}
-"The "
-{adduserstyle STYLE_1c}
+"The"
+" "
+{adduserstyle STYLE_1b}
 "Scale view"
-{remuserstyle STYLE_1c}
-" dialogue, available from the viewer menu and also by pressing "
+{remuserstyle STYLE_1b}
+" "
+"dialogue is available from the viewer menu or by pressing "
 {adduserstyle STYLE_17}{tabruler }{tabruler {tableader ""} {righttab 102047}
 {tableader "."}{lefttab 119055}}
 
 "F11"
 {remuserstyle STYLE_17}{tabruler}
 ". The default scale of 100% shows the image at a 1:1 pixel ratio."
-{newpara}{embed PICT_151}{newpara}
+{newpara}{embed PICT_148}{newpara}
 "There are standard preset scales of 25%, 50%, 100% and 200%. "
 {adduserstyle STYLE_1c}
 "Fit screen"
@@ -958,11 +1051,11 @@ STORY_156={story
 {remuserstyle STYLE_1c}
 " to make the scale level take effect."
 {newpara}
-"With the "
-{adduserstyle STYLE_1c}
+"With the"
+" "
 "Scale view"
-{remuserstyle STYLE_1c}
-" dialogue open, you can also use the "
+" "
+"dialogue open, you can also use the "
 {adduserstyle STYLE_17}
 "Up"
 {remuserstyle STYLE_17}
@@ -1034,7 +1127,7 @@ STORY_156={story
 {remuserstyle STYLE_17}
 " in the viewer window drags out a zoom box. The area of the image "
 "highlighted will be scaled to fit the window."
-{newpara}{embed PICT_153}{newpara}{adduserstyle STYLE_15}
+{newpara}{embed PICT_14a}{newpara}{adduserstyle STYLE_15}{newpage}
 "Moving Between Files"
 {newpara}{remuserstyle STYLE_15}
 "Pressing "
@@ -1059,20 +1152,22 @@ STORY_156={story
 "F3"
 {remuserstyle STYLE_17}
 " opens the "
-{adduserstyle STYLE_1c}
+{adduserstyle STYLE_1b}
 "Save"
-{remuserstyle STYLE_1c}
+{remuserstyle STYLE_1b}
 " dialogue. This saves a copy of the display image."
 {newpara}{adduserstyle STYLE_15}
 "Delete"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_17}
 "Ctrl K"
 {remuserstyle STYLE_17}
-" deletes the currently viewed image. It uses a multitasking Filer_Action "
-"window to perform the deletion. "
-{italic 1}
-"[So will interface with Recyclone, etc.]"
-{italic}{newpara}{adduserstyle STYLE_15}
+" deletes the currently viewed image. It uses the multitasking Filer_Action "
+"window to perform the deletion so will interface with "
+{adduserstyle STYLE_1e}
+"Recyclone"
+{remuserstyle STYLE_1e}
+", etc."
+{newpara}{adduserstyle STYLE_15}
 "New views"
 {newpara}{remuserstyle STYLE_15}
 "Should you need to view an image at two different scales, or view multiple "
@@ -1101,20 +1196,20 @@ STORY_156={story
 "To un-embed a window perform the same action again but release the drag when "
 "over the icon bar."
 {newpara}
-"This uses a feature of the Nested Wimp intended for embedding, for example, "
-"Java plugins inside web browser windows."
+"This uses a feature of the Nested Wimp intended for embedding Java plugins "
+"inside web browser windows."
 {newpara}{endoftext}
 }
 
-TEXT_158={textframe
-{master TEXT_148}{local 0}
+TEXT_14f={textframe
+{master TEXT_13f}{local 0}
 }
 
-TEXT_15b={textframe
-{master TEXT_14b}{local 0}
+TEXT_152={textframe
+{master TEXT_142}{local 0}
 }
 
-TEXT_3b6={textframe
+TEXT_155={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1123,64 +1218,65 @@ TEXT_3b6={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 296000}
+{fcurve {box {x 19842}
 {y 19842}
-{w 270705}
+{w 555583}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_3b7={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_156={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Viewer Windows"
+{remuserstyle STYLE_12}{endoftext}
 }
 
-PAGE_15e={page}
+PAGE_158={page}
 
-TEXT_15f={textframe
-{master TEXT_145}{local 0}
+TEXT_159={textframe
+{master TEXT_13c}{local 0}
 }
 
-TEXT_160={textframe
-{master TEXT_148}{local 0}
+TEXT_15a={textframe
+{master TEXT_13f}{local 0}
 }
 
-TEXT_163={textframe
-{master TEXT_14b}{local 0}
+TEXT_15d={textframe
+{master TEXT_142}{local 0}
 }
 
-PAGE_166={page}
+PAGE_160={page}
 
-TEXT_167={textframe
-{master TEXT_145}{local 0}
+TEXT_161={textframe
+{master TEXT_13c}{local 0}
 }
 
-TEXT_168={textframe
-{master TEXT_148}{local 0}
+TEXT_162={textframe
+{master TEXT_13f}{local 0}
 }
 
-TEXT_16b={textframe
-{master TEXT_14b}{local 0}
+TEXT_165={textframe
+{master TEXT_142}{local 0}
 }
 
-CHAIN_156={textchain
-TEXT_155
-TEXT_15f
-TEXT_167
+CHAIN_14d={textchain
+TEXT_14c
+TEXT_159
+TEXT_161
 }
 
-CHAP_16f={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_169={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 4}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_170={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_16a={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_171={textframe
+TEXT_16b={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -1199,7 +1295,7 @@ TEXT_171={textframe
 {skew 0x0}
 }
 
-TEXT_174={textframe
+TEXT_16e={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1217,13 +1313,13 @@ TEXT_174={textframe
 {skew 0x0}
 }
 
-STORY_175={story 
+STORY_16f={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: The Viewer Window"
 {endoftext}
 }
 
-TEXT_177={textframe
+TEXT_171={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1241,29 +1337,29 @@ TEXT_177={textframe
 {skew 0x0}
 }
 
-STORY_178={story 
+STORY_172={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_17a={page}
+PAGE_174={page}
 
-PICT_17b={pictframe
+PICT_175={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 36635}
-{y 136676}
+{y 134690}
 {w 251343}
 {h 84435}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -1277,25 +1373,25 @@ PICT_17b={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_17c={picture
+PICTURE_422={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.infowin"}
 }
 
-PICT_17d={pictframe
+PICT_177={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 36635}
-{y 279111}
+{y 277125}
 {w 251343}
 {h 96431}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -1309,43 +1405,41 @@ PICT_17d={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_17e={picture
+PICTURE_423={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.sourcewin"}
 }
 
-TEXT_17f={textframe
-{master TEXT_171}{local 0}
+TEXT_179={textframe
+{master TEXT_16b}{local 0}
 }
 
-STORY_180={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"The Information Windows"
-{remuserstyle STYLE_12}{adduserstyle STYLE_15}{newpara}{remuserstyle STYLE_15}
-"PrivateEye retains information both for display and source images, so there "
-"are "
+STORY_17a={story 
+{adduserstyle STYLE_01}
+"PrivateEye retains information about both source and display images, so "
+"there are "
 {adduserstyle STYLE_1d}{bold 1}
 "two"
 {remuserstyle STYLE_1d}{bold}
-" separate information windows."
-{newpara}{adduserstyle STYLE_1e}
+" information windows."
+{newpara}{adduserstyle STYLE_1b}
 "Image Info"
-{remuserstyle STYLE_1e}
-" shows the information for the display image. It is available from the "
-"viewer menu, or with "
+{remuserstyle STYLE_1b}
+" shows information on the display image. It is available from the viewer "
+"menu, or with "
 {adduserstyle STYLE_17}
 "Shift F1"
 {remuserstyle STYLE_17}
 " and looks like this:"
-{newpara}{align 1}{embed PICT_17b}{newpara}{adduserstyle STYLE_1e}{align}
+{newpara}{align 1}{embed PICT_175}{newpara}{adduserstyle STYLE_1b}{align}
 "Source Info"
-{remuserstyle STYLE_1e}
-" shows the information for the source image. It is available from the viewer "
+{remuserstyle STYLE_1b}
+" shows information on the source image. It is available from the viewer "
 "menu, or with "
 {adduserstyle STYLE_17}
 "Ctrl F1"
 {remuserstyle STYLE_17}
 " and looks like this:"
-{newpara}{align 1}{embed PICT_17d}{newpara}{align}
+{newpara}{align 1}{embed PICT_177}{newpara}{align}
 "Notice that source info has an extra "
 {adduserstyle STYLE_1c}
 "Date"
@@ -1356,26 +1450,30 @@ STORY_180={story
 {newpara}
 "The information windows may often display the same information. However, if "
 "a change is made (e.g. a rotation) or a change in the image was involved "
-"when loading it (e.g. converting from JPEG to Sprite) then the information "
-"may differ. For example, Sprite files appear to be 4 bytes longer when "
-"loaded than when on disc. This is because the in-memory structure of a "
-"sprite "
-{italic 1}
+"when loading it (e.g. converting from "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" to Sprite) then the information may differ. For example, Sprite files "
+"appear to be 4 bytes longer when loaded than when on disc. This is because "
+"the in-memory structure of a sprite "
+{bold}
 "is"
-{italic 0}
-" 4 bytes longer."
+" "
+{bold 0}{italic 0}
+"4 bytes longer."
 {align 1}{bold}{italic}{newpara}{align}{endoftext}
 }
 
+TEXT_17c={textframe
+{master TEXT_16e}{local 0}
+}
+
+TEXT_17f={textframe
+{master TEXT_171}{local 0}
+}
+
 TEXT_182={textframe
-{master TEXT_174}{local 0}
-}
-
-TEXT_185={textframe
-{master TEXT_177}{local 0}
-}
-
-TEXT_3c4={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1384,30 +1482,31 @@ TEXT_3c4={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304722}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555586}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_3c5={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
+STORY_183={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Image Information"
 {endoftext}
 }
 
-CHAP_189={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_186={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 5}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_18a={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_187={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_18b={textframe
+TEXT_188={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -1426,7 +1525,7 @@ TEXT_18b={textframe
 {skew 0x0}
 }
 
-TEXT_18e={textframe
+TEXT_18b={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1444,13 +1543,13 @@ TEXT_18e={textframe
 {skew 0x0}
 }
 
-STORY_18f={story 
+STORY_18c={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: The Viewer Window"
 {endoftext}
 }
 
-TEXT_191={textframe
+TEXT_18e={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1468,29 +1567,29 @@ TEXT_191={textframe
 {skew 0x0}
 }
 
-STORY_192={story 
+STORY_18f={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_194={page}
+PAGE_191={page}
 
-PICT_196={pictframe
+PICT_193={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 103492}
+{y 103490}
 {w 251343}
 {h 131452}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -1515,33 +1614,37 @@ PICT_196={pictframe
 {plane 3 {gammapoint 0x0 0x0}{gammapoint 0x8000 0x8000}}}
 }
 
-PICTURE_197={picture
+PICTURE_424={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.metadata"}
 }
 
-TEXT_198={textframe
-{master TEXT_18b}{local 0}
+TEXT_195={textframe
+{master TEXT_188}{local 0}
 }
 
-STORY_199={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"The Metadata Window"
-{newpara}{remuserstyle STYLE_12}
+STORY_196={story 
+{adduserstyle STYLE_01}
 "Some image files may contain embedded information additional to the image "
 "data. PrivateEye calls this "
 {adduserstyle STYLE_1b}
 "metadata"
 {remuserstyle STYLE_1b}
-". The Metadata window lets you see this information."
-{newpara}{italic 1}
-"The Metadata window is only available for JPEG images loaded in their native "
-"format."
-{adduserstyle STYLE_1a}{italic}
-" If you want to use this feature you may need to disable "
+". The "
+{adduserstyle STYLE_1b}
+"Metadata window"
+{remuserstyle STYLE_1b}
+" lets you see this information."
+{newpara}{adduserstyle STYLE_1a}
+"The Metadata window is presently only available for JPEG images loaded in "
+"their native format. If you want to use this feature you may need to disable "
 {adduserstyle STYLE_1c}
 "Convert to sprite"
 {remuserstyle STYLE_1c}
-" in the JPEG choices."
+" in the "
+{remuserstyle STYLE_1a}{adduserstyle STYLE_1f}{adduserstyle STYLE_1a}
+"JPEG"
+{remuserstyle STYLE_1f}{remuserstyle STYLE_1a}{adduserstyle STYLE_1a}
+" choices."
 {newpara}{remuserstyle STYLE_1a}
 "Open the Metadata window by choosing "
 {adduserstyle STYLE_1c}
@@ -1561,20 +1664,24 @@ STORY_199={story
 {newpara}{adduserstyle STYLE_15}{newpage}
 "Use"
 {newpara}{remuserstyle STYLE_15}
-"The metadata is presented in tree format like this:"
-{newpara}{align 0}{embed PICT_196}{newpara}{align}
+"The metadata is presented in a tree format like this:"
+{newpara}{align 0}{embed PICT_193}{newpara}{align}
 "Individual branches of the tree can be collapsed or expanded to hide or "
-"reveal relevant data."
+"reveal relevant data by clicking the controls at the left."
 {newpara}{align 0}
 "Click "
 {adduserstyle STYLE_17}
 "MENU"
 {remuserstyle STYLE_17}
 " to open up a small menu which lets you collapse or expand all tree branches."
-{newpara}{adduserstyle STYLE_15}{align}
+{newpara}{adduserstyle STYLE_15}{align}{newpage}
 "Classes of Metadata"
 {newpara}{remuserstyle STYLE_15}
-"There are three common types of JPEG metadata which PrivateEye understands:"
+"There are three common types of "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" metadata which PrivateEye understands:"
 {newpara}{adduserstyle STYLE_18}
 "Exif"
 {newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_19}
@@ -1591,18 +1698,21 @@ STORY_199={story
 "settings."
 {newpara}{newpara}{remuserstyle STYLE_19}
 "The Adobe segment also includes "
-{adduserstyle STYLE_1b}
+{adduserstyle STYLE_1b}{adduserstyle STYLE_1f}
 "IPTC-NAA"
-{remuserstyle STYLE_1b}
+{remuserstyle STYLE_1b}{remuserstyle STYLE_1f}
 " data."
 {newpara}{adduserstyle STYLE_19}
 "Contains information about captions, headlines, keywords, photographer, "
 "copyright holder, etc."
 {newpara}{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_18}
 "JFIF Comments"
-{newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_19}
-"JFIF provides for multiple blocks of plain, unformatted text data."
+{newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_19}{adduserstyle STYLE_1f}
+"JFIF"
+{remuserstyle STYLE_1f}
+" provides for multiple blocks of plain, unformatted text data."
 {newpara}{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_15}{align 0}
+{newpage}
 "Examples"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "IPTC-NAA"
@@ -1616,15 +1726,15 @@ STORY_199={story
 {align 0}{newpara}{endoftext}
 }
 
+TEXT_198={textframe
+{master TEXT_18b}{local 0}
+}
+
 TEXT_19b={textframe
 {master TEXT_18e}{local 0}
 }
 
 TEXT_19e={textframe
-{master TEXT_191}{local 0}
-}
-
-TEXT_3d1={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1633,36 +1743,37 @@ TEXT_3d1={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304722}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555586}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_3d2={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_19f={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Metadata"
+{remuserstyle STYLE_12}{endoftext}
 }
 
 PAGE_1a1={page}
 
 TEXT_1a2={textframe
-{master TEXT_18b}{local 0}
+{master TEXT_188}{local 0}
 }
 
 TEXT_1a3={textframe
-{master TEXT_18e}{local 0}
+{master TEXT_18b}{local 0}
 }
 
 TEXT_1a6={textframe
-{master TEXT_191}{local 0}
+{master TEXT_18e}{local 0}
 }
 
-CHAIN_199={textchain
-TEXT_198
+CHAIN_196={textchain
+TEXT_195
 TEXT_1a2
 }
 
@@ -1759,14 +1870,14 @@ PICT_1bc={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 34015}
-{y 216676}
+{y 214690}
 {w 251343}
 {h 79244}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -1780,7 +1891,7 @@ PICT_1bc={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_1bd={picture
+PICTURE_425={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.histwin"}
 }
 
@@ -1791,14 +1902,14 @@ PICT_1be={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 137492}
+{y 137490}
 {w 251343}
 {h 79244}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -1812,7 +1923,7 @@ PICT_1be={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_1bf={picture
+PICTURE_426={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.histcumul"}
 }
 
@@ -1821,23 +1932,31 @@ TEXT_1c0={textframe
 }
 
 STORY_1c1={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"The Histogram Window"
-{remuserstyle STYLE_12}{newpara}
+{adduserstyle STYLE_01}
 "The "
 {adduserstyle STYLE_1b}
-"Histogram "
+"Histogram"
+" window"
 {remuserstyle STYLE_1b}
-"window displays a histogram of an image's luma. Luma is the brightness part "
-"of an image."
+" displays a histogram of an image's "
+{adduserstyle STYLE_1b}
+"luma: "
+{remuserstyle STYLE_1b}
+"the brightness portion of the image."
 {newpara}{adduserstyle STYLE_1a}
 "The histogram window is only available for 8bpp grey and 32bpp colour bitmap "
-"formats. If you want to use this feature with a native JPEG then "
+"formats. If you want to use this feature with a "
+{remuserstyle STYLE_01}{remuserstyle STYLE_1a}{adduserstyle STYLE_1f}
+{adduserstyle STYLE_01}{adduserstyle STYLE_1a}
+"JPEG"
+{remuserstyle STYLE_1f}{remuserstyle STYLE_01}{remuserstyle STYLE_1a}
+{adduserstyle STYLE_01}{adduserstyle STYLE_1a}
+" then "
 {adduserstyle STYLE_1c}
 "Convert to sprite"
 {remuserstyle STYLE_1c}
 "."
-{remuserstyle STYLE_1a}{newpara}
+{newpara}{remuserstyle STYLE_1a}
 "It can also show the histogram of red, green, blue and, where available, "
 "alpha, components."
 {newpara}
@@ -1851,9 +1970,9 @@ STORY_1c1={story
 {remuserstyle STYLE_17}
 ". One histogram window may be opened for each image."
 {newpara}{embed PICT_1bc}{newpara}
-"The histogram lets you see which ranges contain the greatest amount of "
+"The histogram lets you see which tones contain the greatest amount of "
 "detail. In the above example, the low level at the right hand side of the "
-"graph indicates an absence of detail in the bright part of the image."
+"graph indicates an absence of detail in the brightest part of the image."
 {newpara}
 "You can use this information to guide your choices when making adjustments "
 "with the Effects window."
@@ -1878,9 +1997,9 @@ STORY_1c1={story
 "Scale Bars"
 {newpara}{remuserstyle STYLE_15}
 "Light grey horizontal bars are drawn across the display for every 3.125% of "
-"total pixels shown. (32 intervals.)"
-{newpara}{adduserstyle STYLE_15}
-"Weights"
+"total pixels shown (32 intervals.)"
+{newpara}{adduserstyle STYLE_15}{newpage}
+"Luma Calculation"
 {newpara}{remuserstyle STYLE_15}
 "Luma is a weighted sum of gamma corrected components. Luma here is "
 "calculated using the Rec. 601 coefficients of Yë = 0.299 Rë + 0.587 Gë + "
@@ -1888,7 +2007,7 @@ STORY_1c1={story
 {endoftext}
 }
 
-TEXT_3dd={textframe
+TEXT_1c3={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1897,49 +2016,50 @@ TEXT_3dd={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304726}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555590}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_3de={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_1c4={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Histogram"
+{remuserstyle STYLE_12}{endoftext}
 }
 
-PAGE_3e7={page}
+PAGE_1c6={page}
 
-TEXT_3e8={textframe
+TEXT_1c7={textframe
 {master TEXT_1ac}{local 0}
 }
 
-TEXT_3eb={textframe
+TEXT_1c8={textframe
 {master TEXT_1af}{local 0}
 }
 
-TEXT_3ef={textframe
+TEXT_1cb={textframe
 {master TEXT_1b2}{local 0}
 }
 
 CHAIN_1c1={textchain
 TEXT_1c0
-TEXT_3e8
+TEXT_1c7
 }
 
-CHAP_1c4={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_1cf={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 7}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_1c5={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_1d0={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_1c6={textframe
+TEXT_1d1={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -1958,7 +2078,7 @@ TEXT_1c6={textframe
 {skew 0x0}
 }
 
-TEXT_1c9={textframe
+TEXT_1d4={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -1976,13 +2096,13 @@ TEXT_1c9={textframe
 {skew 0x0}
 }
 
-STORY_1ca={story 
+STORY_1d5={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: The Effects Window"
 {endoftext}
 }
 
-TEXT_1cc={textframe
+TEXT_1d7={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -2000,29 +2120,29 @@ TEXT_1cc={textframe
 {skew 0x0}
 }
 
-STORY_1cd={story 
+STORY_1d8={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_1cf={page}
+PAGE_1da={page}
 
-PICT_1d0={pictframe
+PICT_1db={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 34015}
-{y 182676}
+{y 180690}
 {w 251343}
 {h 103246}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -2036,25 +2156,25 @@ PICT_1d0={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_1d1={picture
+PICTURE_427={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectswin"}
 }
 
-PICT_1d2={pictframe
+PICT_1dd={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 316011}
-{y 54692}
+{y 54690}
 {w 251343}
 {h 94446}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -2068,31 +2188,31 @@ PICT_1d2={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_1d3={picture
+PICTURE_428={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectspal"}
 }
 
-PICT_1d4={pictframe
+PICT_1df={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 34015}
-{y 71476}
+{y 83476}
 {w 251343}
 {h 55246}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
-{x 10521}
-{y 423}
+{x 8921}
+{y 323}
 {scale 0x10000}
 {aspect 0x10000}
 {angle 0x0}
@@ -2100,25 +2220,25 @@ PICT_1d4={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_1d5={picture
+PICTURE_429={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.slider"}
 }
 
-PICT_1d6={pictframe
+PICT_1e1={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 304672}
-{y 102676}
+{y 231476}
 {w 251343}
 {h 103246}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
@@ -2132,31 +2252,31 @@ PICT_1d6={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_1d7={picture
+PICTURE_42a={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectsdrag"}
 }
 
-PICT_1d8={pictframe
+PICT_1e3={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
-{fcurve {box {x 34015}
-{y 112676}
+{fcurve {box {x 316011}
+{y 136676}
 {w 251343}
-{h 143251}
+{h 153264}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
 {x 51271}
-{y 225}
+{y 32}
 {scale 0x8000}
 {aspect 0x10000}
 {angle 0x0}
@@ -2164,11 +2284,43 @@ PICT_1d8={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_1d9={picture
+PICTURE_42b={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectscrv"}
 }
 
-PICT_1da={pictframe
+PICT_1e5={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 34015}
+{y 190676}
+{w 251343}
+{h 63754}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 58471}
+{y 77}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_42c={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectsblr"}
+}
+
+PICT_1e7={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -2182,25 +2334,25 @@ PICT_1da={pictframe
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
-{x 1414}
-{y 1147}
-{scale 0xe148}
+{x -1}
+{y 609}
+{scale 0xe3d9}
 {aspect 0x10000}
 {angle 0x0}
 {skew 0x0}
 {tile 0 0 0}}
 }
 
-PICTURE_1db={picture
+PICTURE_42d={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectclear"}
 }
 
-PICT_1dc={pictframe
+PICT_1e9={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -2214,25 +2366,25 @@ PICT_1dc={pictframe
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
-{x 1418}
-{y 1151}
-{scale 0xe148}
+{x 1}
+{y 568}
+{scale 0xe3da}
 {aspect 0x10000}
 {angle 0x0}
 {skew 0x0}
 {tile 0 0 0}}
 }
 
-PICTURE_1dd={picture
+PICTURE_42e={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectcont"}
 }
 
-PICT_1de={pictframe
+PICT_1eb={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -2246,25 +2398,25 @@ PICT_1de={pictframe
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
-{x 1418}
-{y 1151}
-{scale 0xe148}
+{x 1}
+{y 568}
+{scale 0xe3da}
 {aspect 0x10000}
 {angle 0x0}
 {skew 0x0}
 {tile 0 0 0}}
 }
 
-PICTURE_1df={picture
+PICTURE_42f={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectgrey"}
 }
 
-PICT_1e0={pictframe
+PICT_1ed={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -2278,68 +2430,75 @@ PICT_1e0={pictframe
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
-{x 1418}
-{y 1147}
-{scale 0xe148}
+{x 0}
+{y 568}
+{scale 0xe3da}
 {aspect 0x10000}
 {angle 0x0}
 {skew 0x0}
 {tile 0 0 0}}
 }
 
-PICTURE_1e1={picture
+PICTURE_430={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectshrp"}
 }
 
-PICT_1e2={pictframe
+PICT_1ef={pictframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 34015}
-{y 102676}
+{y 90676}
 {w 251349}
 {h 88895}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
-{x 1418}
-{y 1147}
-{scale 0xe148}
+{x 0}
+{y 568}
+{scale 0xe3da}
 {aspect 0x10000}
 {angle 0x0}
 {skew 0x0}
 {tile 0 0 0}}
 }
 
-PICTURE_1e3={picture
+PICTURE_431={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectcomb"}
 }
 
-TEXT_1e4={textframe
-{master TEXT_1c6}{local 0}
+TEXT_1f1={textframe
+{master TEXT_1d1}{local 0}
 }
 
-STORY_1e5={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"The Effects Window"
-{newpara}{remuserstyle STYLE_12}
-"The Effects window lets you apply a multitude of effects to bitmap images."
+STORY_1f2={story 
+{adduserstyle STYLE_01}
+"The "
+{adduserstyle STYLE_1b}
+"Effects"
+" window"
+{remuserstyle STYLE_1b}
+" lets you apply a multitude of effects to bitmap images."
 {newpara}{adduserstyle STYLE_1a}
 "The Effects window is only available for 32bpp colour bitmap formats. If you "
-"want to use this feature with a native JPEG then "
+"want to use this feature with a "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" then "
 {adduserstyle STYLE_1c}
 "Convert to sprite"
 {remuserstyle STYLE_1c}
@@ -2353,8 +2512,8 @@ STORY_1e5={story
 {adduserstyle STYLE_17}
 "Ctrl E"
 {remuserstyle STYLE_17}
-". An initially empty effects window will appear:"
-{newpara}{embed PICT_1d0}{newpara}{adduserstyle STYLE_15}
+". An effects dialogue will appear containing an empty list:"
+{newpara}{embed PICT_1db}{newpara}{adduserstyle STYLE_15}
 "Adding Effects"
 {newpara}{remuserstyle STYLE_15}
 "Click "
@@ -2368,7 +2527,7 @@ STORY_1e5={story
 " "
 {bold}
 "window will pop up:"
-{newpara}{embed PICT_1d2}{newpara}
+{newpara}{embed PICT_1dd}{newpara}
 "Drag and drop an effect from the effects palette to the effects window to "
 "add it. The viewer window will immediately update with a preview of the "
 "effect."
@@ -2381,19 +2540,17 @@ STORY_1e5={story
 "Apply"
 {remuserstyle STYLE_1c}
 " to make the effect permanent."
-{newpara}{adduserstyle STYLE_15}
-"Multiple Effects"
-{newpara}{remuserstyle STYLE_15}
-"You can add multiple effects at once. Multiple effects are applied in "
-"sequence from top-to-bottom. The result is then blended with the original "
-"image. "
 {newpara}{adduserstyle STYLE_15}{newpage}
-"Blending"
+"Level Slider"
 {newpara}{remuserstyle STYLE_15}{bold 0}
-"The level slider controls the blender."
-{newpara}{embed PICT_1d4}{newpara}{bold}
-"Rather than ranging 0..100%, it ranges -100%..200%. This is because the "
-"blender is "
+"Effects are computed and blended against the original image. The "
+{adduserstyle STYLE_1b}
+"level slider"
+{remuserstyle STYLE_1b}
+" controls the amount of blending."
+{newpara}{embed PICT_1df}{newpara}{bold}
+"Rather than ranging from 0% (original image) to 100% (processed image) it "
+"ranges -100%..200%. This is because the blender is "
 {adduserstyle STYLE_1b}
 "extrapolative"
 {remuserstyle STYLE_1b}
@@ -2407,6 +2564,12 @@ STORY_1e5={story
 {remuserstyle STYLE_1d}
 "."
 {newpara}{adduserstyle STYLE_15}
+"Multiple Effects"
+{newpara}{remuserstyle STYLE_15}
+"You can add multiple effects at once. Multiple effects are applied in "
+"sequence from top-to-bottom. The result is then blended with the original "
+"image. "
+{newpara}{adduserstyle STYLE_15}{newpage}
 "Editing Effects"
 {newpara}{remuserstyle STYLE_15}
 "The effects are shown in a scrolling list. Effects can be selected with "
@@ -2439,14 +2602,14 @@ STORY_1e5={story
 "Delete"
 {remuserstyle STYLE_17}
 " key."
-{newpara}{adduserstyle STYLE_18}{newpage}
+{newpara}{adduserstyle STYLE_18}
 "Re-ordering Effects"
 {newpara}{remuserstyle STYLE_18}
 "The ordering of effects can be significant: drag and drop effects to "
 "re-order them. While you drag the effect a light grey indicator line will "
 "show you the position where the effect will be inserted."
-{newpara}{adduserstyle STYLE_15}{embed PICT_1d6}{remuserstyle STYLE_15}
-{newpara}{adduserstyle STYLE_15}
+{newpara}{adduserstyle STYLE_15}{embed PICT_1e1}{remuserstyle STYLE_15}
+{newpara}{adduserstyle STYLE_15}{newpage}
 "Individual Effects"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Clear"
@@ -2457,85 +2620,168 @@ STORY_1e5={story
 {adduserstyle STYLE_1c}
 "Edit..."
 {remuserstyle STYLE_1c}
-" button will open up a RISC†OS standard ColourPicker dialogue."
-{newpara}
-"Clear is only of use by itself, as any further effects added later in the "
+" button will open up a "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+" standard ColourPicker dialogue."
+{newpara}{adduserstyle STYLE_1a}
+"The "
+{remuserstyle STYLE_1a}{adduserstyle STYLE_1e}{adduserstyle STYLE_1a}
+"Clear"
+{remuserstyle STYLE_1e}{remuserstyle STYLE_1a}{adduserstyle STYLE_1a}
+" effect is only of use by itself, as any further effects added later in the "
 "list will be applied to a plain colour."
-{newpara}{adduserstyle STYLE_18}{newpage}
+{newpara}{remuserstyle STYLE_1a}{adduserstyle STYLE_18}{newpage}
 "Curve"
 {newpara}{remuserstyle STYLE_18}
-"The Curve effect offers a combined control for gamma, brightness, contrast, "
-"bias and gain. You can also invert the curve and reflect it around its "
-"middle."
+"The "
+{adduserstyle STYLE_1e}
+"Curve"
+{remuserstyle STYLE_1e}
+" effect offers a combined control for gamma, brightness, contrast, midpoint, "
+"bias and gain adjustment. You can also invert the curve (meaning flip "
+"left-to-right) and reflect it around its middle."
 {newpara}
-"By default it shows a linear mapping (no change):"
-{newpara}{embed PICT_1d8}{newpara}
-"Choose the channel to edit from the radio buttons on the right hand side, "
-"then drag the sliders to adjust the curve."
-{newpara}{adduserstyle STYLE_18}
+"Clicking the "
+{adduserstyle STYLE_1c}
+"Edit..."
+{remuserstyle STYLE_1c}
+" button will open up the"
+" "
+{adduserstyle STYLE_1b}
+"Curve effect"
+" "
+"dialogue"
+{remuserstyle STYLE_1b}
+". By default it shows a linear mapping (no change):"
+{newpara}{embed PICT_1e3}{newpara}
+"Choose the channel to edit from the radio buttons on the top right hand "
+"side, then drag the sliders to adjust the curve."
+{newpara}
+"Click "
+{adduserstyle STYLE_1c}
+"Reset"
+{remuserstyle STYLE_1c}
+" if you want the default settings back."
+{newpara}{adduserstyle STYLE_18}{newpage}
 "Greyscale"
 {newpara}{remuserstyle STYLE_18}
-"Discards all chroma information leaving only the luma."
+"The "
+{adduserstyle STYLE_1e}
+"Greyscale"
+{remuserstyle STYLE_1e}
+" effect discards all chroma information leaving only the luma present."
 {newpara}
-"As with the histogram, uses Rec. 601 weightings."
-{newpara}{adduserstyle STYLE_18}{newpage}
+"As with the histogram, this uses the Rec. 601 weightings."
+{newpara}{adduserstyle STYLE_18}
 "Blur"
 {newpara}{remuserstyle STYLE_18}
-"A mild blur effect using a 3x3 convolution matrix."
-{newpara}{adduserstyle STYLE_18}
+"The "
+{adduserstyle STYLE_1e}
+"Blur"
+{remuserstyle STYLE_1e}
+" effect offers a choice of either a box blur or a gaussian blur. Both can "
+"specify a radius of up to 47 pixels."
+{newpara}
+"Clicking the "
+{adduserstyle STYLE_1c}
+"Edit..."
+{remuserstyle STYLE_1c}
+" button will open up the "
+{adduserstyle STYLE_1b}
+"Blur effect"
+" dialogue"
+{remuserstyle STYLE_1b}
+":"
+{newpara}{embed PICT_1e5}{newpara}{adduserstyle STYLE_1a}
+"Note that using box blur with large radii can result in visible banding."
+{newpara}{remuserstyle STYLE_1a}{adduserstyle STYLE_18}
 "Sharpen"
 {newpara}{remuserstyle STYLE_18}
-"A mild sharpen effect, again using a 3x3 convolution matrix."
-{newpara}{adduserstyle STYLE_18}
+"The "
+{adduserstyle STYLE_1e}
+"Sharpen"
+{remuserstyle STYLE_1e}
+" effect provides a mild sharpening effect, using a 3x3 convolution matrix."
+{newpara}{adduserstyle STYLE_18}{newpage}
 "Expand dynamic range"
 {newpara}{remuserstyle STYLE_18}
-"This looks for unused space in the shadows and highlights of the histogram "
-"and stretches the image to fill the available volume."
+"This effect looks for unused space in the shadows and highlights of the "
+"histogram and stretches the image to occupy all of the available volume."
 {newpara}
-"The RGB channels are stretched by the same amount so this will preserve "
-"colours."
+"The "
+{adduserstyle STYLE_1f}
+"RGB"
+{remuserstyle STYLE_1f}
+" channels are stretched by the same amount so this will preserve colours."
 {newpara}{adduserstyle STYLE_18}
 "Histogram equalisation"
 {newpara}{remuserstyle STYLE_18}
 "Attempts to create an even spread of values across the available colour "
 "volume."
 {newpara}
-"This is useful for extracting detail from images, but processes RGB "
-"separately so can lead to colour distortion."
+"This is useful for extracting obscured detail from images, but processes "
+{adduserstyle STYLE_1f}
+"RGB"
+{remuserstyle STYLE_1f}
+" separately so can lead to colour distortion."
 {newpara}{adduserstyle STYLE_15}{newpage}
 "Examples"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Changing brightness"
 {newpara}{remuserstyle STYLE_18}
-"Add a Clear effect. Set its colour to black. Dragging the slider to the left "
-"will increase brightness."
-{newpara}{embed PICT_1da}{newpara}{adduserstyle STYLE_18}
+"Add a "
+"Clear"
+" "
+"effect. Set it to black. Dragging the slider to the left will increase the "
+"imageës brightness."
+{newpara}{embed PICT_1e7}{newpara}{adduserstyle STYLE_18}
 "Changing contrast"
 {newpara}{remuserstyle STYLE_18}
-"Add a Clear effect. Set its colour to 50% grey. Dragging the slider to the "
-"left will increase contrast; to the right will decrease contrast."
-{newpara}{embed PICT_1dc}{newpara}{adduserstyle STYLE_18}
+"Add a "
+"Clear"
+" "
+"effect. Set its colour to 50% grey. Dragging the slider to the left will "
+"increase contrast; to the right will decrease contrast."
+{newpara}{embed PICT_1e9}{newpara}{adduserstyle STYLE_18}
 "Changing saturation"
 {newpara}{remuserstyle STYLE_18}
-"Add a Greyscale effect. Dragging the slider to the left will increase "
-"saturation; to the right will decrease saturation."
-{newpara}{embed PICT_1de}{newpara}{adduserstyle STYLE_18}
+"Add a "
+"Greyscale"
+" "
+"effect. Dragging the slider to the left will increase saturation; to the "
+"right will decrease saturation."
+{newpara}{embed PICT_1eb}{newpara}{adduserstyle STYLE_18}
 "Sharpening an image"
 {newpara}{remuserstyle STYLE_18}
-"Add a Blur effect (really!) then drag the slider to the left past the "
-"left-most ênotchë."
+"Add a "
+"Blur"
+" "
+"effect (yes, really!) then drag the slider to the left past the left-most "
+"ênotchë."
 {newpara}
-"Sharpening this way is sometimes called îUnsharp mask.ï"
-{newpara}{embed PICT_1e0}{newpara}{adduserstyle STYLE_18}{newpage}
+"Sharpening this way is sometimes called "
+{adduserstyle STYLE_1b}
+"u"
+"nsharp mask"
+{remuserstyle STYLE_1b}
+"."
+{newpara}{embed PICT_1ed}{newpara}{adduserstyle STYLE_18}{newpage}
 "Combined saturation and sharpening"
 {newpara}{remuserstyle STYLE_18}
-"Add a Blur effect then a Greyscale effect. Dragging the slider to the left "
-"will simultaneously increase saturation and sharpen; to the right will "
-"decrease saturation and blur."
-{newpara}{embed PICT_1e2}{newpara}{newpara}{adduserstyle STYLE_15}{newpage}
+"Add a "
+"Blur"
+" "
+"effect then a "
+"Greyscale"
+" "
+"effect. Dragging the slider to the left will simultaneously increase "
+"saturation and sharpen; to the right will decrease saturation and blur."
+{newpara}{embed PICT_1ef}{newpara}{newpara}{adduserstyle STYLE_15}{newpage}
 "Memory Use & Speed"
 {newpara}{remuserstyle STYLE_15}
-"The effects system uses two temporary bitmaps of the same size as the "
+"The effects system creates two temporary bitmaps of the same size as the "
 "original image. Therefore applying effects to large images will claim a lot "
 "of memory."
 {newpara}
@@ -2545,22 +2791,25 @@ STORY_1e5={story
 {newpara}{adduserstyle STYLE_15}
 "Further Information"
 {newpara}{remuserstyle STYLE_15}
-"The effects window's blending technique is based on \"Image Processing By "
-"Interpolation and Extrapolation\" by Paul Haeberli and Douglas Voorhies."
+"The effects window's blending technique is based on \""
+{adduserstyle STYLE_1e}
+"Image Processing By Interpolation and Extrapolation"
+{remuserstyle STYLE_1e}
+"\" by Paul Haeberli and Douglas Voorhies."
 {newpara}{adduserstyle STYLE_20}
 "http://www.graficaobscura.com/interp/"
 {remuserstyle STYLE_20}{newpara}{endoftext}
 }
 
-TEXT_1e7={textframe
-{master TEXT_1c9}{local 0}
+TEXT_1f4={textframe
+{master TEXT_1d4}{local 0}
 }
 
-TEXT_1ea={textframe
-{master TEXT_1cc}{local 0}
+TEXT_1f7={textframe
+{master TEXT_1d7}{local 0}
 }
 
-LINE_1ee={line
+LINE_1fb={line
 {lock 0} {spread 0}
 {thickness 1417}
 {linecolour COL_01 0x10000 0}
@@ -2576,7 +2825,7 @@ LINE_1ee={line
 {skew 0x0}
 }
 
-TEXT_3f7={textframe
+TEXT_1fd={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -2585,315 +2834,103 @@ TEXT_3f7={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304726}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555590}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_3f8={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
-}
-
-PAGE_1f0={page}
-
-TEXT_1f1={textframe
-{master TEXT_1c6}{local 0}
-}
-
-TEXT_1f2={textframe
-{master TEXT_1c9}{local 0}
-}
-
-TEXT_1f5={textframe
-{master TEXT_1cc}{local 0}
-}
-
-PAGE_1f8={page}
-
-TEXT_1f9={textframe
-{master TEXT_1c6}{local 0}
-}
-
-TEXT_1fa={textframe
-{master TEXT_1c9}{local 0}
-}
-
-TEXT_1fd={textframe
-{master TEXT_1cc}{local 0}
+STORY_1fe={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Effects"
+{remuserstyle STYLE_12}{endoftext}
 }
 
 PAGE_200={page}
 
 TEXT_201={textframe
-{master TEXT_1c6}{local 0}
+{master TEXT_1d1}{local 0}
 }
 
 TEXT_202={textframe
-{master TEXT_1c9}{local 0}
+{master TEXT_1d4}{local 0}
 }
 
 TEXT_205={textframe
-{master TEXT_1cc}{local 0}
+{master TEXT_1d7}{local 0}
 }
 
 PAGE_208={page}
 
 TEXT_209={textframe
-{master TEXT_1c6}{local 0}
+{master TEXT_1d1}{local 0}
 }
 
 TEXT_20a={textframe
-{master TEXT_1c9}{local 0}
+{master TEXT_1d4}{local 0}
 }
 
 TEXT_20d={textframe
-{master TEXT_1cc}{local 0}
+{master TEXT_1d7}{local 0}
 }
 
-CHAIN_1e5={textchain
-TEXT_1e4
-TEXT_1f1
-TEXT_1f9
-TEXT_201
-TEXT_209
+PAGE_210={page}
+
+TEXT_211={textframe
+{master TEXT_1d1}{local 0}
 }
 
-CHAP_211={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
-{omitheader 0} {omitfooter 0}
-{chapternumber 8}
-{pagenumberformat 2}
-{startonleft 0}
+TEXT_212={textframe
+{master TEXT_1d4}{local 0}
 }
 
-PAGE_212={masterpage {colourvalue COL_02 0x10000 0}}
-
-TEXT_213={textframe
-{lock 0} {spread 0}
-{masterframe 1}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{columns 2}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
-{vertalign 0}
-{firstline 0}
-{inset 2834}
-{textflow 3 1 2834}
-{fcurve {box {x 19842}
-{y 19842}
-{w 555587}
-{h 367091}
-}}
-{angle 0x0}
-{skew 0x0}
+TEXT_215={textframe
+{master TEXT_1d7}{local 0}
 }
 
-TEXT_216={textframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
-{vertalign 0}
-{firstline 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 19842}
-{y 391181}
-{w 270707}
-{h 14173}
-}}
-{angle 0x0}
-{skew 0x0}
-}
-
-STORY_217={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_11}
-"PrivateEye: The Rotate Window"
-{endoftext}
-}
+PAGE_218={page}
 
 TEXT_219={textframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
-{vertalign 0}
-{firstline 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 304724}
-{y 391181}
-{w 270707}
-{h 14173}
-}}
-{angle 0x0}
-{skew 0x0}
+{master TEXT_1d1}{local 0}
 }
 
-STORY_21a={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
-"Page "
-{pageno}{endoftext}
+TEXT_21a={textframe
+{master TEXT_1d4}{local 0}
 }
 
-PAGE_21c={page}
-
-PICT_21d={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 36635}
-{y 206676}
-{w 251343}
-{h 110832}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 83671}
-{y 1216}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
+TEXT_21d={textframe
+{master TEXT_1d7}{local 0}
 }
 
-PICTURE_21e={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.rotatewin"}
-}
+PAGE_220={page}
 
-TEXT_21f={textframe
-{master TEXT_213}{local 0}
-}
-
-STORY_220={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"The Rotate Window"
-{newpara}{remuserstyle STYLE_12}
-"The "
-{adduserstyle STYLE_1b}
-"Rotate"
-{remuserstyle STYLE_1b}
-" dialogue can rotate Sprites and JPEGs in multiples of 90 degrees. It can "
-"also flip, transpose and transverse."
-{align 0}{newpara}{adduserstyle STYLE_1a}{align}
-"Rotate and transform functions are only available for Sprites and native "
-"JPEGs."
-{italic 1}{align 0}{newpara}{remuserstyle STYLE_1a}{italic}
-"Rotation and transformation of JPEGs is lossless. That means it does not "
-"perform a full decompress-transform-compress cycle which would result in "
-"quality degradation. Instead it uses jpegtranës lossless rotation code."
-{newpara}{align 1}{tabruler }{tabruler {tableader ""} {righttab 102047}
-{tableader "."}{lefttab 119055}}
-{embed PICT_21d}{newpara}
-{adduserstyle STYLE_17}{align}
-"Ctrl"
-{tabruler}
-" "
-{tabruler }{tabruler {tableader ""} {righttab 102047}{tableader "."}
-{lefttab 119055}}
-
-"O"
-{remuserstyle STYLE_17}{tabruler}
-" opens the "
-{adduserstyle STYLE_1c}
-"Rotate"
-{remuserstyle STYLE_1c}
-" dialogue"
-{align 0}
-". The dialogue is straightforward to use. Simply drag the thumbnail image "
-"and it will spin around its centre. As you rotate the image it will snap to "
-"the nearest 90 degrees. Release when it appears in the desired orientation. "
-"Click "
-{adduserstyle STYLE_1c}{align}
-"Rotate"
-{remuserstyle STYLE_1c}{align 0}
-" to effect the rotation."
-{align 1}{newpara}{align 0}
-"Dragging with "
-{adduserstyle STYLE_17}
-"ADJUST"
-{remuserstyle STYLE_17}
-" behaves similarly, except that it performs an initial horizontal flip."
-{newpara}{adduserstyle STYLE_17}
-"SELECT"
-{remuserstyle STYLE_17}
-" and "
-{adduserstyle STYLE_17}
-"ADJUST"
-{remuserstyle STYLE_17}
-" allow all possible flips and rotations to be applied."
-{newpara}
-"The icon in the top left hand corner of the window shows which rotation, or "
-"transformation, will occur."
-{newpara}{adduserstyle STYLE_15}
-"Keys"
-{newpara}{remuserstyle STYLE_15}{align}
-"The equivalent key presses in the viewer window are "
-{adduserstyle STYLE_17}
-"Ctrl L"
-{remuserstyle STYLE_17}
-" and "
-{adduserstyle STYLE_17}
-"Ctrl R"
-{remuserstyle STYLE_17}
-" to rotate left and right respectively and "
-{adduserstyle STYLE_17}
-"Ctrl H"
-{remuserstyle STYLE_17}
-" and "
-{adduserstyle STYLE_17}
-"Ctrl V"
-{remuserstyle STYLE_17}
-" respectively to perform horizontal and vertical flips."
-{newpara}{endoftext}
+TEXT_221={textframe
+{master TEXT_1d1}{local 0}
 }
 
 TEXT_222={textframe
-{master TEXT_216}{local 0}
+{master TEXT_1d4}{local 0}
 }
 
 TEXT_225={textframe
-{master TEXT_219}{local 0}
+{master TEXT_1d7}{local 0}
 }
 
-TEXT_426={textframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
-{vertalign 0}
-{firstline 0}
-{inset 2834}
-{textflow 3 1 2834}
-{fcurve {box {x 304726}
-{y 19842}
-{w 270705}
-{h 32014}
-}}
-{angle 0x0}
-{skew 0x0}
-}
-
-STORY_427={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+CHAIN_1f2={textchain
+TEXT_1f1
+TEXT_201
+TEXT_209
+TEXT_211
+TEXT_219
+TEXT_221
 }
 
 CHAP_229={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
-{chapternumber 9}
+{chapternumber 8}
 {pagenumberformat 2}
 {startonleft 0}
 }
@@ -2939,7 +2976,7 @@ TEXT_22e={textframe
 
 STORY_22f={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
-"PrivateEye: The Choices Window"
+"PrivateEye: The Rotate Window"
 {endoftext}
 }
 
@@ -2976,20 +3013,20 @@ PICT_235={pictframe
 {inset 0}
 {textflow 3 1 2834}
 {fcurve {box {x 36635}
-{y 129476}
+{y 192690}
 {w 251343}
-{h 138844}
+{h 110832}
 }}
 {angle 0x0}
 {skew 0x0}
 {picturedata
-{lockmode 0}
+{lockmode 1}
 {aspectlock 1}
 {autoscale 0}
 {hide 0}
 {bottomleft 0}
-{x 36471}
-{y 422}
+{x 83671}
+{y 1216}
 {scale 0x8000}
 {aspect 0x10000}
 {angle 0x0}
@@ -2997,242 +3034,482 @@ PICT_235={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_236={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceview"}
+PICTURE_432={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.rotatewin"}
 }
 
-PICT_237={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 36635}
-{y 49476}
-{w 251343}
-{h 138844}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 36471}
-{y 422}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
-}
-
-PICTURE_238={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicecol"}
-}
-
-PICT_239={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 36635}
-{y 49476}
-{w 251343}
-{h 138844}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 36471}
-{y 422}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
-}
-
-PICTURE_23a={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicespr"}
-}
-
-PICT_23b={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 318631}
-{y 49476}
-{w 251343}
-{h 138844}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 36471}
-{y 422}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
-}
-
-PICTURE_23c={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicejpg"}
-}
-
-PICT_23d={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 36635}
-{y 49476}
-{w 251343}
-{h 138844}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 35914}
-{y 0}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
-}
-
-PICTURE_23e={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicegif"}
-}
-
-PICT_23f={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 318631}
-{y 49476}
-{w 251343}
-{h 138844}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 36471}
-{y 422}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
-}
-
-PICTURE_240={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicepng"}
-}
-
-PICT_241={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 36635}
-{y 49476}
-{w 251343}
-{h 138844}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 36471}
-{y 422}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
-}
-
-PICTURE_242={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicedrw"}
-}
-
-PICT_243={pictframe
-{lock 0} {spread 0}
-{fillcolour COL_02 0x10000 0}
-{radius 0}
-{inset 0}
-{textflow 3 1 2834}
-{fcurve {box {x 318631}
-{y 49476}
-{w 251343}
-{h 138844}
-}}
-{angle 0x0}
-{skew 0x0}
-{picturedata
-{lockmode 0}
-{aspectlock 1}
-{autoscale 0}
-{hide 0}
-{bottomleft 0}
-{x 36471}
-{y 422}
-{scale 0x8000}
-{aspect 0x10000}
-{angle 0x0}
-{skew 0x0}
-{tile 0 0 0}}
-}
-
-PICTURE_244={picture
-{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceart"}
-}
-
-TEXT_245={textframe
+TEXT_237={textframe
 {master TEXT_22b}{local 0}
 }
 
-STORY_246={story 
+STORY_238={story 
+{adduserstyle STYLE_01}
+"The "
+{adduserstyle STYLE_1b}
+"Rotate"
+" dialogue"
+{remuserstyle STYLE_1b}
+" can rotate Sprites and "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+" in multiples of 90 degrees. It can also flip, transpose and transverse."
+{align 0}{newpara}{adduserstyle STYLE_1a}{align}
+"Rotate and transform functions are only available for Sprites and "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+"."
+{italic 1}{align 0}{newpara}{remuserstyle STYLE_1a}{italic}
+"Rotation and transformation of "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+" is lossless. That means it does not perform a full "
+"decompress-transform-compress cycle which would result in quality "
+"degradation. Instead it uses "
+{adduserstyle STYLE_1e}
+"libjpeg"
+{remuserstyle STYLE_1e}
+"ës lossless rotation code."
+{newpara}{align 1}{tabruler }{tabruler {tableader ""} {righttab 102047}
+{tableader "."}{lefttab 119055}}
+{embed PICT_235}{newpara}
+{adduserstyle STYLE_17}{align}
+"Ctrl"
+{tabruler}
+" "
+{tabruler }{tabruler {tableader ""} {righttab 102047}{tableader "."}
+{lefttab 119055}}
+
+"O"
+{remuserstyle STYLE_17}{tabruler}
+" opens the"
+" "
+"Rotate"
+" dialogue"
+"."
+{align 0}
+" The dialogue is straightforward to use. Simply drag the thumbnail image and "
+"it will spin around its centre. As you rotate the image it will snap to the "
+"nearest 90 degrees. Release when it appears in the desired orientation. "
+"Click "
+{adduserstyle STYLE_1c}{align}
+"Rotate"
+{remuserstyle STYLE_1c}{align 0}
+" to apply the rotation."
+{align 1}{newpara}{align 0}
+"Dragging with "
+{adduserstyle STYLE_17}
+"ADJUST"
+{remuserstyle STYLE_17}
+" behaves similarly, except that it performs an initial horizontal flip. "
+{adduserstyle STYLE_17}
+"SELECT"
+{remuserstyle STYLE_17}
+" and "
+{adduserstyle STYLE_17}
+"ADJUST"
+{remuserstyle STYLE_17}
+" allow all possible flips and rotations to be applied."
+{newpara}
+"The icon in the top left hand corner of the window shows which rotation, or "
+"transformation, will occur."
+{newpara}{adduserstyle STYLE_15}
+"Keys"
+{newpara}{remuserstyle STYLE_15}{align}
+"The equivalent key presses in the viewer window are "
+{adduserstyle STYLE_17}
+"Ctrl L"
+{remuserstyle STYLE_17}
+" and "
+{adduserstyle STYLE_17}
+"Ctrl R"
+{remuserstyle STYLE_17}
+" to rotate left and right respectively and "
+{adduserstyle STYLE_17}
+"Ctrl H"
+{remuserstyle STYLE_17}
+" and "
+{adduserstyle STYLE_17}
+"Ctrl V"
+{remuserstyle STYLE_17}
+" respectively to perform horizontal and vertical flips."
+{newpara}{endoftext}
+}
+
+TEXT_23a={textframe
+{master TEXT_22e}{local 0}
+}
+
+TEXT_23d={textframe
+{master TEXT_231}{local 0}
+}
+
+TEXT_240={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 19841}
+{y 19842}
+{w 555590}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_241={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"The Choices Window"
-{newpara}{remuserstyle STYLE_12}
+"Rotate"
+{remuserstyle STYLE_12}{endoftext}
+}
+
+CHAP_244={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+{omitheader 0} {omitfooter 0}
+{chapternumber 9}
+{pagenumberformat 2}
+{startonleft 0}
+}
+
+PAGE_245={masterpage {colourvalue COL_02 0x10000 0}}
+
+TEXT_246={textframe
+{lock 0} {spread 0}
+{masterframe 1}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 2}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 19842}
+{y 19842}
+{w 555587}
+{h 367091}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+TEXT_249={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 19842}
+{y 391181}
+{w 270707}
+{h 14173}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_24a={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_11}
+"PrivateEye: The Choices Window"
+{endoftext}
+}
+
+TEXT_24c={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 304724}
+{y 391181}
+{w 270707}
+{h 14173}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_24d={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
+"Page "
+{pageno}{endoftext}
+}
+
+PAGE_24f={page}
+
+PICT_250={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 36635}
+{y 127490}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_433={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceview"}
+}
+
+PICT_252={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 36635}
+{y 49476}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_434={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicecol"}
+}
+
+PICT_254={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 36635}
+{y 49476}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_435={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicespr"}
+}
+
+PICT_256={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 318631}
+{y 49476}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_436={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicejpg"}
+}
+
+PICT_258={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 36635}
+{y 49476}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_437={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicegif"}
+}
+
+PICT_25a={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 318631}
+{y 49476}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_43a={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicepng"}
+}
+
+PICT_25c={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 36635}
+{y 49476}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_438={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicedrw"}
+}
+
+PICT_25e={pictframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 318631}
+{y 49476}
+{w 251343}
+{h 138844}
+}}
+{angle 0x0}
+{skew 0x0}
+{picturedata
+{lockmode 1}
+{aspectlock 1}
+{autoscale 0}
+{hide 0}
+{bottomleft 0}
+{x 36471}
+{y 422}
+{scale 0x8000}
+{aspect 0x10000}
+{angle 0x0}
+{skew 0x0}
+{tile 0 0 0}}
+}
+
+PICTURE_439={picture
+{reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceart"}
+}
+
+TEXT_260={textframe
+{master TEXT_246}{local 0}
+}
+
+STORY_261={story 
+{adduserstyle STYLE_01}
 "The Choices window is available from the icon bar menu. It provides control "
 "over a number of different aspects of "
 {bold 0}{italic 0}
@@ -3243,30 +3520,34 @@ STORY_246={story
 "."
 {newpara}{adduserstyle STYLE_15}
 "Viewer Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_235}{newpara}
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_250}{newpara}
 {adduserstyle STYLE_1c}{align}
 "Window size"
 {remuserstyle STYLE_1c}
 " "
 {align 0}
-"controls the size of the viewer window. "
-{adduserstyle STYLE_1c}{align}
+"controls the size of the viewer window."
+{newpara}{adduserstyle STYLE_1c}{adduserstyle STYLE_19}{align}
 "Fit to image"
-{remuserstyle STYLE_1c}{align 0}
-" sizes viewer windows to fit exactly the contained image. "
-{adduserstyle STYLE_1c}{align}
+{remuserstyle STYLE_1c}{remuserstyle STYLE_19}{adduserstyle STYLE_19}{align 0}
+" sizes viewer windows to fit exactly the contained image."
+{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_1c}{adduserstyle STYLE_19}
+{align}
 "Fit to screen"
-{remuserstyle STYLE_1c}{align 0}
-" makes viewer windows "
-{italic 1}
+{remuserstyle STYLE_1c}{remuserstyle STYLE_19}{adduserstyle STYLE_19}{align 0}
+" makes viewer windows"
+{align}
+" "
 "at least"
-{italic 0}
-" the size of the screen."
-{italic}{newpara}{adduserstyle STYLE_1c}{align}
+" "
+{italic 0}{align 0}
+"the size of the screen."
+{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_14}{italic}{newpara}
+{remuserstyle STYLE_14}{adduserstyle STYLE_1c}{align}
 "Image scale"
 {remuserstyle STYLE_1c}{align 0}
 " controls the image scale applied when a new image is loaded. The choices "
-"are much the same as those available from the "
+"are similar to those in the "
 {adduserstyle STYLE_1c}{align}
 "Scale view"
 {remuserstyle STYLE_1c}{align 0}
@@ -3309,21 +3590,22 @@ STORY_246={story
 "Size"
 {remuserstyle STYLE_1c}
 " controls the size of the cache. The default is zero which disables the "
-"cache. Choose a non-zero value to enable the cache."
+"cache. Choose a non-zero KByte value to enable the cache."
 {newpara}
 "Use "
 {adduserstyle STYLE_1c}
 "Empty cache"
 {remuserstyle STYLE_1c}
 " on the icon bar menu to discard all cached images."
-{newpage}{adduserstyle STYLE_15}{align}
+{newpara}{adduserstyle STYLE_15}{align}
 "Colour Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_237}{newpara}
-{adduserstyle STYLE_1c}{align}
-"Colour Correction"
-{remuserstyle STYLE_1c}
-" provides a simple gamma, contrast and brightness control which affects the "
-"whole desktop."
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_252}{newpara}
+{adduserstyle STYLE_1b}{align}
+"Screen Correction"
+{remuserstyle STYLE_1b}
+" "
+"provides a simple gamma, contrast "
+"and brightness control which affects the whole desktop."
 {newpara}{adduserstyle STYLE_1c}
 "Enable correction"
 {remuserstyle STYLE_1c}
@@ -3331,8 +3613,8 @@ STORY_246={story
 {newpara}{adduserstyle STYLE_15}{newpage}
 "Common File Format Choices"
 {newpara}{remuserstyle STYLE_15}
-"There are some common choices which exist for every file format. To avoid "
-"repetition, they are described here in advance."
+"There are choices which exist for every file format. To avoid repetition, "
+"they are described here in advance."
 {newpara}{adduserstyle STYLE_1c}
 "Load on double-click"
 {remuserstyle STYLE_1c}
@@ -3345,13 +3627,29 @@ STORY_246={story
 {newpara}{adduserstyle STYLE_1c}{bold}{italic}{underline}{reverse}{sub}
 "Background"
 {remuserstyle STYLE_1c}
-" sets the background colour which is used for masked images and when in îfit "
-"to screenï mode."
+" opens a ColourPicker dialogue which sets the background colour used for "
+"masked images and when in îfit to screenï mode. If "
+{adduserstyle STYLE_1c}
+"None"
+{remuserstyle STYLE_1c}
+" is chosen for the colour then a checkered background will be used."
 {newpara}{adduserstyle STYLE_15}{newpage}
 "Sprite Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_239}{newpara}{align}
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_254}{newpara}{align}
 "Sprite choices will affect any file format which is converted into Sprite "
-"format for display (i.e. GIFs, PNGs, JPEGs)."
+"format for display (i.e. "
+{adduserstyle STYLE_1f}
+"GIFs"
+{remuserstyle STYLE_1f}
+", "
+{adduserstyle STYLE_1f}
+"PNGs"
+{remuserstyle STYLE_1f}
+", "
+{adduserstyle STYLE_1f}
+"JPEGs)"
+{remuserstyle STYLE_1f}
+"."
 {newpara}{adduserstyle STYLE_1c}
 "Dithering"
 {remuserstyle STYLE_1c}
@@ -3377,13 +3675,17 @@ STORY_246={story
 {bold 0}{italic 0}
 {underline 0 {type 1} {thickness 1310} {colourvalue COL_03 0x10000 0} {wordunderline 0} {doubleunderline 0}}
 {reverse 0}{super 0}{sub 0}
-"will draw the sprite, where possible, using the Tinct module. Tinct is "
-"supplied with Netsurf. Tinct offers higher quality diffusion than the "
-"regular OS sprite plotting routines."
+"will draw the Sprite, where possible, using the Tinct module. Tinct offers "
+"higher quality error diffusion than the regular "
+{adduserstyle STYLE_1f}
+"OS"
+{remuserstyle STYLE_1f}
+" sprite plotting routines. PrivateEye uses Tinct in any case to display "
+"images with alpha channel data."
 {newpara}{adduserstyle STYLE_15}{bold}{italic}{underline}{reverse}{sub}
 {newpage}
 "JPEG Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_23b}{newpara}
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_256}{newpara}
 {adduserstyle STYLE_1c}{align}
 "Dithering"
 {remuserstyle STYLE_1c}
@@ -3401,13 +3703,21 @@ STORY_246={story
 {remuserstyle STYLE_1c}
 "."
 {newpara}
-"By default JPEGs are retained in memory in their native format. If this is "
-"not desirable, perhaps to speed up redraw or to be able to use the Histogram "
-"or Editing windows, then enable "
+"By default "
+{adduserstyle STYLE_1f}
+"JPEGs"
+{remuserstyle STYLE_1f}
+" are retained in memory in their native format. If this is not desirable, "
+"perhaps to speed up redraw or to be able to use the Histogram or Editing "
+"windows, then enable "
 {adduserstyle STYLE_1c}
 "Convert to sprite"
 {remuserstyle STYLE_1c}
-". The JPEG will be decompressed to an 8bpp grey or 32bpp colour Sprite."
+". The "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" will be decompressed to an 8bpp grey or 32bpp colour Sprite."
 {newpara}
 "The lossless JPEG rotation code cannot transform boundary blocks. Enabling "
 {adduserstyle STYLE_1c}
@@ -3416,23 +3726,19 @@ STORY_246={story
 " will cause those boundary blocks to be discarded in rotation."
 {newpara}{adduserstyle STYLE_15}{newpage}
 "GIF Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_23d}{newpara}{align}
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_258}{newpara}{align}
 "See "
-{italic 1}
 "Common File Format Choices"
-{italic 0}
 "."
-{align 0}{italic}{newpara}{align}{newpage}{adduserstyle STYLE_15}
+{align 0}{newpara}{align}{newpage}{adduserstyle STYLE_15}
 "PNG Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_23f}{newpara}{align}
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_25a}{newpara}{align}
 "See "
-{italic 1}
 "Common File Format Choices"
-{italic 0}
 "."
-{italic}{newpara}{newpage}{adduserstyle STYLE_15}
+{newpara}{newpage}{adduserstyle STYLE_15}
 "DrawFile Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_241}{newpara}
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_25c}{newpara}
 {adduserstyle STYLE_1c}{align}
 "Flatness"
 {remuserstyle STYLE_1c}
@@ -3452,15 +3758,15 @@ STORY_246={story
 {adduserstyle STYLE_1c}
 "Automatic"
 {remuserstyle STYLE_1c}
-". It controls how many lines bezier curves are broken down into for "
+". It controls how many lines BÈzier curves are broken down into for "
 "rendering."
 {newpara}
-"The DrawFile module's automatic setting does not always seem to work well. "
-"This control is provided to allow the user to force a high-quality render "
-"when viewing at high zoom levels."
+"The DrawFile module's automatic setting does not always work well. This "
+"control is provided to allow the user to force a high-quality render when "
+"viewing at high zoom levels."
 {newpara}{adduserstyle STYLE_15}{newpage}
 "ArtWorks Choices"
-{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_243}{newpara}
+{newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_25e}{newpara}
 {adduserstyle STYLE_1c}{align}
 "Quality"
 {remuserstyle STYLE_1c}
@@ -3484,15 +3790,15 @@ STORY_246={story
 {endoftext}
 }
 
-TEXT_248={textframe
-{master TEXT_22e}{local 0}
+TEXT_263={textframe
+{master TEXT_249}{local 0}
 }
 
-TEXT_24b={textframe
-{master TEXT_231}{local 0}
+TEXT_266={textframe
+{master TEXT_24c}{local 0}
 }
 
-TEXT_433={textframe
+TEXT_269={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3501,94 +3807,95 @@ TEXT_433={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304722}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555586}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_434={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_26a={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Choices"
+{remuserstyle STYLE_12}{endoftext}
 }
 
-PAGE_24e={page}
+PAGE_26c={page}
 
-TEXT_24f={textframe
-{master TEXT_22b}{local 0}
+TEXT_26d={textframe
+{master TEXT_246}{local 0}
 }
 
-TEXT_250={textframe
-{master TEXT_22e}{local 0}
+TEXT_26e={textframe
+{master TEXT_249}{local 0}
 }
 
-TEXT_253={textframe
-{master TEXT_231}{local 0}
+TEXT_271={textframe
+{master TEXT_24c}{local 0}
 }
 
-PAGE_256={page}
+PAGE_274={page}
 
-TEXT_257={textframe
-{master TEXT_22b}{local 0}
+TEXT_275={textframe
+{master TEXT_246}{local 0}
 }
 
-TEXT_258={textframe
-{master TEXT_22e}{local 0}
+TEXT_276={textframe
+{master TEXT_249}{local 0}
 }
 
-TEXT_25b={textframe
-{master TEXT_231}{local 0}
+TEXT_279={textframe
+{master TEXT_24c}{local 0}
 }
 
-PAGE_25e={page}
+PAGE_27c={page}
 
-TEXT_25f={textframe
-{master TEXT_22b}{local 0}
+TEXT_27d={textframe
+{master TEXT_246}{local 0}
 }
 
-TEXT_260={textframe
-{master TEXT_22e}{local 0}
+TEXT_27e={textframe
+{master TEXT_249}{local 0}
 }
 
-TEXT_263={textframe
-{master TEXT_231}{local 0}
+TEXT_281={textframe
+{master TEXT_24c}{local 0}
 }
 
-PAGE_266={page}
+PAGE_284={page}
 
-TEXT_267={textframe
-{master TEXT_22b}{local 0}
+TEXT_285={textframe
+{master TEXT_246}{local 0}
 }
 
-TEXT_268={textframe
-{master TEXT_22e}{local 0}
+TEXT_286={textframe
+{master TEXT_249}{local 0}
 }
 
-TEXT_26b={textframe
-{master TEXT_231}{local 0}
+TEXT_289={textframe
+{master TEXT_24c}{local 0}
 }
 
-CHAIN_246={textchain
-TEXT_245
-TEXT_24f
-TEXT_257
-TEXT_25f
-TEXT_267
+CHAIN_261={textchain
+TEXT_260
+TEXT_26d
+TEXT_275
+TEXT_27d
+TEXT_285
 }
 
-CHAP_26f={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_295={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 10}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_270={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_296={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_271={textframe
+TEXT_297={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -3607,7 +3914,7 @@ TEXT_271={textframe
 {skew 0x0}
 }
 
-TEXT_274={textframe
+TEXT_29a={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3625,13 +3932,13 @@ TEXT_274={textframe
 {skew 0x0}
 }
 
-STORY_275={story 
+STORY_29b={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Control Summary"
 {endoftext}
 }
 
-TEXT_277={textframe
+TEXT_29d={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3649,64 +3956,67 @@ TEXT_277={textframe
 {skew 0x0}
 }
 
-STORY_278={story 
+STORY_29e={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_27a={page}
+PAGE_2a0={page}
 
-TEXT_27b={textframe
-{master TEXT_271}{local 0}
+TEXT_2a1={textframe
+{master TEXT_297}{local 0}
 }
 
-STORY_27c={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"Control Summary"
-{newpara}{remuserstyle STYLE_12}{adduserstyle STYLE_15}
+STORY_2a2={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_15}
 "Mouse Controls"
 {newpara}{remuserstyle STYLE_15}{tabruler }
-{tabruler {tableader ""} {righttab 65197}{lefttab 68031}{tableader "."}
-{lefttab 170079}}
+{tabruler {tableader ""} {righttab 68031}{lefttab 73701}{tableader "."}
+{lefttab 155906}}
 {tab}
 " "
-{tab}{adduserstyle STYLE_17}{tabruler}
-"SELECT "
-{remuserstyle STYLE_17}{tabruler }{tabruler {tableader ""} {righttab 65197}
-{lefttab 68031}{tableader "."}{lefttab 170079}}
 {tab}{adduserstyle STYLE_17}
-{tabruler}
+"SELECT "
+{remuserstyle STYLE_17}{tab}{adduserstyle STYLE_17}
 "ADJUST "
-{remuserstyle STYLE_17}{tabruler }{tabruler {tableader ""} {righttab 65197}
-{lefttab 68031}{tableader "."}{lefttab 170079}}
-{newline}{tab}{italic 1}
-"none"
-{italic}{tab}
+{remuserstyle STYLE_17}{newline}{tab}{tab}
 "Gain focus"
 {tab}
 "Gain focus"
-{newline}{tab}{adduserstyle STYLE_17}
+{newline}{tab}
+"+"
+{adduserstyle STYLE_17}
 "Shift"
 {remuserstyle STYLE_17}{tab}
 "Zoom in to point"
 {tab}
 "Zoom out from point"
-{newline}{tab}{adduserstyle STYLE_17}
+{newline}{tab}
+"+"
+{adduserstyle STYLE_17}
 "Ctrl"
 {remuserstyle STYLE_17}{tab}
 "Scroll to point"
-{tab}{newline}{tab}{adduserstyle STYLE_17}
+{tab}
+"(n"
+"o action)"
+{newline}{tab}
+"+"
+{adduserstyle STYLE_17}
 "Drag"
 {remuserstyle STYLE_17}{tab}
 "Grab "
 {tab}
 "Zoom to box"
-{newline}{adduserstyle STYLE_17}{tab}
-"Shift Ctrl"
+{newline}{tab}{adduserstyle STYLE_17}
+"+Shift+Ctrl"
 {remuserstyle STYLE_17}{tab}
-"Embed viewer window"
-{tab}{newpara}{adduserstyle STYLE_15}{tabruler}
+"Embed window"
+{tab}
+"(n"
+"o action)"
+{newpara}{adduserstyle STYLE_15}{tabruler}
 "Keyboard Controls"
 {newpara}{remuserstyle STYLE_15}
 "Viewer windows accept the input focus. These are the keys you can use whilst "
@@ -3714,27 +4024,15 @@ STORY_27c={story
 {newpara}{leftindent 1 14173}{firstindent 0}{tabruler }
 {tabruler {tableader ""} {righttab 102047}{tableader "."}{lefttab 119055}}
 
-{tab}{adduserstyle STYLE_17}
-"Up"
-{remuserstyle STYLE_17}{tab}
-"Scroll up"
-{newline}{tab}{adduserstyle STYLE_17}
-"Down"
-{remuserstyle STYLE_17}{tab}
-"Scroll down"
-{newline}{tab}{adduserstyle STYLE_17}
-"Left"
-{remuserstyle STYLE_17}{tab}
-"Scroll left"
-{newline}{tab}{adduserstyle STYLE_17}
-"Right"
-{remuserstyle STYLE_17}{tab}
-"Scroll right"
+{tab}{adduserstyle STYLE_17}{adduserstyle STYLE_22}
+"≠  Ø  ¨  Æ"
+{remuserstyle STYLE_17}{remuserstyle STYLE_22}{tab}
+"Scroll up, down, left, right"
 {newline}{tab}{adduserstyle STYLE_17}
 "Ctrl Z"
 {remuserstyle STYLE_17}{tab}
 "Scroll somewhere random"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newline}{tab}{adduserstyle STYLE_17}
 "Ctrl W"
 {remuserstyle STYLE_17}{tab}
 "Zoom in    "
@@ -3754,7 +4052,7 @@ STORY_27c={story
 "F11"
 {remuserstyle STYLE_17}{tab}
 "Open Scale dialogue"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "Ctrl L"
 {remuserstyle STYLE_17}{tab}
 "Rotate left"
@@ -3774,15 +4072,15 @@ STORY_27c={story
 "Ctrl O"
 {remuserstyle STYLE_17}{tab}
 "Open Rotate dialogue"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "Ctrl C"
 {remuserstyle STYLE_17}{tab}
 "Copy to clipboard"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "Ctrl N"
 {remuserstyle STYLE_17}{tab}
 "New view"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "F3"
 {remuserstyle STYLE_17}{tab}
 "Open Save dialogue"
@@ -3790,7 +4088,7 @@ STORY_27c={story
 "Ctrl S"
 {remuserstyle STYLE_17}{tab}
 "Convert to Sprite"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "Ctrl I"
 {remuserstyle STYLE_17}{tab}
 "Open Histogram window"
@@ -3798,31 +4096,35 @@ STORY_27c={story
 "Ctrl E"
 {remuserstyle STYLE_17}{tab}
 "Open Effects window"
-{newline}{newline}{adduserstyle STYLE_17}
-"Page Down & SPACE"
-{newline}{tab}{tab}{remuserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
+"Page Down/SPACE"
+{remuserstyle STYLE_17}{tab}
 "Move to next file in directory"
 {newline}{tab}{adduserstyle STYLE_17}
 "Page Up"
 {remuserstyle STYLE_17}{tab}
 "Move to previous file"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newline}{tab}{adduserstyle STYLE_17}
 "Ctrl F2 & Esc"
 {remuserstyle STYLE_17}{tab}
 "Close viewer window"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "Esc"
 {remuserstyle STYLE_17}{tab}
-"Cancel drag operation"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+"Close the viewer window"
+{newline}{tab}{adduserstyle STYLE_17}
+"Esc"
+{remuserstyle STYLE_17}{tab}
+"Cancel drag (when dragging)"
+{newpara}{tab}{adduserstyle STYLE_17}
 "Ctrl K"
 {remuserstyle STYLE_17}{tab}
 "Kill (delete file)"
-{newline}{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "F1"
 {remuserstyle STYLE_17}{tab}
 "Start Interactive Help"
-{newline}{tab}{adduserstyle STYLE_17}
+{newpara}{tab}{adduserstyle STYLE_17}
 "Shift F1"
 {remuserstyle STYLE_17}{tab}
 "Open Image Info window"
@@ -3837,15 +4139,15 @@ STORY_27c={story
 {leftindent}{firstindent}{tabruler}{endoftext}
 }
 
-TEXT_27e={textframe
-{master TEXT_274}{local 0}
+TEXT_2a4={textframe
+{master TEXT_29a}{local 0}
 }
 
-TEXT_281={textframe
-{master TEXT_277}{local 0}
+TEXT_2a7={textframe
+{master TEXT_29d}{local 0}
 }
 
-TEXT_44c={textframe
+TEXT_2aa={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3854,49 +4156,31 @@ TEXT_44c={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304726}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555590}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_44d={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_2ab={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Controls"
+{remuserstyle STYLE_12}{endoftext}
 }
 
-PAGE_455={page}
-
-TEXT_456={textframe
-{master TEXT_271}{local 0}
-}
-
-TEXT_459={textframe
-{master TEXT_274}{local 0}
-}
-
-TEXT_45d={textframe
-{master TEXT_277}{local 0}
-}
-
-CHAIN_27c={textchain
-TEXT_27b
-TEXT_456
-}
-
-CHAP_285={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_2ae={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 11}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_286={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_2af={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_287={textframe
+TEXT_2b0={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -3915,7 +4199,7 @@ TEXT_287={textframe
 {skew 0x0}
 }
 
-TEXT_28a={textframe
+TEXT_2b3={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3933,13 +4217,13 @@ TEXT_28a={textframe
 {skew 0x0}
 }
 
-STORY_28b={story 
+STORY_2b4={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Keymap"
 {endoftext}
 }
 
-TEXT_28d={textframe
+TEXT_2b6={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3957,34 +4241,55 @@ TEXT_28d={textframe
 {skew 0x0}
 }
 
-STORY_28e={story 
+STORY_2b7={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_290={page}
+PAGE_2b9={page}
 
-TEXT_291={textframe
-{master TEXT_287}{local 0}
+TEXT_2ba={textframe
+{master TEXT_2b0}{local 0}
 }
 
-STORY_292={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"Viewer Window Keymap"
-{newpara}{remuserstyle STYLE_12}
-"The key assignments for the viewer window may be customised by altering a "
-"Keys file, which is held in PrivateEye's Choices directory:"
-{newpara}{adduserstyle STYLE_16}
+STORY_2bb={story 
+{adduserstyle STYLE_01}
+"PrivateEyeës key assignments may be customised or supplemented by editing a "
+"file called êKeysë, which is held in PrivateEye's Choices directory: "
+{adduserstyle STYLE_16}
 "Choices:PrivateEye.Keys"
-{newpara}{remuserstyle STYLE_16}
-"This is held in your !Boot application e.g. "
+{remuserstyle STYLE_16}
+". This usually lives inside your !Boot application as "
 {adduserstyle STYLE_16}
 "!Boot.Choices.PrivateEye.Keys"
-{remuserstyle STYLE_16}{newpara}{adduserstyle STYLE_15}
+{remuserstyle STYLE_16}
+"."
+{newpara}{adduserstyle STYLE_15}
+"Sections"
+{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_16}
+"Keys"
+{remuserstyle STYLE_16}
+" is a text file built of sections. Sections begin with a square bracketed "
+"line "
+{adduserstyle STYLE_16}
+"[Like This]"
+{remuserstyle STYLE_16}
+" and are followed by a series of entries."
+{newpara}
+"Two sections are presently used: "
+{adduserstyle STYLE_16}
+"[Common]"
+{remuserstyle STYLE_16}
+" and "
+{adduserstyle STYLE_16}
+"[Viewer]"
+{remuserstyle STYLE_16}
+". Common is searched after a lookup in a more specific section is exhausted."
+{newpara}{adduserstyle STYLE_15}
 "Entries"
 {newpara}{remuserstyle STYLE_15}
-"Each line of the file is of the form:"
+"Each entry within a section is of the form:"
 {newpara}{adduserstyle STYLE_16}
 "[modifier]keyname:action"
 {remuserstyle STYLE_16}{newpara}
@@ -3995,22 +4300,28 @@ STORY_292={story
 " indicates an optional part."
 {newpara}
 "Tokens are case sensitive."
-{newpara}{adduserstyle STYLE_15}
+{newpage}{adduserstyle STYLE_15}
 "Modifiers"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_16}
 "S_"
 {remuserstyle STYLE_16}
-"  Shift"
-{newline}{adduserstyle STYLE_16}
+"  "
+{adduserstyle STYLE_17}
+"Shift"
+{remuserstyle STYLE_17}{newline}{adduserstyle STYLE_16}
 "C_"
 {remuserstyle STYLE_16}
-"  Ctrl"
-{adduserstyle STYLE_16}{newline}
+"  "
+{adduserstyle STYLE_17}
+"Ctrl"
+{remuserstyle STYLE_17}{adduserstyle STYLE_16}{newline}
 "SC_"
 {remuserstyle STYLE_16}
-" Shift Ctrl"
-{newpara}{adduserstyle STYLE_15}{newpage}
-"Special key names understood"
+" "
+{adduserstyle STYLE_17}
+"Shift Ctrl"
+{remuserstyle STYLE_17}{newpara}{adduserstyle STYLE_15}
+"Special key names"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_16}
 "Escape"
 {remuserstyle STYLE_16}
@@ -4090,12 +4401,16 @@ STORY_292={story
 {adduserstyle STYLE_16}
 "Right"
 {remuserstyle STYLE_16}{newpara}{adduserstyle STYLE_15}
-"Action names understood"
+"Common action names"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_16}{textsize 9000}
 "Close"
 {remuserstyle STYLE_16}{textsize}
 ", "
-{adduserstyle STYLE_16}
+{adduserstyle STYLE_16}{textsize 9000}
+"Help"
+{textsize}{newpara}{remuserstyle STYLE_16}{adduserstyle STYLE_15}
+"Viewer action names"
+{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_16}
 "ConvToSpr"
 {remuserstyle STYLE_16}
 ", "
@@ -4105,10 +4420,6 @@ STORY_292={story
 ", "
 {adduserstyle STYLE_16}{textsize 9000}
 "Effects"
-{remuserstyle STYLE_16}{textsize}
-", "
-{adduserstyle STYLE_16}{textsize 9000}
-"Help"
 {remuserstyle STYLE_16}{textsize}
 ", "
 {adduserstyle STYLE_16}{textsize 9000}
@@ -4201,14 +4512,19 @@ STORY_292={story
 ", "
 {adduserstyle STYLE_16}{textsize 9000}
 "ZoomToggle"
-{textsize}{newpara}{remuserstyle STYLE_16}{adduserstyle STYLE_15}
+{textsize}{newpara}{remuserstyle STYLE_16}{adduserstyle STYLE_15}{newpage}
 "Examples"
 {newpara}{remuserstyle STYLE_15}
-"To make "
+"To make a "
 {adduserstyle STYLE_17}
-"Tab "
+"Tab"
 {remuserstyle STYLE_17}
-"step forwards to the next image, add:"
+" keypress step forwards to the next image, when in a viewer window, add the "
+"following to the "
+{adduserstyle STYLE_16}
+"[Viewer]"
+{remuserstyle STYLE_16}
+" section of a Keys file:"
 {newpara}{adduserstyle STYLE_16}
 "Tab:StepForwards"
 {remuserstyle STYLE_16}{newpara}
@@ -4219,18 +4535,18 @@ STORY_292={story
 " step backwards to the previous image:"
 {newpara}{adduserstyle STYLE_16}
 "S_Tab:StepBackwards"
-{remuserstyle STYLE_16}{newpara}{endoftext}
+{newpara}{remuserstyle STYLE_16}{endoftext}
 }
 
-TEXT_294={textframe
-{master TEXT_28a}{local 0}
+TEXT_2bd={textframe
+{master TEXT_2b3}{local 0}
 }
 
-TEXT_297={textframe
-{master TEXT_28d}{local 0}
+TEXT_2c0={textframe
+{master TEXT_2b6}{local 0}
 }
 
-TEXT_465={textframe
+TEXT_2c3={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4239,30 +4555,50 @@ TEXT_465={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304722}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555586}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_466={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_2c4={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Keymap"
+{remuserstyle STYLE_12}{endoftext}
 }
 
-CHAP_29b={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+PAGE_2c6={page}
+
+TEXT_2c7={textframe
+{master TEXT_2b0}{local 0}
+}
+
+TEXT_2c8={textframe
+{master TEXT_2b3}{local 0}
+}
+
+TEXT_2cb={textframe
+{master TEXT_2b6}{local 0}
+}
+
+CHAIN_2bb={textchain
+TEXT_2ba
+TEXT_2c7
+}
+
+CHAP_2cf={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 12}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_29c={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_2d0={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_29d={textframe
+TEXT_2d1={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -4281,7 +4617,7 @@ TEXT_29d={textframe
 {skew 0x0}
 }
 
-TEXT_2a0={textframe
+TEXT_2d4={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4299,13 +4635,13 @@ TEXT_2a0={textframe
 {skew 0x0}
 }
 
-STORY_2a1={story 
+STORY_2d5={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: History"
 {endoftext}
 }
 
-TEXT_2a3={textframe
+TEXT_2d7={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4323,39 +4659,148 @@ TEXT_2a3={textframe
 {skew 0x0}
 }
 
-STORY_2a4={story 
+STORY_2d8={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_2a6={page}
+PAGE_2da={page}
 
-TEXT_2a7={textframe
-{master TEXT_29d}{local 0}
+TEXT_2db={textframe
+{master TEXT_2d1}{local 0}
 }
 
-STORY_2a8={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{tabruler }
-{tabruler {tableader ""} {righttab 68031}{tableader "."}{lefttab 90709}}
-
-"History"
-{remuserstyle STYLE_12}{newpara}{adduserstyle STYLE_15}{tabruler}
-"Version 3.00 (xx xxx 2010)"
+STORY_2dc={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_15}
+"Version 2.99 (05 Feb 2012)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
-"Tagging"
+"Open sourced"
 {newpara}{remuserstyle STYLE_18}
-"Lorem ipsum dolor sit amet."
+"This is the first release of PrivateEye since I opened up the source on "
+"riscos.info."
+{newpara}
+"The source now lives at "
+{adduserstyle STYLE_20}
+"svn://svn.riscos.info/privateeye"
+{remuserstyle STYLE_20}
+". This is also accessible as "
+{adduserstyle STYLE_20}
+"http://www.riscos.info/websvn/listing.php?repname=privateeye"
+{remuserstyle STYLE_20}
+" for the web-based repository viewer. "
 {newpara}{adduserstyle STYLE_18}
-"Thumbview"
+"License updated"
 {newpara}{remuserstyle STYLE_18}
-"Lorem ipsum dolor sit amet."
-{newpara}{adduserstyle STYLE_15}{newpage}
+"The old license was a bit vague which concerned the Raspberry Pi boys. Iëve "
+"updated it to be a "
+{adduserstyle STYLE_1f}
+"BSD"
+{remuserstyle STYLE_1f}
+" two-clause type license."
+{newpara}{remuserstyle STYLE_01}{adduserstyle STYLE_10}{adduserstyle STYLE_01}
+{adduserstyle STYLE_18}
+"Rebuilt for ARMv7 compatibility"
+{newpara}{remuserstyle STYLE_10}{remuserstyle STYLE_01}{remuserstyle STYLE_18}
+{adduserstyle STYLE_01}
+"Built using Norcroft "
+{adduserstyle STYLE_1f}
+"RISC OS"
+{remuserstyle STYLE_1f}
+" "
+{adduserstyle STYLE_1f}
+"ARM"
+{remuserstyle STYLE_1f}
+" C vsn 5.69 [20 Oct 2010] this "
+{adduserstyle STYLE_1d}
+"should"
+{remuserstyle STYLE_1d}
+" "
+{italic 0}
+"now be BeagleBoard, ARMini, etc. compatible."
+{italic}{newpara}{remuserstyle STYLE_01}{adduserstyle STYLE_10}
+{adduserstyle STYLE_01}{adduserstyle STYLE_18}
+"Improved blur effect"
+{newpara}{remuserstyle STYLE_10}{remuserstyle STYLE_01}{remuserstyle STYLE_18}
+{adduserstyle STYLE_01}
+"You can now choose between box or gaussian blurs and the blur radius can now "
+"be increased up to 47 pixels."
+{newpara}{adduserstyle STYLE_18}
+"îMidpointï curve effect"
+{newpara}{remuserstyle STYLE_18}
+"This sets the value of the middle curve point and linearly interpolates "
+"between the extremes. Itës useful for creating some tinting effects."
+{newpara}{adduserstyle STYLE_18}
+"FFG import improvements"
+{newpara}{remuserstyle STYLE_18}
+"Generally "
+{adduserstyle STYLE_1f}
+"FFG"
+{remuserstyle STYLE_1f}
+" is more reliable now."
+{newpara}
+"Iëve fixed the spurious ê"
+{adduserstyle STYLE_1f}
+"FFG"
+{remuserstyle STYLE_1f}
+" translator diedë message appearing when PrivateEye saw FFG messages not "
+"intended for it, e.g. when using Ovation Pro."
+{newpara}{remuserstyle STYLE_01}{adduserstyle STYLE_10}{adduserstyle STYLE_01}
+{adduserstyle STYLE_18}
+"Keymaps"
+{newpara}{remuserstyle STYLE_10}{remuserstyle STYLE_01}{remuserstyle STYLE_18}
+{adduserstyle STYLE_01}
+"Keymaps are now split into separate "
+{adduserstyle STYLE_16}
+"[Sections]"
+{remuserstyle STYLE_16}
+" to allow for future features. Tokens now make sense only within the "
+"appropriate section."
+{newpara}{adduserstyle STYLE_18}
+"libjpeg"
+{newpara}{remuserstyle STYLE_18}
+"Updated to libjpeg-8c."
+{newpara}{adduserstyle STYLE_18}
+"& also..."
+{remuserstyle STYLE_18}{adduserstyle STYLE_14}{newpara}{remuserstyle STYLE_01}
+{remuserstyle STYLE_14}{adduserstyle STYLE_10}{adduserstyle STYLE_01}
+{adduserstyle STYLE_14}
+"Allowed image cache sizes up to 256M. Added "
+{remuserstyle STYLE_14}{adduserstyle STYLE_16}{adduserstyle STYLE_14}
+"PrivateEye$DALimit"
+{remuserstyle STYLE_16}{remuserstyle STYLE_14}{adduserstyle STYLE_14}
+" to control dynamic area maximum size. See "
+{adduserstyle STYLE_16}
+"!Run"
+{remuserstyle STYLE_16}
+"."
+{newpara}
+"Added a wider range of default image scale values to the viewer choices."
+{newpara}
+"Fix: We now close the effects window when an image is entered into the cache."
+{newpara}
+"Added a little bit of anti-aliasing to the êfx-dynamicë and êfx-equaliseë "
+"effects icons."
+{newpara}{remuserstyle STYLE_10}{remuserstyle STYLE_01}{remuserstyle STYLE_14}
+{adduserstyle STYLE_01}{adduserstyle STYLE_14}
+"PrivateEye will now build using "
+{remuserstyle STYLE_14}{adduserstyle STYLE_1f}{adduserstyle STYLE_14}
+"GCCSDK"
+{remuserstyle STYLE_1f}{remuserstyle STYLE_14}{adduserstyle STYLE_14}
+"."
+{newpara}
+"Numerous changes to the internals for robustness and to enable future "
+"features."
+{newpara}{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}
 "Version 2.85 (03 Jun 2008)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Alpha channel transparency support"
 {newpara}{remuserstyle STYLE_18}
-"Sprites and PNGs may specify an "
+"Sprites and "
+{adduserstyle STYLE_1f}
+"PNGs"
+{remuserstyle STYLE_1f}
+" may specify an "
 {adduserstyle STYLE_1b}
 "alpha channel"
 {remuserstyle STYLE_1b}
@@ -4363,9 +4808,19 @@ STORY_2a8={story
 "is assumed to contain transparency information. (Although sometimes theyëre "
 "used for masks rather than transparency.)"
 {newpara}
-"Sprites containing alpha channels in their top byte (like Variations, "
-"TextEffX, etc. use) are recognised, but RISC†OS Select format alpha sprites "
-"are not yet understood."
+"Sprites containing alpha channels in their top byte (like "
+{adduserstyle STYLE_1e}
+"Variations"
+{remuserstyle STYLE_1e}
+", "
+{adduserstyle STYLE_1e}
+"TextEffX"
+{remuserstyle STYLE_1e}
+", etc. use) are recognised, but "
+{adduserstyle STYLE_1f}
+"RISC†OS"
+{remuserstyle STYLE_1f}
+" Select format alpha sprites are not yet understood."
 {newpara}
 "Alpha channel images are plotted using the "
 {adduserstyle STYLE_1e}
@@ -4388,11 +4843,26 @@ STORY_2a8={story
 "The effects system has been upgraded to always preserve alpha channel data."
 {newpara}
 "The curve effect has been upgraded to allow editing of the alpha channel, "
-"where present. Itës also been made easier to use by turning the RGB option "
-"icons into radio icons and adding a dedicated combined RGB mode."
+"where present. Itës also been made easier to use by turning the "
+{adduserstyle STYLE_1f}
+"RGB"
+{remuserstyle STYLE_1f}
+" option icons into radio icons and adding a dedicated combined "
+{adduserstyle STYLE_1f}
+"RGB"
+{remuserstyle STYLE_1f}
+" mode."
 {newpara}
-"Iëve also added added a Reflect effect, which can be used to produce "
-"solarisation effects. The dialogue has also gained a êResetë button."
+"Iëve also added added a "
+{adduserstyle STYLE_1e}
+"Reflect"
+{remuserstyle STYLE_1e}
+" effect, which can be used to produce solarisation effects. The dialogue has "
+"also gained a "
+{adduserstyle STYLE_1c}
+"Reset"
+{remuserstyle STYLE_1c}
+" button."
 {adduserstyle STYLE_19}{newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_18}
 "Other changes for alpha "
 {remuserstyle STYLE_18}{adduserstyle STYLE_19}{adduserstyle STYLE_18}{newpara}
@@ -4403,9 +4873,12 @@ STORY_2a8={story
 {newpara}{adduserstyle STYLE_18}
 "Checkerboard pattern backgrounds"
 {newpara}{remuserstyle STYLE_18}
-"You can now choose êNoneë as the window background colour. This works for "
-"all formats. This uses Tinct to fill the window background with a "
-"checkerboard pattern."
+"You can now choose "
+{adduserstyle STYLE_1c}
+"None"
+{remuserstyle STYLE_1c}
+" as the window background colour. This works for all formats. This uses "
+"Tinct to fill the window background with a checkerboard pattern."
 {newpara}
 "Default choices have been changed so that bitmap backgrounds now use the "
 "checkerboard pattern."
@@ -4418,8 +4891,12 @@ STORY_2a8={story
 {remuserstyle STYLE_20}
 "."
 {adduserstyle STYLE_20}{newpara}{remuserstyle STYLE_20}
-"1, 2, 4 and 8bpp PNGs with single transparent palette entries are now "
-"converted into masked sprites of the same depth."
+"1, 2, 4 and 8bpp "
+{adduserstyle STYLE_1f}
+"PNGs"
+{remuserstyle STYLE_1f}
+" with single transparent palette entries are now converted into masked "
+"sprites of the same depth."
 {newpara}
 "bKGD chunks are used, where present, to set the viewer background colour. "
 "The image retains its transparency where present and draws on top of the "
@@ -4434,7 +4911,11 @@ STORY_2a8={story
 "Errors generated by libpng whilst decoding are reported using standard Wimp "
 "error dialogues."
 {newpara}
-"The unused PNG choices have been removed."
+"The unused "
+{adduserstyle STYLE_1f}
+"PNG"
+{remuserstyle STYLE_1f}
+" choices have been removed."
 {newpara}{adduserstyle STYLE_18}
 "& also..."
 {newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_14}
@@ -4447,14 +4928,29 @@ STORY_2a8={story
 "The !Run file now checks for modules before attempting to RMLoad them. This "
 "gives more accurate errors when required modules are missing."
 {newpara}
-"Fixed a crash when clicking MENU on the Choices window pane workarea."
-{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}{newpage}
+"Fixed a crash when clicking "
+{adduserstyle STYLE_17}
+"MENU"
+{remuserstyle STYLE_17}
+" on the Choices window pane workarea."
+{newpara}{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}
 "Version 2.75 (14 Jan 2008)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Metadata"
 {newpara}{remuserstyle STYLE_18}
-"New Metadata window displays the contents of JPEG COM, Exif and Adobe "
-"segments in a tree view."
+"A new "
+{adduserstyle STYLE_1e}
+"Metadata window"
+{remuserstyle STYLE_1e}
+" displays the contents of "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" "
+{adduserstyle STYLE_1f}
+"COM"
+{remuserstyle STYLE_1f}
+", Exif and Adobe segments in a tree view."
 {newpara}
 "The "
 {adduserstyle STYLE_1e}
@@ -4462,7 +4958,11 @@ STORY_2a8={story
 {remuserstyle STYLE_1e}
 " library is used to decode the Exif segment."
 {newpara}
-"Metadata is not available if the JPEG is converted to Sprite on loading."
+"Metadata is not available if the "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" is converted to Sprite on loading."
 {newpara}{adduserstyle STYLE_18}
 "Caching"
 {newpara}{remuserstyle STYLE_18}
@@ -4472,258 +4972,39 @@ STORY_2a8={story
 "Convert to Sprite"
 {newpara}{remuserstyle STYLE_18}
 "It wasnët very convenient to go to the Choices dialogue, enable an option "
-"and re-load a JPEG just to see its histogram or apply an effect, so you can "
-"now choose "
+"and re-load a "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" just to see its histogram or apply an effect, so you can now choose "
 {adduserstyle STYLE_1c}
 "Convert to Sprite"
 {remuserstyle STYLE_1c}
 " from the viewer menu, or use "
 {adduserstyle STYLE_17}
-"Ctrl-S"
+"Ctrl S"
 {remuserstyle STYLE_17}
 "."
 {newpara}{adduserstyle STYLE_18}
 "& also..."
 {newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_14}
-"Greyscale PNGs < 8bpp now load correctly."
-{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}{newpage}
-"Version 2.51 (17 Jul 2007)"
-{newpara}{remuserstyle STYLE_15}
-"Wimp_AutoScroll was being called even on Wimps earlier than 4.00 causing a "
-"crash on any OS prior to RISC†OS†4."
-{newpara}
-"Fixed some group title icons that would vanish on RISC†OS†<=†3.7 in the "
-"choices pane windows."
-{newpara}{adduserstyle STYLE_15}{newpage}
-"Version 2.50 (28 Jun 2007)"
-{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
-"Effects"
-{newpara}{remuserstyle STYLE_18}
-"New effects window allows brightness, contrast, gamma, bias, gain, tinting, "
-"blurring, sharpening, histogram equalisation, histogram expansion, greyscale "
-"and saturation adjustment on 32bpp Sprites."
-{newpara}
-"Effects are compounded and applied through an interpolative blending routine "
-"which allows effects outside the normal range to be achieved."
-{newpara}{adduserstyle STYLE_18}
-"Editing awareness"
-{newpara}{remuserstyle STYLE_18}
-"Previous versions didnët know when an image has been edited (the only "
-"editing operation available being rotation which was no great loss). It now "
-"knows if an image has been edited, and will query attempts to "
-"close/quit/replace etc. with a standard DCS/Quit dialogue."
-{newpara}{adduserstyle STYLE_18}
-"Histogram"
-{newpara}{remuserstyle STYLE_18}
-"Now a separate window no longer attached to the menu structure. One "
-"histogram window per image may be open."
-{newpara}
-"Can now choose which component to look at: luma, red, green or blue."
-{newpara}
-"New 'Cumulative' option lets you display the histogram cumulatively."
-{newpara}
-"Light grey gridlines are drawn for every 5%."
-{adduserstyle STYLE_18}{newpara}
-"Dialogues accept key presses"
-{newpara}{remuserstyle STYLE_18}
-"All dialogues (Save window, Scale window, DCS window, Quit window) now "
-"accept key presses. F≠keys map onto action buttons."
-{newpara}
-"In windows without writable icons, keys activate the icon with that name "
-"(e.g. '"
-{adduserstyle STYLE_17}
-"D"
-{remuserstyle STYLE_17}
-"' presses the '"
-{adduserstyle STYLE_1c}
-"Discard"
-{remuserstyle STYLE_1c}
-"' button)."
-{newpara}{adduserstyle STYLE_18}
-"PhotoCheck"
-{newpara}{remuserstyle STYLE_18}
-"This OS patch developed for PhotoFiler has been brought across. This patches "
-"the versions of SpriteExtend in RISC†OS 3.6, 3.7 and 4.0x to cope with Exif "
-"type JPEGs. SpriteExtend rejects these types by default."
-{newpara}{adduserstyle STYLE_18}
-"Choices are now stored in the \"right\" place"
-{newpara}{remuserstyle STYLE_18}
-"Choices are no longer stored in "
-{adduserstyle STYLE_16}
-"Choices:Sliced"
-{remuserstyle STYLE_16}
-" but instead in "
-{adduserstyle STYLE_16}
-"Choices:PrivateEye"
-{remuserstyle STYLE_16}
-". Older format Choices files are automatically copied across and upgraded."
-{newpara}{adduserstyle STYLE_18}
-"User customisable viewer window keymap"
-{newpara}{remuserstyle STYLE_18}
-"Stored in "
-{adduserstyle STYLE_16}
-"Choices:PrivateEye.Keys."
-{remuserstyle STYLE_16}
-" This lets you redefine, or add to, the keys that viewer windows use."
-{newpara}{adduserstyle STYLE_18}
-"ArtWorks"
-{newpara}{remuserstyle STYLE_18}
-"Synchronised the rendering code with a newer version from Tony Houghtonës "
-"Art2Spr. This fixed a bit of stray 26-bit code which would cause crashes "
-"when îCrystalï transparency was used."
-{newpara}{adduserstyle STYLE_18}
-"Info dialogues"
-{newpara}{remuserstyle STYLE_18}
-"The info dialogues (image info, source info, prog info) are now all derived "
-"from a common base class. They all will now shrink or stretch automatically "
-"to fit their contents."
-{newpara}{adduserstyle STYLE_18}
-"Flex"
-{newpara}{remuserstyle STYLE_18}
-"Flex is now used rather than AppEngine for memory management. On RISC†OS†5 "
-"you can let PrivateEye use the wimp slot by setting "
-{adduserstyle STYLE_16}
-"PrivateEye$Flex"
-{remuserstyle STYLE_16}
-" to "
-{adduserstyle STYLE_16}
-"WimpSlot"
-{remuserstyle STYLE_16}
-". See the "
-{adduserstyle STYLE_16}
-"!Run"
-{remuserstyle STYLE_16}
-" file for details."
-{newpara}{adduserstyle STYLE_18}
-"& also..."
-{newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_14}
-"ResFind is now used to locate resources."
-{newpara}
-"Rotate is no longer a sub-menu."
-{newpara}
-"Unavailable functions activated by keypress now beep rather than causing a "
-"crash."
-{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}{newpage}
-"Version 2.00 (22 Dec 2006)"
-{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
-"Viewer windows can now gain the input focus. "
-{remuserstyle STYLE_18}
-"Many key-activated functions have been added."
-{newpara}{adduserstyle STYLE_18}
-"Viewer windows can fill the whole desktop. "
-{remuserstyle STYLE_18}
-"The image is shown centred within the viewer."
-{newpara}{adduserstyle STYLE_18}
-"Rotation. "
-{remuserstyle STYLE_18}
-"Sprites and JPEGs can now be transformed with any combination of 90 degree "
-"rotations and horizontal flips. A new dialogue shows an interactive preview "
-"of the rotation."
-{newpara}{adduserstyle STYLE_18}
-"Progressive JPEGs can now be loaded and displayed. "
-{remuserstyle STYLE_18}
-"JPEGs are now optionally integrity-checked when loaded. If they fail the "
-"check (wrong number of tables, etc.) then theyëre passed through an internal "
-"version of "
-{adduserstyle STYLE_1e}
-"jpegtran"
-{remuserstyle STYLE_1e}
-". This turns them into baseline JPEGs which SpriteExtend is happy to plot."
-{newpara}
-"Any errors from libjpeg are captured and shown to the user."
-{newpara}{adduserstyle STYLE_18}
-"Histogram info window added. "
-{remuserstyle STYLE_18}
-"Shows a luma histogram."
-{newpara}{adduserstyle STYLE_18}
-"New views. "
-{remuserstyle STYLE_18}
-"Multiple views on the same image."
-{newpara}{adduserstyle STYLE_18}
-"Smooth scrolling on cursor keypresses. "
-{remuserstyle STYLE_18}
-"Smooth scroll-to-click. Smooth scaling. Configurable number of steps."
-{newpara}{adduserstyle STYLE_18}
-"Stepping through files in the same directory. "
-{remuserstyle STYLE_18}
-"("
-{adduserstyle STYLE_17}
-"SPACE"
-{remuserstyle STYLE_17}
-", "
-{adduserstyle STYLE_17}
-"Page Up"
-{remuserstyle STYLE_17}
-", "
-{adduserstyle STYLE_17}
-"Page Down"
-{remuserstyle STYLE_17}
-").  This was actually in the previous version, but was hidden behind a weird "
-"keypress."
-{newpara}{adduserstyle STYLE_18}
-"Tinct support. "
-{remuserstyle STYLE_18}
-"Uses the Sprite dithering setting: êSimpleë is mapped to êError diffusion.ë"
-{newpara}{adduserstyle STYLE_18}
-"Auto file type. "
-{remuserstyle STYLE_18}
-"Automatically sets the file type of recognised but un-typed files."
-{newpara}{adduserstyle STYLE_18}
-"FFG. "
-{remuserstyle STYLE_18}
-"Added FFG support (can load images using TransTIFF, TransFSI, etc.)"
-{newpara}
-"Image info window split into two separate info windows: one for source and "
-"one for display. Both now display their values using comma-separated "
-"numbers. Physical image size field added."
-{newpara}
-"Mouse wheel support."
-{newpara}
-"Viewer windows will scroll up/down."
-{newpara}
-"Pressing Up/Down in the scale dialogue bumps the scale by +/-5%. Also "
-"pressing "
-{adduserstyle STYLE_17}
-"Shift"
-{remuserstyle STYLE_17}
-" (a.k.a. "
-{adduserstyle STYLE_17}
-"Page Up"
-{remuserstyle STYLE_17}
-", "
-{adduserstyle STYLE_17}
-"Page Down"
-{remuserstyle STYLE_17}
-") can be used to make it go faster (10%)."
-{newline}
-"These values can be configured in the Choices file by setting "
-{adduserstyle STYLE_16}
-"scale.step"
-{remuserstyle STYLE_16}
-" and "
-{adduserstyle STYLE_16}
-"scale.mult"
-{remuserstyle STYLE_16}
-"."
-{newpara}
-"îFit to screenï scale. îFit to windowï scale. Default scale can be "
-"configured."
-{newpara}
-"New icon. Including !Sprites11 versions."
-{newpara}
-"Title bars display percentage scale and number of views."
-{newpara}{endoftext}
+"Greyscale "
+{adduserstyle STYLE_1f}
+"PNGs"
+{remuserstyle STYLE_1f}
+" < 8bpp now load correctly."
+{newpara}{remuserstyle STYLE_14}{endoftext}
 }
 
-TEXT_2aa={textframe
-{master TEXT_2a0}{local 0}
+TEXT_2de={textframe
+{master TEXT_2d4}{local 0}
 }
 
-TEXT_2ad={textframe
-{master TEXT_2a3}{local 0}
+TEXT_2e1={textframe
+{master TEXT_2d7}{local 0}
 }
 
-TEXT_472={textframe
+TEXT_2e4={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4732,124 +5013,82 @@ TEXT_472={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304726}
+{fcurve {box {x 19841}
 {y 19842}
-{w 270705}
+{w 555590}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_473={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
+STORY_2e5={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}{tabruler }
+{tabruler {tableader ""} {righttab 68031}{tableader "."}{lefttab 90709}}
+
+"History"
+{remuserstyle STYLE_12}{tabruler}{endoftext}
 }
 
-PAGE_2b0={page}
+PAGE_2e7={page}
 
-TEXT_2b1={textframe
-{master TEXT_29d}{local 0}
+TEXT_2e8={textframe
+{master TEXT_2d1}{local 0}
 }
 
-TEXT_2b2={textframe
-{master TEXT_2a0}{local 0}
+TEXT_2e9={textframe
+{master TEXT_2d4}{local 0}
 }
 
-TEXT_2b5={textframe
-{master TEXT_2a3}{local 0}
+TEXT_2ec={textframe
+{master TEXT_2d7}{local 0}
 }
 
-PAGE_2b8={page}
+PAGE_2ef={page}
 
-TEXT_2b9={textframe
-{master TEXT_29d}{local 0}
+TEXT_2f0={textframe
+{master TEXT_2d1}{local 0}
 }
 
-TEXT_2ba={textframe
-{master TEXT_2a0}{local 0}
+TEXT_2f1={textframe
+{master TEXT_2d4}{local 0}
 }
 
-TEXT_2bd={textframe
-{master TEXT_2a3}{local 0}
+TEXT_2f4={textframe
+{master TEXT_2d7}{local 0}
 }
 
-PAGE_2c0={page}
+PAGE_2f7={page}
 
-TEXT_2c1={textframe
-{master TEXT_29d}{local 0}
+TEXT_2f8={textframe
+{master TEXT_2d1}{local 0}
 }
 
-TEXT_2c2={textframe
-{master TEXT_2a0}{local 0}
+TEXT_2f9={textframe
+{master TEXT_2d4}{local 0}
 }
 
-TEXT_2c5={textframe
-{master TEXT_2a3}{local 0}
+TEXT_2fc={textframe
+{master TEXT_2d7}{local 0}
 }
 
-PAGE_2c8={page}
-
-TEXT_2c9={textframe
-{master TEXT_29d}{local 0}
+CHAIN_2dc={textchain
+TEXT_2db
+TEXT_2e8
+TEXT_2f0
+TEXT_2f8
 }
 
-TEXT_2ca={textframe
-{master TEXT_2a0}{local 0}
-}
-
-TEXT_2cd={textframe
-{master TEXT_2a3}{local 0}
-}
-
-PAGE_49a={page}
-
-TEXT_49b={textframe
-{master TEXT_29d}{local 0}
-}
-
-TEXT_49e={textframe
-{master TEXT_2a0}{local 0}
-}
-
-TEXT_4a2={textframe
-{master TEXT_2a3}{local 0}
-}
-
-PAGE_4a7={page}
-
-TEXT_4a8={textframe
-{master TEXT_29d}{local 0}
-}
-
-TEXT_4ab={textframe
-{master TEXT_2a0}{local 0}
-}
-
-TEXT_4af={textframe
-{master TEXT_2a3}{local 0}
-}
-
-CHAIN_2a8={textchain
-TEXT_2a7
-TEXT_2b1
-TEXT_2b9
-TEXT_2c1
-TEXT_2c9
-TEXT_49b
-TEXT_4a8
-}
-
-CHAP_2d1={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_300={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 13}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_2d2={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_301={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_2d3={textframe
+TEXT_302={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -4868,7 +5107,7 @@ TEXT_2d3={textframe
 {skew 0x0}
 }
 
-TEXT_2d6={textframe
+TEXT_305={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4886,13 +5125,13 @@ TEXT_2d6={textframe
 {skew 0x0}
 }
 
-STORY_2d7={story 
+STORY_306={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
-"PrivateEye: Acknowledgements & Copyright"
+"PrivateEye: Copyright & License"
 {endoftext}
 }
 
-TEXT_2d9={textframe
+TEXT_308={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4910,31 +5149,179 @@ TEXT_2d9={textframe
 {skew 0x0}
 }
 
-STORY_2da={story 
+STORY_309={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_2dc={page}
+PAGE_30b={page}
 
-TEXT_2dd={textframe
-{master TEXT_2d3}{local 0}
+TEXT_30c={textframe
+{master TEXT_302}{local 0}
 }
 
-STORY_2de={story 
+STORY_30d={story 
+{adduserstyle STYLE_01}
+"Copyright © 1999-2012, David Thomas. All rights reserved."
+{newpara}
+"Redistribution and use in source and binary forms, with or without "
+"modification, are permitted provided that the following conditions are met:"
+{newpara}{adduserstyle STYLE_21}
+"Redistributions of source code must retain the above copyright notice, this "
+"list of conditions and the following disclaimer. "
+{newpara}
+"Redistributions in binary form must reproduce the above copyright notice, "
+"this list of conditions and the following disclaimer in the documentation "
+"and/or other materials provided with the distribution."
+{newpara}{remuserstyle STYLE_21}{newpage}
+"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS îAS ISï "
+"AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE "
+"IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE "
+"ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE "
+"LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR "
+"CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF "
+"SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS "
+"INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN "
+"CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) "
+"ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE "
+"POSSIBILITY OF SUCH DAMAGE."
+{newpara}{endoftext}
+}
+
+TEXT_30f={textframe
+{master TEXT_305}{local 0}
+}
+
+TEXT_312={textframe
+{master TEXT_308}{local 0}
+}
+
+TEXT_315={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 19841}
+{y 19842}
+{w 555590}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_316={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}
-"Acknowledgements"
-{newpara}{remuserstyle STYLE_12}
+"Copyright & License"
+{remuserstyle STYLE_12}{endoftext}
+}
+
+CHAP_319={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+{omitheader 0} {omitfooter 0}
+{chapternumber 14}
+{pagenumberformat 2}
+{startonleft 0}
+}
+
+PAGE_31a={masterpage {colourvalue COL_02 0x10000 0}}
+
+TEXT_31b={textframe
+{lock 0} {spread 0}
+{masterframe 1}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 2}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 19842}
+{y 19842}
+{w 555587}
+{h 367091}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+TEXT_31e={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 19842}
+{y 391181}
+{w 270707}
+{h 14173}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_31f={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_11}
+"PrivateEye: Acknowledgements"
+{endoftext}
+}
+
+TEXT_321={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 304724}
+{y 391181}
+{w 270707}
+{h 14173}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_322={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
+"Page "
+{pageno}{endoftext}
+}
+
+PAGE_324={page}
+
+TEXT_325={textframe
+{master TEXT_31b}{local 0}
+}
+
+STORY_326={story 
+{adduserstyle STYLE_01}
 "The ArtWorks rendering module veneers are based on "
 {adduserstyle STYLE_1e}
 "ArtToSpr"
 {remuserstyle STYLE_1e}
 " by Tony Houghton."
-{newpara}
-"GIF LZW decoding is based on code by Steven A. Bennett."
-{newpara}
-"PNG support uses "
+{newpara}{adduserstyle STYLE_1f}
+"GIF"
+{remuserstyle STYLE_1f}
+" "
+{adduserstyle STYLE_1f}
+"LZW"
+{remuserstyle STYLE_1f}
+" decoding is based on code by Steven A. Bennett."
+{newpara}{adduserstyle STYLE_1f}
+"PNG"
+{remuserstyle STYLE_1f}
+" support uses "
 {adduserstyle STYLE_1e}
 "libpng"
 {remuserstyle STYLE_1e}
@@ -4953,14 +5340,20 @@ STORY_2de={story
 ":"
 {newpara}
 "Copyright © 1995-2004 Jean-loup Gailly and Mark Adler."
-{newpara}
-"JPEG support uses "
+{newpara}{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" support uses "
 {adduserstyle STYLE_1e}
 "libjpeg"
 {remuserstyle STYLE_1e}
 ":"
 {newpara}
-"This software is based in part on the work of the Independent JPEG Group."
+"This software is based in part on the work of the Independent "
+{adduserstyle STYLE_1f}
+"JPEG"
+{remuserstyle STYLE_1f}
+" Group."
 {newpara}
 "Copyright © 1991-1998, Thomas G. Lane."
 {newpara}
@@ -4976,7 +5369,11 @@ STORY_2de={story
 {adduserstyle STYLE_1e}
 "ResFind "
 {remuserstyle STYLE_1e}
-"by Olaf Krumnow and Herbert zur Nedden of GAG."
+"by Olaf Krumnow and Herbert zur Nedden of "
+{adduserstyle STYLE_1f}
+"GAG"
+{remuserstyle STYLE_1f}
+"."
 {newpara}
 "Alpha sprite plotting uses "
 {adduserstyle STYLE_1e}
@@ -4987,40 +5384,134 @@ STORY_2de={story
 "http://tinct.net/tinct.asp"
 {remuserstyle STYLE_20}{leftindent 1 22677}{newpara}{leftindent}
 "My thanks to all of the above."
-{newpara}{adduserstyle STYLE_12}{newpage}
-"License"
-{newpara}{remuserstyle STYLE_12}
-"Copyright © 2011, David Thomas. All rights reserved."
-{newpara}
-"Redistribution and use in source and binary forms, with or without "
-"modification, are permitted provided that the following conditions are met:"
-{newpara}{adduserstyle STYLE_21}
-"Redistributions of source code must retain the above copyright notice, this "
-"list of conditions and the following disclaimer. "
-{newpara}
-"Redistributions in binary form must reproduce the above copyright notice, "
-"this list of conditions and the following disclaimer in the documentation "
-"and/or other materials provided with the distribution."
-{newpara}{remuserstyle STYLE_21}
-"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS îAS ISï "
-"AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE "
-"IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE "
-"ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE "
-"LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR "
-"CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF "
-"SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS "
-"INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN "
-"CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) "
-"ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE "
-"POSSIBILITY OF SUCH DAMAGE."
-{newpara}{adduserstyle STYLE_12}{newpage}
-"Contacting the Author"
-{remuserstyle STYLE_12}{newpara}
+{newpara}{bold 0}{italic 0}
+{underline 0 {type 1} {thickness 1310} {colourvalue COL_03 0x10000 0} {wordunderline 0} {doubleunderline 0}}
+{reverse 0}{super 0}{sub 0}{newpara}{endoftext}
+}
+
+TEXT_328={textframe
+{master TEXT_31e}{local 0}
+}
+
+TEXT_32b={textframe
+{master TEXT_321}{local 0}
+}
+
+TEXT_32e={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 19841}
+{y 19842}
+{w 555590}
+{h 32014}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_32f={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Acknowledgements"
+{remuserstyle STYLE_12}{endoftext}
+}
+
+CHAP_332={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+{omitheader 0} {omitfooter 0}
+{chapternumber 15}
+{pagenumberformat 2}
+{startonleft 0}
+}
+
+PAGE_333={masterpage {colourvalue COL_02 0x10000 0}}
+
+TEXT_334={textframe
+{lock 0} {spread 0}
+{masterframe 1}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 2}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 2834}
+{textflow 3 1 2834}
+{fcurve {box {x 19842}
+{y 19842}
+{w 555587}
+{h 367091}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+TEXT_337={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 19842}
+{y 391181}
+{w 270707}
+{h 14173}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_338={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_11}
+"PrivateEye: Contacting the Author"
+{endoftext}
+}
+
+TEXT_33a={textframe
+{lock 0} {spread 0}
+{fillcolour COL_02 0x10000 0}
+{radius 0}
+{columns 1}{gutterwidth 14173}{columnguides 0 {thickness 2834} {colourvalue COL_01 0x10000 0}}
+{vertalign 0}
+{firstline 0}
+{inset 0}
+{textflow 3 1 2834}
+{fcurve {box {x 304724}
+{y 391181}
+{w 270707}
+{h 14173}
+}}
+{angle 0x0}
+{skew 0x0}
+}
+
+STORY_33b={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
+"Page "
+{pageno}{endoftext}
+}
+
+PAGE_33d={page}
+
+TEXT_33e={textframe
+{master TEXT_334}{local 0}
+}
+
+STORY_33f={story 
+{adduserstyle STYLE_01}
 "If you have any comments, bug reports or suggestions for future versions "
 "then you can contact me at "
-{adduserstyle STYLE_1d}
+{remuserstyle STYLE_01}{adduserstyle STYLE_1d}{adduserstyle STYLE_01}
+{adduserstyle STYLE_20}
 "dave@davespace.co.uk"
-{remuserstyle STYLE_1d}
+{remuserstyle STYLE_1d}{remuserstyle STYLE_01}{remuserstyle STYLE_20}
+{adduserstyle STYLE_01}
 "."
 {newpara}
 "If you have a question, then please check it has not already been answered "
@@ -5035,18 +5526,18 @@ STORY_2de={story
 {underline 0 {type 1} {thickness 1310} {colourvalue COL_03 0x10000 0} {wordunderline 0} {doubleunderline 0}}
 {reverse 0}{super 0}{sub 0}
 "what you were doing when the bug occurred and the version number."
-{newpara}{endoftext}
+{bold}{italic}{underline}{reverse}{sub}{endoftext}
 }
 
-TEXT_2e0={textframe
-{master TEXT_2d6}{local 0}
+TEXT_341={textframe
+{master TEXT_337}{local 0}
 }
 
-TEXT_2e3={textframe
-{master TEXT_2d9}{local 0}
+TEXT_344={textframe
+{master TEXT_33a}{local 0}
 }
 
-TEXT_47f={textframe
+TEXT_347={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5055,51 +5546,18 @@ TEXT_47f={textframe
 {firstline 0}
 {inset 2834}
 {textflow 3 1 2834}
-{fcurve {box {x 304726}
+{fcurve {box {x 19842}
 {y 19842}
-{w 270705}
+{w 555590}
 {h 32014}
 }}
 {angle 0x0}
 {skew 0x0}
 }
 
-STORY_480={story 
-{adduserstyle STYLE_01}{adduserstyle STYLE_12}{remuserstyle STYLE_12}
-{endoftext}
-}
-
-PAGE_489={page}
-
-TEXT_48a={textframe
-{master TEXT_2d3}{local 0}
-}
-
-TEXT_48d={textframe
-{master TEXT_2d6}{local 0}
-}
-
-TEXT_491={textframe
-{master TEXT_2d9}{local 0}
-}
-
-PAGE_4b4={page}
-
-TEXT_4b5={textframe
-{master TEXT_2d3}{local 0}
-}
-
-TEXT_4b8={textframe
-{master TEXT_2d6}{local 0}
-}
-
-TEXT_4bc={textframe
-{master TEXT_2d9}{local 0}
-}
-
-CHAIN_2de={textchain
-TEXT_2dd
-TEXT_48a
-TEXT_4b5
+STORY_348={story 
+{adduserstyle STYLE_01}{adduserstyle STYLE_12}
+"Contacting the Author"
+{remuserstyle STYLE_12}{endoftext}
 }
 

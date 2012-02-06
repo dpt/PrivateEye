@@ -88,18 +88,23 @@ struct treeview_t
 
 /* ----------------------------------------------------------------------- */
 
-static int treeview_refcount = 0;
+static unsigned int treeview_refcount = 0;
 
 error treeview_init(void)
 {
-  if (treeview_refcount++ == 0)
-    ;
+  if (treeview_refcount == 0)
+     ;
+
+  treeview_refcount++;
 
   return error_OK;
 }
 
 void treeview_fin(void)
 {
+  if (treeview_refcount == 0)
+    return;
+
   if (--treeview_refcount == 0)
     ;
 }

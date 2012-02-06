@@ -555,21 +555,21 @@ void tags_common_fin(void)
 
 /* The 'lazy' init/fin functions provide lazy initialisation. */
 
-static int tags_common_lazyrefcount = 0;
+static unsigned int tags_common_lazyrefcount = 0;
 
 error tags_common_lazyinit(void)
 {
   error err;
 
-  if (tags_common_lazyrefcount++ == 0)
+  if (tags_common_lazyrefcount == 0)
   {
     os_error     *oserr;
     tagdb        *db  = NULL;
     filenamedb_t *fdb = NULL;
 
-    hourglass_on();
+    /* initialise */
 
-    /* init */
+    hourglass_on();
 
     oserr = xosfile_create_dir(TAGS_DIR, 0);
     if (oserr == NULL)
@@ -593,6 +593,8 @@ error tags_common_lazyinit(void)
 
     hourglass_off();
   }
+
+  tags_common_lazyrefcount++;
 
   return error_OK;
 

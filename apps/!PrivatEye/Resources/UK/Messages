@@ -1,8 +1,8 @@
 # Messages for PrivateEye
-# © David Thomas, 1999-2011
+# © David Thomas, 1999-2012
 #
 
-version:2.97 TEST (18 Jan 2011)
+version:2.99 (05 Feb 2012)
 
 task:PrivateEye
 icon:!privateye
@@ -24,7 +24,7 @@ menu.artworks:Quality,Outline,Simple,Normal,Anti-aliased
 menu.cleanjpeg:Cleaning,Only when required,Always
 menu.drawfile:Flatness,Coarse,Normal,Best|Automatic
 menu.jpeg:Dithering,None,Simple,Error diffusion
-menu.scale:Image scale,50%,100%,200%,Fit to screen|Preserve
+menu.scale:Image scale,25%,50%,75%,100%,125%,150%,175%,200%,Fit to screen|Preserve
 menu.size:Window size,Fit to image,Fit to screen
 menu.sprite:Dithering,None,Simple
 menu.steps:Scrolling,Instant,5 steps,10 steps,15 steps,20 steps
@@ -102,7 +102,7 @@ adobe.0425:Caption Digest
 adobe.0426:Print Scale
 adobe.2710:Print Flags Information
 adobe.unknown:Unknown 8BIM
-
+ 
 # Tag Cloud window
 
 tagcloud.title:Tags of %s
@@ -217,10 +217,10 @@ hw.choices_spr:\TSprite Choices \w.
 hw.choices_vwr.b_cachedown/hw.choices_vwr.b_cacheup:Use the up and down arrows to change the maximum cache size.
 hw.choices_vwr.d_cache:\Tcurrent maximum cache size setting.
 hw.choices_vwr.d_scale:\Tcurrent image scale setting.
-hw.choices_vwr.d_size:\Tcurrent viewer size setting.
+hw.choices_vwr.d_size:\Tcurrent window size setting.
 hw.choices_vwr.d_steps:\Tcurrent scrolling and zooming setting.
 hw.choices_vwr.o_covericonbar:If selected, PrivateEye will allow its viewer windows to obscure the icon bar.
-hw.choices_vwr.p_size:\Schoose the viewer size setting,
+hw.choices_vwr.p_size:\Schoose the window size setting,
 hw.choices_vwr.p_steps:\Schoose the scrolling and zooming setting.
 hw.choices_vwr:\Tviewer and cache choices \w.
 hw.dcs.b_cancel:\Sgo back.
@@ -236,15 +236,22 @@ hw.effects.b_edit:\Sedit the selected effect.
 hw.effects:\Teffects \w.|MOpen the effects palette \w by clicking êAddë.|MDrag effects from the palette to the effects list.|MAdjust the level of the combined effects by dragging the slider.|MMake the effect permanent with êApplyë.
 hw.effects_add.b_cancel:\Scancel the dialogue box.
 hw.effects_add:\Teffects palette.|MDrag an effect to the effects list to add it.
-hw.effects_crv.11/hw.effects_crv.12/hw.effects_crv.13:\Dalter gamma.|MThis bends the curve in a nonlinear fashion.
-hw.effects_crv.15/hw.effects_crv.16/hw.effects_crv.17:\Dalter brightness.|MThis lowers and raises the curve.
-hw.effects_crv.19/hw.effects_crv.20/hw.effects_crv.21:\Dalter contrast.|MThis pivots the curve around its middle.
-hw.effects_crv.23/hw.effects_crv.24/hw.effects_crv.25:\Dalter bias.|MThis bends the curve in a nonlinear fashion.
-hw.effects_crv.27/hw.effects_crv.28/hw.effects_crv.29:\Dalter gain.|MThis bends the curve around its middle.
+hw.effects_blr.6/hw.effects_blr.7/hw.effects_blr.8:\Dalter the radius of the blur.
+hw.effects_blr.b_apply:\Scancel the dialogue box.
+hw.effects_blr.b_cancel:\Smake your changes permanent.
+hw.effects_blr.r_box:\Suse a box blur.
+hw.effects_blr.r_gaussian:\Suse a gaussian blur.
+hw.effects_blr.w_val:\Tradius of the blur.
+hw.effects_crv.10/hw.effects_crv.11/hw.effects_crv.12:\Dalter gamma.|MThis bends the curve in a nonlinear fashion.
+hw.effects_crv.14/hw.effects_crv.15/hw.effects_crv.16:\Dalter brightness.|MThis lowers and raises the curve.
+hw.effects_crv.18/hw.effects_crv.19/hw.effects_crv.20:\Dalter contrast.|MThis pivots the curve around its middle.
+hw.effects_crv.22/hw.effects_crv.23/hw.effects_crv.24:\Dalter midpoint.|MThis moves the middle of the curve up or down.
+hw.effects_crv.26/hw.effects_crv.27/hw.effects_crv.28:\Dalter bias.|MThis bends the curve in a nonlinear fashion.
+hw.effects_crv.30/hw.effects_crv.31/hw.effects_crv.32:\Dalter gain.|MThis bends the curve around its middle.
 hw.effects_crv.b_apply:\Smake your changes permanent.
 hw.effects_crv.b_cancel:\Scancel the dialogue box.
 hw.effects_crv.b_reset:\Sreset the settings to their defaults.
-hw.effects_crv.d_curve:\Tcurve display.|MA upwards diagonal curve is one which makes no change.
+hw.effects_crv.d_curve:\Tcurve display.|MA diagonal upwards curve is one which causes no change.
 hw.effects_crv.o_invert:\Stoggle inversion of the curve.
 hw.effects_crv.o_reflect:\Stoggle reflection of the curve about its middle.
 hw.effects_crv.r_all:\Sedit red, green and blue channels simultaneously.
@@ -278,7 +285,7 @@ hw.quit.b_discard:\Sthrow away any changes and quit.
 hw.quit:Answer the question.
 hw.rotate.b_cancel:\Scancel the dialogue box.
 hw.rotate.b_rotate:\Srotate the image as shown.
-hw.rotate:\Trotate \w.|M\Drotate the image.|M\dflip the image horizontally, then rotate the image.|MThe indicator at the top-left of the window shows which transform will be used.
+hw.rotate:\Trotate \w.|M\Drotate the image.|M\dflip the image horizontally, then rotate the image.|MThe indicator at the top left of the window shows which transform will be used.
 hw.save.b_cancel:\Sclose this box.
 hw.save.b_save:\Ssave the file with the current filename.|MIf it is not a full pathname, you must drag the icon to a directory display.
 hw.save.i_icon:Drag the file icon to a directory display to save it there.|MDrag the file icon to an application to transfer the file there.
@@ -332,7 +339,7 @@ hm.iconbar.5:\Sto make PrivateEye go away.
 hm.image.0.0:\Rsee information about the display image.
 hm.image.0.1:\Rsee information about the source image.
 hm.image.0.2:\Ssee the metadata associated with this image.
-hm.image.0.2g:\Gthis image does not contain metadata.|MOnly JPEGs are suitable.
+hm.image.0.2g:\Gthis image does not contain metadata.|MOnly JPEGs have metadata which PrivateEye understands.
 hm.image.0.3:\Sopen a histogram view of this image.
 hm.image.0.3g:\Gthis type of image is not suitable for the histogram.|MOnly 16 or 32bpp Sprites are suitable.
 hm.image.0.4:\Sshow the tags window.|MThis is used to label images for later searches.
@@ -356,11 +363,16 @@ hm.jpeg.1:\Schoose simple dithered JPEG rendering.|MThis displays the image usin
 hm.jpeg.2:\Schoose error diffused JPEG rendering.|MThis displays the image using a slow, accurate dither technique.
 hm.metadata.0:\Sexpand all nodes.
 hm.metadata.1:\Scollapse all nodes.
-hm.scale.0:\Schoose a default scale of 50%.
-hm.scale.1:\Schoose a default scale of 100%.
-hm.scale.2:\Schoose a default scale of 200%.
-hm.scale.3:\Schoose a default scale which fits the image to the screen.
-hm.scale.4:\Schoose to preserve the previous scale.|MA scale of 100% will be used for new viewer windows.
+hm.scale.0:\Schoose a default scale of 25%.
+hm.scale.1:\Schoose a default scale of 50%.
+hm.scale.2:\Schoose a default scale of 75%.
+hm.scale.3:\Schoose a default scale of 100%.
+hm.scale.4:\Schoose a default scale of 125%.
+hm.scale.5:\Schoose a default scale of 150%.
+hm.scale.6:\Schoose a default scale of 175%.
+hm.scale.7:\Schoose a default scale of 200%.
+hm.scale.8:\Schoose a default scale which fits the image to the screen.
+hm.scale.9:\Schoose to preserve the previous scale.|MA scale of 100% will be used for new viewer windows.
 hm.size.0:\Schoose to have viewer \ws fit the image exactly.
 hm.size.1:\Schoose to have viewer \ws be at least the size of the screen.
 hm.sprite.0:\Schoose undithered Sprite plotting.|MThis displays the image using the closest available colours.

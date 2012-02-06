@@ -30,13 +30,13 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static int digestdb_refcount = 0;
+static unsigned int digestdb_refcount = 0;
 
 error digestdb_init(void)
 {
-  if (digestdb_refcount++ == 0)
+  if (digestdb_refcount == 0)
   {
-    /* init */
+    /* initialise */
 
     LOCALS.digests = atom_create_tuned(ATOMBUFSZ / digestdb_DIGESTSZ,
                                        ATOMBUFSZ);
@@ -44,13 +44,20 @@ error digestdb_init(void)
       return error_OOM;
   }
 
+  digestdb_refcount++;
+
   return error_OK;
 }
 
 void digestdb_fin(void)
 {
+  if (digestdb_refcount == 0)
+    return;
+
   if (--digestdb_refcount == 0)
   {
+    /* finalise */
+
     atom_destroy(LOCALS.digests);
   }
 }
