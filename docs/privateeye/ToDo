@@ -1,49 +1,41 @@
-seem to have had some data loss when tagging
-- extended the tagdb test for this
-
-
-
-seem to have had two tags confused ('london' tag became 'nuts')
-
-
-re-check currently-loaded image when tags modified by a drop on the window
-
-check file types before tagging
-
-(1bpp pngs going mad - geminus bug)
-
-
 in progress
 ~~~~~~~~~~~
-sort tags by highlight (put highlighted tags first)
-- sort lazily? ie. on demand?
+memory optimisation for tag cloud and tag dbs
+
+related:
+heap usage higher than expected
+- could be fragmentation
+- also excess wastage due to single malloc block per string
+
+tags: merge separate and separately-sized bitvecs into a single vector of
+      bitarrs
+
 
 todo
 ~~~~
-list display mode
+tagcloud: list display mode
 - drop the divider char
 - needs dedicated layout?
   - would be more efficient
-  
-finish mode change handlers
 
-use colour optional in addition/instead of font weight, for highlights
+tagcloud: use colour optional in addition/instead of font weight, for
+          highlights
 - use a colour proportional to count (darker -> higher count)
 
-set window extent when tags added
-set window extent when tag choices updated
+tagcloud: set window extent when tags added
+tagcloud: set window extent when tag choices updated
 
-SetCaretPosition not working
+tagcloud: SetCaretPosition not working
 
-display a message in the window when no tags are present
+tagcloud: display a message in the window when no tags are present
 - "Tags let you foo foo foo. Create tags by opening the blah blah."
 - greyed out
 
-detect when layout has actually changed
+tagcloud: detect when layout has actually changed
 - ie. refresh more economically
 - we centre the lines so whenever the window changes we must redraw
 
-prune dbs
+tags: prune dbs
 - prune stuff not in both dbs
 - things may exist in tagdb but not in filenamedb
   - ie. id+tag may be orphaned
@@ -65,10 +57,6 @@ unused tags will vanish when db saved/reloaded -- needs to be documented
 
 file type checking
 
-heap usage higher than expected
-- could be fragmentation
-- also excess wastage due to single malloc block per string
-
 not updating as soon as expected (delayed refresh?)
 
 allow a minimum tag cloud window size (for search window)
@@ -77,6 +65,15 @@ layout scale changes need a call to tag_cloud__set_display for the effect to
 set
 
 in-RAM data transfers
+
+tags/tagcloud: tagging slow
+- doing way too much work
+- needs new methods adding to /only/ tag/detag and not cause a full tagcloud
+  re-population
+
+tagcloud: embedded tag clouds, e.g. search window doens't lay out correctly
+          when opened.
+          
 
 done
 ~~~~
@@ -144,6 +141,12 @@ huge blurs
 
 set default sort in tagcloud
 
+sort tags by highlight (put highlighted tags first)
+- sort lazily? ie. on demand?
+  
+finish mode change handlers
+
+
 later
 ~~~~~
 show tags in main viewer window
@@ -152,8 +155,13 @@ faster redraw using system font
 
 merge two tag sets [feature]
 
+multiple tag sets
+
 "scale down to screen" scaling option
 - only scale images larger than the screen to the screen size
+
+grand idea about programmable tags for star ratings etc.
+
 
 rejected
 ~~~~~~~~
@@ -166,3 +174,18 @@ MD5->binary to save space [maybe not]
 is something taking time proportional to image size when tagging?
 - load large image. tag. notice time taken.
 [could be mistaken]
+
+
+sargasso
+~~~~~~~~
+
+seem to have had some data loss when tagging
+- extended the tagdb test for this
+
+seem to have had two tags confused ('london' tag became 'nuts')
+
+re-check currently-loaded image when tags modified by a drop on the window
+
+check file types before tagging
+
+(1bpp pngs going mad - geminus bug)
