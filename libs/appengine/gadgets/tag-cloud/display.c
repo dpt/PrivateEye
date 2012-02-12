@@ -12,6 +12,14 @@
 #include "iconnames.h"
 #include "impl.h"
 
+static void display(tag_cloud *tc)
+{
+  tc->flags |= tag_cloud_FLAG_NEW_DISPLAY;
+  tag_cloud_schedule_redraw(tc);
+}
+
+/* ----------------------------------------------------------------------- */
+
 static void tag_cloud_kick_display_icon(tag_cloud *tc)
 {
   if (tc->toolbar_w)
@@ -21,13 +29,17 @@ static void tag_cloud_kick_display_icon(tag_cloud *tc)
 
 void tag_cloud_set_display(tag_cloud *tc, int display_type)
 {
-  assert(display_type < tag_cloud_DISPLAY_TYPE__LIMIT);
+  if (display_type >= tag_cloud_DISPLAY_TYPE__LIMIT)
+    display_type = 0;
 
-  tc->flags |= tag_cloud_FLAG_NEW_DISPLAY;
+  /* avoid updating the display wherever possible */
+
+  if (display_type == tc->display_type)
+    return;
 
   tc->display_type = display_type;
 
-  tag_cloud_schedule_redraw(tc);
+  display(tc);
 
   tag_cloud_kick_display_icon(tc);
 }
