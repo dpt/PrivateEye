@@ -14,7 +14,7 @@ suppress		= x
 
 asmflags		= $(depend) $(throwback)
 ccflags			= -strict -c99 -fah -Wh -Otime -c $(cpu) $(depend) $(throwback) $(includes) $(ccextra)
-ccflags_memcheck	= -strict -c99 -fah -Wh -Otime -c $(cpu) $(depend) $(throwback) $(includes) $(ccextra) -zpc1 -DMemCheck_MEMCHECK -JMemCheck:ANSI.,:mem -fw
+#ccflags_memcheck	= -strict -c99 -fah -Wh -Otime -c $(cpu) $(depend) $(throwback) $(includes) $(ccextra) -zpc1 -DMemCheck_MEMCHECK -JMemCheck:ANSI.,:mem -fw
 everyflags     	 	= -c
 linkflags		= -c++
 wipeflags		= ~CFR~V
@@ -44,7 +44,7 @@ includes		= -IC: -ICLibs: -IOSLib: -IZLib: -ITCPIPLibs:
 lib_normal		= CLibs:appengine.o.AOFLib
 lib_debug		= CLibs:appengine.odf.AOFLib
 lib_fortify       	= CLibs:fortify.o.libfortify
-lib_memcheck       	= MemCheck:o.MC
+#lib_memcheck       	= MemCheck:o.MC
 lib_all			= OSLib:o.OSLib32 C:o.flexlib C:o.stubs
 
 libraries_normal	= $(lib_normal) $(lib_all)
