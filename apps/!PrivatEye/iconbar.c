@@ -12,6 +12,7 @@
 #include "appengine/gadgets/iconbar.h"
 #include "appengine/wimp/menu.h"
 
+#include "canvas.h"
 #include "choicesdat.h"
 #include "globals.h"
 #include "iconbar.h"
@@ -20,6 +21,7 @@
 #include "menunames.h"          /* not generated */
 #include "quit.h"
 #include "tags-search.h"
+#include "thumbview.h"
 #include "viewer.h"
 
 static void selected(const wimp_selection *selection, void *opaque)
@@ -28,10 +30,41 @@ static void selected(const wimp_selection *selection, void *opaque)
 
   switch (selection->items[0])
   {
+  case ICONBAR_NEW:
+    switch (selection->items[1])
+    {
+      case NEW_CANVAS:
+        {
+          error err;
+          canvas_t *canvas;
+
+          err = canvas_create(&canvas);
+          if (err)
+            return;
+
+          canvas_open(canvas);
+        }
+        break;
+    }
+    break;
+
+  /* Close all */
   case ICONBAR_CLOSE:
-    /* Close all */
-    if (can_quit())
-      viewer_close_all();
+    switch (selection->items[1])
+    {
+      case CLOSE_VIEWERS:
+        if (can_quit())
+          viewer_close_all();
+        break;
+
+      case CLOSE_THUMBVIEWS:
+        thumbview_close_all();
+        break;
+
+      case CLOSE_CANVASES:
+        canvas_close_all();
+        break;
+    }
     break;
 
   case ICONBAR_EMPTYCACHE:
@@ -75,9 +108,19 @@ static void update(wimp_menu *menu, void *opaque)
   NOT_USED(opaque);
 
   /* Shade the "Close all" entry if there are no images open */
-  menu_set_icon_flags(menu,
-                      ICONBAR_CLOSE,
+  menu_set_icon_flags(menu->entries[ICONBAR_CLOSE].sub_menu,
+                      CLOSE_VIEWERS,
                      (viewer_get_count() > 0) ? 0 : wimp_ICON_SHADED,
+                      wimp_ICON_SHADED);
+
+  menu_set_icon_flags(menu->entries[ICONBAR_CLOSE].sub_menu,
+                      CLOSE_THUMBVIEWS,
+                     (thumbview_get_count() > 0) ? 0 : wimp_ICON_SHADED,
+                      wimp_ICON_SHADED);
+
+  menu_set_icon_flags(menu->entries[ICONBAR_CLOSE].sub_menu,
+                      CLOSE_CANVASES,
+                     (canvas_get_count() > 0) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
 
   /* Shade the "Empty cache" entry if the cache is already empty */

@@ -181,6 +181,15 @@ void thumbview_close_all(void)
 
 /* ----------------------------------------------------------------------- */
 
+int thumbview_get_count(void)
+{
+  /* FIXME: This is not the actual count! It doesn't matter at the moment as
+   * this value is only used to determine whether to shade menu entries. */
+  return LOCALS.list_anchor.next ? 1 : 0;
+}
+
+/* ----------------------------------------------------------------------- */
+
 static void redraw(wimp_draw *redraw,
                    int        x,
                    int        y,

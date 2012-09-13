@@ -56,6 +56,7 @@
 #include "appengine/wimp/icon.h"
 #include "appengine/wimp/menu.h"
 
+#include "canvas.h"
 #include "choicesdat.h"
 #include "clipboard.h"
 #include "dataxfer.h"
@@ -121,6 +122,7 @@ static error initialise_subsystems(void)
     tags_search_init,
 #endif
     display_init,   /* careful: this one depends on the earlier init calls */
+    canvas_init,
 #ifdef EYE_THUMBVIEW
     thumbview_init,
 #endif

@@ -33,6 +33,7 @@ extern struct PrivateEyeGlobals
 #ifdef EYE_THUMBVIEW
   wimp_w           thumbview_w;
 #endif
+  wimp_w           canvas_w;
 
   wimp_w           effects_w;
   wimp_w           effects_add_w;
@@ -45,6 +46,7 @@ extern struct PrivateEyeGlobals
 #ifdef EYE_THUMBVIEW
   wimp_menu       *thumbview_m;
 #endif
+  wimp_menu       *canvas_m;
 
   eye_choices      choices, proposed_choices;
 

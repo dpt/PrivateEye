@@ -58,6 +58,12 @@ typedef struct
 
   struct
   {
+    int               random_variable; /* for future use */
+  }
+  canvas;
+
+  struct
+  {
     int               size; /* in kilobytes */
   }
   cache;

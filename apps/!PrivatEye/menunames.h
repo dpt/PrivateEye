@@ -11,6 +11,7 @@
 enum
 {
   ICONBAR_INFO          = 0,
+  ICONBAR_NEW,
   ICONBAR_CLOSE,
   ICONBAR_EMPTYCACHE,
 #ifdef EYE_TAGS
@@ -19,6 +20,12 @@ enum
   ICONBAR_CHOICES,
   ICONBAR_QUIT,
   ICONBAR__LIMIT,
+
+  NEW_CANVAS            = 0,
+
+  CLOSE_VIEWERS         = 0,
+  CLOSE_THUMBVIEWS,
+  CLOSE_CANVASES,
 
   IMAGE_FILE            = 0,
   IMAGE_SAVE,
