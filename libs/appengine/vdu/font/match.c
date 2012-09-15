@@ -17,6 +17,10 @@
 
 #define DBUG(args)
 
+#define MAXFONTNAME 128 /* maximum length of a font name */
+#define MAXFAMILY   128 /* maximum length of a font family name */
+#define MAXTOKENS    16 /* Foo.Bar.Bold.Italic - each is one token */
+
 typedef struct nameattr
 {
   char        name[11];
@@ -128,8 +132,8 @@ static int score(font_attrs a, font_attrs b)
  */
 static font_attrs splitname(const char *fontname, char *family)
 {
-  char       tokenised[128];
-  char      *tokens[16];
+  char       tokenised[MAXFONTNAME];
+  char      *tokens[MAXTOKENS];
   int        c;
   font_attrs attrs;
   int        highest_contiguous_unrecognised_token;
@@ -185,7 +189,7 @@ error font_select(const char *wantname,
                   char       *selected,
                   int         selected_size)
 {
-  char              wantfamily[128];
+  char              wantfamily[MAXFAMILY];
   font_list_context context;
   int               winner = INT_MAX;
 
@@ -202,8 +206,8 @@ error font_select(const char *wantname,
 
   for (;;)
   {
-    char       fontname[128];
-    char       family[128];
+    char       fontname[MAXFONTNAME];
+    char       family[MAXFAMILY];
     font_attrs attrs;
     int        sc;
 
@@ -248,7 +252,7 @@ error font_select(const char *wantname,
 
 font_attrs font_get_attrs(const char *name)
 {
-  char family[128];
+  char family[MAXFAMILY];
 
   return splitname(name, family);
 }
