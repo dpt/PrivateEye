@@ -473,6 +473,7 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
   {
     char        *p;
     font_attrs  attrs;
+    font_attrs  weight;
 
     /* normal */
 
@@ -485,10 +486,14 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
 
     font_p = font_id;
 
-    /* find a bold version */
+    /* find a bold(er) version */
 
     attrs = font_get_attrs(font_id);
-    attrs = (attrs & ~font_WEIGHT_MASK) | font_WEIGHT_BOLD;
+    weight = attrs & font_WEIGHT_MASK;
+    weight += font_WEIGHT_BOLD - font_WEIGHT_NORMAL;
+    if (weight > font_WEIGHT_950)
+      weight = font_WEIGHT_950;
+    attrs = (attrs & ~font_WEIGHT_MASK) | weight;
     err2 = font_select(font_id, attrs, bold_font_id, sizeof(bold_font_id));
     if (err2)
       return err2;
