@@ -48,8 +48,6 @@
 #include "appengine/base/os.h"
 #include "appengine/base/oserror.h"
 #include "appengine/base/strings.h"
-#include "appengine/dialogues/dcs-quit.h"
-#include "appengine/gadgets/hist.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/vdu/sprite.h"
 #include "appengine/wimp/event.h"
@@ -77,6 +75,39 @@
 #include "thumbview.h"
 #include "viewer.h"
 #include "zones.h"
+
+/* ----------------------------------------------------------------------- */
+
+static error initialise_substrate(void)
+{
+  typedef error (*initfn)(void);
+
+  static const initfn initfns[] =
+  {
+#ifdef EYE_CANVAS
+    canvas_substrate_init,
+#endif
+    display_substrate_init,
+#ifdef EYE_TAGS
+    tags_substrate_init,
+#endif
+#ifdef EYE_THUMBVIEW
+    thumbview_substrate_init,
+#endif
+  };
+
+  error err;
+  int   i;
+
+  for (i = 0; i < NELEMS(initfns); i++)
+  {
+    err = initfns[i]();
+    if (err)
+      return err;
+  }
+
+  return error_OK;
+}
 
 /* ----------------------------------------------------------------------- */
 
@@ -113,16 +144,16 @@ static error initialise_subsystems(void)
 
   static const initfn initfns[] =
   {
-    dcs_quit_init,  /* in AppEngine */
-    hist_init,      /* in AppEngine */
     eye_icon_bar_init,
     rotate_init,
     effects_init,
 #ifdef EYE_TAGS
     tags_search_init,
 #endif
-    display_init,   /* careful: this one depends on the earlier init calls */
+    display_init,
+#ifdef EYE_CANVAS
     canvas_init,
+#endif
 #ifdef EYE_THUMBVIEW
     thumbview_init,
 #endif
@@ -132,6 +163,8 @@ static error initialise_subsystems(void)
 
   error err;
   int   i;
+
+  /* initialise dependencies */
 
   for (i = 0; i < NELEMS(initfns); i++)
   {
@@ -154,6 +187,9 @@ static void finalise_subsystems(void)
 #ifdef EYE_THUMBVIEW
     thumbview_fin,
 #endif
+#ifdef EYE_CANVAS
+    canvas_fin,
+#endif
     display_fin,
 #ifdef EYE_TAGS
     tags_search_fin,
@@ -161,8 +197,6 @@ static void finalise_subsystems(void)
     effects_fin,
     rotate_fin,
     eye_icon_bar_fin,
-    hist_fin,
-    dcs_quit_fin,
   };
 
   int i;
@@ -298,6 +332,10 @@ int main(int argc, char *argv[])
 #ifdef FORTIFY
   Fortify_EnterScope();
 #endif
+
+  err = initialise_substrate();
+  if (err)
+    goto Failure;
 
   open_messages(APPNAME "Res:Messages");
 

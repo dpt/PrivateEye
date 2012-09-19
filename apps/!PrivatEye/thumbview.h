@@ -10,6 +10,8 @@
 
 typedef struct thumbview thumbview;
 
+error thumbview_substrate_init(void);
+
 error thumbview_init(void);
 void thumbview_fin(void);
 

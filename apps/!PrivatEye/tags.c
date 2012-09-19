@@ -16,6 +16,7 @@
 #include "oslib/osfscontrol.h"
 
 #include "appengine/types.h"
+#include "appengine/app/wire.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/strings.h"
@@ -38,12 +39,84 @@
 
 static struct
 {
-  tag_cloud *tc;
-  image_t   *image;
+  tag_cloud        *tc;
+  image_t          *image;
+  viewer_keymap_id  keymap_id;
 }
 LOCALS;
 
-/* ----------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
+
+/* key defns */
+enum
+{
+  TagCloud_List,
+  TagCloud_Cloud,
+  TagCloud_SmallCloud,
+  TagCloud_UnscaledCloud,
+  TagCloud_SortByCount,
+  TagCloud_SortByName,
+  TagCloud_SortSelFirst,
+  TagCloud_Rename,
+  TagCloud_Kill,
+  TagCloud_New,
+  TagCloud_Info,
+  TagCloud_Commit,
+};
+
+/* ---------------------------------------------------------------------- */
+
+static error declare_keymap(void)
+{
+  /* Keep these sorted by name */
+  static const keymap_name_to_action keys[] =
+  {
+    { "Cloud",            TagCloud_Cloud          },
+    { "Commit",           TagCloud_Commit         },
+    { "Info",             TagCloud_Info           },
+    { "Kill",             TagCloud_Kill           },
+    { "List",             TagCloud_List           },
+    { "New",              TagCloud_New            },
+    { "Rename",           TagCloud_Rename         },
+    { "SmallCloud",       TagCloud_SmallCloud     },
+    { "SortByCount",      TagCloud_SortByCount    },
+    { "SortByName",       TagCloud_SortByName     },
+    { "SortSelFirst",     TagCloud_SortSelFirst   },
+    { "UnscaledCloud",    TagCloud_UnscaledCloud  },
+  };
+
+  return viewer_keymap_add("Tag Cloud",
+                           keys,
+                           NELEMS(keys),
+                           &LOCALS.keymap_id);
+}
+
+static error tags_substrate_callback(const wire_message_t *message,
+                                     void                 *opaque)
+{
+  NOT_USED(opaque);
+
+  switch (message->event)
+  {
+    case wire_event_DECLARE_KEYMAP:
+      return declare_keymap();
+  }
+
+  return error_OK;
+}
+
+error tags_substrate_init(void)
+{
+  error err;
+
+  err = wire_register(0, tags_substrate_callback, NULL, NULL);
+  if (err)
+    return err;
+
+  return error_OK;
+}
+
+/* ---------------------------------------------------------------------- */
 
 /* Delete 'index'. */
 static error deletetag(tag_cloud *tc, int index, void *opaque)
@@ -119,7 +192,7 @@ static tag_cloud_event keyhandler(wimp_key_no key_no, void *opaque)
 
   NOT_USED(opaque);
 
-  op = viewer_keymap_op(viewer_keymap_SECTION_TAG_CLOUD, key_no);
+  op = viewer_keymap_op(LOCALS.keymap_id, key_no);
 
   switch (op)
   {

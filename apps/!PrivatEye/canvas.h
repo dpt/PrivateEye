@@ -10,6 +10,8 @@
 
 typedef struct canvas canvas_t;
 
+error canvas_substrate_init(void);
+
 error canvas_init(void);
 void canvas_fin(void);
 

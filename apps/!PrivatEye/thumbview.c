@@ -23,6 +23,8 @@
 #include "oslib/wimp.h"
 
 #include "appengine/types.h"
+#include "appengine/app/keymap.h"
+#include "appengine/app/wire.h"
 #include "appengine/base/bsearch.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
@@ -56,6 +58,79 @@
 #include "scale.h"
 
 #include "thumbview.h"
+
+/* ----------------------------------------------------------------------- */
+
+static struct
+{
+  list_t            list_anchor;
+  thumbview        *current_tv;  /* most recent thumbview a menu was opened for */
+  viewer_keymap_id  keymap_id;
+}
+LOCALS;
+
+/* ---------------------------------------------------------------------- */
+
+/* key defns */
+enum
+{
+  Thumbview_LargeThumbs,
+  Thumbview_SmallThumbs,
+  Thumbview_FullInfoHorz,
+  Thumbview_FullInfoVert,
+  Thumbview_SortByName,
+  Thumbview_SortByCount,
+  Thumbview_SelectAll,
+  Thumbview_ClearSelection,
+};
+
+/* ---------------------------------------------------------------------- */
+
+static error declare_keymap(void)
+{
+  /* Keep these sorted by name */
+  static const keymap_name_to_action keys[] =
+  {
+    { "ClearSelection",   Thumbview_ClearSelection },
+    { "FullInfoHorz",     Thumbview_FullInfoHorz   },
+    { "FullInfoVert",     Thumbview_FullInfoVert   },
+    { "LargeThumbs",      Thumbview_LargeThumbs    },
+    { "SelectAll",        Thumbview_SelectAll      },
+    { "SmallThumbs",      Thumbview_SmallThumbs    },
+    { "SortByCount",      Thumbview_SortByCount    },
+    { "SortByName",       Thumbview_SortByName     },
+  };
+
+  return viewer_keymap_add("Thumbview",
+                           keys,
+                           NELEMS(keys),
+                           &LOCALS.keymap_id);
+}
+
+static error thumbview_substrate_callback(const wire_message_t *message,
+                                          void                 *opaque)
+{
+  NOT_USED(opaque);
+
+  switch (message->event)
+  {
+    case wire_event_DECLARE_KEYMAP:
+      return declare_keymap();
+  }
+
+  return error_OK;
+}
+
+error thumbview_substrate_init(void)
+{
+  error err;
+
+  err = wire_register(0, thumbview_substrate_callback, NULL, NULL);
+  if (err)
+    return err;
+
+  return error_OK;
+}
 
 /* ----------------------------------------------------------------------- */
 
@@ -132,15 +207,6 @@ struct thumbview
   }
   layout;
 };
-
-/* ----------------------------------------------------------------------- */
-
-static struct
-{
-  list_t     list_anchor;
-  thumbview *last_tv;     /* last thumbview a menu was opened on */
-}
-LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
@@ -356,7 +422,7 @@ static void pointer(wimp_pointer *pointer, void *opaque)
 
   tv = opaque;
 
-  LOCALS.last_tv = tv;
+  LOCALS.current_tv = tv;
 
   thumbview_menu_update();
 
@@ -561,7 +627,7 @@ static int thumbview_event_key_pressed(wimp_event_no event_no,
   key = &block->key;
   tv  = handle;
 
-  op = viewer_keymap_op(viewer_keymap_SECTION_THUMBVIEW, key->c);
+  op = viewer_keymap_op(LOCALS.keymap_id, key->c);
   if (op < 0) /* unknown op */
   {
     wimp_process_key(key->c);
@@ -620,7 +686,7 @@ static int thumbview_event_menu_selection(wimp_event_no event_no,
   i = bsearch_uint(&map[0].items, nelems, stride, item);
   if (i >= 0)
   {
-    tv = LOCALS.last_tv;
+    tv = LOCALS.current_tv;
     if (tv == NULL)
       return event_HANDLED;
 

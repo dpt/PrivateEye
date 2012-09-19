@@ -126,9 +126,9 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
   NOT_USED(handle);
 
-  /* FIXME: It may be incorrect to assume that the current_display_w will be
+  /* FIXME: It may be incorrect to assume that the current_viewer will be
    * valid at this point. */
-  viewer = viewer_find(GLOBALS.current_display_w);
+  viewer = GLOBALS.current_viewer;
   if (viewer == NULL)
     return event_NOT_HANDLED;
 

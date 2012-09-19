@@ -10,8 +10,11 @@
 
 #include "viewer.h"
 
+error display_substrate_init(void);
+
 error display_init(void);
 void display_fin(void);
+
 error display_set_handlers(viewer_t *viewer);
 void display_release_handlers(viewer_t *viewer);
 

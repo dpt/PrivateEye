@@ -32,7 +32,7 @@ templheadr		= $(templheadr_) $(templheadrflags)
 
 # Tool flags (specific cases)
 
-defines			= -DEYE_TAGS -DEYE_THUMBVIEW -DEYE_ZONES -DEYE_META
+defines			= -DEYE_TAGS -DEYE_THUMBVIEW -DEYE_ZONES -DEYE_META -DEYE_CANVAS
 
 # Compiler options
 

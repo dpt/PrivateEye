@@ -52,7 +52,7 @@ static void populate_info_dialogue(dialogue_t                  *d,
   char        scratch[256]; /* Careful Now */
   bits        time[2];
 
-  viewer = viewer_find(GLOBALS.current_display_w);
+  viewer = GLOBALS.current_viewer;
   if (viewer == NULL)
     return;
 

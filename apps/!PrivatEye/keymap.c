@@ -6,6 +6,7 @@
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
 #include "appengine/app/keymap.h"
+#include "appengine/app/wire.h"
 
 #include "actions.h"
 #include "privateeye.h"
@@ -14,99 +15,35 @@
 
 /* ----------------------------------------------------------------------- */
 
-/* KEEP THESE SORTED */
-
-static const keymap_name_to_action common[] =
+typedef struct
 {
-  { "Close",            Close                   },
-  { "Help",             Help                    },
-};
+  keymap_section *sections;
+  int             nsections;
+  int             allocated;
+}
+viewer_keymap_section_array;
 
-static const keymap_name_to_action viewer[] =
+static struct
 {
-  { "ConvToSpr",        ConvToSpr               },
-  { "Copy",             Copy                    },
-  { "Effects",          Effects                 },
-  { "Hist",             Hist                    },
-  { "HorzFlip",         HorzFlip                },
-  { "Info",             Info                    },
-  { "Kill",             Kill                    },
-#ifdef EYE_META
-  { "MetaData",         MetaData                },
-#endif
-  { "NewView",          NewView                 },
-  { "PanDown",          PanDown                 },
-  { "PanLeft",          PanLeft                 },
-  { "PanRandom",        PanRandom               },
-  { "PanRight",         PanRight                },
-  { "PanUp",            PanUp                   },
-  { "Rotate",           Rotate                  },
-  { "RotateLeft",       RotateLeft              },
-  { "RotateRight",      RotateRight             },
-  { "Save",             Save                    },
-  { "Scale",            Scale                   },
-  { "SourceInfo",       SourceInfo              },
-  { "StepBackwards",    StepBackwards           },
-  { "StepForwards",     StepForwards            },
-#ifdef EYE_TAGS
-  { "Tags",             Tags                    },
-#endif
-  { "VertFlip",         VertFlip                },
-  { "ZoomIn",           ZoomIn                  },
-  { "ZoomOut",          ZoomOut                 },
-  { "ZoomReset",        ZoomReset               },
-  { "ZoomToggle",       ZoomToggle              },
-};
-
-#ifdef EYE_TAGS
-static const keymap_name_to_action tag_cloud[] =
-{
-  { "Cloud",            TagCloud_Cloud          },
-  { "Commit",           TagCloud_Commit         },
-  { "Info",             TagCloud_Info           },
-  { "Kill",             TagCloud_Kill           },
-  { "List",             TagCloud_List           },
-  { "New",              TagCloud_New            },
-  { "Rename",           TagCloud_Rename         },
-  { "SmallCloud",       TagCloud_SmallCloud     },
-  { "SortByCount",      TagCloud_SortByCount    },
-  { "SortByName",       TagCloud_SortByName     },
-  { "SortSelFirst",     TagCloud_SortSelFirst   },
-  { "UnscaledCloud",    TagCloud_UnscaledCloud  },
-};
-#endif
-
-#ifdef EYE_THUMBVIEW
-static const keymap_name_to_action thumbview[] =
-{
-  { "ClearSelection",   Thumbview_ClearSelection },
-  { "FullInfoHorz",     Thumbview_FullInfoHorz   },
-  { "FullInfoVert",     Thumbview_FullInfoVert   },
-  { "LargeThumbs",      Thumbview_LargeThumbs    },
-  { "SelectAll",        Thumbview_SelectAll      },
-  { "SmallThumbs",      Thumbview_SmallThumbs    },
-  { "SortByCount",      Thumbview_SortByCount    },
-  { "SortByName",       Thumbview_SortByName     },
-};
-#endif
-
-static const keymap_section sections[] =
-{
-  { "Common",           common,         NELEMS(common)          },
-#ifdef EYE_TAGS
-  { "Tag Cloud",        tag_cloud,      NELEMS(tag_cloud)       },
-#endif
-#ifdef EYE_THUMBVIEW
-  { "Thumbview",        thumbview,      NELEMS(thumbview)       },
-#endif
-  { "Viewer",           viewer,         NELEMS(viewer)          },
-};
-
-/* ----------------------------------------------------------------------- */
+  viewer_keymap_section_array array;
+  int                         id; /* counter for ids we assign */
+}
+LOCALS;
 
 static keymap_t *keymap;
 
 static unsigned int viewer_keymap_refcount = 0;
+
+/* ----------------------------------------------------------------------- */
+
+/* Keep these sorted by name */
+static const keymap_name_to_action common[] =
+{
+  { "Close", Close },
+  { "Help",  Help  },
+};
+
+/* ----------------------------------------------------------------------- */
 
 error viewer_keymap_init(void)
 {
@@ -114,11 +51,25 @@ error viewer_keymap_init(void)
 
   if (viewer_keymap_refcount == 0)
   {
+    wire_message_t m;
+
     /* initialise */
 
+    /* add our mappings first - guaranteeing an id of zero */
+
+    viewer_keymap_add("Common", common, NELEMS(common), NULL);
+
+    /* invite all interested components to declare their mappings now */
+
+    m.event   = wire_event_DECLARE_KEYMAP;
+    m.payload = NULL;
+    wire_dispatch(&m);
+
+    /* parse the keymap */
+
     err = keymap_create("Choices:" APPNAME ".Keys",
-                        sections,
-                        NELEMS(sections),
+                        LOCALS.array.sections,
+                        LOCALS.array.nsections,
                        &keymap);
     if (err)
       return err;
@@ -144,13 +95,57 @@ void viewer_keymap_fin(void)
   viewer_keymap_refcount--;
 }
 
-int viewer_keymap_op(viewer_keymap_section section, wimp_key_no key_no)
+error viewer_keymap_add(const char                  *name,
+                        const keymap_name_to_action *mappings,
+                        int                          nmappings,
+                        viewer_keymap_id            *id)
+{
+  viewer_keymap_section_array *array = &LOCALS.array;
+  keymap_section              *section;
+
+  section = array->sections + array->nsections;
+  if (section == array->sections + array->allocated)
+  {
+    int             n;
+    keymap_section *newsections;
+
+    /* doubling strategy */
+
+    n = array->allocated * 2;
+    if (n < 8)
+      n = 8;
+
+    newsections = realloc(array->sections, sizeof(*array->sections) * n);
+    if (newsections == NULL)
+      return error_OOM;
+
+    array->sections  = newsections;
+    array->allocated = n;
+
+    section = array->sections + array->nsections;
+  }
+
+  section->name      = name;
+  section->mappings  = mappings;
+  section->nmappings = nmappings;
+
+  array->nsections++;
+
+  if (id)
+    *id = LOCALS.id;
+
+  LOCALS.id++;
+
+  return error_OK;
+}
+
+int viewer_keymap_op(viewer_keymap_id id, wimp_key_no key_no)
 {
   keymap_action act;
 
-  act = keymap_get_action(keymap, section, key_no);
-  if (act >= 0 || section == viewer_keymap_SECTION_COMMON)
+  act = keymap_get_action(keymap, id, key_no);
+  if (act >= 0 || id == 0) // common id
     return act;
 
-  return viewer_keymap_op(viewer_keymap_SECTION_COMMON, key_no);
+  return viewer_keymap_op(0, key_no);
 }

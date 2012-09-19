@@ -36,6 +36,7 @@
 
 #include "appengine/types.h"
 #include "appengine/app/choices.h"
+#include "appengine/app/wire.h"
 #include "appengine/base/bsearch.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
@@ -72,6 +73,122 @@
 #include "zones.h"
 
 #include "display.h"
+
+/* ---------------------------------------------------------------------- */
+
+static struct
+{
+  viewer_keymap_id keymap_id;
+}
+LOCALS;
+
+/* ---------------------------------------------------------------------- */
+
+/* key defns */
+enum
+{
+  ConvToSpr,
+  Copy,
+  Effects,
+  Hist,
+  HorzFlip,
+  Info,
+  Kill,
+  MetaData,
+  NewView,
+  PanDown,
+  PanLeft,
+  PanRandom,
+  PanRight,
+  PanUp,
+  Release,
+  Rotate,
+  RotateLeft,
+  RotateRight,
+  Save,
+  Scale,
+  SourceInfo,
+  StepBackwards,
+  StepForwards,
+  Tags,
+  VertFlip,
+  ZoomIn,
+  ZoomOut,
+  ZoomReset,
+  ZoomToggle,
+};
+
+/* ---------------------------------------------------------------------- */
+
+static error declare_keymap(void)
+{
+  /* Keep these sorted by name */
+  static const keymap_name_to_action keys[] =
+  {
+    { "ConvToSpr",        ConvToSpr               },
+    { "Copy",             Copy                    },
+    { "Effects",          Effects                 },
+    { "Hist",             Hist                    },
+    { "HorzFlip",         HorzFlip                },
+    { "Info",             Info                    },
+    { "Kill",             Kill                    },
+#ifdef EYE_META
+    { "MetaData",         MetaData                },
+#endif
+    { "NewView",          NewView                 },
+    { "PanDown",          PanDown                 },
+    { "PanLeft",          PanLeft                 },
+    { "PanRandom",        PanRandom               },
+    { "PanRight",         PanRight                },
+    { "PanUp",            PanUp                   },
+    { "Rotate",           Rotate                  },
+    { "RotateLeft",       RotateLeft              },
+    { "RotateRight",      RotateRight             },
+    { "Save",             Save                    },
+    { "Scale",            Scale                   },
+    { "SourceInfo",       SourceInfo              },
+    { "StepBackwards",    StepBackwards           },
+    { "StepForwards",     StepForwards            },
+#ifdef EYE_TAGS
+    { "Tags",             Tags                    },
+#endif
+    { "VertFlip",         VertFlip                },
+    { "ZoomIn",           ZoomIn                  },
+    { "ZoomOut",          ZoomOut                 },
+    { "ZoomReset",        ZoomReset               },
+    { "ZoomToggle",       ZoomToggle              },
+  };
+
+  return viewer_keymap_add("Viewer",
+                           keys,
+                           NELEMS(keys),
+                           &LOCALS.keymap_id);
+}
+
+static error display_substrate_callback(const wire_message_t *message,
+                                        void                 *opaque)
+{
+  NOT_USED(opaque);
+
+  switch (message->event)
+  {
+    case wire_event_DECLARE_KEYMAP:
+      return declare_keymap();
+  }
+
+  return error_OK;
+}
+
+error display_substrate_init(void)
+{
+  error err;
+
+  err = wire_register(0, display_substrate_callback, NULL, NULL);
+  if (err)
+    return err;
+
+  return error_OK;
+}
 
 /* ---------------------------------------------------------------------- */
 
@@ -145,29 +262,32 @@ static void display_set_single_handlers(int reg)
 
 error display_init(void)
 {
-  error err;
+  typedef error (*initfn)(void);
 
-  /* dependencies */
-
-  err = help_init();
-  if (err)
-    return err;
-
-  err = dcs_quit_init();
-  if (err)
-    return err;
-
+  static const initfn initfns[] =
+  {
+    help_init,
+    dcs_quit_init,
+    hist_init,
 #ifdef EYE_META
-  err = metadata_init();
-  if (err)
-    return err;
+    metadata_init,
 #endif
-
 #ifdef EYE_TAGS
-  err = tags_init();
-  if (err)
-    return err;
+    tags_init,
 #endif
+  };
+
+  error err;
+  int   i;
+
+  /* initialise dependencies */
+
+  for (i = 0; i < NELEMS(initfns); i++)
+  {
+    err = initfns[i]();
+    if (err)
+      return err;
+  }
 
   /* handlers */
 
@@ -207,6 +327,23 @@ error display_init(void)
 
 void display_fin(void)
 {
+  typedef void (*finfn)(void);
+
+  static const finfn finfns[] =
+  {
+#ifdef EYE_TAGS
+    tags_fin,
+#endif
+#ifdef EYE_META
+    metadata_fin,
+#endif
+    hist_fin,
+    dcs_quit_fin,
+    help_fin,
+  };
+
+  int i;
+
   help_remove_menu(GLOBALS.image_m);
 
   menu_destroy(GLOBALS.image_m);
@@ -218,14 +355,8 @@ void display_fin(void)
 
   display_set_single_handlers(0);
 
-#ifdef EYE_TAGS
-  tags_fin();
-#endif
-#ifdef EYE_META
-  metadata_fin();
-#endif
-  dcs_quit_fin();
-  help_fin();
+  for (i = 0; i < NELEMS(finfns); i++)
+    finfns[i]();
 }
 
 /* ----------------------------------------------------------------------- */
@@ -742,7 +873,7 @@ static void pan_to_point(wimp_pointer *pointer, viewer_t *viewer)
   wimp_window_info info;
   int              wax, way; /* work area x,y */
 
-  info.w = GLOBALS.current_display_w;
+  info.w = GLOBALS.current_viewer->main_w;
   wimp_get_window_info_header_only(&info);
 
   wax = pointer->pos.x + (info.xscroll - info.visible.x0);
@@ -758,7 +889,7 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
   int              visible_w, visible_h;
   int              old_scale, new_scale;
 
-  info.w = GLOBALS.current_display_w;
+  info.w = GLOBALS.current_viewer->main_w;
   wimp_get_window_info_header_only(&info);
 
   wax = pointer->pos.x + (info.xscroll - info.visible.x0);
@@ -773,13 +904,13 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
   else
     new_scale = old_scale / 2;
 #if 0
-  viewer_scaledlg_set(GLOBALS.current_display_w, new_scale, 0);
+  viewer_scaledlg_set(GLOBALS.current_viewer->main_w, new_scale, 0);
 
   info.xscroll = (wax * new_scale / old_scale) - visible_w / 2;
   info.yscroll = (way * new_scale / old_scale) + visible_h / 2;
   wimp_open_window((wimp_open *) &info);
 
-  window_redraw((int) GLOBALS.current_display_w);
+  window_redraw((int) GLOBALS.current_viewer->main_w);
 #else
   wax = (wax * new_scale / old_scale);
   way = (way * new_scale / old_scale);
@@ -871,12 +1002,12 @@ static int embed_event_user_drag_box(wimp_event_no event_no,
 
   wimp_get_pointer_info(&pointer);
 
-  if (pointer.w == GLOBALS.current_display_w)
+  if (pointer.w == GLOBALS.current_viewer->main_w)
     return event_HANDLED; /* can't embed in self */
 
   parent = (pointer.w == wimp_ICON_BAR) ? wimp_TOP : pointer.w;
 
-  info.w = GLOBALS.current_display_w;
+  info.w = GLOBALS.current_viewer->main_w;
   wimp_get_window_info_header_only(&info);
 
   wimp_open_window_nested((wimp_open *) &info,
@@ -1019,7 +1150,7 @@ static int zoombox_event_user_drag_box(wimp_event_no event_no,
   zoombox_end(viewer);
 
   /* Read the window coordinates */
-  info.w = GLOBALS.current_display_w;
+  info.w = GLOBALS.current_viewer->main_w;
   wimp_get_window_info_header_only(&info);
 
   extent_w = info.extent.x1 - info.extent.x0;
@@ -1061,7 +1192,7 @@ static int zoombox_event_user_drag_box(wimp_event_no event_no,
 
       wimp_open_window((wimp_open *) &info);
 
-      window_redraw(GLOBALS.current_display_w);
+      window_redraw(GLOBALS.current_viewer->main_w);
     }
   }
 
@@ -1136,7 +1267,7 @@ static void display_menu_update(void)
   wimp_menu_entry *entries;
   wimp_menu       *m;
 
-  viewer = viewer_find(GLOBALS.current_display_w);
+  viewer = GLOBALS.current_viewer;
   if (viewer == NULL)
     return;
 
@@ -1197,7 +1328,7 @@ static int display_event_mouse_click(wimp_event_no event_no,
   pointer = &block->pointer;
   viewer  = handle;
 
-  GLOBALS.current_display_w = viewer->main_w;
+  GLOBALS.current_viewer = viewer;
 
   shift = inkey(INKEY_SHIFT);
   ctrl  = inkey(INKEY_CTRL);
@@ -1539,7 +1670,7 @@ static int display_event_key_pressed(wimp_event_no event_no,
     }
   }
 
-  op = viewer_keymap_op(viewer_keymap_SECTION_VIEWER, key->c);
+  op = viewer_keymap_op(LOCALS.keymap_id, key->c);
   if (op < 0) /* unknown op */
   {
     wimp_process_key(key->c);
@@ -1609,7 +1740,7 @@ static int display_event_menu_selection(wimp_event_no event_no,
   i = bsearch_uint(&map[0].items, nelems, stride, item);
   if (i >= 0)
   {
-    viewer = viewer_find(GLOBALS.current_display_w);
+    viewer = GLOBALS.current_viewer;
     if (viewer == NULL)
       return event_HANDLED;
 

@@ -28,7 +28,7 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
 
   NOT_USED(opaque);
 
-  viewer = viewer_find(GLOBALS.current_display_w);
+  viewer = GLOBALS.current_viewer;
   if (viewer == NULL)
     return;
 
@@ -45,7 +45,7 @@ static void viewer_savedlg_handler(dialogue_t *d, const char *file_name)
 
   NOT_USED(d);
 
-  viewer = viewer_find(GLOBALS.current_display_w);
+  viewer = GLOBALS.current_viewer;
   if (viewer == NULL)
     return;
 

@@ -10,6 +10,8 @@
 #include "appengine/base/errors.h"
 #include "appengine/graphics/image.h"
 
+error tags_substrate_init(void);
+
 error tags_init(void);
 void tags_fin(void);
 error tags_open(image_t *image);

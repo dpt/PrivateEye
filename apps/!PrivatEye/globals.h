@@ -40,7 +40,7 @@ extern struct PrivateEyeGlobals
   wimp_w           effects_crv_w;
   dialogue_t       effects_blr_d;
 
-  wimp_w           current_display_w;
+  viewer_t        *current_viewer;
 
   wimp_menu       *image_m;
 #ifdef EYE_THUMBVIEW
