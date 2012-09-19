@@ -25,6 +25,7 @@ extern int layout_test(void);
 extern int stream_test(void);
 extern int pack_test(void);
 extern int pickle_test(void);
+extern int wire_test(void);
 
 typedef struct test
 {
@@ -53,6 +54,7 @@ static const test tests[] =
   { "stream", stream_test },
   { "pack",   pack_test   },
   { "pickle", pickle_test },
+  { "wire",   wire_test   },
 };
 
 static const int ntests = NELEMS(tests);

@@ -298,13 +298,13 @@ adding 'bryant'...
 adding 'pris'...
 adding 'sebastian'...
 test: iterate
-000213d8: sebastian
-000213b4: pris
-00021390: bryant
-0002136c: gaff
-00021348: rachael
-00021324: batty
-00021300: deckard
+000218b4: sebastian
+00021890: pris
+0002186c: bryant
+00021848: gaff
+00021824: rachael
+00021800: batty
+000217dc: deckard
 
 >> ntree tests
 test: build tree
@@ -2394,7 +2394,6 @@ test: filing: dirscan
 @./svn
 @.AETest
 @.app
-@.array_grow_idea
 @.base
 @.databases
 @.datastruct
@@ -2407,7 +2406,6 @@ test: filing: dirscan
 @.io
 @.Makefile
 @.MakeMake
-@.MakeMakeG
 @.net
 @.o
 @.objs-debug
@@ -2417,20 +2415,19 @@ test: filing: dirscan
 @.odf
 @.om
 @.output
+@.output2
 @.TemplateMF
-@.TemplateMFG
 @.test
 @.testpickle1
 @.testpickle2
 @.text
-@.thumbnail-diff
 @.vdu
 @.wimp
 
 >> font tests
 test: select
 Matching for 'Homerton' with attrs 403
-font_select says: Use 'Homerton.Light'.
+font_select says: Use 'Homerton.Medium'.
 Matching for 'Goudy' with attrs 406
 font_select says: No good match.
 Matching for 'eric' with attrs 206
@@ -4685,12 +4682,29 @@ walk 'Stilton':'England Derbyshire Cow None Pasteurised 2'...
 walk 'Wensleydale':'England Yorkshire Cow Ewe Pasteurised 3'...
 test: destroy hash
 
+>> wire tests
+register client 00060418/"Fred"
+new client's wire id is 60390
+register client 00060310/"Jim"
+new client's wire id is 60288
+register client 00060208/"Sheila"
+new client's wire id is 60180
+client 00060208/"Sheila" informed of event
+event was 42, payload was 00000000
+client 00060310/"Jim" informed of event
+event was 42, payload was 00000000
+client 00060418/"Fred" informed of event
+event was 42, payload was 00000000
+deregister client 00060418/"Fred" with id of 60390
+deregister client 00060310/"Jim" with id of 60288
+deregister client 00060208/"Sheila" with id of 60180
 
-Tests completed: 18/18 tests passed.
 
-Fortify: Statistics at test.main.c.main.142
+Tests completed: 19/19 tests passed.
+
+Fortify: Statistics at test.main.c.main.144
          Memory currently allocated: 0 bytes in 0 blocks
          Maximum memory allocated at one time: 55868 bytes in 156 blocks
-         There have been 1038 allocations and 1038 deallocations
-         There was a total of 104678 bytes allocated
+         There have been 1045 allocations and 1045 deallocations
+         There was a total of 104762 bytes allocated
          The average allocation was 100 bytes
