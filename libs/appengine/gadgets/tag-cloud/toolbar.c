@@ -26,6 +26,10 @@ void tag_cloud_attach_toolbar(tag_cloud *tc)
   if (tc->flags & tag_cloud_FLAG_TOOLBAR)
     return; /* already attached */
 
+  /* turn off all event handlers */
+  // this is grisly - maybe have tag_cloud_internal_set_handlers_toolbar?
+  tag_cloud_internal_set_handlers(0, tc);
+
   toolbar_w = window_clone(tag_cloud_get_toolbar_window());
 
   wstate.w = tc->main_w;
@@ -45,8 +49,6 @@ void tag_cloud_attach_toolbar(tag_cloud *tc)
   tc->flags    |= tag_cloud_FLAG_TOOLBAR;
   tc->toolbar_w = toolbar_w;
 
-  // grisly - maybe have tag_cloud_internal_set_handlers_toolbar?
-  tag_cloud_internal_set_handlers(0, tc);
   tag_cloud_internal_set_handlers(1, tc);
 
   // reset the buttons - also grisly, copied from display.c etc.
@@ -67,13 +69,15 @@ void tag_cloud_detach_toolbar(tag_cloud *tc)
   if ((tc->flags & tag_cloud_FLAG_TOOLBAR) == 0)
     return; /* already detached */
 
+  /* turn off all event handlers */
+  // this is grisly - see above
+  tag_cloud_internal_set_handlers(0, tc);
+
   window_delete_cloned(tc->toolbar_w);
 
   tc->flags    &= ~tag_cloud_FLAG_TOOLBAR;
   tc->toolbar_w = NULL;
 
-  // grisly - see above
-  tag_cloud_internal_set_handlers(0, tc);
   tag_cloud_internal_set_handlers(1, tc);
 }
 
@@ -83,4 +87,6 @@ void tag_cloud_toggle_toolbar(tag_cloud *tc)
     tag_cloud_detach_toolbar(tc);
   else
     tag_cloud_attach_toolbar(tc);
+
+  // kick()
 }
