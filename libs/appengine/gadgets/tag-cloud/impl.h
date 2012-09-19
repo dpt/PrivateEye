@@ -198,7 +198,6 @@ void tag_cloud_hover_toggle(tag_cloud *tc);
 void tag_cloud_schedule_redraw(tag_cloud *tc);
 
 /* open.c */
-void tag_cloud_post_open(tag_cloud *tc, wimp_open *open);
 void tag_cloud_post_reopen(tag_cloud *tc, wimp_open *open);
 
 /* highlight.c */

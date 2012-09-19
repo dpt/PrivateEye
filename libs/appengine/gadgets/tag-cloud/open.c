@@ -9,7 +9,7 @@
 
 #include "impl.h"
 
-static void kick(tag_cloud *tc, wimp_open *open, os_box *box)
+static int kick(tag_cloud *tc, wimp_open *open, os_box *box)
 {
   int width;
 
@@ -28,29 +28,28 @@ static void kick(tag_cloud *tc, wimp_open *open, os_box *box)
     wimp_set_extent(tc->main_w, box);
 
     wimp_open_window(open); // have to re-kick after extent change
+
+    return 1;
   }
-}
 
-void tag_cloud_post_open(tag_cloud *tc, wimp_open *open)
-{
-  os_box box;
-
-  kick(tc, open, &box);
+  return 0;
 }
 
 void tag_cloud_post_reopen(tag_cloud *tc, wimp_open *open)
 {
   os_box box;
 
-  kick(tc, open, &box);
-
-  /* immediate redraw */
-  wimp_force_redraw(tc->main_w, box.x0, box.y0, box.x1, box.y1);
+  if (kick(tc, open, &box))
+  {
+    /* immediate redraw */
+    wimp_force_redraw(tc->main_w, box.x0, box.y0, box.x1, box.y1);
+  }
 }
 
 void tag_cloud_open(tag_cloud *tc)
 {
   wimp_window_state state;
+  os_box            box;
 
   state.w = tc->main_w;
   wimp_get_window_state(&state);
@@ -58,5 +57,5 @@ void tag_cloud_open(tag_cloud *tc)
   state.next = wimp_TOP;
   wimp_open_window((wimp_open *) &state);
 
-  tag_cloud_post_open(tc, (wimp_open *) &state);
+  kick(tc, (wimp_open *) &state, &box);
 }
