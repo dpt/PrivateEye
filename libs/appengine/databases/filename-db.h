@@ -3,11 +3,16 @@
  * Purpose: Filename database
  * ----------------------------------------------------------------------- */
 
-// this is probably more general than i've set it up for:
-// it could just be 'stringhashdb'
-
-/* The filenamedb maps IDs (MD5 digests) to filenames so that we can search
- * for files and retrieve filenames */
+/**
+ * \file filename-db.h
+ *
+ * Filename database.
+ *
+ * The filenamedb is an associative array which maps keys (such as digests)
+ * to filenames. The data is stored on disc.
+ *
+ * PrivateEye uses this to find out where an image lives given its digest.
+ */
 
 #ifndef APPENGINE_FILENAME_DB_H
 #define APPENGINE_FILENAME_DB_H
@@ -49,6 +54,7 @@ const char *filenamedb_get(T          *db,
 
 /* ----------------------------------------------------------------------- */
 
+/* delete knowledge of filenames which don't exist on disc */
 error filenamedb_prune(T *db);
 
 /* ----------------------------------------------------------------------- */

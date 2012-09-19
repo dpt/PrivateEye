@@ -1,10 +1,10 @@
 /* --------------------------------------------------------------------------
  *    Name: vector.h
- * Purpose: Flexible array library
+ * Purpose: Flexible arrays
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Vector (interface).
+ * \file vector.h
  *
  * Vector is an abstracted array which can be resized by both length and
  * element width.

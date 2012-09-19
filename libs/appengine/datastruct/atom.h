@@ -1,10 +1,10 @@
 /* --------------------------------------------------------------------------
  *    Name: atom.h
- * Purpose: Indexed data block store
+ * Purpose: Indexed data block storage
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Atoms (interface).
+ * \file atom.h
  *
  * Indexed data block store.
  *

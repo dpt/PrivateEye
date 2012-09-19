@@ -1,10 +1,10 @@
 /* --------------------------------------------------------------------------
  *    Name: ntree.h
- * Purpose: N-ary tree library
+ * Purpose: N-ary trees
  * ----------------------------------------------------------------------- */
 
 /**
- * \file NTree (interface).
+ * \file ntree.h
  *
  * NTree is an N-ary tree.
  */

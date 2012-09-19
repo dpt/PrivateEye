@@ -3,12 +3,19 @@
  * Purpose: Tag database
  * ----------------------------------------------------------------------- */
 
-/* The tagdb maintains a series of key-value pairs. The key is a string (a
- * filename, or a hash), the value is a set of tags. */
+/**
+ * \file tag-db.h
+ *
+ * Tag database.
+ *
+ * The tagdb is an associative array which maps keys (such as filenames, or
+ * digests) to one or more tags. The data is stored on disc.
+ *
+ * PrivateEye uses this to label images.
+ */
 
-/* Continuations
- * Set continuation to zero to begin with, it'll return zero when no more
- * tags are available. */
+/* Use of continuations: Set the continuation value to zero to begin with,
+ * it will return zero when no more tags are available. */
 
 #ifndef APPENGINE_TAG_DB_H
 #define APPENGINE_TAG_DB_H

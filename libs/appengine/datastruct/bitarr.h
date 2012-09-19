@@ -1,10 +1,10 @@
 /* --------------------------------------------------------------------------
  *    Name: bitarr.h
- * Purpose: Array of bits
+ * Purpose: Arrays of bits
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Bit Array (interface).
+ * \file bitarr.h
  *
  * Arrays of bits.
  *

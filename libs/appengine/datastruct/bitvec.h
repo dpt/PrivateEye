@@ -1,10 +1,10 @@
 /* --------------------------------------------------------------------------
  *    Name: bitvec.h
- * Purpose: Vector of bits
+ * Purpose: Flexible arrays of bits
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Bit Vector (interface).
+ * \file bitvec.h
  *
  * Vectors of bits.
  *

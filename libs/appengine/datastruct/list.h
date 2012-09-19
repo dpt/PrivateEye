@@ -1,12 +1,12 @@
 /* --------------------------------------------------------------------------
  *    Name: list.h
- * Purpose: Linked list library
+ * Purpose: Linked lists
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Linked list (interface).
+ * \file list.h
  *
- * List is a linked list.
+ * A linked list.
  */
 
 #ifndef APPENGINE_LIST_H

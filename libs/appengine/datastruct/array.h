@@ -4,7 +4,7 @@
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Array (interface).
+ * \file array.h
  *
  * Utilities for operating on arrays.
  */

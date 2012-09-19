@@ -4,17 +4,17 @@
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Pickle (interface).
+ * \file pickle.h
  *
- * (De-)Serialising associative arrays
+ * Storage of associative arrays.
  *
- * Its name borrowed from Python, this provides pickle_pickle and
- * pickle_unpickle which can serialise or deserialise an associative array to
- * a file of the form:
+ * Its name borrowed from Python, this provides pickle_pickle() and
+ * pickle_unpickle() which respectively serialise or deserialise an
+ * associative array to a file of the form:
  *
- * #<comments>
- * <version>
- * <key><separator><value>
+ *   #<comments>
+ *   <version>
+ *   <key><separator><value>  (zero or more)
  *
  * When serialising, keys and values are read from through an abstract
  * pickle_reader_methods interface. They are then transformed into savable
@@ -138,12 +138,22 @@ pickle_unformat_methods;
 
 // use streams for output?
 
+/**
+ * Store associative array 'assocarr' to the file 'filename'. Interpret the
+ * contents of the associative array using the methods in 'reader'. Format
+ * the keys and values for storage using the methods in 'format'.
+ */
 error pickle_pickle(const char                  *filename,
                     void                        *assocarr,
                     const pickle_reader_methods *reader,
                     const pickle_format_methods *format,
                     void                        *opaque);
 
+/**
+ * Populate associative array 'assocarr' from the file 'filename'. Insert
+ * into the associative array using the methods in 'writer'. Parse
+ * the keys and values from storage using the methods in 'unformat'.
+ */
 error pickle_unpickle(const char                    *filename,
                       void                          *assocarr,
                       const pickle_writer_methods   *writer,

@@ -3,6 +3,18 @@
  * Purpose: Digest database
  * ----------------------------------------------------------------------- */
 
+/**
+ * \file digest-db.h
+ *
+ * Digest database.
+ *
+ * The digestdb is a static in-memory array dedicated to holding (128-bit)
+ * digests.
+ *
+ * digestdb is used by tagdb and filenamedb to save memory by sharing the
+ * digest storage cost.
+ */
+
 #ifndef APPENGINE_DIGEST_DB_H
 #define APPENGINE_DIGEST_DB_H
 

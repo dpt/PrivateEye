@@ -1,10 +1,10 @@
 /* --------------------------------------------------------------------------
  *    Name: hash.h
- * Purpose: Interface of Hash library
+ * Purpose: Associative arrays
  * ----------------------------------------------------------------------- */
 
 /**
- * \file Hash (interface).
+ * \file hash.h
  *
  * Hash is an associative array.
  *
