@@ -3,59 +3,20 @@
  * Purpose: Tag cloud
  * ----------------------------------------------------------------------- */
 
-#include "appengine/wimp/window.h"
-
 #include "appengine/gadgets/tag-cloud.h"
 
 #include "impl.h"
 
-static int kick(tag_cloud *tc, wimp_open *open, os_box *box)
+/* ----------------------------------------------------------------------- */
+
+void tag_cloud_post_reopen(tag_cloud *tc)
 {
-  int width;
-
-  width = open->visible.x1 - open->visible.x0;
-
-  /* only layout + redraw where necessary */
-  if (tc->layout.width != width ||
-      tc->flags & (tag_cloud_FLAG_NEW_DATA | tag_cloud_FLAG_NEW_HIGHLIGHTS)) // probably other conditions too
-  {
-    tag_cloud_layout(tc, width);
-
-    box->x0 = 0;
-    box->y0 = -tc->layout.height - 44; /* add a bit of extra vertical space */
-    box->x1 = 16384;
-    box->y1 = (tc->flags & tag_cloud_FLAG_TOOLBAR) ? 64 : 0; /* height of toolbar window */
-    wimp_set_extent(tc->main_w, box);
-
-    wimp_open_window(open); // have to re-kick after extent change
-
-    return 1;
-  }
-
-  return 0;
-}
-
-void tag_cloud_post_reopen(tag_cloud *tc, wimp_open *open)
-{
-  os_box box;
-
-  if (kick(tc, open, &box))
-  {
-    /* immediate redraw */
-    wimp_force_redraw(tc->main_w, box.x0, box.y0, box.x1, box.y1);
-  }
+  tag_cloud_sync(tc, tag_cloud_SYNC_REDRAW_IF_LAYOUT);
 }
 
 void tag_cloud_open(tag_cloud *tc)
 {
-  wimp_window_state state;
-  os_box            box;
-
-  state.w = tc->main_w;
-  wimp_get_window_state(&state);
-
-  state.next = wimp_TOP;
-  wimp_open_window((wimp_open *) &state);
-
-  kick(tc, (wimp_open *) &state, &box);
+  tag_cloud_sync(tc, tag_cloud_SYNC_OPEN_TOP);
 }
+
+/* ----------------------------------------------------------------------- */

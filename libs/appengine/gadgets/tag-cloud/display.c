@@ -15,7 +15,7 @@
 static void display(tag_cloud *tc)
 {
   tc->flags |= tag_cloud_FLAG_NEW_DISPLAY;
-  tag_cloud_schedule_redraw(tc);
+  tag_cloud_redraw(tc);
 }
 
 /* ----------------------------------------------------------------------- */

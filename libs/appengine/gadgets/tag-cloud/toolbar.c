@@ -17,6 +17,8 @@
 #include "iconnames.h"
 #include "impl.h"
 
+/* ----------------------------------------------------------------------- */
+
 void tag_cloud_attach_toolbar(tag_cloud *tc)
 {
   wimp_w                    toolbar_w;
@@ -88,5 +90,15 @@ void tag_cloud_toggle_toolbar(tag_cloud *tc)
   else
     tag_cloud_attach_toolbar(tc);
 
-  // kick()
+  tag_cloud_kick_extent(tc);
 }
+
+/* ----------------------------------------------------------------------- */
+
+void tag_cloud_toolbar_adjust_extent(const tag_cloud *tc, os_box *box)
+{
+  if (tc->flags & tag_cloud_FLAG_TOOLBAR)
+    box->y1 += 64; /* height of toolbar window */
+}
+
+/* ----------------------------------------------------------------------- */

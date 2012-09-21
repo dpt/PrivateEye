@@ -177,9 +177,9 @@ error tag_cloud_set_tags(tag_cloud           *tc,
 
   tag_cloud_set_sort(tc, tc->sort_type); /* kick */
 
-  tag_cloud_schedule_redraw(tc);
-
   tc->menued_tag_index = -1; // not pleasant doing this here
+
+  tag_cloud_redraw(tc);
 
 
   if (tc->flags & tag_cloud_FLAG_TOOLBAR)

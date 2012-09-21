@@ -21,7 +21,7 @@ static void tag_cloud_kick_highlight(tag_cloud *tc)
   if (tc->flags & tag_cloud_FLAG_SORT_SEL_FIRST)
     tag_cloud_set_sort(tc, tc->sort_type); /* kick the sorter */
 
-  tag_cloud_schedule_redraw(tc);
+  tag_cloud_redraw(tc);
 }
 
 static error tag_cloud_add_highlights(tag_cloud *tc,

@@ -635,15 +635,17 @@ error tag_cloud_layout(tag_cloud *tc, int width)
   int        lineheight;
   int        y;
 
-  err = tag_cloud_layout_prepare(tc);
-  if (err)
-    goto cleanup;
+  fprintf(stderr, "tag_cloud_layout %p\n", tc);
 
   if ((tc->flags & tag_cloud_FLAG_NEW_ALL) == 0 &&
        tc->layout.width == width)
   {
     return error_OK; /* nothing has changed */
   }
+
+  err = tag_cloud_layout_prepare(tc);
+  if (err)
+    goto cleanup;
 
   /* call if: new data, new highlights, new display */
   if (tc->flags & (tag_cloud_FLAG_NEW_DATA       |

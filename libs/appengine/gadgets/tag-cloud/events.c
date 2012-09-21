@@ -260,6 +260,8 @@ static int tag_cloud_event_redraw_window_request(wimp_event_no event_no,
 
   NOT_USED(event_no);
 
+  fprintf(stderr, "tag_cloud_event_redraw_window_request %p\n", handle);
+
   redraw = &block->redraw;
   tc     = handle;
 
@@ -323,6 +325,8 @@ static int tag_cloud_event_open_window_request(wimp_event_no event_no,
 
   NOT_USED(event_no);
 
+  fprintf(stderr, "tag_cloud_event_open_window_request %p\n", handle);
+
   tc   = handle;
   open = &block->open;
 
@@ -332,7 +336,7 @@ static int tag_cloud_event_open_window_request(wimp_event_no event_no,
 
   // open is now the actual window dimensions
 
-  tag_cloud_post_reopen(tc, open);
+  tag_cloud_post_reopen(tc);
 
   return event_HANDLED;
 }
@@ -884,7 +888,7 @@ static int tag_cloud_message_font_changed(wimp_message *message, void *handle)
   // not NEW_DISPLAY (config doesn't change)
   tc->flags |= tag_cloud_FLAG_NEW_DATA;
 
-  tag_cloud_schedule_redraw(tc);
+  tag_cloud_redraw(tc);
 
   return event_HANDLED;
 }

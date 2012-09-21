@@ -3,6 +3,7 @@
  * Purpose: Tag cloud
  * ----------------------------------------------------------------------- */
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "fortify/fortify.h"
@@ -18,53 +19,68 @@
 
 /* ----------------------------------------------------------------------- */
 
-static event_wimp_handler tag_cloud_redraw_event_null_reason_code;
-
-/* ----------------------------------------------------------------------- */
-
-static void claim_nulls(int reg, tag_cloud *tc)
+void tag_cloud_sync(tag_cloud *tc, tag_cloud_sync_flags flags)
 {
-  static const event_wimp_handler_spec wimp_handlers[] =
-  {
-    { wimp_NULL_REASON_CODE, tag_cloud_redraw_event_null_reason_code },
-  };
-
-  event_register_wimp_group(reg,
-                            wimp_handlers,
-                            NELEMS(wimp_handlers),
-                            tc->main_w,
-                            event_ANY_ICON,
-                            tc);
-}
-
-static int tag_cloud_redraw_event_null_reason_code(wimp_event_no event_no,
-                                                   wimp_block   *block,
-                                                   void         *handle)
-{
-  tag_cloud *tc;
   wimp_window_state state;
-
-  NOT_USED(event_no);
-  NOT_USED(block);
-
-  tc = handle;
+  int               visible_width;
+  int               old_width, old_height;
 
   state.w = tc->main_w;
   wimp_get_window_state(&state);
 
-  if (state.flags & wimp_WINDOW_OPEN)
+  /* do nothing if the window is closed */
+
+  if ((flags & tag_cloud_SYNC_OPEN_TOP) == 0 &&
+      (state.flags & wimp_WINDOW_OPEN) == 0)
+    return;
+
+  /* layout to fit the visible width */
+
+  visible_width = state.visible.x1 - state.visible.x0;
+
+  old_width  = tc->layout.width;
+  old_height = tc->layout.height;
+
+  (void) tag_cloud_layout(tc, visible_width); // error ignored
+
+  /* set extent if the vertical size has changed */
+
+  if ((flags & (tag_cloud_SYNC_OPEN_TOP | tag_cloud_SYNC_EXTENT)) != 0 ||
+      tc->layout.height != old_height)
   {
-    tag_cloud_layout(tc, tc->layout.width /* no change */);
-    wimp_force_redraw(tc->main_w, 0, -16384, 16384, 0);
+    os_box box;
+
+    box.x0 = 0;
+    box.y0 = -(tc->layout.height + 44); /* add a bit of extra vertical space */
+    box.x1 = 16384;
+    box.y1 = 0;
+
+    tag_cloud_toolbar_adjust_extent(tc, &box);
+
+    wimp_set_extent(tc->main_w, &box);
+
+    if (flags & tag_cloud_SYNC_OPEN_TOP)
+      state.next = wimp_TOP;
+
+    /* have to re-kick after extent change */
+    wimp_open_window((wimp_open *) &state);
   }
 
-  claim_nulls(0, tc);
-
-  return event_HANDLED;
+  if ((flags & tag_cloud_SYNC_REDRAW) != 0 ||
+      ((flags & tag_cloud_SYNC_REDRAW_IF_LAYOUT) != 0 && (tc->layout.width != old_width)))
+    wimp_force_redraw(tc->main_w, 0, -16384, 16384, 0);
 }
 
-void tag_cloud_schedule_redraw(tag_cloud *tc)
+/* ----------------------------------------------------------------------- */
+
+void tag_cloud_redraw(tag_cloud *tc)
 {
-  /* This will ignore already-registered handlers. */
-  claim_nulls(1, tc);
+  tag_cloud_sync(tc, tag_cloud_SYNC_REDRAW);
 }
+
+void tag_cloud_kick_extent(tag_cloud *tc)
+{
+  tag_cloud_sync(tc, tag_cloud_SYNC_EXTENT);
+}
+
+/* ----------------------------------------------------------------------- */

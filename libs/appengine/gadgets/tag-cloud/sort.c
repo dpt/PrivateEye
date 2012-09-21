@@ -145,7 +145,7 @@ static void sort(tag_cloud *tc)
   tc->sort.last_sort_type  = sort_type;
   tc->sort.last_order_type = order_type;
 
-  tag_cloud_schedule_redraw(tc);
+  tag_cloud_redraw(tc);
 }
 
 /* ----------------------------------------------------------------------- */

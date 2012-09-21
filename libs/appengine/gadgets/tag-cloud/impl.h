@@ -195,10 +195,22 @@ void tag_cloud_restore_pointer_shape(tag_cloud *tc);
 void tag_cloud_hover_toggle(tag_cloud *tc);
 
 /* redraw.c */
-void tag_cloud_schedule_redraw(tag_cloud *tc);
+enum
+{
+  tag_cloud_SYNC_OPEN_TOP         = (1 << 0),
+  tag_cloud_SYNC_EXTENT           = (1 << 1),
+  tag_cloud_SYNC_REDRAW           = (1 << 2),
+  tag_cloud_SYNC_REDRAW_IF_LAYOUT = (1 << 3),
+};
+
+typedef unsigned int tag_cloud_sync_flags;
+
+void tag_cloud_sync(tag_cloud *tc, tag_cloud_sync_flags flags);
+void tag_cloud_redraw(tag_cloud *tc);
+void tag_cloud_kick_extent(tag_cloud *tc);
 
 /* open.c */
-void tag_cloud_post_reopen(tag_cloud *tc, wimp_open *open);
+void tag_cloud_post_reopen(tag_cloud *tc);
 
 /* highlight.c */
 int tag_cloud_is_highlighted(tag_cloud *tc, int index);
@@ -207,5 +219,6 @@ int tag_cloud_is_highlighted(tag_cloud *tc, int index);
 void tag_cloud_attach_toolbar(tag_cloud *tc);
 void tag_cloud_detach_toolbar(tag_cloud *tc);
 void tag_cloud_toggle_toolbar(tag_cloud *tc);
+void tag_cloud_toolbar_adjust_extent(const tag_cloud *tc, os_box *box);
 
 #endif /* TAG_CLOUD_IMPL_H */
