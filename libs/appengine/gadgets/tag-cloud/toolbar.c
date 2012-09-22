@@ -98,7 +98,7 @@ void tag_cloud_toggle_toolbar(tag_cloud *tc)
 void tag_cloud_toolbar_adjust_extent(const tag_cloud *tc, os_box *box)
 {
   if (tc->flags & tag_cloud_FLAG_TOOLBAR)
-    box->y1 += 64; /* height of toolbar window */
+    box->y1 += 68; /* height of toolbar window */
 }
 
 /* ----------------------------------------------------------------------- */
