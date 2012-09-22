@@ -102,17 +102,20 @@ tag_cloud_hover_data;
 
 enum
 {
-  tag_cloud_FLAG_NEW_DATA       = (1 << 0),
-  tag_cloud_FLAG_NEW_HIGHLIGHTS = (1 << 1),
-  tag_cloud_FLAG_NEW_HOVER      = (1 << 2),
-  tag_cloud_FLAG_NEW_SORT       = (1 << 3),
-  tag_cloud_FLAG_NEW_DISPLAY    = (1 << 4),
-  tag_cloud_FLAG_NEW_ALL        = 0x1f,
-  tag_cloud_FLAG_SHADED         = (1 << 5),
-  tag_cloud_FLAG_SORT_SEL_FIRST = (1 << 6),
-  tag_cloud_FLAG_TOOLBAR        = (1 << 7),
-  tag_cloud_FLAG_TOOLBAR_NOT_EVER = (1 << 8),
-  tag_cloud_FLAG_LAYOUT_PREPED  = (1 << 9),
+  tag_cloud_FLAG_NEW_DATA         = (1 << 0),
+  tag_cloud_FLAG_NEW_HIGHLIGHTS   = (1 << 1),
+  tag_cloud_FLAG_NEW_HOVER        = (1 << 2),
+  tag_cloud_FLAG_NEW_SORT         = (1 << 3),
+  tag_cloud_FLAG_NEW_DISPLAY      = (1 << 4),
+  tag_cloud_FLAG_NEW_SHADE        = (1 << 5),
+
+  tag_cloud_FLAG_NEW_ALL          = (1 << 6) - 1,
+
+  tag_cloud_FLAG_SHADED           = (1 << 6),
+  tag_cloud_FLAG_SORT_SEL_FIRST   = (1 << 7),
+  tag_cloud_FLAG_TOOLBAR          = (1 << 8),
+  tag_cloud_FLAG_TOOLBAR_NOT_EVER = (1 << 9),
+  tag_cloud_FLAG_LAYOUT_PREPED    = (1 << 10),
 };
 
 typedef unsigned int tag_cloud_flags;
