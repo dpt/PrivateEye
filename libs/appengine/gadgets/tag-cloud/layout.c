@@ -632,8 +632,10 @@ error tag_cloud_layout(tag_cloud *tc, int width)
   int        scaledw;
   int        last_x_move;
   int        last_y_move;
-  int        lineheight;
   int        y;
+  int        line;
+  int        largestscale = 0; /* initialised to quiet compiler warning */
+  int        lineheight;
 
   fprintf(stderr, "tag_cloud_layout %p\n", tc);
 
@@ -738,11 +740,12 @@ error tag_cloud_layout(tag_cloud *tc, int width)
 
   y = 0;
 
+  line = 0;
+
   while (i < tc->e_used)
   {
     int    index;
     int    remain;
-    int    largestscale;
     os_box b;
 
     /* find out how many tags will fit on this line */
@@ -886,7 +889,9 @@ error tag_cloud_layout(tag_cloud *tc, int width)
 
     /* vertically space the line */
 
-    lineheight = tc->layout.leading * tc->scaletab[largestscale] / 256;
+    /* the first line drops by font size; subsequent lines drop by leading */
+    lineheight = (line == 0) ? tc->layout.font_size : tc->layout.leading;
+    lineheight = lineheight * tc->scaletab[largestscale] / 256;
     (void) move_y(tc->layout.paintstring.string + last_y_move,
                   -lineheight * font_OS_UNIT);
     y -= lineheight;
@@ -927,7 +932,13 @@ error tag_cloud_layout(tag_cloud *tc, int width)
     }
 
     linestart = i;
+    line++;
   }
+
+  /* now add space for descenders */
+  lineheight = tc->layout.leading - tc->layout.font_size;
+  lineheight = lineheight * tc->scaletab[largestscale] / 256;
+  y -= lineheight;
 
 #ifndef NDEBUG
   fprintf(stderr, "paintstring.used = %d\n", tc->layout.paintstring.used);

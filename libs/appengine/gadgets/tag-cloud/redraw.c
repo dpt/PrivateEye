@@ -51,7 +51,7 @@ void tag_cloud_sync(tag_cloud *tc, tag_cloud_sync_flags flags)
     os_box box;
 
     box.x0 = 0;
-    box.y0 = -(tc->layout.height + 44); /* add a bit of extra vertical space */
+    box.y0 = -tc->layout.height;
     box.x1 = 16384;
     box.y1 = 0;
 
