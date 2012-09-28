@@ -148,7 +148,7 @@ error atom_new(atom_set_t *s, const unsigned char *block, size_t length,
   assert(patom);
 
   atom = atom_for_block(s, block, length);
-  if (atom >= 0) /* already present */
+  if (atom != atom_NOT_FOUND) /* already present */
   {
     if (patom)
       *patom = atom;
