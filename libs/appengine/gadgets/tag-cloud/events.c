@@ -19,6 +19,7 @@
 #include "appengine/wimp/help.h"
 #include "appengine/wimp/icon.h"
 #include "appengine/wimp/menu.h"
+#include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/numstr.h"
 #include "appengine/base/os.h"
@@ -134,12 +135,16 @@ static void add_new_tag(dialogue_t *d,
                         const char *tag_name,
                         void       *opaque)
 {
+  error      err;
   tag_cloud *tc = opaque;
 
   NOT_USED(d);
 
-  if (tc->newtag)
-    tc->newtag(tc, tag_name, strlen(tag_name), tc->opaque);
+  if (tc->newtag == NULL)
+    return;
+
+  err = tc->newtag(tc, tag_name, strlen(tag_name), tc->opaque);
+  error_report(err); /* warn user */
 
   // FIXME: if ADJUST is clicked to add then the menu stays open, should
   // update it and re-open it
@@ -149,6 +154,7 @@ static void rename_tag(dialogue_t *d,
                        const char *tag_name,
                        void       *opaque)
 {
+  error      err;
   tag_cloud *tc = opaque;
 
   NOT_USED(d);
@@ -156,24 +162,32 @@ static void rename_tag(dialogue_t *d,
   if (tc->menued_tag_index < 0)
     return;
 
-  if (tc->renametag)
-    tc->renametag(tc,
-                  tc->menued_tag_index,
-                  tag_name,
-                  strlen(tag_name),
-                  tc->opaque);
+  if (tc->renametag == NULL)
+    return;
+
+  err = tc->renametag(tc,
+                      tc->menued_tag_index,
+                      tag_name,
+                      strlen(tag_name),
+                      tc->opaque);
+  error_report(err); /* warn user */
 
   // if (tc->menued_tag_index == -1)
   //   close menu?
 
-  // FIXNE: if ADJUST is clicked to rename then the menu stays open, should
+  // FIXME: if ADJUST is clicked to rename then the menu stays open, should
   // update it and re-open it
 }
 
 static void delete_tag(tag_cloud *tc, int index)
 {
-  if (tc->deletetag)
-    tc->deletetag(tc, index, tc->opaque);
+  error err;
+
+  if (tc->deletetag == NULL)
+    return;
+
+  err = tc->deletetag(tc, index, tc->opaque);
+  error_report(err); /* warn user */
 }
 
 static void rename_fillout(dialogue_t *d, void *opaque)
@@ -479,7 +493,10 @@ static int tag_cloud_event_mouse_click(wimp_event_no event_no,
       {
         err = tagfn(tc, i, tc->opaque);
         if (err)
-          return event_NOT_HANDLED; // handle error
+        {
+          error_report(err); /* warn user */
+          return event_NOT_HANDLED;
+        }
 
         /* kick the pointer to update it's indication. this is cheap as it
          * won't cope if the layout changes. (and it assumes that the state
@@ -508,7 +525,10 @@ static int tag_cloud_event_mouse_click(wimp_event_no event_no,
 
     err = help_add_menu(tc->main_m, "tagcloud");
     if (err)
-      return event_NOT_HANDLED; // handle error
+    {
+      error_report(err); /* warn user */
+      return event_NOT_HANDLED;
+    }
 
     /* shade 'Tag 'name'' entry and sub menu when no tag */
 
@@ -830,7 +850,10 @@ static int tag_cloud_message_data_load(wimp_message *message, void *handle)
     {
       err = tagfilefn(tc, xfer->file_name, i, tc->opaque);
       if (err)
-        return event_NOT_HANDLED; // handle error
+      {
+        error_report(err); /* warn user */
+        return event_NOT_HANDLED;
+      }
 
       // but we need to tag the files specified, not the current file
 
