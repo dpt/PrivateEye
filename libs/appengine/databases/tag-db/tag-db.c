@@ -93,7 +93,7 @@ struct tagdb
 {
   char                   *filename;
 
-  atom_set_t             *tags; /* indexes tag names */
+  atom_set_t             *tags; /* tag names */
 
   struct tagdb_tag_entry *counts;
   int                     c_used;
