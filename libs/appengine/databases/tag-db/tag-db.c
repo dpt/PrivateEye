@@ -351,7 +351,7 @@ static error format_value(const void *vvalue,
     // better if it prepared a list of quoted tags in advance outside of
     // this loop
 
-    c += length;
+    c += length - 1; /* account for terminator */
     buf[c++] = ' ';
   }
 
