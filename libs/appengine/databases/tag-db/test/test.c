@@ -122,7 +122,7 @@ static error test_rename_tags(State *state)
   {
     char buf[256];
 
-    err = tagdb_tagtoname(state->db, state->tags[i], buf, sizeof(buf));
+    err = tagdb_tagtoname(state->db, state->tags[i], buf, NULL, sizeof(buf));
     if (err)
       goto Failure;
 
@@ -132,7 +132,7 @@ static error test_rename_tags(State *state)
     if (err)
       goto Failure;
 
-    err = tagdb_tagtoname(state->db, state->tags[i], buf, sizeof(buf));
+    err = tagdb_tagtoname(state->db, state->tags[i], buf, NULL, sizeof(buf));
     if (err)
       goto Failure;
 
@@ -169,7 +169,7 @@ static error test_enumerate_tags(State *state)
     {
       printf("tag %d, count %d", tag, count);
 
-      err = tagdb_tagtoname(state->db, tag, buf, sizeof(buf));
+      err = tagdb_tagtoname(state->db, tag, buf, NULL, sizeof(buf));
       if (err)
         goto Failure;
 
@@ -247,7 +247,7 @@ static error test_get_tags_for_id(State *state)
 
       if (cont)
       {
-        err = tagdb_tagtoname(state->db, tag, buf, sizeof(buf));
+        err = tagdb_tagtoname(state->db, tag, buf, NULL, sizeof(buf));
         if (err)
           goto Failure;
 
@@ -316,7 +316,7 @@ static error test_enumerate_ids_by_tag(State *state)
     int  cont;
     char buf[256];
 
-    err = tagdb_tagtoname(state->db, state->tags[i], buf, sizeof(buf));
+    err = tagdb_tagtoname(state->db, state->tags[i], buf, NULL, sizeof(buf));
     if (err)
       goto Failure;
 
@@ -510,7 +510,7 @@ static error bash_enumerate(State *state)
 
         if (cont2)
         {
-          err = tagdb_tagtoname(state->db, tag, buf2, sizeof(buf2));
+          err = tagdb_tagtoname(state->db, tag, buf2, NULL, sizeof(buf2));
           if (err)
             goto failure;
 
@@ -677,7 +677,7 @@ static error test_bash(State *state)
       char        buf[256];
       const char *tagname;
 
-      err = tagdb_tagtoname(state->db, tags[i], buf, sizeof(buf));
+      err = tagdb_tagtoname(state->db, tags[i], buf, NULL, sizeof(buf));
       if (err)
         goto failure;
 
@@ -710,7 +710,7 @@ static error test_bash(State *state)
         printf("..name clash..");
       }
 
-      err = tagdb_tagtoname(state->db, tags[i], buf, sizeof(buf));
+      err = tagdb_tagtoname(state->db, tags[i], buf, NULL, sizeof(buf));
       if (err)
         goto failure;
 

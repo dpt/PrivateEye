@@ -337,11 +337,13 @@ static error format_value(const void *vvalue,
   index = -1;
   for (;;)
   {
+    size_t length;
+
     index = bitvec_next(v, index);
     if (index < 0)
       break;
 
-    err = tagdb_tagtoname(db, index, buf + c, len - c);
+    err = tagdb_tagtoname(db, index, buf + c, &length, len - c);
     if (err)
       return -1;
 
@@ -349,7 +351,7 @@ static error format_value(const void *vvalue,
     // better if it prepared a list of quoted tags in advance outside of
     // this loop
 
-    c += strlen(buf + c);
+    c += length;
     buf[c++] = ' ';
   }
 
@@ -585,7 +587,11 @@ error tagdb_enumerate_tags(tagdb     *db,
   return error_OK;
 }
 
-error tagdb_tagtoname(tagdb *db, tagdb_tag tag, char *buf, size_t bufsz)
+error tagdb_tagtoname(tagdb     *db,
+                      tagdb_tag  tag,
+                      char      *buf,
+                      size_t    *length,
+                      size_t     bufsz)
 {
   const char *s;
   size_t      l;
@@ -596,6 +602,9 @@ error tagdb_tagtoname(tagdb *db, tagdb_tag tag, char *buf, size_t bufsz)
     return error_TAGDB_UNKNOWN_TAG;
 
   s = (const char *) atom_get(db->tags, db->counts[tag].index, &l);
+
+  if (length)
+    *length = l;
 
   if (bufsz < l)
     return error_TAGDB_BUFF_OVERFLOW;

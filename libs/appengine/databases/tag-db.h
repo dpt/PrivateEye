@@ -69,7 +69,11 @@ error tagdb_enumerate_tags(T         *db,
 
 /* convert a tag to a name */
 /* 'buf' may be NULL if bufsz is 0 */
-error tagdb_tagtoname(T *db, tagdb_tag tag, char *buf, size_t bufsz);
+error tagdb_tagtoname(T         *db,
+                      tagdb_tag  tag,
+                      char      *buf,
+                      size_t    *length,
+                      size_t     bufsz);
 
 /* ----------------------------------------------------------------------- */
 
