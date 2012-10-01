@@ -7,6 +7,8 @@
 #ifndef APPENGINE_STRINGS_H
 #define APPENGINE_STRINGS_H
 
+#include <stddef.h>
+
 /*
  * Returns a pointer to whatever precedes the last ':' or '.' in the input.
  */
@@ -55,5 +57,11 @@ void str_term(char *string);
 
 /* Case insensitive strcmp. */
 int strcasecmp(const char *s1, const char *s2);
+
+/* Case insensitive strncmp. */
+int strncasecmp(const char *s1, const char *s2, size_t n);
+
+/* Case insensitive string compare for two unterminated strings. */
+int strnncasecmp(const char *s1, size_t n1, const char *s2, size_t n2);
 
 #endif /* APPENGINE_STRINGS_H */

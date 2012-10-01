@@ -4,14 +4,14 @@
 
 #include "appengine/base/strings.h"
 
-int strcasecmp(const char *s1, const char *s2)
+int strncasecmp(const char *s1, const char *s2, size_t n)
 {
   const unsigned char *u1, *u2;
 
   u1 = (const unsigned char *) s1;
   u2 = (const unsigned char *) s2;
 
-  for (;;)
+  for (; n > 0; n--)
   {
     unsigned int c1, c2;
 
@@ -29,4 +29,6 @@ int strcasecmp(const char *s1, const char *s2)
     s1++;
     s2++;
   }
+
+  return 0;
 }
