@@ -577,9 +577,9 @@ error tagdb_enumerate_tags(tagdb     *db,
   {
     /* got one */
 
-    *tag          = db->counts[index].index;
+    *tag          = index;
     *count        = db->counts[index].count;
-    *continuation = ++index;
+    *continuation = index + 1;
   }
 
   return error_OK;
