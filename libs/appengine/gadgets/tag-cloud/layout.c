@@ -52,6 +52,11 @@ set_state;
 static void set_reset(void)
 {
   memset(&set_state, 0, sizeof(set_state));
+
+  set_state.a = 1 << 16;
+  set_state.b = 0;
+  set_state.c = 0;
+  set_state.d = 1 << 16;
 }
 
 static char *set_colour(char *s, os_colour bg, os_colour fg)
@@ -66,6 +71,9 @@ static char *set_colour(char *s, os_colour bg, os_colour fg)
     *s++ = (fg >> 16) & 0xFF;
     *s++ = (fg >> 24) & 0xFF;
     *s++ = 14; /* maximum foreground colour offset */
+
+    set_state.bg = bg;
+    set_state.fg = fg;
   }
 
   return s;
@@ -96,6 +104,9 @@ static char *set_underline(char *s, int pos, int thickness)
     *s++ = 25;
     *s++ = pos;
     *s++ = thickness;
+
+    set_state.pos       = pos;
+    set_state.thickness = thickness;
   }
 
   return s;
@@ -107,6 +118,8 @@ static char *set_handle(char *s, font_f f)
   {
     *s++ = 26;
     *s++ = f;
+
+    set_state.f = f;
   }
 
   return s;
@@ -130,6 +143,11 @@ static char *set_transform(char *s, int a, int b, int c, int d)
   *p++ = b;
   *p++ = c;
   *p++ = d;
+
+  set_state.a = a;
+  set_state.b = b;
+  set_state.c = c;
+  set_state.d = d;
 
   return (char *) p;
 }
