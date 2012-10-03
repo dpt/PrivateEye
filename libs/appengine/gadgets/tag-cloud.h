@@ -6,6 +6,8 @@
 #ifndef APPENGINE_TAG_CLOUD_H
 #define APPENGINE_TAG_CLOUD_H
 
+#include <stddef.h>
+
 #include "oslib/wimp.h"
 
 #include "appengine/base/errors.h"
@@ -24,23 +26,37 @@ void tag_cloud_fin(void);
 
 /* ----------------------------------------------------------------------- */
 
+/**
+ * Configuration of a tag cloud.
+ */
 typedef struct tag_cloud_config
 {
-  int size;    /* points (-1 to use desktop font size) */
-  int scale;   /* percent */
-  int leading; /* 24.8 fixed */
-  int padding; /* OS units */
+  int size;    /**< base font size in whole points, e.g. 12,
+                    or -1 to use the desktop font size */
+  int scale;   /**< overall scale factor, in percent */
+  int leading; /**< inter-line spacing, 24.8 fixed scale factor
+                    (256 => leading equals font size) */
+  int padding; /**< amount of padding to put around the edge of the tag
+                    cloud, in OS units */
 }
 tag_cloud_config;
 
 /* ----------------------------------------------------------------------- */
 
-/* the toolbar is normally visible by default - this hides it */
-#define tag_cloud_CREATE_FLAG_TOOLBAR_HIDDEN   (1u << 0)
-/* this disallows the toolbar entirely */
-#define tag_cloud_CREATE_FLAG_TOOLBAR_DISABLED (1u << 1)
-
+/**
+ * Flags specified to tag_cloud_create.
+ */
 typedef unsigned int tag_cloud_create_flags;
+
+/**
+ * The toolbar is normally visible by default - this hides it.
+ */
+#define tag_cloud_CREATE_FLAG_TOOLBAR_HIDDEN   (1u << 0)
+
+/**
+ * Disallow the toolbar entirely.
+ */
+#define tag_cloud_CREATE_FLAG_TOOLBAR_DISABLED (1u << 1)
 
 T *tag_cloud_create(tag_cloud_create_flags  flags,
                     const tag_cloud_config *config);
@@ -54,6 +70,9 @@ error tag_cloud_set_config(T                      *tc,
 
 /* ----------------------------------------------------------------------- */
 
+/**
+ * Events delivered from, or to, the tag cloud.
+ */
 typedef enum tag_cloud_event
 {
   tag_cloud_EVENT_CLOSE,
@@ -64,7 +83,7 @@ typedef enum tag_cloud_event
   tag_cloud_EVENT_SORT_BY_NAME,
   tag_cloud_EVENT_SORT_BY_COUNT,
 
-  tag_cloud_EVENT_SORT_SELECTED_FIRST,
+  tag_cloud_EVENT_SORT_SELECTED_FIRST, /* note: this toggles the state */
 
   tag_cloud_EVENT_INFO,
   tag_cloud_EVENT_KILL,
@@ -79,43 +98,63 @@ tag_cloud_event;
 
 /* ----------------------------------------------------------------------- */
 
-/* Create a new tag. */
-// must client call settags again?
+// TODO: Document whether it's expected that after these callbacks that the
+// client call settags again.
+
+/**
+ * Callback to create a new tag.
+ */
 typedef error (tag_cloud_newtagfn)(T          *tc,
                                    const char *name,
                                    int         length,
                                    void       *opaque);
 
-/* Delete 'index'. */
+/**
+ * Callback to delete tag 'index'.
+ */
 typedef error (tag_cloud_deletetagfn)(T    *tc,
                                       int   index,
                                       void *opaque);
 
-/* Rename 'index' to 'name'. */
+/**
+ * Callback to rename tag 'index' to 'name'.
+ */
 typedef error (tag_cloud_renametagfn)(T          *tc,
                                       int         index,
                                       const char *name,
                                       int         length,
                                       void       *opaque);
 
-/* Tag or detag the current file with 'index'.
- * Called when the user clicks on a tag in the the window. */
+/**
+ * Callback to tag or detag the current file with 'index'.
+ * Called when the user clicks on a tag in the the tag cloud.
+ */
 typedef error (tag_cloud_tagfn)(T    *tc,
                                 int   index,
                                 void *opaque);
 
-/* Tag or detag the file 'filename' with 'index'.
- * Called when files are dropped in the window. */
+/**
+ * Callback to tag or detag the file 'filename' with 'index'.
+ * Called when files are dropped in the window.
+ */
 typedef error (tag_cloud_tagfilefn)(T          *tc,
                                     const char *filename,
                                     int         index,
                                     void       *opaque);
 
-/* Some other sort of event. */
+/**
+ * Callback for other sorts of event.
+ */
 typedef error (tag_cloud_eventfn)(T                *tc,
                                   tag_cloud_event  event,
                                   void             *opaque);
 
+/**
+ * Set event handlers.
+ *
+ * \param tc     Tag cloud.
+ * \param opaque Opaque value passed to callbacks.
+ */
 void tag_cloud_set_handlers(T                     *tc,
                             tag_cloud_newtagfn    *newtag,
                             tag_cloud_deletetagfn *deletetag,
@@ -129,25 +168,53 @@ void tag_cloud_set_handlers(T                     *tc,
 
 /* ----------------------------------------------------------------------- */
 
+/**
+ * Specifies a tag name along with its count.
+ */
 typedef struct tag_cloud_tag
 {
-  const char *name;
-  int         count;
+  const char *name;   /**< tag name, need not be terminated */
+  int         count;  /**< number of times used */
 }
 tag_cloud_tag;
 
+/**
+ * Populate a tag cloud with tags.
+ *
+ * When tags are quoted in callbacks and highlights the i'th tag in the input
+ * data will have index i.
+ *
+ * \param tc    Tag cloud.
+ * \param tags  Array of tag_cloud_tag values to set.
+ * \param ntags Number of values given.
+ *
+ * \return Error indication.
+ */
 error tag_cloud_set_tags(T                   *tc,
                          const tag_cloud_tag *tags,
                          int                  ntags);
 
 /* ----------------------------------------------------------------------- */
 
-/* Highlights the specified indices.
- * Indices must be given in ascending order.
- * Use nindices == 0 and indices == NULL to clear highlights. */
+/**
+ * Highlight all of the specified indices.
+ *
+ * \param tc       Tag cloud.
+ * \param indices  Array of indices to highlight.
+ * \param nindices Number of indices given, or zero to clear all highlights.
+ *
+ * \return Error indication.
+ */
 error tag_cloud_highlight(T *tc, const int *indices, int nindices);
 
+/**
+ * Add a single highlight.
+ */
 error tag_cloud_add_highlight(T *tc, int index);
+
+/**
+ * Remove a single highlight.
+ */
 void tag_cloud_remove_highlight(T *tc, int index);
 
 /* ----------------------------------------------------------------------- */
@@ -184,8 +251,12 @@ int tag_cloud_get_order(T *tc);
 
 /* ----------------------------------------------------------------------- */
 
-/* Dim the window contents and inhibit any activity.
- * Used when no taggable entity is present. */
+/**
+ * Dim the window contents and inhibit any tagging.
+ *
+ * \param tc    Tag cloud.
+ * \param shade On or off.
+ */
 void tag_cloud_shade(T *tc, int shade);
 
 /* ----------------------------------------------------------------------- */
@@ -194,11 +265,25 @@ wimp_w tag_cloud_get_window_handle(T *tc);
 
 /* ----------------------------------------------------------------------- */
 
-/* Tag Cloud asks what to do with the specified key.
- * Return the event to perform. Return -1 if you don't know. */
+// FIXME: Why is this section down here, and not nearer to the other event
+// handler definitions? Why is tag_cloud_set_key_handler separate from
+// tag_cloud_set_handlers?
+
+/**
+ * Callback which asks what to do with the specified key.
+ *
+ * Return the tag_cloud_event to perform or -1 if you don't know.
+ */
 typedef tag_cloud_event (tag_cloud_key_handler_fn)(wimp_key_no key_no,
                                                    void       *opaque);
 
+/**
+ * Set key handler.
+ *
+ * \param tc     Tag cloud.
+ * \param key    Key handler function.
+ * \param opaque Opaque value passed to callback.
+ */
 void tag_cloud_set_key_handler(T                        *tc,
                                tag_cloud_key_handler_fn *key,
                                void                     *opaque);
@@ -206,6 +291,8 @@ void tag_cloud_set_key_handler(T                        *tc,
 /* ----------------------------------------------------------------------- */
 
 void tag_cloud_open(T *tc);
+
+/* ----------------------------------------------------------------------- */
 
 #undef T
 
