@@ -289,6 +289,10 @@ static error metrics_calc(tag_cloud *tc)
 
   for (i = 0; i < tc->e_used; i++)
   {
+    const font_string_flags flags = font_GIVEN_TRFM   |
+                                    font_GIVEN_LENGTH |
+                                    font_GIVEN_FONT   |
+                                    font_KERN;
     const char *s;
     size_t      len;
     os_trfm     trfm;
@@ -314,7 +318,7 @@ static error metrics_calc(tag_cloud *tc)
 
     font_scan_string(tc->layout.font,
                      s,
-                     font_GIVEN_TRFM | font_GIVEN_FONT | font_KERN,
+                     flags,
                      LargeWidth, LargeWidth,
                      NULL,
                     &trfm,
@@ -325,7 +329,7 @@ static error metrics_calc(tag_cloud *tc)
 
     font_scan_string(tc->layout.bold_font,
                      s,
-                     font_GIVEN_TRFM | font_GIVEN_FONT | font_KERN,
+                     flags,
                      LargeWidth, LargeWidth,
                      NULL,
                     &trfm,
@@ -339,7 +343,7 @@ static error metrics_calc(tag_cloud *tc)
 
   font_scan_string(tc->layout.font,
                    SPACESTRING,
-                   font_GIVEN_FONT | font_KERN,
+                   font_GIVEN_LENGTH | font_GIVEN_FONT | font_KERN,
                    LargeWidth, LargeWidth,
                    NULL,
                    NULL,
