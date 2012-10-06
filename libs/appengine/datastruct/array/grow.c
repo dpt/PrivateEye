@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "fortify/fortify.h"
+
 #include "appengine/datastruct/array.h"
 
 int array_grow(void   **pblock,
@@ -17,7 +19,7 @@ int array_grow(void   **pblock,
 
   assert(pblock);
   assert(elemsize > 0);
-  assert(used > 0);
+  assert(used >= 0);
   assert(pallocated);
   assert(need > 0);
   assert(minimum > 0);

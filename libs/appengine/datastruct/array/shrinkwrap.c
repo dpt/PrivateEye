@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "fortify/fortify.h"
+
 #include "appengine/datastruct/array.h"
 
 int array_shrinkwrap(void   **pblock,
