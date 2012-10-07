@@ -6,7 +6,7 @@ ccflags		+= $(generalinc) $(flexinc) $(oslibinc) $(zlibinc)
 # Nobble TCP/IP-dependent stuff as we've no headers for it at the moment.
 ccflags		+= -DAPPENGINE_NO_TCPIP
 # Enable features
-ccflags		+= -DEYE_TAGS -DEYE_THUMBVIEW -DEYE_ZONES -DEYE_META
+ccflags		+= -DEYE_TAGS -DEYE_THUMBVIEW -DEYE_ZONES -DEYE_META -DEYE_CANVAS
 
 # Library references
 
