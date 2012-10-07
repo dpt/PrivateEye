@@ -35,10 +35,10 @@ objs	= flex.o
 \$(lib):	\$(objs)
 	\$(libfile) \$@ \$(objs)
 
-normal: $(lib)
+normal: \$(lib)
 	@echo 'normal' built
 
-all:	\$(lib)
+all:	normal
 	@echo 'all' built
 
 -include $(objs:.o=.d)
