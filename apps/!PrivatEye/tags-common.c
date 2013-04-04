@@ -335,7 +335,7 @@ error tags_common_set_tags(tag_cloud *tc)
 
     do
     {
-      err = tagdb_tagtoname(LOCALS.db, tag, bufp, bufend - bufp);
+      err = tagdb_tagtoname(LOCALS.db, tag, bufp, NULL, bufend - bufp);
       if (err == error_TAGDB_BUFF_OVERFLOW)
       {
         int   n;
