@@ -26,22 +26,30 @@ cat > GNUmakefile <<EOF
 
 include ../../common.mk
 
-lib	= libflex.a
+lib			= libflex.a
+libdbg	= libflexdbg.a
 
-objs	= flex.o
+objs		= flex.o
+objsdbg	= \$(objs:.o=.odf)
 
-.PHONY:	normal all
+.PHONY:	normal debug all
 
 \$(lib):	\$(objs)
 	\$(libfile) \$@ \$(objs)
 
+\$(libdbg):	\$(objsdbg)
+	\$(libfile) \$@ \$(objsdbg)
+
 normal: \$(lib)
 	@echo 'normal' built
 
-all:	normal
+debug:	\$(libdbg)
+	@echo 'debug' built
+
+all:	normal debug
 	@echo 'all' built
 
--include $(objs:.o=.d)
+-include \$(objs:.o=.d)
 EOF
 
 make all
