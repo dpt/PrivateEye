@@ -67,6 +67,8 @@ static error declare_keymap(void)
 static error canvas_substrate_callback(const wire_message_t *message,
                                        void                 *opaque)
 {
+  NOT_USED(opaque);
+
   switch (message->event)
   {
     case wire_event_DECLARE_KEYMAP:
