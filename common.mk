@@ -99,6 +99,8 @@ templheadr      = $(templheadr_) $(templheadrflags)
 .PHONY: clean
 
 clean:
-	-find \( -regex '.*\.\(o\|odf\|om\|a\|d\)' -or -name '*,ff8' \) -delete
+	-find -E . \( -regex '.*\.(o|odf|om|a|d)' -or -name '*,ff8' \) -delete
+#	-find -regextype posix-extended . \( -regex '.*\.(o|odf|om|a|d)' -or -name '*,ff8' \) -delete
+#	-find . \( -regex '.*\.\(o\|odf\|om\|a\|d\)' -or -name '*,ff8' \) -delete
 	@echo Cleaned
 
