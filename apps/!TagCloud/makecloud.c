@@ -5,6 +5,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "fortify/fortify.h"
 
 #include "oslib/os.h"
 
@@ -32,44 +35,61 @@ static int rnd(int mod)
   return (rand() % mod) + 1;
 }
 
-static const char *randomtagname(void)
+static const char *randomtagname(size_t *plength)
 {
   static char buf[10 + 1];
 
   int length;
   int i;
 
-  length = rnd(NELEMS(buf) - 1);
+  length = 10;//rnd(NELEMS(buf) - 1);
 
   for (i = 0; i < length; i++)
     buf[i] = 'a' + rnd(26) - 1;
 
   buf[i] = '\0';
 
+  if (plength)
+    *plength = length;
+
   return buf;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static int ntags = 50;
+static int ntags = 150;
 static tag_cloud_tag tags[200];
 static unsigned int highlights[(NELEMS(tags) + 31) / 32];
 static int indices[NELEMS(tags)];
 
-static void make_tags(void)
+static error make_tags(void)
 {
-  const char *name;
-  int         i;
+  int i;
 
   for (i = 0; i < ntags; i++)
   {
-    name = randomtagname();
+    const char *name;
+    size_t      length;
+    char       *newname;
 
-    tags[i].name  = str_dup(name);
-    tags[i].count = rnd(100);
-    if (tags[i].name == NULL)
-      return; // OOM
+    name = randomtagname(&length);
+
+    newname = malloc(length);
+    if (newname == NULL)
+      return error_OOM;
+
+    memcpy(newname, name, length);
+
+    tags[i].name   = newname;
+    tags[i].length = length;
+    tags[i].count  = rnd(100);
   }
+
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
+
+  return error_OK;
 }
 
 static error set_tags(void)
@@ -79,6 +99,10 @@ static error set_tags(void)
   err = tag_cloud_set_tags(LOCALS.tc, tags, ntags);
   if (err)
     return err;
+
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
 
   return error_OK;
 }
@@ -98,6 +122,10 @@ static error set_highlights(void)
   if (err)
     return err;
 
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
+
   return error_OK;
 }
 
@@ -109,11 +137,26 @@ static error add_tag(tag_cloud  *tc,
                      void       *opaque)
 {
   error err;
+  char *newname;
+  int   i;
+
+  /* does it exist already? */
+
+  for (i = 0; i < ntags; i++)
+    if (tags[i].length == length && memcmp(tags[i].name, name, length) == 0)
+      return error_OK; /* yes - ignore the request */
 
   /* add the new tag */
 
-  tags[ntags].name  = str_dup(name);
-  tags[ntags].count = 1;
+  newname = malloc(length);
+  if (newname == NULL)
+    return error_OOM;
+
+  memcpy(newname, name, length);
+
+  tags[ntags].name   = newname;
+  tags[ntags].length = length;
+  tags[ntags].count  = 1;
   ntags++;
 
   /* then call tag_cloud_set_tags */
@@ -121,6 +164,10 @@ static error add_tag(tag_cloud  *tc,
   err = set_tags();
   if (err)
     return err;
+
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
 
   return error_OK;
 }
@@ -136,11 +183,17 @@ static error delete_tag(tag_cloud *tc,
   array_delete_element(tags, sizeof(tags[0]), ntags, index);
   ntags--;
 
+  // need to wipe any highlight
+
   /* then call tag_cloud_set_tags */
 
   err = set_tags();
   if (err)
     return err;
+
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
 
   return error_OK;
 }
@@ -152,17 +205,38 @@ static error rename_tag(tag_cloud  *tc,
                         void       *opaque)
 {
   error err;
+  char *newname;
 
   /* rename the tag */
 
-  free((char *) tags[index].name);
-  tags[index].name = str_dup(name);
+  if (tags[index].length != length)
+  {
+    free((char *) tags[index].name);
+
+    newname = malloc(length);
+    if (newname == NULL)
+      return error_OOM;
+
+    tags[index].length = length;
+  }
+  else
+  {
+    newname = (char *) tags[index].name;
+  }
+
+  memcpy(newname, name, length);
+
+  tags[index].name = newname;
 
   /* then call tag_cloud_set_tags */
 
   err = set_tags();
   if (err)
     return err;
+
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
 
   return error_OK;
 }
@@ -179,6 +253,10 @@ static error tag(tag_cloud *tc,
 
   highlights[index >> 5] |= 1u << (index & 31);
 
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
+
   return error_OK;
 }
 
@@ -189,6 +267,10 @@ static error detag(tag_cloud *tc,
   tag_cloud_remove_highlight(LOCALS.tc, index);
 
   highlights[index >> 5] &= ~(1u << (index & 31));
+
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
 
   return error_OK;
 }
@@ -255,6 +337,10 @@ static tag_cloud_event keyhandler(wimp_key_no  key_no,
   case wimp_KEY_F2 | wimp_KEY_CONTROL: return tag_cloud_EVENT_CLOSE;
   }
 
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
+
   return tag_cloud_EVENT_UNKNOWN;
 }
 
@@ -273,7 +359,7 @@ error makecloud_init(void)
 
     conf.size    = -1; /* use desktop font size */
     conf.leading = (int) (1.4 * 256); /* 8.8 fixed point */
-    conf.padding = 32; /* OS units */
+    conf.padding = 16; /* OS units */
     conf.scale   = 100; /* percent */
 
     tc = tag_cloud_create(0 /* flags */, &conf);
@@ -301,6 +387,10 @@ error makecloud_init(void)
 
   makecloud_refcount++;
 
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
+
   return error_OK;
 
 
@@ -311,6 +401,10 @@ Failure:
 
 void makecloud_fin(void)
 {
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
+
   if (makecloud_refcount == 0)
     return;
 
@@ -339,7 +433,7 @@ void make_cloud(void)
   }
   else
   {
-    make_tags();
+    make_tags(); // errors not handled
     set_tags();
     set_highlights();
 
@@ -348,6 +442,10 @@ void make_cloud(void)
 
   /* FIXME: This doesn't work - needs investigation. */
   /* wimp_set_caret_position(state.w, wimp_ICON_WINDOW, -1, -1, -1, -1); */
+
+#ifdef FORTIFY
+  Fortify_CheckAllMemory();
+#endif
 
   return;
 }

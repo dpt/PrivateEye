@@ -210,6 +210,10 @@ int main(void)
     }
 #endif
 
+#ifdef FORTIFY
+    Fortify_CheckAllMemory();
+#endif
+
     (void) event_poll(&poll);
   }
 
