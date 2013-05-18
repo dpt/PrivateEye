@@ -8,7 +8,7 @@ normal:	utils
 	Dir ^.^.libs.fortify
 	amu -f MakefileRO $@
 	Dir ^.^.libs.jpeg
-	amu -f MakefileRO $@
+	amu -f MakefileRO libs
 	Dir ^.^.libs.md5
 	amu $@
 	Dir ^.^.libs.png
@@ -17,7 +17,6 @@ normal:	utils
 	amu -f MakefileRO $@
 	Dir ^.^.apps.!PrivatEye
 	amu $@
-	Dir ^.^
 	Dir ^.^.apps.!TagCloud
 	amu $@
 	Dir ^.^
@@ -30,7 +29,7 @@ debug:	utils
 	Dir ^.^.libs.fortify
 	amu -f MakefileRO $@
 	Dir ^.^.libs.jpeg
-	amu -f MakefileRO $@
+	amu -f MakefileRO libs
 	Dir ^.^.libs.md5
 	amu $@
 	Dir ^.^.libs.png
@@ -39,7 +38,6 @@ debug:	utils
 	amu -f MakefileRO $@
 	Dir ^.^.apps.!PrivatEye
 	amu $@
-	Dir ^.^
 	Dir ^.^.apps.!TagCloud
 	amu $@
 	Dir ^.^
@@ -70,5 +68,7 @@ clean:
 	Dir ^.^.libs.zlib
 	-amu -f MakefileRO $@
 	Dir ^.^.apps.!PrivatEye
+	-amu $@
+	Dir ^.^.apps.!TagCloud
 	-amu $@
 	Dir ^.^
