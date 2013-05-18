@@ -84,7 +84,7 @@ typedef struct T T;
 struct drawable_methods
 {
   void (*redraw)  (const drawable_choices *choices,
-                         wimp_draw        *draw,
+                         wimp_draw        *draw, /* used only for clip box */
                          T                *drawable,
                          int               x,
                          int               y);
