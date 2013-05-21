@@ -20,6 +20,7 @@
 #include "appengine/base/os.h"
 #include "appengine/databases/filename-db.h"
 #include "appengine/databases/tag-db.h"
+#include "appengine/datastruct/array.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/help.h"
 
@@ -33,7 +34,7 @@
 
 typedef struct
 {
-  int *indices;
+  int *indices; /* tag cloud indices */
   int  nindices;
   int  allocated;
 }
@@ -41,9 +42,10 @@ Indices;
 
 static struct
 {
-  wimp_w     tags_search_w;
-  tag_cloud *tc;
-  Indices    indices;
+  wimp_w       tags_search_w;
+  tags_common  common;
+  tag_cloud   *tc;
+  Indices      indices;
 }
 LOCALS;
 
@@ -56,60 +58,31 @@ static error tag(tag_cloud *tc, int index, void *opaque)
 
   NOT_USED(opaque);
 
-  /* make space */
-
-  if (ind->nindices >= ind->allocated)
+  if (array_grow((void **) &ind->indices,
+                 sizeof(*ind->indices),
+                 ind->nindices, /* used */
+                 &ind->allocated,
+                 1,
+                 8))
   {
-    int *newindices;
-    int  newallocated;
-
-    newallocated = ind->allocated * 2;
-    if (newallocated < 8) // FIXME: Hoist growth constants.
-      newallocated = 8;
-
-    newindices = realloc(ind->indices,
-                         newallocated * sizeof(*ind->indices));
-    if (newindices == NULL)
-      return error_OOM;
-
-    ind->indices   = newindices;
-    ind->allocated = newallocated;
+    err = error_OOM;
+    goto failure;
   }
 
-  /* insert index into the sorted indices table */
+  ind->indices[ind->nindices++] = index;
 
-  if (ind->nindices == 0)
-  {
-    ind->indices[0] = index;
-  }
-  else
-  {
-    int i;
-    int shift;
-
-    /* A linear search is probably more appropriate here than calling
-     * bsearch_int (which in any case doesn't return us the insertion point).
-     */
-
-    for (i = 0; i < ind->nindices && ind->indices[i] < index; i++)
-      ;
-
-    shift = ind->nindices - i;
-    if (shift)
-      memmove(ind->indices + i + 1,
-              ind->indices + i,
-              shift * sizeof(*ind->indices));
-
-    ind->indices[i] = index;
-  }
-
-  ind->nindices++;
+//  tag_cloud_add_highlight(tc, index);
 
   err = tag_cloud_highlight(tc, ind->indices, ind->nindices);
   if (err)
     return err;
 
   return error_OK;
+
+
+failure:
+
+  return err;
 }
 
 static error detag(tag_cloud *tc, int index, void *opaque)
@@ -117,23 +90,24 @@ static error detag(tag_cloud *tc, int index, void *opaque)
   error    err;
   Indices *ind = &LOCALS.indices;
   int      i;
-  int      shift;
 
   NOT_USED(opaque);
 
-  for (i = 0; i < ind->nindices && ind->indices[i] < index; i++)
-    ;
+  for (i = 0; i < ind->nindices; i++)
+    if (ind->indices[i] == index)
+      break;
 
   if (i == ind->nindices)
     return error_OK; /* index not found */
 
-  shift = ind->nindices - i - 1;
-  if (shift)
-    memmove(ind->indices + i,
-            ind->indices + i + 1,
-            shift * sizeof(*ind->indices));
+  array_delete_element(ind->indices,
+                       sizeof(*ind->indices),
+                       ind->nindices,
+                       i);
 
   ind->nindices--;
+
+//  tag_cloud_remove_highlight(tc, index);
 
   err = tag_cloud_highlight(tc, ind->indices, ind->nindices);
   if (err)
@@ -257,16 +231,19 @@ static error tags_search_lazyinit(void)
                            tags_common_tagfile,
                            tags_common_detagfile,
                            tags_common_event,
-                           tags_common_get_db());
+                           &LOCALS.common);
 
-    /* tag_cloud_set_key_handler(tc, keyhandler, db); */
+    /* tag_cloud_set_key_handler(tc, keyhandler, &LOCALS.common); */
 
-    err = tags_common_set_tags(tc);
+    LOCALS.common.db          = tags_common_get_db(); /* FIXME: Seems grotty. */
+    LOCALS.common.indextotag  = NULL;
+    LOCALS.common.nindextotag = 0;
+
+    LOCALS.tc                 = tc;
+
+    err = tags_common_set_tags(tc, &LOCALS.common);
     if (err)
       goto Failure;
-
-    LOCALS.tc = tc;
-
   }
 
   return error_OK;

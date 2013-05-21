@@ -21,6 +21,7 @@
 #include "appengine/databases/digest-db.h"
 #include "appengine/databases/filename-db.h"
 #include "appengine/databases/tag-db.h"
+#include "appengine/datastruct/array.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image.h"
 #include "appengine/io/md5.h"
@@ -44,9 +45,11 @@ static struct
 {
   tagdb        *db;        /* maps digests to tags */
   filenamedb_t *fdb;       /* maps digests to filenames */
-  int           backed_up; /* have we backed up this session? */
+  int           backed_up; /* have we backed up during this session? */
 }
 LOCALS;
+
+/* ----------------------------------------------------------------------- */
 
 tagdb *tags_common_get_db(void)
 {
@@ -60,6 +63,7 @@ filenamedb_t *tags_common_get_filename_db(void)
 
 /* ----------------------------------------------------------------------- */
 
+// unused
 /* FIXME: This is probably in the wrong place. */
 void tags_common_choices_updated(const choices *cs)
 {
@@ -123,14 +127,14 @@ error tags_common_add_tag(tag_cloud  *tc,
                           int         length,
                           void       *opaque)
 {
-  error  err;
-  tagdb *db = opaque;
+  error        err;
+  tags_common *common = opaque;
 
   NOT_USED(length);
 
-  tagdb_add(db, name, NULL);
+  tagdb_add(common->db, name, NULL);
 
-  err = tags_common_set_tags(tc);
+  err = tags_common_set_tags(tc, common);
   if (err)
     return err;
 
@@ -139,12 +143,12 @@ error tags_common_add_tag(tag_cloud  *tc,
 
 error tags_common_delete_tag(tag_cloud *tc, int index, void *opaque)
 {
-  error  err;
-  tagdb *db = opaque;
+  error        err;
+  tags_common *common = opaque;
 
-  tagdb_remove(db, index);
+  tagdb_remove(common->db, common->indextotag[index]);
 
-  err = tags_common_set_tags(tc);
+  err = tags_common_set_tags(tc, common);
   if (err)
     return err;
 
@@ -157,16 +161,16 @@ error tags_common_rename_tag(tag_cloud  *tc,
                              int         length,
                              void       *opaque)
 {
-  error  err;
-  tagdb *db = opaque;
+  error        err;
+  tags_common *common = opaque;
 
   NOT_USED(length);
 
-  err = tagdb_rename(db, index, name);
+  err = tagdb_rename(common->db, common->indextotag[index], name);
   if (err)
     return err;
 
-  err = tags_common_set_tags(tc);
+  err = tags_common_set_tags(tc, common);
   if (err)
     return err;
 
@@ -179,10 +183,10 @@ error tags_common_tag(tag_cloud  *tc,
                       const char *file_name,
                       void       *opaque)
 {
-  error  err;
-  tagdb *db = opaque;
+  error        err;
+  tags_common *common = opaque;
 
-  err = tagdb_tagid(db, digest, index);
+  err = tagdb_tagid(common->db, digest, common->indextotag[index]);
   if (err)
     return err;
 
@@ -190,7 +194,7 @@ error tags_common_tag(tag_cloud  *tc,
   if (err)
     return err;
 
-  err = tags_common_set_tags(tc);
+  err = tags_common_set_tags(tc, common);
   if (err)
     return err;
 
@@ -202,17 +206,17 @@ error tags_common_detag(tag_cloud  *tc,
                         const char *digest,
                         void       *opaque)
 {
-  error  err;
-  tagdb *db = opaque;
+  error        err;
+  tags_common *common = opaque;
 
-  err = tagdb_untagid(db, digest, index);
+  err = tagdb_untagid(common->db, digest, common->indextotag[index]);
   if (err)
     return err;
 
   /* We _don't_ remove from the filenamedb here, as there may be other tags
    * applied to the same file. */
 
-  err = tags_common_set_tags(tc);
+  err = tags_common_set_tags(tc, common);
   if (err)
     return err;
 
@@ -225,7 +229,7 @@ error tags_common_tagfile(tag_cloud  *tc,
                           void       *opaque)
 {
   error          err;
-  tagdb         *db = opaque;
+  tags_common   *common = opaque;
   unsigned char  digest[md5_DIGESTSZ];
 
   assert(md5_DIGESTSZ == digestdb_DIGESTSZ);
@@ -234,7 +238,7 @@ error tags_common_tagfile(tag_cloud  *tc,
   if (err)
     return err;
 
-  err = tagdb_tagid(db, (char *) digest, index);
+  err = tagdb_tagid(common->db, (char *) digest, common->indextotag[index]);
   if (err)
     return err;
 
@@ -242,7 +246,7 @@ error tags_common_tagfile(tag_cloud  *tc,
   if (err)
     return err;
 
-  err = tags_common_set_tags(tc);
+  err = tags_common_set_tags(tc, common);
   if (err)
     return err;
 
@@ -255,7 +259,7 @@ error tags_common_detagfile(tag_cloud  *tc,
                             void       *opaque)
 {
   error          err;
-  tagdb         *db = opaque;
+  tags_common   *common = opaque;
   unsigned char  digest[md5_DIGESTSZ];
 
   assert(md5_DIGESTSZ == digestdb_DIGESTSZ);
@@ -264,11 +268,11 @@ error tags_common_detagfile(tag_cloud  *tc,
   if (err)
     return err;
 
-  err = tagdb_untagid(db, (char *) digest, index);
+  err = tagdb_untagid(common->db, (char *) digest, common->indextotag[index]);
   if (err)
     return err;
 
-  err = tags_common_set_tags(tc);
+  err = tags_common_set_tags(tc, common);
   if (err)
     return err;
 
@@ -285,7 +289,7 @@ error tags_common_event(tag_cloud *tc, tag_cloud_event event, void *opaque)
   case tag_cloud_EVENT_COMMIT:
 
     /* Backup before we write out the databases. */
-    backup();
+    backup(); // would it be best to backup at start of session only?
 
     filenamedb_commit(LOCALS.fdb);
 
@@ -299,7 +303,10 @@ error tags_common_event(tag_cloud *tc, tag_cloud_event event, void *opaque)
 
 /* ----------------------------------------------------------------------- */
 
-error tags_common_set_tags(tag_cloud *tc)
+#define BUFMIN 128 /* minimum size of name buffer */
+#define TAGMIN 8   /* minimum size of tags array */
+
+error tags_common_set_tags(tag_cloud *tc, tags_common *common)
 {
   error          err;
   int            tagsallocated;
@@ -310,9 +317,9 @@ error tags_common_set_tags(tag_cloud *tc)
   char          *bufend;
   int            cont;
   int            ntags;
-  tagdb_tag      tag;
-  int            count;
   tag_cloud_tag *t;
+  int            ittallocated;
+  tagdb_tag     *indextotag;
 
   tagsallocated = 0; /* allocated */
   tags          = NULL;
@@ -322,11 +329,22 @@ error tags_common_set_tags(tag_cloud *tc)
   bufp          = buf;
   bufend        = buf;
 
+  ittallocated  = 0;
+  indextotag    = NULL;
+
+  // free indextotag map
+  free(common->indextotag);
+  common->indextotag = NULL;
+
   cont  = 0;
   ntags = 0;
   for (;;)
   {
-    err = tagdb_enumerate_tags(LOCALS.db, &cont, &tag, &count);
+    tagdb_tag tag;
+    int       count;
+    size_t    length;
+
+    err = tagdb_enumerate_tags(common->db, &cont, &tag, &count);
     if (err)
       goto failure;
 
@@ -335,29 +353,27 @@ error tags_common_set_tags(tag_cloud *tc)
 
     do
     {
-      err = tagdb_tagtoname(LOCALS.db, tag, bufp, NULL, bufend - bufp);
+      err = tagdb_tagtoname(common->db, tag, bufp, &length, bufend - bufp);
       if (err == error_TAGDB_BUFF_OVERFLOW)
       {
-        int   n;
-        char *newbuf;
+        char *oldbuf;
 
-        n = bufallocated * 2;
-        if (n < 128) // FIXME: Hoist growth constants.
-          n = 128;
+        oldbuf = buf;
 
-        newbuf = realloc(buf, n * sizeof(*newbuf));
-        if (newbuf == NULL)
+        if (array_grow((void **) &buf,
+                       sizeof(*buf),
+                       bufp - buf, /* used */
+                       &bufallocated,
+                       length,
+                       BUFMIN))
         {
           err = error_OOM;
           goto failure;
         }
 
-        /* adjust bufp */
-        bufp += newbuf - buf;
-
-        buf          = newbuf;
-        bufallocated = n;
-        bufend       = newbuf + bufallocated;
+        /* adjust buffer interior pointers */
+        bufp   += buf - oldbuf;
+        bufend  = buf + bufallocated;
       }
       else if (err)
       {
@@ -366,32 +382,42 @@ error tags_common_set_tags(tag_cloud *tc)
     }
     while (err == error_TAGDB_BUFF_OVERFLOW);
 
-    if (ntags >= tagsallocated)
+    if (array_grow((void **) &tags,
+                   sizeof(*tags),
+                   ntags, /* used */
+                   &tagsallocated,
+                   1, /* need */
+                   TAGMIN))
     {
-      int             n;
-      tag_cloud_tag *newtags;
-
-      n = tagsallocated * 2;
-      if (n < 8)
-        n = 8;
-
-      newtags = realloc(tags, n * sizeof(*newtags));
-      if (newtags == NULL)
-      {
-        err = error_OOM;
-        goto failure;
-      }
-
-      tags          = newtags;
-      tagsallocated = n;
+      err = error_OOM;
+      goto failure;
     }
 
+    if (array_grow((void **) &indextotag,
+                   sizeof(*indextotag),
+                   ntags, /* used */
+                   &ittallocated,
+                   1, /* need */
+                   TAGMIN))
+    {
+      err = error_OOM;
+      goto failure;
+    }
+
+    assert(tagsallocated == ittallocated);
+
+    length--; /* tagdb_tagtoname returns length inclusive of terminator. compensate. */
+
     /* store as a delta now, fix up later */
-    tags[ntags].name  = (void *) (bufp - buf);
-    tags[ntags].count = count;
+    tags[ntags].name   = (void *) (bufp - buf);
+    tags[ntags].length = length;
+    tags[ntags].count  = count;
+
+    indextotag[ntags] = tag;
+
     ntags++;
 
-    bufp += strlen(bufp) + 1;
+    bufp += length;
   }
 
   /* We've stored the tag name pointers as deltas so we can cope when the
@@ -408,6 +434,10 @@ error tags_common_set_tags(tag_cloud *tc)
 
   free(tags);
 
+  // store indextotag
+  common->indextotag  = indextotag;
+  common->nindextotag = ntags;
+
   return error_OK;
 
 
@@ -418,7 +448,9 @@ failure:
 
 /* ----------------------------------------------------------------------- */
 
-error tags_common_set_highlights(tag_cloud *tc, image_t *image)
+#define HLMIN 8  /* minimum allocated size of tags array */
+
+error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *common)
 {
   error         err;
   unsigned char digest[image_DIGESTSZ];
@@ -427,8 +459,6 @@ error tags_common_set_highlights(tag_cloud *tc, image_t *image)
   int           allocated;
   int           cont;
   tagdb_tag     tag;
-
-  /* DON'T use LOCALS.image here -- it may not be set up, yet */
 
   if (image == NULL)
     return error_OK;
@@ -443,40 +473,37 @@ error tags_common_set_highlights(tag_cloud *tc, image_t *image)
 
   cont = 0;
 
-  do
+  for (;;)
   {
-    err = tagdb_get_tags_for_id(LOCALS.db, (char *) digest, &cont, &tag);
+    int i;
+
+    err = tagdb_get_tags_for_id(common->db, (char *) digest, &cont, &tag);
     if (err == error_TAGDB_UNKNOWN_ID)
       break;
     else if (err)
       goto failure;
 
-    if (cont) // FIXME: if (!cont) break; etc.
+    if (cont == 0)
+      break; /* none left */
+
+    if (array_grow((void **) &indices,
+                   sizeof(*indices),
+                   nindices, /* used */
+                   &allocated,
+                   1,
+                   HLMIN))
     {
-      if (nindices >= allocated)
-      {
-        int *newindices;
-        int  newallocated;
-
-        newallocated = allocated * 2;
-        if (newallocated < 8) // FIXME: Hoist growth constants.
-          newallocated = 8;
-
-        newindices = realloc(indices, newallocated * sizeof(*indices));
-        if (newindices == NULL)
-        {
-          err = error_OOM;
-          goto failure;
-        }
-
-        indices   = newindices;
-        allocated = newallocated;
-      }
-
-      indices[nindices++] = tag;
+      err = error_OOM;
+      goto failure;
     }
+
+    /* search for index */
+    for (i = 0; i < common->nindextotag; i++)
+      if (common->indextotag[i] == tag)
+        break;
+
+    indices[nindices++] = i;
   }
-  while (cont);
 
   err = tag_cloud_highlight(tc, indices, nindices);
   if (err)
@@ -588,8 +615,8 @@ error tags_common_lazyinit(void)
     if (err)
       goto failure;
 
-    LOCALS.db  = db;
-    LOCALS.fdb = fdb;
+    LOCALS.db      = db;
+    LOCALS.fdb     = fdb;
 
     hourglass_off();
   }

@@ -30,7 +30,7 @@ static void calc_scales(tag_cloud *tc)
   min = INT_MAX;
   max = INT_MIN;
 
-  for (i = 0; i < tc->e_used; i++)
+  for (i = 0; i < tc->ntags; i++)
   {
     int s;
 
@@ -60,115 +60,84 @@ error tag_cloud_set_tags(tag_cloud           *tc,
 {
   error                err;
   atom_set_t          *dict        = NULL;
-  int                  totalcount;
-  const tag_cloud_tag *t;
   tag_cloud_entry     *entries     = NULL;
-  int                  e_used      = 0;
-  int                  e_allocated = 0;
-  void                *newarr;
-  int                 *sorted;
+  int                  totalcount;
   int                  i;
+  int                 *sorted      = NULL;
+
+  /* clean out any previous tags */
 
   atom_destroy(tc->dict);
-  tc->dict = NULL;
+  tc->dict    = NULL;
 
   free(tc->entries);
-  tc->entries     = NULL;
-  tc->e_used      = 0;
-  tc->e_allocated = 0;
+  tc->entries = NULL;
 
-  /* populate a dictionary with the new tags and at the same time construct
-   * a parallel array containing dictionary indices and tag counts. the
-   * array entries can be re-ordered to sort the data.
+  free(tc->sorted);
+  tc->sorted  = NULL;
+
+  tc->ntags   = 0;
+
+  /* populate a dictionary with the new tag names and at the same time
+   * construct parallel arrays containing dictionary indices and tag counts.
+   * the array entries can be re-ordered to sort the data.
    */
 
-  dict = atom_create();
+  dict = atom_create(); // could suggest sizes using atom_create_tuned()
   if (dict == NULL)
     return error_OOM;
 
-  totalcount = 0;
-
-  for (t = tags; t < tags + ntags; t++)
-  {
-    atom_t index;
-
-    err = atom_new(dict,
-                   (const unsigned char *) t->name,
-                   strlen(t->name) + 1,
-                  &index);
-    if (err != error_ATOM_NAME_EXISTS && err)
-      return err;
-
-    if (index < e_used)
-    {
-      /* duplicate tag */
-
-      /* add the duplicate's count to the original's */
-      entries[index].count += t->count;
-    }
-    else
-    {
-      /* new tag */
-
-      if (index >= e_allocated) /* need more space? */
-      {
-        size_t n;
-
-        n = (size_t) power2gt(index);
-
-        newarr = realloc(entries, n * sizeof(*entries));
-        if (newarr == NULL)
-        {
-          err = error_OOM;
-          goto Failure;
-        }
-
-        entries     = newarr;
-        e_allocated = n;
-      }
-
-      entries[index].count = t->count;
-      e_used++;
-    }
-
-    totalcount += t->count;
-  }
-
-  /* we assume that the returned indices cover the whole range, so don't
-   * leave us with any empty entries */
-
-  /* shrink wrap */
-  newarr = realloc(entries, e_used * sizeof(*entries));
-  if (newarr == NULL)
+  entries = malloc(ntags * sizeof(*tc->entries));
+  if (entries == NULL)
   {
     err = error_OOM;
     goto Failure;
   }
 
-  entries = newarr;
+  totalcount = 0;
 
+  for (i = 0; i < ntags; i++)
+  {
+    char   buf[MAXTOKEN];
+    atom_t atom;
+
+    /* add a terminator (Font_ScanString returns the 'Illegal control
+     * character' error if the string is unterminated). */
+    memcpy(buf, tags[i].name, tags[i].length);
+    buf[tags[i].length] = '\0';
+
+    err = atom_new(dict,
+                   (const unsigned char *) buf,
+                   tags[i].length + 1,
+                   &atom);
+    if (err)
+      goto Failure;
+
+    entries[i].atom  = atom;
+    entries[i].count = tags[i].count;
+
+    totalcount += tags[i].count;
+  }
 
   /* set up index table (which we use when sorting) */
 
-  sorted = malloc(e_used * sizeof(*sorted));
+  sorted = malloc(ntags * sizeof(*sorted));
   if (sorted == NULL)
   {
     err = error_OOM;
     goto Failure;
   }
 
-  for (i = 0; i < e_used; i++)
+  for (i = 0; i < ntags; i++)
     sorted[i] = i;
 
 
   tc->dict        = dict;
 
   tc->entries     = entries;
-  tc->e_used      = e_used;
-  tc->e_allocated = e_used;
-
-  free(tc->sorted);
   tc->sorted      = sorted;
+  tc->ntags       = ntags;
+
 
   calc_scales(tc);
 
@@ -195,11 +164,12 @@ error tag_cloud_set_tags(tag_cloud           *tc,
 
   return error_OK;
 
+
 Failure:
 
   atom_destroy(dict);
-
   free(entries);
+  free(sorted);
 
   return err;
 }

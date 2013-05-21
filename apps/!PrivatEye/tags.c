@@ -39,8 +39,9 @@
 
 static struct
 {
+  tags_common       common;
   tag_cloud        *tc;
-  image_t          *image;
+  image_t          *image;     /* current image */
   viewer_keymap_id  keymap_id;
 }
 LOCALS;
@@ -127,7 +128,7 @@ static error deletetag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  err = tags_common_set_highlights(tc, LOCALS.image);
+  err = tags_common_set_highlights(tc, LOCALS.image, &LOCALS.common);
   if (err)
     return err;
 
@@ -154,7 +155,7 @@ static error tag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  err = tags_common_set_highlights(tc, LOCALS.image);
+  err = tags_common_set_highlights(tc, LOCALS.image, &LOCALS.common);
   if (err)
     return err;
 
@@ -177,7 +178,7 @@ static error detag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  err = tags_common_set_highlights(tc, LOCALS.image);
+  err = tags_common_set_highlights(tc, LOCALS.image, &LOCALS.common);
   if (err)
     return err;
 
@@ -253,7 +254,7 @@ static void tags_image_changed_callback(image_t             *image,
 
       tag_cloud_shade(LOCALS.tc, 0);
 
-      err = tags_common_set_highlights(LOCALS.tc, image);
+      err = tags_common_set_highlights(LOCALS.tc, image, &LOCALS.common);
       if (err)
         goto failure;
 
@@ -303,6 +304,11 @@ failure:
 }
 
 /* ----------------------------------------------------------------------- */
+
+// we receive this callback when choices are updated, but tag-search does not.
+// choices only has a single callback, so either that must dispatch to, say,
+// tags_common and be divided out there, or choices could be amended to output change notfications on
+// the wire system.
 
 error tags_choices_updated(const choices_group *group)
 {
@@ -386,7 +392,6 @@ static error tags_lazyinit(void)
   {
     tag_cloud_config conf;
     tag_cloud       *tc = NULL;
-    tagdb           *db = NULL;
 
     err = tags_common_lazyinit();
     if (err)
@@ -406,8 +411,6 @@ static error tags_lazyinit(void)
 
     imageobserver_register_greedy(tags_image_changed_callback, NULL);
 
-    db = tags_common_get_db(); /* FIXME: Feels a bit grotty. */
-
     tag_cloud_set_handlers(tc,
                            tags_common_add_tag,
                            deletetag,
@@ -417,18 +420,24 @@ static error tags_lazyinit(void)
                            tags_common_tagfile,
                            tags_common_detagfile,
                            tags_common_event,
-                           db);
+                           &LOCALS.common);
 
-    tag_cloud_set_key_handler(tc, keyhandler, db);
+    tag_cloud_set_key_handler(tc, keyhandler, &LOCALS.common);
 
     tag_cloud_set_display(tc, GLOBALS.choices.tagcloud.display);
     tag_cloud_set_sort(tc, GLOBALS.choices.tagcloud.sort);
     tag_cloud_set_order(tc, GLOBALS.choices.tagcloud.selfirst);
 
-    LOCALS.tc = tc;
+    LOCALS.common.db          = tags_common_get_db(); /* FIXME: Seems grotty. */
+    LOCALS.common.indextotag  = NULL;
+    LOCALS.common.nindextotag = 0;
+
+    LOCALS.tc                 = tc;
+    LOCALS.image              = NULL;
   }
 
   return error_OK;
+
 
 Failure:
 
@@ -447,6 +456,8 @@ static void tags_lazyfin(int force)
   if (--tags_lazyrefcount == 0)
   {
     imageobserver_deregister_greedy(tags_image_changed_callback, NULL);
+
+    free(LOCALS.common.indextotag);
 
     tag_cloud_destroy(LOCALS.tc);
 
@@ -493,12 +504,12 @@ error tags_open(image_t *image)
 
     /* opening for the first(?) time */
 
-    err = tags_common_set_tags(LOCALS.tc);
+    err = tags_common_set_tags(LOCALS.tc, &LOCALS.common);
     if (err)
       goto failure;
 
     /* FIXME: This duplicates code in tags_image_changed_callback. */
-    err = tags_common_set_highlights(LOCALS.tc, image);
+    err = tags_common_set_highlights(LOCALS.tc, image, &LOCALS.common);
     if (err)
       goto failure;
 

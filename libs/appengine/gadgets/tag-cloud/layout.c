@@ -27,6 +27,10 @@
 
 #include "impl.h"
 
+#define FORCE_FULL_LAYOUT 0 /* disable all FLAG_NEW_xxx shortcircuits */
+
+/* ----------------------------------------------------------------------- */
+
 #define SPACESTRING    " \xB7 " /* small bullet */
 #define SPACESTRINGLEN 3
 
@@ -134,7 +138,7 @@ static char *set_transform(char *s, int a, int b, int c, int d)
     return s; /* no change */
 
   *s++ = 27;
-  while ((int) s & 3)
+  while ((unsigned int) s & 3)
     *s++ = 0;
 
   p = (int *) s;
@@ -182,7 +186,7 @@ static error paintstring_new(tag_cloud *tc)
     int   n;
     char *string;
 
-    n = tc->e_used * 64; /* initial estimate */
+    n = tc->ntags * 64; /* initial estimate */
     string = malloc(sizeof(*tc->layout.paintstring.string) * n);
     if (string == NULL)
       return error_OOM;
@@ -241,7 +245,7 @@ static error metrics_new(tag_cloud *tc)
 {
   int N;
 
-  N = tc->e_used;
+  N = tc->ntags;
 
   if (N > tc->layout.dims.allocated)
   {
@@ -287,7 +291,7 @@ static error metrics_calc(tag_cloud *tc)
 
   /* work out lengths. determine scales */
 
-  for (i = 0; i < tc->e_used; i++)
+  for (i = 0; i < tc->ntags; i++)
   {
     const font_string_flags flags = font_GIVEN_TRFM   |
                                     font_GIVEN_LENGTH |
@@ -298,7 +302,7 @@ static error metrics_calc(tag_cloud *tc)
     os_trfm     trfm;
     int         scale;
 
-    s = (const char *) atom_get(tc->dict, i, &len);
+    s = (const char *) atom_get(tc->dict, tc->entries[i].atom, &len);
     assert(s != NULL);
 
     len--; /* discount terminator */
@@ -361,7 +365,7 @@ static error lengths_new(tag_cloud *tc)
 {
   int N;
 
-  N = tc->e_used;
+  N = tc->ntags;
 
   /* allocate one per tag */
   if (N > tc->layout.lengths.allocated)
@@ -399,7 +403,7 @@ static error lengths_calc(tag_cloud *tc)
   int   widest;
   int   i;
 
-  N = tc->e_used;
+  N = tc->ntags;
 
   err = lengths_new(tc);
   if (err)
@@ -433,7 +437,7 @@ static error boxes_new(tag_cloud *tc)
 {
   int N;
 
-  N = tc->e_used;
+  N = tc->ntags;
 
   /* allocate one box per tag */
   if (N > tc->layout.boxes.allocated)
@@ -659,7 +663,10 @@ error tag_cloud_layout(tag_cloud *tc, int width)
   int        largestscale = 0; /* initialised to quiet compiler warning */
   int        lineheight;
 
-  fprintf(stderr, "tag_cloud_layout %p\n", tc);
+  // fprintf(stderr, "tag_cloud_layout %p\n", tc);
+
+  if (FORCE_FULL_LAYOUT)
+    tc->flags |= tag_cloud_FLAG_NEW_ALL;
 
   if ((tc->flags & tag_cloud_FLAG_NEW_ALL) == 0 &&
        tc->layout.width == width)
@@ -764,7 +771,7 @@ error tag_cloud_layout(tag_cloud *tc, int width)
 
   line = 0;
 
-  while (i < tc->e_used)
+  while (i < tc->ntags)
   {
     int    index;
     int    remain;
@@ -775,7 +782,7 @@ error tag_cloud_layout(tag_cloud *tc, int width)
     x = tc->layout.lengths.length[tc->sorted[i]];
     i++; /* let at least one always fit */
 
-    while (i < tc->e_used)
+    while (i < tc->ntags)
     {
       int x1;
 
@@ -824,7 +831,7 @@ error tag_cloud_layout(tag_cloud *tc, int width)
 
       index = tc->sorted[j];
 
-      s = (const char *) atom_get(tc->dict, index, &l);
+      s = (const char *) atom_get(tc->dict, tc->entries[index].atom, &l);
 
       l--; /* discount terminator */
 
@@ -920,7 +927,7 @@ error tag_cloud_layout(tag_cloud *tc, int width)
 
     /* if not the last line, reset the line horizontally */
 
-    if (i < tc->e_used)
+    if (i < tc->ntags)
     {
       err = paintstring_ensure(tc, sizeof_MOVE_X, &p);
       if (err)
@@ -980,9 +987,9 @@ int tag_cloud_hit(tag_cloud *tc, int x, int y)
 {
   int i;
 
-  for (i = 0; i < tc->e_used; i++)
+  for (i = 0; i < tc->ntags; i++)
     if (box_contains_point(&tc->layout.boxes.boxes[i], x, y))
       break;
 
-  return (i == tc->e_used) ? -1 : i;
+  return (i == tc->ntags) ? -1 : i;
 }

@@ -5,7 +5,7 @@
 
 /* TODO
  *
- * The sorting highlights first stuff can likely be implemented more
+ * The 'sorting highlights first' stuff can likely be implemented more
  * efficiently by first sorting the highlights into two bins then sorting
  * within each.
  */
@@ -27,13 +27,13 @@ static tag_cloud *sort_tc;
 
 static int sort_by_name(const void *va, const void *vb)
 {
-  int         a = *((const int *) va);
-  int         b = *((const int *) vb);
+  atom_t      a = *((const atom_t *) va);
+  atom_t      b = *((const atom_t *) vb);
   const char *sa;
   const char *sb;
 
   if (a == b)
-    return 0;
+    return 0; /* equal atoms means identical strings */
 
   sa = (const char *) atom_get(sort_tc->dict, a, NULL);
   sb = (const char *) atom_get(sort_tc->dict, b, NULL);
@@ -43,28 +43,28 @@ static int sort_by_name(const void *va, const void *vb)
 
 static int sort_by_count(const void *va, const void *vb)
 {
-  int a      = *((const int *) va);
-  int b      = *((const int *) vb);
-  int counta = sort_tc->entries[a].count;
-  int countb = sort_tc->entries[b].count;
+  atom_t a      = *((const atom_t *) va);
+  atom_t b      = *((const atom_t *) vb);
+  int    counta = sort_tc->entries[a].count;
+  int    countb = sort_tc->entries[b].count;
 
   if (a == b)
-    return 0;
+    return 0; /* equal atoms means identical strings */
 
   /* This sorts high counts first. */
        if (counta > countb) return -1;
   else if (counta < countb) return  1;
 
-  return a - b; /* compare indices to keep sort stable */
+  return a - b; /* compare atoms to keep sort stable */
 }
 
 /* sort_by_name with highlights first */
 static int sort_by_name_hi(const void *va, const void *vb)
 {
-  int a = *((const int *) va);
-  int b = *((const int *) vb);
-  int ha;
-  int hb;
+  atom_t a = *((const atom_t *) va);
+  atom_t b = *((const atom_t *) vb);
+  int    ha;
+  int    hb;
 
   if (a == b)
     return 0;
@@ -86,10 +86,10 @@ static int sort_by_name_hi(const void *va, const void *vb)
 /* sort_by_count with highlights first */
 static int sort_by_count_hi(const void *va, const void *vb)
 {
-  int a = *((const int *) va);
-  int b = *((const int *) vb);
-  int ha;
-  int hb;
+  atom_t a = *((const atom_t *) va);
+  atom_t b = *((const atom_t *) vb);
+  int    ha;
+  int    hb;
 
   if (a == b)
     return 0;
@@ -137,7 +137,7 @@ static void sort(tag_cloud *tc)
    */
   sort_tc = tc;
 
-  qsort(tc->sorted, tc->e_used, sizeof(*tc->sorted),
+  qsort(tc->sorted, tc->ntags, sizeof(*tc->sorted),
         fn[order_type][sort_type]);
 
   tc->flags |= tag_cloud_FLAG_NEW_SORT;

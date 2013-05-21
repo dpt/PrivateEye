@@ -16,8 +16,11 @@
 
 #include "appengine/gadgets/tag-cloud.h"
 
+#define MAXTOKEN 64
+
 typedef struct tag_cloud_entry
 {
+  atom_t           atom;
   int              count;
 }
 tag_cloud_entry;
@@ -105,7 +108,7 @@ enum
   tag_cloud_FLAG_NEW_DATA         = (1 << 0),
   tag_cloud_FLAG_NEW_HIGHLIGHTS   = (1 << 1),
   tag_cloud_FLAG_NEW_HOVER        = (1 << 2),
-  tag_cloud_FLAG_NEW_SORT         = (1 << 3),
+  tag_cloud_FLAG_NEW_SORT         = (1 << 3), /* new sort applied */
   tag_cloud_FLAG_NEW_DISPLAY      = (1 << 4),
   tag_cloud_FLAG_NEW_SHADE        = (1 << 5),
 
@@ -141,15 +144,13 @@ struct tag_cloud
   void                     *opaque;
 
   tag_cloud_key_handler_fn *key_handler;
-  void                     *key_handler_arg;
+  void                     *key_handler_arg; // -> key_handler_opaque
 
   atom_set_t               *dict;
 
-  tag_cloud_entry          *entries;
-  int                       e_used;
-  int                       e_allocated;
-
-  atom_t                   *sorted; /* of length e_used */
+  tag_cloud_entry          *entries; /* of length ntags */
+  atom_t                   *sorted;  /* of length ntags */
+  int                       ntags;
 
   int                       sort_type;
   int                       order_type;
@@ -164,7 +165,7 @@ struct tag_cloud
 
   tag_cloud_hover_data      hover;
 
-  int                       menued_tag_index;
+  int                       menued_tag_index; /* indexes 'entries' */
 
   struct
   {

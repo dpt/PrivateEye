@@ -174,6 +174,7 @@ void tag_cloud_set_handlers(T                     *tc,
 typedef struct tag_cloud_tag
 {
   const char *name;   /**< tag name, need not be terminated */
+  size_t      length; /**< length of name ("fred" == 4) */
   int         count;  /**< number of times used */
 }
 tag_cloud_tag;

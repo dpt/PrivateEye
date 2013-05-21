@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "fortify/fortify.h"
+
 #include "oslib/colourtrans.h"
 #include "oslib/filer.h"
 #include "oslib/font.h"
@@ -192,30 +194,32 @@ static void delete_tag(tag_cloud *tc, int index)
 
 static void rename_fillout(dialogue_t *d, void *opaque)
 {
-  tag_cloud *tc = opaque;
+  tag_cloud             *tc = opaque;
+  const tag_cloud_entry *entry;
 
   if (tc->menued_tag_index < 0)
     return;
 
-  name_set(d, (const char *) atom_get(tc->dict,
-                                      tc->menued_tag_index,
-                                      NULL));
+  entry = &tc->entries[tc->menued_tag_index];
+
+  name_set(d, (const char *) atom_get(tc->dict, entry->atom, NULL));
 }
 
 static void tag_info_fillout(dialogue_t *d, void *opaque)
 {
-  tag_cloud  *tc = opaque;
-  char        buf[12];
-  info_spec_t specs[2];
+  tag_cloud             *tc = opaque;
+  const tag_cloud_entry *entry;
+  char                   buf[12];
+  info_spec_t            specs[2];
 
   if (tc->menued_tag_index < 0)
     return;
 
-  comma_number(tc->entries[tc->menued_tag_index].count, buf, sizeof(buf));
+  entry = &tc->entries[tc->menued_tag_index];
 
-  specs[0].value = (const char *) atom_get(tc->dict,
-                                           tc->menued_tag_index,
-                                           NULL);
+  comma_number(entry->count, buf, sizeof(buf));
+
+  specs[0].value = (const char *) atom_get(tc->dict, entry->atom, NULL);
   specs[1].value = buf;
 
   info_set_info(d, specs, 2);
@@ -274,7 +278,7 @@ static int tag_cloud_event_redraw_window_request(wimp_event_no event_no,
 
   NOT_USED(event_no);
 
-  fprintf(stderr, "tag_cloud_event_redraw_window_request %p\n", handle);
+  //fprintf(stderr, "tag_cloud_event_redraw_window_request %p\n", handle);
 
   redraw = &block->redraw;
   tc     = handle;
@@ -306,7 +310,7 @@ static int tag_cloud_event_redraw_window_request(wimp_event_no event_no,
 
       colourtrans_set_gcol(os_COLOUR_RED, 0, 0, NULL);
 
-      for (i = 0; i < tc->e_used; i++)
+      for (i = 0; i < tc->ntags; i++)
       {
         os_plot(os_MOVE_TO,
                 x + tc->layout.boxes.boxes[i].x0,
@@ -509,13 +513,16 @@ static int tag_cloud_event_mouse_click(wimp_event_no event_no,
 
   case wimp_CLICK_MENU:
   {
-    const char *name;
+    const tag_cloud_entry *entry;
+    const char            *name;
 
     tc->menued_tag_index = i; /* keep for later (e.g. Rename, or Delete) */
 
     /* set tag name */
 
-    name = (i >= 0) ? (const char *) atom_get(tc->dict, i, NULL) : "";
+    entry = &tc->entries[i];
+
+    name = (i >= 0) ? (const char *) atom_get(tc->dict, entry->atom, NULL) : "";
 
     tc->main_m = menu_create_from_desc(message0("menu.tagcloud"),
                                        name,
@@ -694,6 +701,13 @@ static int tag_cloud_event_key_pressed(wimp_event_no event_no,
     return event_HANDLED;
   }
 
+  // FIXME: Ought to provide a default here in case the client isn't
+  // interested in providing a key handler callback.
+  //
+  // Could also split this out into a dedicated tag_cloud_process_event which
+  // can take events as commands from the client. (Then re-cast the menu
+  // handler to use that too). [like action() in PrivateEye].
+
   event = tc->key_handler(key->c, tc->key_handler_arg);
 
   switch (event)
@@ -769,6 +783,25 @@ static int tag_cloud_event_menu_selection(wimp_event_no event_no,
   last = menu_last();
   if (last != tc->main_m)
     return event_NOT_HANDLED;
+
+//#define PACK(a,b) (((a) << 8) | (b & 0xFF))
+
+  // static const struct
+  // {
+  //   unsigned int    items;
+  //   tag_cloud_event event;
+  // }
+  // map[] =
+  // {
+  //   { PACK(MAIN_DISPLAY, DISPLAY_LIST),           tag_cloud_EVENT_DISPLAY_LIST        },
+  //   { PACK(MAIN_DISPLAY, DISPLAY_CLOUD),          tag_cloud_EVENT_DISPLAY_CLOUD       },
+  //   { PACK(MAIN_DISPLAY, DISPLAY_SORT_NAME),      tag_cloud_EVENT_SORT_BY_NAME        },
+  //   { PACK(MAIN_DISPLAY, DISPLAY_SORT_COUNT),     tag_cloud_EVENT_SORT_BY_COUNT       },
+  //   { PACK(MAIN_DISPLAY, DISPLAY_SELECTED_FIRST), tag_cloud_EVENT_SORT_SELECTED_FIRST },
+  //   { PACK(MAIN_TAG,     TAG_DELETE),             tag_cloud_EVENT_KILL                },
+  //   { PACK(MAIN_COMMIT,  -1),                     tag_cloud_EVENT_COMMIT              },
+  //   { PACK(MAIN_TOOLBAR, -1),                     tag_cloud_EVENT_TOOLBAR             }, // doesn't exist
+  // };
 
   switch (selection->items[0])
   {
