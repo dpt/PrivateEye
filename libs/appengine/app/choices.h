@@ -70,6 +70,7 @@ typedef struct choices_choice
   int                          defaultval;
   union
   {
+    const void                *ui;
     const choices_colour      *colour;
     const choices_numberrange *number_range;
     const choices_option      *option;

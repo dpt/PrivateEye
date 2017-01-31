@@ -1066,6 +1066,9 @@ int choices_event_mouse_click_pane(wimp_event_no  event_no,
 
       c = &g->choices[j];
 
+      if (c->data.ui == NULL)
+        continue; /* no UI */
+
       switch (c->type)
       {
       case choices_TYPE_COLOUR:
