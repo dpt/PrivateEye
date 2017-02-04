@@ -4,7 +4,7 @@
 
 prefix		= $(GCCSDK_INSTALL_CROSSBIN)/arm-unknown-riscos-
 
-asm_		= /home/riscos/cross/arm-unknown-riscos/bin/asasm
+asm_		= $(GCCSDK_INSTALL_CROSSBIN)/asasm
 cc_		= $(prefix)gcc
 libfile_	= $(prefix)ar
 link_		= $(prefix)gcc
@@ -12,7 +12,7 @@ templheadr_     = ../../utils/templheader/templheadr
 
 # Tool flags:
 
-asmflags	= -pedantic -target ARM6 -objasm -upper
+asmflags	= -pedantic -cpu=ARM6 -Uppercase
 
 ccflags		= -c -std=c99 -mlibscl $(throwback) $(cpu) $(warnings)
 ccflags		+= -mpoke-function-name
@@ -85,7 +85,7 @@ templheadr      = $(templheadr_) $(templheadrflags)
 
 .SUFFIXES:	.o .odf .om
 
-.c.o:;		$(cc) -Os -DNDEBUG $< -o $@
+.c.o:;		$(cc) -O2 -DNDEBUG $< -o $@
 .c.odf:;	$(cc) -g -DFORTIFY $< -o $@
 .c.om:;		$(cc) -mmodule $< -o $@
 .s.o:;		$(asm) $< -o $@
