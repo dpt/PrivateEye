@@ -14,14 +14,14 @@ templheadr_     = ../../utils/templheader/templheadr
 
 asmflags	= -pedantic -cpu=ARM6 -Uppercase
 
-ccflags		= -c -std=c99 -mlibscl $(throwback) $(cpu) $(warnings)
+ccflags		= -c -std=c99 -mlibscl -mhard-float $(throwback) $(cpu) $(warnings)
 ccflags		+= -mpoke-function-name
 # create foo.d with dependency information as well as compiling foo.c
 ccflags		+= -MMD
 
 libfileflags	= rc
 
-linkflags	= $(throwback) -mlibscl
+linkflags	= $(throwback) -mlibscl -mhard-float
 
 templheadrflags	=
 
@@ -64,7 +64,8 @@ libpngdbg	= ../../libs/png/libpngdbg.a
 md5		= ../../libs/md5/libmd5.a
 md5dbg		= ../../libs/md5/libmd5dbg.a
 
-oslib		= -L$(GCCSDK_INSTALL_ENV)/lib -lOSLib32
+# OSLib32H -> hard float variant
+oslib		= -L$(GCCSDK_INSTALL_ENV)/lib -lOSLib32H
 oslibdbg	= $(oslib)
 oslibinc	= -I$(GCCSDK_INSTALL_ENV)/include
 
@@ -99,8 +100,8 @@ templheadr      = $(templheadr_) $(templheadrflags)
 .PHONY: clean
 
 clean:
-	-find -E . \( -regex '.*\.(o|odf|om|a|d)' -or -name '*,ff8' \) -delete
+#	-find -E . \( -regex '.*\.(o|odf|om|a|d)' -or -name '*,ff8' \) -delete
 #	-find -regextype posix-extended . \( -regex '.*\.(o|odf|om|a|d)' -or -name '*,ff8' \) -delete
-#	-find . \( -regex '.*\.\(o\|odf\|om\|a\|d\)' -or -name '*,ff8' \) -delete
+	-find . \( -regex '.*\.\(o\|odf\|om\|a\|d\)' -or -name '*,ff8' \) -delete
 	@echo Cleaned
 
