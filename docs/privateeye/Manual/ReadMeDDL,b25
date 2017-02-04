@@ -1,5 +1,5 @@
 //->ReadMeDDL
-// Produced by OvationPro at 3:18pm 4th February 2012
+// Produced by OvationPro at 10:17pm 4th February 2017
 //
 //
 
@@ -326,14 +326,13 @@ TEXT_113={textframe
 
 STORY_114={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_10}
-"Private"
-"Eye"
+"PrivateEye"
 {newpara}{remuserstyle STYLE_10}{align 1}
 "Image Viewer"
 {newline}
-"by David Thomas, © 1999ó2012"
+"by David Thomas, © 1999ó2017"
 {newline}
-"version 2.99 (05 Feb 2012)"
+"version 3.00 (08 Feb 2017)"
 {newpage}{adduserstyle STYLE_18}{adduserstyle STYLE_12}{align}
 "Welcome"
 {newpara}{remuserstyle STYLE_18}{remuserstyle STYLE_12}
@@ -452,7 +451,7 @@ PICT_116={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_418={picture
+PICTURE_117={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.logo"}
 }
 
@@ -592,8 +591,7 @@ STORY_126={story
 {adduserstyle STYLE_1e}
 "Composition"
 {remuserstyle STYLE_1e}
-" and"
-" "
+" and "
 {adduserstyle STYLE_1e}
 "Variations"
 {remuserstyle STYLE_1e}
@@ -889,7 +887,7 @@ PICT_146={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_41b={picture
+PICTURE_147={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.viewerwin"}
 }
 
@@ -921,7 +919,7 @@ PICT_148={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_420={picture
+PICTURE_149={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.scalewin"}
 }
 
@@ -953,7 +951,7 @@ PICT_14a={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_421={picture
+PICTURE_14b={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.zoombox"}
 }
 
@@ -1007,8 +1005,7 @@ STORY_14d={story
 {adduserstyle STYLE_17}
 "CTRL"
 {remuserstyle STYLE_17}
-" "
-"and clicking "
+" and clicking "
 {adduserstyle STYLE_17}
 "SELECT"
 {remuserstyle STYLE_17}
@@ -1019,13 +1016,11 @@ STORY_14d={story
 "You may need to scale the image to fit it to the screen, or to view an area "
 "in detail. There are a number of controls for this."
 {newpara}
-"The"
-" "
+"The "
 {adduserstyle STYLE_1b}
 "Scale view"
 {remuserstyle STYLE_1b}
-" "
-"dialogue is available from the viewer menu or by pressing "
+" dialogue is available from the viewer menu or by pressing "
 {adduserstyle STYLE_17}{tabruler }{tabruler {tableader ""} {righttab 102047}
 {tableader "."}{lefttab 119055}}
 
@@ -1051,11 +1046,7 @@ STORY_14d={story
 {remuserstyle STYLE_1c}
 " to make the scale level take effect."
 {newpara}
-"With the"
-" "
-"Scale view"
-" "
-"dialogue open, you can also use the "
+"With the Scale view dialogue open, you can also use the "
 {adduserstyle STYLE_17}
 "Up"
 {remuserstyle STYLE_17}
@@ -1373,7 +1364,7 @@ PICT_175={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_422={picture
+PICTURE_176={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.infowin"}
 }
 
@@ -1405,7 +1396,7 @@ PICT_177={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_423={picture
+PICTURE_178={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.sourcewin"}
 }
 
@@ -1458,8 +1449,7 @@ STORY_17a={story
 "appear to be 4 bytes longer when loaded than when on disc. This is because "
 "the in-memory structure of a sprite "
 {bold}
-"is"
-" "
+"is "
 {bold 0}{italic 0}
 "4 bytes longer."
 {align 1}{bold}{italic}{newpara}{align}{endoftext}
@@ -1614,7 +1604,7 @@ PICT_193={pictframe
 {plane 3 {gammapoint 0x0 0x0}{gammapoint 0x8000 0x8000}}}
 }
 
-PICTURE_424={picture
+PICTURE_194={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.metadata"}
 }
 
@@ -1891,7 +1881,7 @@ PICT_1bc={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_425={picture
+PICTURE_1bd={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.histwin"}
 }
 
@@ -1923,7 +1913,7 @@ PICT_1be={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_426={picture
+PICTURE_1bf={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.histcumul"}
 }
 
@@ -1935,8 +1925,7 @@ STORY_1c1={story
 {adduserstyle STYLE_01}
 "The "
 {adduserstyle STYLE_1b}
-"Histogram"
-" window"
+"Histogram window"
 {remuserstyle STYLE_1b}
 " displays a histogram of an image's "
 {adduserstyle STYLE_1b}
@@ -2156,7 +2145,7 @@ PICT_1db={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_427={picture
+PICTURE_1dc={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectswin"}
 }
 
@@ -2188,7 +2177,7 @@ PICT_1dd={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_428={picture
+PICTURE_1de={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectspal"}
 }
 
@@ -2220,7 +2209,7 @@ PICT_1df={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_429={picture
+PICTURE_1e0={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.slider"}
 }
 
@@ -2252,7 +2241,7 @@ PICT_1e1={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_42a={picture
+PICTURE_1e2={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectsdrag"}
 }
 
@@ -2284,7 +2273,7 @@ PICT_1e3={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_42b={picture
+PICTURE_1e4={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectscrv"}
 }
 
@@ -2316,7 +2305,7 @@ PICT_1e5={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_42c={picture
+PICTURE_1e6={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectsblr"}
 }
 
@@ -2348,7 +2337,7 @@ PICT_1e7={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_42d={picture
+PICTURE_1e8={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectclear"}
 }
 
@@ -2380,7 +2369,7 @@ PICT_1e9={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_42e={picture
+PICTURE_1ea={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectcont"}
 }
 
@@ -2412,7 +2401,7 @@ PICT_1eb={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_42f={picture
+PICTURE_1ec={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectgrey"}
 }
 
@@ -2444,7 +2433,7 @@ PICT_1ed={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_430={picture
+PICTURE_1ee={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectshrp"}
 }
 
@@ -2476,7 +2465,7 @@ PICT_1ef={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_431={picture
+PICTURE_1f0={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.effectcomb"}
 }
 
@@ -2488,8 +2477,7 @@ STORY_1f2={story
 {adduserstyle STYLE_01}
 "The "
 {adduserstyle STYLE_1b}
-"Effects"
-" window"
+"Effects window"
 {remuserstyle STYLE_1b}
 " lets you apply a multitude of effects to bitmap images."
 {newpara}{adduserstyle STYLE_1a}
@@ -2647,12 +2635,9 @@ STORY_1f2={story
 {adduserstyle STYLE_1c}
 "Edit..."
 {remuserstyle STYLE_1c}
-" button will open up the"
-" "
+" button will open up the "
 {adduserstyle STYLE_1b}
-"Curve effect"
-" "
-"dialogue"
+"Curve effect dialogue"
 {remuserstyle STYLE_1b}
 ". By default it shows a linear mapping (no change):"
 {newpara}{embed PICT_1e3}{newpara}
@@ -2690,8 +2675,7 @@ STORY_1f2={story
 {remuserstyle STYLE_1c}
 " button will open up the "
 {adduserstyle STYLE_1b}
-"Blur effect"
-" dialogue"
+"Blur effect dialogue"
 {remuserstyle STYLE_1b}
 ":"
 {newpara}{embed PICT_1e5}{newpara}{adduserstyle STYLE_1a}
@@ -2731,53 +2715,35 @@ STORY_1f2={story
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Changing brightness"
 {newpara}{remuserstyle STYLE_18}
-"Add a "
-"Clear"
-" "
-"effect. Set it to black. Dragging the slider to the left will increase the "
-"imageës brightness."
+"Add a Clear effect. Set it to black. Dragging the slider to the left will "
+"increase the imageës brightness."
 {newpara}{embed PICT_1e7}{newpara}{adduserstyle STYLE_18}
 "Changing contrast"
 {newpara}{remuserstyle STYLE_18}
-"Add a "
-"Clear"
-" "
-"effect. Set its colour to 50% grey. Dragging the slider to the left will "
-"increase contrast; to the right will decrease contrast."
+"Add a Clear effect. Set its colour to 50% grey. Dragging the slider to the "
+"left will increase contrast; to the right will decrease contrast."
 {newpara}{embed PICT_1e9}{newpara}{adduserstyle STYLE_18}
 "Changing saturation"
 {newpara}{remuserstyle STYLE_18}
-"Add a "
-"Greyscale"
-" "
-"effect. Dragging the slider to the left will increase saturation; to the "
-"right will decrease saturation."
+"Add a Greyscale effect. Dragging the slider to the left will increase "
+"saturation; to the right will decrease saturation."
 {newpara}{embed PICT_1eb}{newpara}{adduserstyle STYLE_18}
 "Sharpening an image"
 {newpara}{remuserstyle STYLE_18}
-"Add a "
-"Blur"
-" "
-"effect (yes, really!) then drag the slider to the left past the left-most "
-"ênotchë."
+"Add a Blur effect (yes, really!) then drag the slider to the left past the "
+"left-most ênotchë."
 {newpara}
 "Sharpening this way is sometimes called "
 {adduserstyle STYLE_1b}
-"u"
-"nsharp mask"
+"unsharp mask"
 {remuserstyle STYLE_1b}
 "."
 {newpara}{embed PICT_1ed}{newpara}{adduserstyle STYLE_18}{newpage}
 "Combined saturation and sharpening"
 {newpara}{remuserstyle STYLE_18}
-"Add a "
-"Blur"
-" "
-"effect then a "
-"Greyscale"
-" "
-"effect. Dragging the slider to the left will simultaneously increase "
-"saturation and sharpen; to the right will decrease saturation and blur."
+"Add a Blur effect then a Greyscale effect. Dragging the slider to the left "
+"will simultaneously increase saturation and sharpen; to the right will "
+"decrease saturation and blur."
 {newpara}{embed PICT_1ef}{newpara}{newpara}{adduserstyle STYLE_15}{newpage}
 "Memory Use & Speed"
 {newpara}{remuserstyle STYLE_15}
@@ -3034,7 +3000,7 @@ PICT_235={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_432={picture
+PICTURE_236={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.rotatewin"}
 }
 
@@ -3046,8 +3012,7 @@ STORY_238={story
 {adduserstyle STYLE_01}
 "The "
 {adduserstyle STYLE_1b}
-"Rotate"
-" dialogue"
+"Rotate dialogue"
 {remuserstyle STYLE_1b}
 " can rotate Sprites and "
 {adduserstyle STYLE_1f}
@@ -3084,11 +3049,7 @@ STORY_238={story
 
 "O"
 {remuserstyle STYLE_17}{tabruler}
-" opens the"
-" "
-"Rotate"
-" dialogue"
-"."
+" opens the Rotate dialogue."
 {align 0}
 " The dialogue is straightforward to use. Simply drag the thumbnail image and "
 "it will spin around its centre. As you rotate the image it will snap to the "
@@ -3276,7 +3237,7 @@ PICT_250={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_433={picture
+PICTURE_251={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceview"}
 }
 
@@ -3308,7 +3269,7 @@ PICT_252={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_434={picture
+PICTURE_253={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicecol"}
 }
 
@@ -3340,7 +3301,7 @@ PICT_254={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_435={picture
+PICTURE_255={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicespr"}
 }
 
@@ -3372,7 +3333,7 @@ PICT_256={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_436={picture
+PICTURE_257={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicejpg"}
 }
 
@@ -3404,7 +3365,7 @@ PICT_258={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_437={picture
+PICTURE_259={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicegif"}
 }
 
@@ -3436,7 +3397,7 @@ PICT_25a={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_43a={picture
+PICTURE_25b={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicepng"}
 }
 
@@ -3468,7 +3429,7 @@ PICT_25c={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_438={picture
+PICTURE_25d={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choicedrw"}
 }
 
@@ -3500,7 +3461,7 @@ PICT_25e={pictframe
 {tile 0 0 0}}
 }
 
-PICTURE_439={picture
+PICTURE_25f={picture
 {reference "<PrivateEye$Dir>.^.^.docs.privateeye.Manual.Pictures.choiceart"}
 }
 
@@ -3537,9 +3498,7 @@ STORY_261={story
 {remuserstyle STYLE_1c}{remuserstyle STYLE_19}{adduserstyle STYLE_19}{align 0}
 " makes viewer windows"
 {align}
-" "
-"at least"
-" "
+" at least "
 {italic 0}{align 0}
 "the size of the screen."
 {newpara}{remuserstyle STYLE_19}{adduserstyle STYLE_14}{italic}{newpara}
@@ -3603,9 +3562,8 @@ STORY_261={story
 {adduserstyle STYLE_1b}{align}
 "Screen Correction"
 {remuserstyle STYLE_1b}
-" "
-"provides a simple gamma, contrast "
-"and brightness control which affects the whole desktop."
+" provides a simple gamma, contrast and brightness control which affects the "
+"whole desktop."
 {newpara}{adduserstyle STYLE_1c}
 "Enable correction"
 {remuserstyle STYLE_1c}
@@ -3727,15 +3685,11 @@ STORY_261={story
 {newpara}{adduserstyle STYLE_15}{newpage}
 "GIF Choices"
 {newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_258}{newpara}{align}
-"See "
-"Common File Format Choices"
-"."
+"See Common File Format Choices."
 {align 0}{newpara}{align}{newpage}{adduserstyle STYLE_15}
 "PNG Choices"
 {newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_25a}{newpara}{align}
-"See "
-"Common File Format Choices"
-"."
+"See Common File Format Choices."
 {newpara}{newpage}{adduserstyle STYLE_15}
 "DrawFile Choices"
 {newpara}{remuserstyle STYLE_15}{align 1}{embed PICT_25c}{newpara}
@@ -3886,16 +3840,16 @@ TEXT_27d
 TEXT_285
 }
 
-CHAP_295={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_28d={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 10}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_296={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_28e={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_297={textframe
+TEXT_28f={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -3914,7 +3868,7 @@ TEXT_297={textframe
 {skew 0x0}
 }
 
-TEXT_29a={textframe
+TEXT_292={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3932,13 +3886,13 @@ TEXT_29a={textframe
 {skew 0x0}
 }
 
-STORY_29b={story 
+STORY_293={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Control Summary"
 {endoftext}
 }
 
-TEXT_29d={textframe
+TEXT_295={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -3956,19 +3910,19 @@ TEXT_29d={textframe
 {skew 0x0}
 }
 
-STORY_29e={story 
+STORY_296={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_2a0={page}
+PAGE_298={page}
 
-TEXT_2a1={textframe
-{master TEXT_297}{local 0}
+TEXT_299={textframe
+{master TEXT_28f}{local 0}
 }
 
-STORY_2a2={story 
+STORY_29a={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_15}
 "Mouse Controls"
 {newpara}{remuserstyle STYLE_15}{tabruler }
@@ -3999,8 +3953,7 @@ STORY_2a2={story
 {remuserstyle STYLE_17}{tab}
 "Scroll to point"
 {tab}
-"(n"
-"o action)"
+"(no action)"
 {newline}{tab}
 "+"
 {adduserstyle STYLE_17}
@@ -4014,8 +3967,7 @@ STORY_2a2={story
 {remuserstyle STYLE_17}{tab}
 "Embed window"
 {tab}
-"(n"
-"o action)"
+"(no action)"
 {newpara}{adduserstyle STYLE_15}{tabruler}
 "Keyboard Controls"
 {newpara}{remuserstyle STYLE_15}
@@ -4139,15 +4091,15 @@ STORY_2a2={story
 {leftindent}{firstindent}{tabruler}{endoftext}
 }
 
-TEXT_2a4={textframe
-{master TEXT_29a}{local 0}
+TEXT_29c={textframe
+{master TEXT_292}{local 0}
 }
 
-TEXT_2a7={textframe
-{master TEXT_29d}{local 0}
+TEXT_29f={textframe
+{master TEXT_295}{local 0}
 }
 
-TEXT_2aa={textframe
+TEXT_2a2={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4165,22 +4117,22 @@ TEXT_2aa={textframe
 {skew 0x0}
 }
 
-STORY_2ab={story 
+STORY_2a3={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}
 "Controls"
 {remuserstyle STYLE_12}{endoftext}
 }
 
-CHAP_2ae={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_2a6={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 11}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_2af={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_2a7={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_2b0={textframe
+TEXT_2a8={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -4199,7 +4151,7 @@ TEXT_2b0={textframe
 {skew 0x0}
 }
 
-TEXT_2b3={textframe
+TEXT_2ab={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4217,13 +4169,13 @@ TEXT_2b3={textframe
 {skew 0x0}
 }
 
-STORY_2b4={story 
+STORY_2ac={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Keymap"
 {endoftext}
 }
 
-TEXT_2b6={textframe
+TEXT_2ae={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4241,19 +4193,19 @@ TEXT_2b6={textframe
 {skew 0x0}
 }
 
-STORY_2b7={story 
+STORY_2af={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_2b9={page}
+PAGE_2b1={page}
 
-TEXT_2ba={textframe
-{master TEXT_2b0}{local 0}
+TEXT_2b2={textframe
+{master TEXT_2a8}{local 0}
 }
 
-STORY_2bb={story 
+STORY_2b3={story 
 {adduserstyle STYLE_01}
 "PrivateEyeës key assignments may be customised or supplemented by editing a "
 "file called êKeysë, which is held in PrivateEye's Choices directory: "
@@ -4538,15 +4490,15 @@ STORY_2bb={story
 {newpara}{remuserstyle STYLE_16}{endoftext}
 }
 
-TEXT_2bd={textframe
-{master TEXT_2b3}{local 0}
+TEXT_2b5={textframe
+{master TEXT_2ab}{local 0}
 }
 
-TEXT_2c0={textframe
-{master TEXT_2b6}{local 0}
+TEXT_2b8={textframe
+{master TEXT_2ae}{local 0}
 }
 
-TEXT_2c3={textframe
+TEXT_2bb={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4564,41 +4516,41 @@ TEXT_2c3={textframe
 {skew 0x0}
 }
 
-STORY_2c4={story 
+STORY_2bc={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}
 "Keymap"
 {remuserstyle STYLE_12}{endoftext}
 }
 
-PAGE_2c6={page}
+PAGE_2be={page}
 
-TEXT_2c7={textframe
-{master TEXT_2b0}{local 0}
+TEXT_2bf={textframe
+{master TEXT_2a8}{local 0}
 }
 
-TEXT_2c8={textframe
-{master TEXT_2b3}{local 0}
+TEXT_2c0={textframe
+{master TEXT_2ab}{local 0}
 }
 
-TEXT_2cb={textframe
-{master TEXT_2b6}{local 0}
+TEXT_2c3={textframe
+{master TEXT_2ae}{local 0}
 }
 
-CHAIN_2bb={textchain
-TEXT_2ba
-TEXT_2c7
+CHAIN_2b3={textchain
+TEXT_2b2
+TEXT_2bf
 }
 
-CHAP_2cf={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_2c7={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 12}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_2d0={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_2c8={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_2d1={textframe
+TEXT_2c9={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -4617,7 +4569,7 @@ TEXT_2d1={textframe
 {skew 0x0}
 }
 
-TEXT_2d4={textframe
+TEXT_2cc={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4635,13 +4587,13 @@ TEXT_2d4={textframe
 {skew 0x0}
 }
 
-STORY_2d5={story 
+STORY_2cd={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: History"
 {endoftext}
 }
 
-TEXT_2d7={textframe
+TEXT_2cf={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -4659,20 +4611,30 @@ TEXT_2d7={textframe
 {skew 0x0}
 }
 
-STORY_2d8={story 
+STORY_2d0={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_2da={page}
+PAGE_2d2={page}
 
-TEXT_2db={textframe
-{master TEXT_2d1}{local 0}
+TEXT_2d3={textframe
+{master TEXT_2c9}{local 0}
 }
 
-STORY_2dc={story 
+STORY_2d4={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_15}
+"Version 3.00 (08 Feb 2017)"
+{newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
+"Fixes"
+{newpara}{remuserstyle STYLE_18}{adduserstyle STYLE_14}
+"Fix: Avoid crashes on Raspberry Pi 3 (Cortex-A53) by fixing a stray \"MOVS "
+"pc\" instruction which had previously gone undetected."
+{newpara}
+"Fix: Zero page access in choices handling code which would cause a crash on "
+"zero page protected OSes."
+{newpara}{newpara}{remuserstyle STYLE_14}{adduserstyle STYLE_15}
 "Version 2.99 (05 Feb 2012)"
 {newpara}{remuserstyle STYLE_15}{adduserstyle STYLE_18}
 "Open sourced"
@@ -4996,15 +4958,15 @@ STORY_2dc={story
 {newpara}{remuserstyle STYLE_14}{endoftext}
 }
 
-TEXT_2de={textframe
-{master TEXT_2d4}{local 0}
+TEXT_2d6={textframe
+{master TEXT_2cc}{local 0}
 }
 
-TEXT_2e1={textframe
-{master TEXT_2d7}{local 0}
+TEXT_2d9={textframe
+{master TEXT_2cf}{local 0}
 }
 
-TEXT_2e4={textframe
+TEXT_2dc={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5022,7 +4984,7 @@ TEXT_2e4={textframe
 {skew 0x0}
 }
 
-STORY_2e5={story 
+STORY_2dd={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}{tabruler }
 {tabruler {tableader ""} {righttab 68031}{tableader "."}{lefttab 90709}}
 
@@ -5030,65 +4992,65 @@ STORY_2e5={story
 {remuserstyle STYLE_12}{tabruler}{endoftext}
 }
 
+PAGE_2df={page}
+
+TEXT_2e0={textframe
+{master TEXT_2c9}{local 0}
+}
+
+TEXT_2e1={textframe
+{master TEXT_2cc}{local 0}
+}
+
+TEXT_2e4={textframe
+{master TEXT_2cf}{local 0}
+}
+
 PAGE_2e7={page}
 
 TEXT_2e8={textframe
-{master TEXT_2d1}{local 0}
+{master TEXT_2c9}{local 0}
 }
 
 TEXT_2e9={textframe
-{master TEXT_2d4}{local 0}
+{master TEXT_2cc}{local 0}
 }
 
 TEXT_2ec={textframe
-{master TEXT_2d7}{local 0}
+{master TEXT_2cf}{local 0}
 }
 
 PAGE_2ef={page}
 
 TEXT_2f0={textframe
-{master TEXT_2d1}{local 0}
+{master TEXT_2c9}{local 0}
 }
 
 TEXT_2f1={textframe
-{master TEXT_2d4}{local 0}
+{master TEXT_2cc}{local 0}
 }
 
 TEXT_2f4={textframe
-{master TEXT_2d7}{local 0}
+{master TEXT_2cf}{local 0}
 }
 
-PAGE_2f7={page}
-
-TEXT_2f8={textframe
-{master TEXT_2d1}{local 0}
-}
-
-TEXT_2f9={textframe
-{master TEXT_2d4}{local 0}
-}
-
-TEXT_2fc={textframe
-{master TEXT_2d7}{local 0}
-}
-
-CHAIN_2dc={textchain
-TEXT_2db
+CHAIN_2d4={textchain
+TEXT_2d3
+TEXT_2e0
 TEXT_2e8
 TEXT_2f0
-TEXT_2f8
 }
 
-CHAP_300={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_2f8={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 13}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_301={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_2f9={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_302={textframe
+TEXT_2fa={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -5107,7 +5069,7 @@ TEXT_302={textframe
 {skew 0x0}
 }
 
-TEXT_305={textframe
+TEXT_2fd={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5125,13 +5087,13 @@ TEXT_305={textframe
 {skew 0x0}
 }
 
-STORY_306={story 
+STORY_2fe={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Copyright & License"
 {endoftext}
 }
 
-TEXT_308={textframe
+TEXT_300={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5149,21 +5111,25 @@ TEXT_308={textframe
 {skew 0x0}
 }
 
-STORY_309={story 
+STORY_301={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_30b={page}
+PAGE_303={page}
 
-TEXT_30c={textframe
-{master TEXT_302}{local 0}
+TEXT_304={textframe
+{master TEXT_2fa}{local 0}
 }
 
-STORY_30d={story 
+STORY_305={story 
 {adduserstyle STYLE_01}
-"Copyright © 1999-2012, David Thomas. All rights reserved."
+"Copyright © "
+{align 1}
+"1999ó2017"
+{align}
+", David Thomas. All rights reserved."
 {newpara}
 "Redistribution and use in source and binary forms, with or without "
 "modification, are permitted provided that the following conditions are met:"
@@ -5189,15 +5155,15 @@ STORY_30d={story
 {newpara}{endoftext}
 }
 
-TEXT_30f={textframe
-{master TEXT_305}{local 0}
+TEXT_307={textframe
+{master TEXT_2fd}{local 0}
 }
 
-TEXT_312={textframe
-{master TEXT_308}{local 0}
+TEXT_30a={textframe
+{master TEXT_300}{local 0}
 }
 
-TEXT_315={textframe
+TEXT_30d={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5215,22 +5181,22 @@ TEXT_315={textframe
 {skew 0x0}
 }
 
-STORY_316={story 
+STORY_30e={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}
 "Copyright & License"
 {remuserstyle STYLE_12}{endoftext}
 }
 
-CHAP_319={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_311={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 14}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_31a={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_312={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_31b={textframe
+TEXT_313={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -5249,7 +5215,7 @@ TEXT_31b={textframe
 {skew 0x0}
 }
 
-TEXT_31e={textframe
+TEXT_316={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5267,13 +5233,13 @@ TEXT_31e={textframe
 {skew 0x0}
 }
 
-STORY_31f={story 
+STORY_317={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Acknowledgements"
 {endoftext}
 }
 
-TEXT_321={textframe
+TEXT_319={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5291,19 +5257,19 @@ TEXT_321={textframe
 {skew 0x0}
 }
 
-STORY_322={story 
+STORY_31a={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_324={page}
+PAGE_31c={page}
 
-TEXT_325={textframe
-{master TEXT_31b}{local 0}
+TEXT_31d={textframe
+{master TEXT_313}{local 0}
 }
 
-STORY_326={story 
+STORY_31e={story 
 {adduserstyle STYLE_01}
 "The ArtWorks rendering module veneers are based on "
 {adduserstyle STYLE_1e}
@@ -5389,15 +5355,15 @@ STORY_326={story
 {reverse 0}{super 0}{sub 0}{newpara}{endoftext}
 }
 
-TEXT_328={textframe
-{master TEXT_31e}{local 0}
+TEXT_320={textframe
+{master TEXT_316}{local 0}
 }
 
-TEXT_32b={textframe
-{master TEXT_321}{local 0}
+TEXT_323={textframe
+{master TEXT_319}{local 0}
 }
 
-TEXT_32e={textframe
+TEXT_326={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5415,22 +5381,22 @@ TEXT_32e={textframe
 {skew 0x0}
 }
 
-STORY_32f={story 
+STORY_327={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}
 "Acknowledgements"
 {remuserstyle STYLE_12}{endoftext}
 }
 
-CHAP_332={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
+CHAP_32a={chapter {papersize "A5" 0 {w 595276} {h 420944} {sideways 0}}
 {omitheader 0} {omitfooter 0}
 {chapternumber 15}
 {pagenumberformat 2}
 {startonleft 0}
 }
 
-PAGE_333={masterpage {colourvalue COL_02 0x10000 0}}
+PAGE_32b={masterpage {colourvalue COL_02 0x10000 0}}
 
-TEXT_334={textframe
+TEXT_32c={textframe
 {lock 0} {spread 0}
 {masterframe 1}
 {fillcolour COL_02 0x10000 0}
@@ -5449,7 +5415,7 @@ TEXT_334={textframe
 {skew 0x0}
 }
 
-TEXT_337={textframe
+TEXT_32f={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5467,13 +5433,13 @@ TEXT_337={textframe
 {skew 0x0}
 }
 
-STORY_338={story 
+STORY_330={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}
 "PrivateEye: Contacting the Author"
 {endoftext}
 }
 
-TEXT_33a={textframe
+TEXT_332={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5491,19 +5457,19 @@ TEXT_33a={textframe
 {skew 0x0}
 }
 
-STORY_33b={story 
+STORY_333={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_11}{bold 0}{italic 0}{align 2}
 "Page "
 {pageno}{endoftext}
 }
 
-PAGE_33d={page}
+PAGE_335={page}
 
-TEXT_33e={textframe
-{master TEXT_334}{local 0}
+TEXT_336={textframe
+{master TEXT_32c}{local 0}
 }
 
-STORY_33f={story 
+STORY_337={story 
 {adduserstyle STYLE_01}
 "If you have any comments, bug reports or suggestions for future versions "
 "then you can contact me at "
@@ -5529,15 +5495,15 @@ STORY_33f={story
 {bold}{italic}{underline}{reverse}{sub}{endoftext}
 }
 
-TEXT_341={textframe
-{master TEXT_337}{local 0}
+TEXT_339={textframe
+{master TEXT_32f}{local 0}
 }
 
-TEXT_344={textframe
-{master TEXT_33a}{local 0}
+TEXT_33c={textframe
+{master TEXT_332}{local 0}
 }
 
-TEXT_347={textframe
+TEXT_33f={textframe
 {lock 0} {spread 0}
 {fillcolour COL_02 0x10000 0}
 {radius 0}
@@ -5555,7 +5521,7 @@ TEXT_347={textframe
 {skew 0x0}
 }
 
-STORY_348={story 
+STORY_340={story 
 {adduserstyle STYLE_01}{adduserstyle STYLE_12}
 "Contacting the Author"
 {remuserstyle STYLE_12}{endoftext}
