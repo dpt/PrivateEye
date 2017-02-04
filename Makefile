@@ -1,4 +1,20 @@
-.PHONY:	normal debug all utils clean
+.PHONY:	build normal debug all utils clean
+
+build:
+	Dir utils.templheader
+	Obey MakeMake
+	Dir ^.^
+	Dir libs.appengine
+	Obey MakeMake
+	Dir ^.^.libs.exiftags
+	Obey MakeMake
+	Dir ^.^.libs.md5
+	Obey MakeMake
+	Dir ^.^.apps.!PrivatEye
+	Obey MakeMake
+	Dir ^.^.apps.!TagCloud
+	Obey MakeMake
+	Dir ^.^
 
 normal:	utils
 	Dir libs.appengine
@@ -42,7 +58,7 @@ debug:	utils
 	amu $@
 	Dir ^.^
 
-all:	normal debug
+all:	build normal debug
 
 utils:
 	Dir utils.templheader

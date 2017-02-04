@@ -1,4 +1,6 @@
-WimpSlot -min 4000K
+| !TagCloud.MakeMake
+|
+WimpSlot -min 4096K
 Dir <Obey$Dir>
 CDir o
 CDir odf

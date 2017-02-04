@@ -1,6 +1,9 @@
-WimpSlot -min 4000K
+| exiftags.MakeMake
+|
+WimpSlot -min 4096K
 Dir <Obey$Dir>
 CDir o
 CDir om
 CDir odf
-Makatic.Makatic3 -e -D
+CDir other.o
+Makatic.Makatic3 -e

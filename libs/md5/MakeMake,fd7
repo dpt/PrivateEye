@@ -1,6 +1,8 @@
-WimpSlot -min 4000K
+| md5.MakeMake
+|
+WimpSlot -min 4096K
 Dir <Obey$Dir>
 CDir o
 CDir om
 CDir odf
-Makatic.Makatic3 -e -D
+Makatic.Makatic3 -e

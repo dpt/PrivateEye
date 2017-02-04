@@ -1,4 +1,6 @@
-WimpSlot -min 8M
+| !PrivatEye.MakeMake
+|
+WimpSlot -min 8192K
 Dir <Obey$Dir>
 CDir o
 CDir odf
