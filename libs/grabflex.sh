@@ -24,8 +24,7 @@ cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/opts     > opts.h
 cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/swiextra > swiextra.h
 cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/c/flex     > flex.c
 
-# Build
-echo "Building flex."
+# Write out a Makefile
 
 cat > GNUmakefile <<EOF
 # GNU makefile for flex
@@ -58,5 +57,5 @@ all:	normal debug
 -include \$(objs:.o=.d)
 EOF
 
-make all
+cd -
 
