@@ -12,7 +12,6 @@ cd flex
 
 export CVSROOT=:pserver:anonymous@riscosopen.org:/home/rool/cvsroot
 
-cvs login
 # Would prefer to have: "for file in [flex, opts, swiextra]: download"
 cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/flex     > flex.h
 cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/opts     > opts.h
