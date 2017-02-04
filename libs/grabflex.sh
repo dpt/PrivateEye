@@ -1,14 +1,20 @@
-#!/bin/bash
+#!/bin/bash -e
 #
 # Fetch the source to the flex memory manager from the riscosopen.org site and
 # compile it up with GCCSDK.
 #
 # by dpt
 
+if [ -d flex ]; then
+	echo "flex is downloaded."
+	exit 0
+fi
+
 mkdir -p flex
 cd flex
 
 # Fetch
+echo "Downloading flex."
 
 export CVSROOT=:pserver:anonymous@riscosopen.org:/home/rool/cvsroot
 
@@ -19,6 +25,7 @@ cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/swiextra > swiextra.h
 cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/c/flex     > flex.c
 
 # Build
+echo "Building flex."
 
 cat > GNUmakefile <<EOF
 # GNU makefile for flex
