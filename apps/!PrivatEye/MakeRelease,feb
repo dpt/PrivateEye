@@ -1,4 +1,4 @@
-Set V 299
+Set V 300
 Set C <Obey$Dir>.privateye-release<V>
 Set D <C>.!PrivatEye
 CDir <C>
@@ -33,6 +33,6 @@ Copy <Obey$Dir>.Release                <C> ~CFR~V
 |
 Dir <C>
 |losecvs @
-zip -9mru ^.privateeye299/zip * -x /svn.* *./svn.*
+zip -9mru ^.privateeye300/zip * -x /svn.* *./svn.*
 |
 |Wipe <C> ~CFR~V

@@ -30,6 +30,7 @@ static void selected(const wimp_selection *selection, void *opaque)
 
   switch (selection->items[0])
   {
+#ifdef EYE_CANVAS
   case ICONBAR_NEW:
     switch (selection->items[1])
     {
@@ -47,6 +48,7 @@ static void selected(const wimp_selection *selection, void *opaque)
         break;
     }
     break;
+#endif
 
   /* Close all */
   case ICONBAR_CLOSE:
@@ -57,13 +59,17 @@ static void selected(const wimp_selection *selection, void *opaque)
           viewer_close_all();
         break;
 
+#ifdef EYE_THUMBVIEW
       case CLOSE_THUMBVIEWS:
         thumbview_close_all();
         break;
+#endif
 
+#ifdef EYE_CANVAS
       case CLOSE_CANVASES:
         canvas_close_all();
         break;
+#endif
     }
     break;
 
@@ -113,15 +119,19 @@ static void update(wimp_menu *menu, void *opaque)
                      (viewer_get_count() > 0) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
 
+#ifdef EYE_THUMBVIEW
   menu_set_icon_flags(menu->entries[ICONBAR_CLOSE].sub_menu,
                       CLOSE_THUMBVIEWS,
                      (thumbview_get_count() > 0) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
+#endif
 
+#ifdef EYE_CANVAS
   menu_set_icon_flags(menu->entries[ICONBAR_CLOSE].sub_menu,
                       CLOSE_CANVASES,
                      (canvas_get_count() > 0) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
+#endif
 
   /* Shade the "Empty cache" entry if the cache is already empty */
   menu_set_icon_flags(menu,
