@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "fortify/fortify.h"
 
@@ -585,86 +586,117 @@ static void scrolling_start(viewer_t *viewer,
 
 /* ----------------------------------------------------------------------- */
 
-/*
- * step through disc files
- */
-static void step(viewer_t *viewer, int direction)
+/* A strcmp() guaranteed to return -1, 0 or 1. */
+static int step_strcmp(const char *a, const char *b)
 {
-  const char         *leaf_name;
-  const char         *dir_name;
-  int                 context;
-  char                file_name[256]; /* Careful Now */
-  int                 read_count;
-  osgbpb_info_stamped curr[10]; /* space for one struct + buffer space for filename (approx 256 bytes) */
+    int r;
 
-  leaf_name = str_leaf(viewer->drawable->image->file_name);
-  dir_name  = str_branch(viewer->drawable->image->file_name);
+    r = strcmp(a, b);
 
-  context = 0;
+    return r < 0 ? -1 :
+           r > 0 ? +1 :
+                    0;
+}
 
-  /* scan until we match the current image's leafname */
-  do
-  {
-    EC(xosgbpb_dir_entries_info_stamped(dir_name,
-           (osgbpb_info_stamped_list *) curr,
-                                        1, /* count */
-                                        context,
-                                        sizeof(curr), /* size */
-                                        leaf_name,
-                                       &read_count,
-                                       &context));
-  }
-  while (read_count == 0 && context > -1);
+/*
+ * Step to an adjacent disc file.
+ */
+static int step(viewer_t *viewer, int direction)
+{
+    const char *leaf_name;
+    const char *dir_name;
+    int         context;
+    char        file_name[256]; /* Careful Now */
+    int         read_count;
+    int         found; /* bool */
+    osgbpb_info_stamped found_info[11];
 
-  if (context < 0)
-    return; /* couldn't find the original file */
+    if (direction > 0)
+        direction = +1;
+    else
+        direction = -1;
 
-  do
-  {
+    leaf_name = str_leaf(viewer->drawable->image->file_name);
+    dir_name  = str_branch(viewer->drawable->image->file_name);
+
+    /* Enumerate the entire directory to find the previous or next file.
+     *
+     * While FileCore FS directory indices are stable and we are returned
+     * sorted directories we can't make any assumptions about directory
+     * ordering on other file systems. So to find the lexicographical
+     * previous or next file in a directory we have to read in the entire
+     * directory contents. To do that we check to see if the current
+     * filename is less than the target filename (when stepping backwards).
+     * If so we store it. We read further filenames. If they're less than the
+     * target and greater than the stored filename we update the stored
+     * filename. At the end of the directory we will have stored the closest
+     * matching "less than" filename from the directory. Reversing the signs
+     * makes the same process work for stepping forwards.
+     */
+    found   = 0;
+    context = 0;
     do
     {
-      /* if we're moving backwards then skip back by *two* entries. */
-      /* note the assumption that the context values returned by OS_GBPB are
-       * indices */
-      if (direction < 0)
-        context -= 2;
+        char   buffer[256];
+        char  *bufp;
+        size_t len;
 
-      EC(xosgbpb_dir_entries_info_stamped(dir_name,
-             (osgbpb_info_stamped_list *) curr,
-                                          1, /* count */
-                                          context,
-                                          sizeof(curr), /* size */
-                                          "*",
-                                         &read_count,
-                                         &context));
+        /* Read in as many directory entries as will fit in the buffer */
+        EC(xosgbpb_dir_entries_info_stamped(dir_name,
+               (osgbpb_info_stamped_list *) buffer,
+                                            INT_MAX, /* count */
+                                            context,
+                                            sizeof(buffer), /* size */
+                                            NULL, /* match any filename */
+                                            &read_count,
+                                            &context));
+
+        /* Process the buffer entries */
+        for (bufp = buffer; read_count-- > 0; bufp += (len + 3) & ~3)
+        {
+            const osgbpb_info_stamped *info;
+
+            info = (const osgbpb_info_stamped *) bufp;
+            len  = osgbpb_SIZEOF_INFO_STAMPED(strlen(info->name) + 1); /* note: used in outer for() */
+
+            /* Save any entry which lies between the target and the current
+             * best match */
+            if (image_is_loadable(info->file_type) &&
+                step_strcmp(info->name, leaf_name) == direction)
+            {
+                if (found == 0 ||
+                    step_strcmp(info->name, found_info->name) != direction)
+                {
+                    memcpy(found_info, info, len);
+                    found = 1;
+                }
+            }
+        }
     }
-    while (read_count == 0 && context > -1);
+    while (context > -1);
 
-    if (context < 0)
-      return; /* couldn't find the file */
-  }
-  while (!image_is_loadable(curr[0].file_type));
+    if (!found)
+    {
+        /* beep or something */
+        return -1;
+    }
 
-  /* now we've got a file, and it's loadable */
+    /* now we've got a file, and it's loadable */
 
-  if (!viewer_query_unload(viewer))
-    return;
+    if (!viewer_query_unload(viewer))
+        return 0;
 
-  viewer_unload(viewer);
+    viewer_unload(viewer);
 
-  str_cpy(file_name, dir_name);
-  strcat(file_name, ".");
-  strcat(file_name, curr[0].name);
+    sprintf(file_name, "%s.%s", dir_name, found_info->name);
+    if (viewer_load(viewer, file_name, found_info->load_addr, found_info->exec_addr))
+    {
+        viewer_destroy(viewer);
+        return 0;
+    }
 
-  if (viewer_load(viewer, file_name, curr[0].load_addr, curr[0].exec_addr))
-  {
-    viewer_destroy(viewer);
-    /* FIXME: break out and return */
-  }
-  else
-  {
     viewer_open(viewer);
-  }
+    return 0;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1428,7 +1460,7 @@ static void action_zoom(viewer_t *viewer, int op)
 
 static void action_step(viewer_t *viewer, int op)
 {
-  step(viewer, (op == StepForwards) ? 1 : -1);
+  (void) step(viewer, (op == StepForwards) ? 1 : -1);
 }
 
 static void action_panrand(viewer_t *viewer, int op)
