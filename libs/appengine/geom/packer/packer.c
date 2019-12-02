@@ -114,7 +114,7 @@ static error add_area(packer_t *packer, const os_box *area)
   {
     if (box_is_empty(&packer->areas[i]) ||
        !box_contains_box(area, &packer->areas[i]))
-        continue;
+      continue;
 
     debugf(("add_area: contained by: %d <%d %d %d %d>\n",
             i,

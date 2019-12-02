@@ -93,7 +93,7 @@ static unsigned int treeview_refcount = 0;
 error treeview_init(void)
 {
   if (treeview_refcount == 0)
-     ;
+    ;
 
   treeview_refcount++;
 

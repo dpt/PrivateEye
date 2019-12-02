@@ -63,7 +63,7 @@ zones *zones_create(image_t *image)
 void zones_destroy(zones *zones)
 {
   if (zones == NULL)
-      return;
+    return;
 
   free(zones);
 }

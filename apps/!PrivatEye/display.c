@@ -538,7 +538,7 @@ static void scrolling_start(viewer_t *viewer,
   cs = viewer->scale.cur;
 
   if (ds <= 0) /* desired zoom */
-      ds = cs;
+    ds = cs;
 
   /* where are we? */
 
@@ -589,13 +589,13 @@ static void scrolling_start(viewer_t *viewer,
 /* A strcmp() guaranteed to return -1, 0 or 1. */
 static int step_strcmp(const char *a, const char *b)
 {
-    int r;
+  int r;
 
-    r = strcmp(a, b);
+  r = strcmp(a, b);
 
-    return r < 0 ? -1 :
-           r > 0 ? +1 :
-                    0;
+  return r < 0 ? -1 :
+         r > 0 ? +1 :
+                  0;
 }
 
 /*
@@ -603,100 +603,100 @@ static int step_strcmp(const char *a, const char *b)
  */
 static int step(viewer_t *viewer, int direction)
 {
-    const char *leaf_name;
-    const char *dir_name;
-    int         context;
-    char        file_name[256]; /* Careful Now */
-    int         read_count;
-    int         found; /* bool */
-    osgbpb_info_stamped found_info[11];
+  const char *leaf_name;
+  const char *dir_name;
+  int         context;
+  char        file_name[256]; /* Careful Now */
+  int         read_count;
+  int         found; /* bool */
+  osgbpb_info_stamped found_info[11];
 
-    if (direction > 0)
-        direction = +1;
-    else
-        direction = -1;
+  if (direction > 0)
+    direction = +1;
+  else
+    direction = -1;
 
-    leaf_name = str_leaf(viewer->drawable->image->file_name);
-    dir_name  = str_branch(viewer->drawable->image->file_name);
+  leaf_name = str_leaf(viewer->drawable->image->file_name);
+  dir_name  = str_branch(viewer->drawable->image->file_name);
 
-    /* Enumerate the entire directory to find the previous or next file.
-     *
-     * While FileCore FS directory indices are stable and we are returned
-     * sorted directories we can't make any assumptions about directory
-     * ordering on other file systems. So to find the lexicographical
-     * previous or next file in a directory we have to read in the entire
-     * directory contents. To do that we check to see if the current
-     * filename is less than the target filename (when stepping backwards).
-     * If so we store it. We read further filenames. If they're less than the
-     * target and greater than the stored filename we update the stored
-     * filename. At the end of the directory we will have stored the closest
-     * matching "less than" filename from the directory. Reversing the signs
-     * makes the same process work for stepping forwards.
-     */
-    found   = 0;
-    context = 0;
-    do
+  /* Enumerate the entire directory to find the previous or next file.
+   *
+   * While FileCore FS directory indices are stable and we are returned
+   * sorted directories we can't make any assumptions about directory
+   * ordering on other file systems. So to find the lexicographical
+   * previous or next file in a directory we have to read in the entire
+   * directory contents. To do that we check to see if the current
+   * filename is less than the target filename (when stepping backwards).
+   * If so we store it. We read further filenames. If they're less than the
+   * target and greater than the stored filename we update the stored
+   * filename. At the end of the directory we will have stored the closest
+   * matching "less than" filename from the directory. Reversing the signs
+   * makes the same process work for stepping forwards.
+   */
+  found   = 0;
+  context = 0;
+  do
+  {
+    char   buffer[256];
+    char  *bufp;
+    size_t len;
+
+    /* Read in as many directory entries as will fit in the buffer */
+    EC(xosgbpb_dir_entries_info_stamped(dir_name,
+                                        (osgbpb_info_stamped_list *) buffer,
+                                        INT_MAX, /* count */
+                                        context,
+                                        sizeof(buffer), /* size */
+                                        NULL, /* match any filename */
+                                        &read_count,
+                                        &context));
+
+    /* Process the buffer entries */
+    for (bufp = buffer; read_count-- > 0; bufp += (len + 3) & ~3)
     {
-        char   buffer[256];
-        char  *bufp;
-        size_t len;
+      const osgbpb_info_stamped *info;
 
-        /* Read in as many directory entries as will fit in the buffer */
-        EC(xosgbpb_dir_entries_info_stamped(dir_name,
-               (osgbpb_info_stamped_list *) buffer,
-                                            INT_MAX, /* count */
-                                            context,
-                                            sizeof(buffer), /* size */
-                                            NULL, /* match any filename */
-                                            &read_count,
-                                            &context));
+      info = (const osgbpb_info_stamped *) bufp;
+      len  = osgbpb_SIZEOF_INFO_STAMPED(strlen(info->name) + 1); /* note: used in outer for() */
 
-        /* Process the buffer entries */
-        for (bufp = buffer; read_count-- > 0; bufp += (len + 3) & ~3)
+      /* Save any entry which lies between the target and the current
+       * best match */
+      if (image_is_loadable(info->file_type) &&
+          step_strcmp(info->name, leaf_name) == direction)
+      {
+        if (found == 0 ||
+            step_strcmp(info->name, found_info->name) != direction)
         {
-            const osgbpb_info_stamped *info;
-
-            info = (const osgbpb_info_stamped *) bufp;
-            len  = osgbpb_SIZEOF_INFO_STAMPED(strlen(info->name) + 1); /* note: used in outer for() */
-
-            /* Save any entry which lies between the target and the current
-             * best match */
-            if (image_is_loadable(info->file_type) &&
-                step_strcmp(info->name, leaf_name) == direction)
-            {
-                if (found == 0 ||
-                    step_strcmp(info->name, found_info->name) != direction)
-                {
-                    memcpy(found_info, info, len);
-                    found = 1;
-                }
-            }
+          memcpy(found_info, info, len);
+          found = 1;
         }
+      }
     }
-    while (context > -1);
+  }
+  while (context > -1);
 
-    if (!found)
-    {
-        /* beep or something */
-        return -1;
-    }
+  if (!found)
+  {
+    /* beep or something */
+    return -1;
+  }
 
-    /* now we've got a file, and it's loadable */
+  /* now we've got a file, and it's loadable */
 
-    if (!viewer_query_unload(viewer))
-        return 0;
-
-    viewer_unload(viewer);
-
-    sprintf(file_name, "%s.%s", dir_name, found_info->name);
-    if (viewer_load(viewer, file_name, found_info->load_addr, found_info->exec_addr))
-    {
-        viewer_destroy(viewer);
-        return 0;
-    }
-
-    viewer_open(viewer);
+  if (!viewer_query_unload(viewer))
     return 0;
+
+  viewer_unload(viewer);
+
+  sprintf(file_name, "%s.%s", dir_name, found_info->name);
+  if (viewer_load(viewer, file_name, found_info->load_addr, found_info->exec_addr))
+  {
+    viewer_destroy(viewer);
+    return 0;
+  }
+
+  viewer_open(viewer);
+  return 0;
 }
 
 /* ---------------------------------------------------------------------- */

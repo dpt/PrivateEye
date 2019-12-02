@@ -95,7 +95,7 @@ static void calculate_mask(void)
     else
       flags |= tests[i].no;
 
-   event_wimp_poll_mask = flags;
+  event_wimp_poll_mask = flags;
 }
 
 wimp_poll_flags event_wimp_get_mask(void)

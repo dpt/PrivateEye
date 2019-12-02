@@ -142,7 +142,7 @@ static int decompress(MTFState *s, int (*cb)(void *opaque), void *opaque)
       return EOF; // fix termination case
     }
 
-    DBUG(("{=%d}",c));
+    DBUG(("{=%d}", c));
     buf |= c << used;
     used += 8;
   }
@@ -172,7 +172,7 @@ static int decompress(MTFState *s, int (*cb)(void *opaque), void *opaque)
         return EOF; // fix termination case
       }
 
-      DBUG(("{=%d}",c));
+      DBUG(("{=%d}", c));
       buf |= c << used;
       used += 8;
     }
@@ -187,7 +187,7 @@ static int decompress(MTFState *s, int (*cb)(void *opaque), void *opaque)
   s->buf  = buf;
   s->used = used;
 
-  DBUG(("{decompress=%c}",r));
+  DBUG(("{decompress=%c}", r));
 
   return r;
 }

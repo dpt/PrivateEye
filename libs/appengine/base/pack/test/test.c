@@ -43,14 +43,14 @@ int pack_test(void)
 
     n = unpack(buf, fmt, &c1, &c2, &s1, &s2, &l1, &l2);
     if (n != sz || c1 != data[0] || c2 != data[1] ||
-             s1 != data[2] || s2 != data[3] ||
-             l1 != data[4] || l2 != data[5])
+        s1 != data[2] || s2 != data[3] ||
+        l1 != data[4] || l2 != data[5])
     {
       printf("Failure: unpack():\n"
-            "%d %d, %d %d, %d %d, %d %d, %d %d, %d %d\n",
-            c1, data[0], c2, data[1],
-            s1, data[2], s2, data[3],
-            l1, data[4], l2, data[5]);
+             "%d %d, %d %d, %d %d, %d %d, %d %d, %d %d\n",
+             c1, data[0], c2, data[1],
+             s1, data[2], s2, data[3],
+             l1, data[4], l2, data[5]);
       nfailures++;
     }
   }
@@ -70,16 +70,16 @@ int pack_test(void)
 
     n = unpack(packedshorts, ">*s", NELEMS(unpackedshorts), unpackedshorts);
     if (n != 8 || unpackedshorts[0] != shorts[0] ||
-            unpackedshorts[1] != shorts[1] ||
-            unpackedshorts[2] != shorts[2] ||
-            unpackedshorts[3] != shorts[3])
+        unpackedshorts[1] != shorts[1] ||
+        unpackedshorts[2] != shorts[2] ||
+        unpackedshorts[3] != shorts[3])
     {
       printf("Failure: unpack() array:\n"
-            "%d %d, %d %d, %d %d, %d %d\n",
-            unpackedshorts[0], shorts[0],
-            unpackedshorts[1], shorts[1],
-            unpackedshorts[2], shorts[2],
-            unpackedshorts[3], shorts[3]);
+             "%d %d, %d %d, %d %d, %d %d\n",
+             unpackedshorts[0], shorts[0],
+             unpackedshorts[1], shorts[1],
+             unpackedshorts[2], shorts[2],
+             unpackedshorts[3], shorts[3]);
       nfailures++;
     }
   }

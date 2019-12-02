@@ -113,7 +113,7 @@ error hist_init(void)
   error err;
 
   if (LOCALS.refcount)
-      return error_OK; /* already initialised */
+    return error_OK; /* already initialised */
 
   /* dependencies */
 
@@ -166,7 +166,7 @@ int hist_available(const image_t *image)
 /* ----------------------------------------------------------------------- */
 
 static error hist_alloc(const void    *opaque_config,
-                         imageobwin_t **obwin)
+                        imageobwin_t **obwin)
 {
   hist_window       *self;
   const hist_config *config = opaque_config;
@@ -175,7 +175,7 @@ static error hist_alloc(const void    *opaque_config,
 
   self = malloc(sizeof(*self));
   if (self == NULL)
-      return error_OOM;
+    return error_OOM;
 
   self->config       = *config;
 

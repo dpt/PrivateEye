@@ -230,7 +230,7 @@ static error tone_defaults(effect_element *e)
 
   t->map = tonemap_create();
   if (t->map == NULL)
-     return error_OOM;
+    return error_OOM;
 
   tonemap_draw_set_stroke_width(t->map, GLOBALS.choices.effects.curve_width);
 

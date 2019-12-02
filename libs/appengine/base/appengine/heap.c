@@ -38,7 +38,7 @@ ae_anchor ae_heap_claim(ae_heap *heap, size_t size)
 void ae_heap_release(ae_heap *heap, ae_anchor *anchor)
 {
   /* MemCheck_UnRegisterFlexBlock(*anchor); */
- /* MemCheck_UnRegisterMiscBlock(*anchor); */
+  /* MemCheck_UnRegisterMiscBlock(*anchor); */
 
   EC(xappengine_heap_release(heap, anchor));
 }
@@ -60,7 +60,7 @@ size_t ae_heap_size(ae_heap *heap, ae_anchor anchor)
 {
   unsigned int *sl;
   size_t s;
-  heap=heap; /* unused */
+  heap = heap; /* unused */
 
   sl = (unsigned int *) anchor + 1;
 

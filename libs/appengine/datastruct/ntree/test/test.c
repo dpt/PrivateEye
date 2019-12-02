@@ -30,16 +30,16 @@ mynode;
 
 static mynode data[] =
 {
-   { "a", -1, 0, NULL },
-   { "b",  0, 0, NULL },
-   { "c",  0, 1, NULL },
-   { "d",  1, 0, NULL },
-   { "e",  1, 1, NULL },
-   { "f",  2, 0, NULL },
-   { "g",  2, 1, NULL },
-   { "h",  2, 2, NULL },
-   { "i",  3, 0, NULL },
-   { "j",  6, 0, NULL },
+  { "a", -1, 0, NULL },
+  { "b",  0, 0, NULL },
+  { "c",  0, 1, NULL },
+  { "d",  1, 0, NULL },
+  { "e",  1, 1, NULL },
+  { "f",  2, 0, NULL },
+  { "g",  2, 1, NULL },
+  { "h",  2, 2, NULL },
+  { "i",  3, 0, NULL },
+  { "j",  6, 0, NULL },
 };
 
 static const char *expected_in_order[6] =
@@ -245,7 +245,7 @@ int ntree_test(void)
     printf("sub-test: discard copied data\n");
 
     err = ntree_walk(copy, ntree_WALK_IN_ORDER | ntree_WALK_ALL, 0,
-                      free_data, NULL);
+                     free_data, NULL);
     if (err)
       goto Failure;
 

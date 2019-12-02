@@ -57,7 +57,7 @@ extern ae_anchor ae_heap_claim(ae_heap *,
  * DocumentMe
  */
 extern void ae_heap_release(ae_heap *,
-                               ae_anchor *);
+                            ae_anchor *);
 
 /*
  * DocumentMe

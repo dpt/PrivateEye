@@ -266,7 +266,7 @@ static error addentry(MakeMenus *maker, const char *text)
 
     max = g->max * 2;
     if (max < 2)
-        max = 2;
+      max = 2;
 
     base = realloc(g->base, MENUSZ(max));
     if (base == NULL)

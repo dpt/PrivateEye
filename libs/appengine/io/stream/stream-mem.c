@@ -67,7 +67,7 @@ error stream_mem_create(const unsigned char *block,
 
   sf = malloc(sizeof(*sf));
   if (!sf)
-      return error_OOM;
+    return error_OOM;
 
   sf->base.buf     = block;
   sf->base.end     = block + length;

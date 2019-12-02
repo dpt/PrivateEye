@@ -171,7 +171,7 @@ enum
 };
 
 static error thumbview_set_display_mode(thumbview             *tv,
-                                         thumbview_display_mode mode);
+                                        thumbview_display_mode mode);
 
 /* ----------------------------------------------------------------------- */
 
@@ -287,7 +287,7 @@ static void redraw(wimp_draw *redraw,
 
     if (box_is_empty(b)) /* should ideally cull empty boxes before they
                              reach this stage */
-        continue;
+      continue;
 
     if (i == ElementIndex_Info)
       continue;
@@ -527,7 +527,7 @@ error thumbview_init(void)
   /* menu */
 
   GLOBALS.thumbview_m = menu_create_from_desc(message0("menu.thumbview"),
-                                             "(filename goes here)",
+                                              "(filename goes here)",
                                               NULL);
 
   err = help_add_menu(GLOBALS.thumbview_m, "thumbview");
@@ -615,8 +615,8 @@ static void thumbview_action(thumbview *tv, int op)
 }
 
 static int thumbview_event_key_pressed(wimp_event_no event_no,
-                                        wimp_block   *block,
-                                        void         *handle)
+                                       wimp_block   *block,
+                                       void         *handle)
 {
   wimp_key  *key;
   thumbview *tv;
@@ -640,8 +640,8 @@ static int thumbview_event_key_pressed(wimp_event_no event_no,
 }
 
 static int thumbview_event_menu_selection(wimp_event_no event_no,
-                                           wimp_block   *block,
-                                           void         *handle)
+                                          wimp_block   *block,
+                                          void         *handle)
 {
 #define PACK(a,b) (((a & 0xff) << 8) | (b & 0xff))
 
@@ -706,8 +706,8 @@ static int thumbview_event_menu_selection(wimp_event_no event_no,
 }
 
 static int thumbview_event_scroll_request(wimp_event_no event_no,
-                                           wimp_block   *block,
-                                           void         *handle)
+                                          wimp_block   *block,
+                                          void         *handle)
 {
   wimp_scroll *scroll;
   thumbview   *tv;
@@ -823,25 +823,25 @@ static int thumbview_update_all(thumbview_update_flags flags)
 }
 
 static int thumbview_message_palette_change(wimp_message *message,
-                                             void         *handle)
+                                            void         *handle)
 {
   NOT_USED(message);
   NOT_USED(handle);
 
   thumbview_update_all(thumbview_UPDATE_COLOURS |
-                        thumbview_UPDATE_REDRAW);
+                       thumbview_UPDATE_REDRAW);
 
   return event_PASS_ON;
 }
 
 static int thumbview_message_mode_change(wimp_message *message,
-                                          void         *handle)
+                                         void         *handle)
 {
   NOT_USED(message);
   NOT_USED(handle);
 
   thumbview_update_all(thumbview_UPDATE_COLOURS |
-                        thumbview_UPDATE_SCALING);
+                       thumbview_UPDATE_SCALING);
 
   return event_PASS_ON;
 }
@@ -1317,9 +1317,9 @@ void thumbview_load_dir(thumbview *tv, const char *dir_name)
     goto Failure;
 
   thumbview_update(tv,
-                    thumbview_UPDATE_COLOURS |
-                    thumbview_UPDATE_SCALING |
-                    thumbview_UPDATE_EXTENT);
+                   thumbview_UPDATE_COLOURS |
+                   thumbview_UPDATE_SCALING |
+                   thumbview_UPDATE_EXTENT);
 
   return;
 
@@ -1332,7 +1332,7 @@ Failure:
 /* ----------------------------------------------------------------------- */
 
 static error thumbview_set_display_mode(thumbview             *tv,
-                                         thumbview_display_mode mode)
+                                        thumbview_display_mode mode)
 {
   error err;
 

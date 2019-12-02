@@ -225,9 +225,9 @@ static tag_cloud_event keyhandler(wimp_key_no key_no, void *opaque)
 /* ----------------------------------------------------------------------- */
 
 static void tags_image_changed_callback(image_t             *image,
-                                         imageobserver_change change,
-                                         imageobserver_data  *data,
-                                         void                *opaque)
+                                        imageobserver_change change,
+                                        imageobserver_data  *data,
+                                        void                *opaque)
 {
   error err;
 

@@ -310,7 +310,7 @@ static error event(tag_cloud       *tc,
 /* ----------------------------------------------------------------------- */
 
 static tag_cloud_event keyhandler(wimp_key_no  key_no,
-                                   void       *opaque)
+                                  void       *opaque)
 {
   int op;
 
@@ -370,15 +370,15 @@ error makecloud_init(void)
     }
 
     tag_cloud_set_handlers(tc,
-                            add_tag,
-                            delete_tag,
-                            rename_tag,
-                            tag,
-                            detag,
-                            tag_file,
-                            detag_file,
-                            event,
-                            NULL /* opaque */);
+                           add_tag,
+                           delete_tag,
+                           rename_tag,
+                           tag,
+                           detag,
+                           tag_file,
+                           detag_file,
+                           event,
+                           NULL /* opaque */);
 
     tag_cloud_set_key_handler(tc, keyhandler, NULL /* opaque */);
 

@@ -297,7 +297,7 @@ char *colour_to_approx(os_colour c)
     f = fopen("colour-dump", "w");
     for (i = 0; i < NCOLOURS; i++)
     {
-      fprintf(f,"%d: %d %x\n", i, colours[i].index, colours[i].score);
+      fprintf(f, "%d: %d %x\n", i, colours[i].index, colours[i].score);
 
       colourtrans_set_gcol(palette[colours[i].index].colour,
                            colourtrans_USE_ECFS_GCOL,
@@ -311,7 +311,7 @@ char *colour_to_approx(os_colour c)
   }
 
   if (colours[0].score == 0) /* perfect match */
-    return (char*) palette[colours[0].index].name;
+    return (char *) palette[colours[0].index].name;
 
   return "WTF";
 }

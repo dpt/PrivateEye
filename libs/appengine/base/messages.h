@@ -46,7 +46,7 @@ extern const char *message_direct(const char *token);
  */
 extern char *get_messages_fd(void); /* icky */
 
-/* 
+/*
  * Compatibility macros
  */
 #define message(m)	    messages_lookup(m,NULL,NULL,NULL,NULL)

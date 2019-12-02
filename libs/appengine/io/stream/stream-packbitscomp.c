@@ -267,7 +267,7 @@ error stream_packbitscomp_create(stream *input, int bufsz, stream **s)
 
   sp = malloc(offsetof(stream_packbitscomp, buffer) + bufsz);
   if (!sp)
-      return error_OOM;
+    return error_OOM;
 
   sp->base.buf     =
   sp->base.end     = sp->buffer; /* force a fill on first use */

@@ -289,9 +289,9 @@ static error subtest2(packer_loc loc, packer_cleardir clear)
       printf("place vertical padding\n");
 
       err = packer_place_by(packer,
-                             loc,
-                             MAXWIDTH - 2 * PADDING, PADDING,
-                             NULL);
+                            loc,
+                            MAXWIDTH - 2 * PADDING, PADDING,
+                            NULL);
       if (err == error_PACKER_DIDNT_FIT)
       {
         printf("*** could not place vertical padding\n");
@@ -308,9 +308,9 @@ static error subtest2(packer_loc loc, packer_cleardir clear)
         printf("place horizontal padding\n");
 
         err = packer_place_by(packer,
-                               loc,
-                               PADDING, elements[k].h,
-                               NULL);
+                              loc,
+                              PADDING, elements[k].h,
+                              NULL);
         if (err == error_PACKER_DIDNT_FIT)
         {
           printf("*** could not place horizontal padding\n");
@@ -323,8 +323,8 @@ static error subtest2(packer_loc loc, packer_cleardir clear)
       printf("place element\n");
 
       err = packer_place_by(packer,
-                             loc,
-                             elements[k].chosenw, elements[k].h,
+                            loc,
+                            elements[k].chosenw, elements[k].h,
                             &placed);
       if (err == error_PACKER_DIDNT_FIT)
       {

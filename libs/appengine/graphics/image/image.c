@@ -57,7 +57,7 @@ image_t *image_create_from_file(image_choices *choices,
 
   i = image_create();
   if (i == NULL)
-      goto Failure;
+    goto Failure;
 
   strcpy(i->file_name, file_name);
   i->source.file_type = file_type;

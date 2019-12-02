@@ -246,7 +246,7 @@ error choices_load(const choices *cs)
       int          i;
 
       if (isspace(*buf) || *buf == '#')
-          continue;
+        continue;
 
       for (bufptr = buf; *bufptr != ':'; bufptr++)
         ;
@@ -524,7 +524,7 @@ static error create_windows_callback(const choices      *cs,
 
   *p->window = window_create(buf);
   if (*p->window == 0)
-      return error_OOM; /* potentially inaccurate */
+    return error_OOM; /* potentially inaccurate */
 
   err = help_add_window(*p->window, buf);
   if (err)

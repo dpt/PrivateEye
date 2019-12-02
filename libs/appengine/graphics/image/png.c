@@ -236,7 +236,7 @@ static int png_load(image_choices *choices, image_t *image)
 #if 1
     if (colour_type == PNG_COLOR_TYPE_PALETTE ||
         colour_type == PNG_COLOR_TYPE_GRAY)
-        // does PNG_COLOR_TYPE_GRAY have this case?
+      // does PNG_COLOR_TYPE_GRAY have this case?
     {
       // see if we should use a mask rather than alpha
 
@@ -513,7 +513,7 @@ static int png_load(image_choices *choices, image_t *image)
   return FALSE; /* success */
 
 
- CleanUp:
+CleanUp:
   if (png_ptr)
     png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
 
@@ -525,7 +525,7 @@ static int png_load(image_choices *choices, image_t *image)
   return TRUE; /* failure */
 
 
- NoMem:
+NoMem:
 
   oserror_report(0, "error.no.mem");
 

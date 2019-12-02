@@ -141,12 +141,12 @@ static error jpeg_meta_exif_prop(struct exifprop *list,
     /* Take care of point-and-shoot values. */
 
     if (list->lvl == ED_PAS)
-        list->lvl = 1 /* was 'pas' ### */ ? ED_CAM : ED_IMG;
+      list->lvl = 1 /* was 'pas' ### */ ? ED_CAM : ED_IMG;
 
     /* For now, just treat overridden & bad values as verbose. */
 
     if (list->lvl == ED_OVR || list->lvl == ED_BAD)
-        list->lvl = ED_VRB;
+      list->lvl = ED_VRB;
 
     if (list->lvl != lvl)
       continue; /* don't output */

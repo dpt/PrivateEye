@@ -569,8 +569,8 @@ static void refresh(void)
 }
 
 static int rotate_event_pollword_non_zero(wimp_event_no event_no,
-                                           wimp_block   *block,
-                                           void         *handle)
+                                          wimp_block   *block,
+                                          void         *handle)
 {
   wimp_pointer pointer;
   int          rotation;

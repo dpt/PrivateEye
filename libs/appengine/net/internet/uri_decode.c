@@ -49,32 +49,41 @@ int uri_decode(const char *uri,
   *q++ = '\0';
   /* are there credentials in the host string? */
   r = strchr(host, '@');
-  if (r != NULL) {
+  if (r != NULL)
+  {
     *r = '\0';
     str_cpy(creds, host);
     str_cpy(host, r + 1);
-  } else {
+  }
+  else
+  {
     *creds = '\0';
   }
   /* Port specifier */
   r = strchr(host, ':');
-  if (r != NULL) {
+  if (r != NULL)
+  {
     *r++ = '\0';
     if (*r >= '0' && *r <= '9')
       *port = atoi(r);
     else
       *port = 80;
-  } else {
+  }
+  else
+  {
     *port = 80;
   }
 
   /* Path specifier */
-  if (*p > ' ') {
+  if (*p > ' ')
+  {
     q = path;
     while (*p > ' ')
       *q++ = *p++;
     *q++ = '\0';
-  } else {
+  }
+  else
+  {
     /* End of string, without path specified, assume default of '/'. */
     path = "/";
   }

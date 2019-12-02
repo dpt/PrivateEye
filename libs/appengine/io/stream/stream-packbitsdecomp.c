@@ -110,7 +110,7 @@ static int stream_packbits_decomp_get(stream *s)
         if (v == EOF)
           break; /* likely truncated data */
 
-          DBUG(("{%c}\n", v));
+        DBUG(("{%c}\n", v));
 
         *p++ = v;
       }
@@ -151,8 +151,8 @@ static int stream_packbits_decomp_get(stream *s)
     }
     else
     {
-        DBUG(("stream_packbits_decomp_get: *** 128 encountered! ***"));
-        /* ignore the 128 case */
+      DBUG(("stream_packbits_decomp_get: *** 128 encountered! ***"));
+      /* ignore the 128 case */
     }
   }
 
@@ -184,7 +184,7 @@ error stream_packbitsdecomp_create(stream *input, int bufsz, stream **s)
 
   sp = malloc(offsetof(stream_packbits_decomp, buffer) + bufsz);
   if (!sp)
-      return error_OOM;
+    return error_OOM;
 
   sp->base.buf     =
   sp->base.end     = sp->buffer; /* force a fill on first use */

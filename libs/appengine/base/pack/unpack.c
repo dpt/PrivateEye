@@ -11,7 +11,7 @@
 
 #include "appengine/base/pack.h"
 
-static int vunpack_le(const unsigned char* buf, const char* fmt, va_list args)
+static int vunpack_le(const unsigned char *buf, const char *fmt, va_list args)
 {
   const unsigned char *bp;
   const char          *p;
@@ -140,7 +140,7 @@ static int vunpack_le(const unsigned char* buf, const char* fmt, va_list args)
   return bp - buf;
 }
 
-static int vunpack_be(const unsigned char* buf, const char* fmt, va_list args)
+static int vunpack_be(const unsigned char *buf, const char *fmt, va_list args)
 {
   const unsigned char *bp;
   const char          *p;

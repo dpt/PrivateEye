@@ -131,99 +131,99 @@ static void calc(tonemap *map)
 
   for (comp = map->comp; comp < map->comp + map->ncomponents; comp++)
   {
-      double  igamma; /* inverse */
-      int     brightness;
-      int     contrast;
-      int     midd;
-      double  dbias, dgain;
-      byte   *tab;
-      int     i;
+    double  igamma; /* inverse */
+    int     brightness;
+    int     contrast;
+    int     midd;
+    double  dbias, dgain;
+    byte   *tab;
+    int     i;
 
-      /* inverse of gamma, hence gamma correction */
-      igamma     = 100.0 / comp->spec.gamma;
+    /* inverse of gamma, hence gamma correction */
+    igamma     = 100.0 / comp->spec.gamma;
 
-      brightness = comp->spec.brightness - 50;
-      brightness = (int) (brightness * 2.56);
+    brightness = comp->spec.brightness - 50;
+    brightness = (int)(brightness * 2.56);
 
-      contrast   = (int) (comp->spec.contrast * 2.56);
+    contrast   = (int)(comp->spec.contrast * 2.56);
 
-      midd  = comp->spec.midd;
+    midd  = comp->spec.midd;
 
-      dbias = comp->spec.bias / 100.0;
-      dbias = CLAMP(dbias, 0.00001, 0.99999);
+    dbias = comp->spec.bias / 100.0;
+    dbias = CLAMP(dbias, 0.00001, 0.99999);
 
-      dgain = comp->spec.gain / 100.0;
-      dgain = CLAMP(dgain, 0.00001, 0.99999);
+    dgain = comp->spec.gain / 100.0;
+    dgain = CLAMP(dgain, 0.00001, 0.99999);
 
-      tab = comp->table.gamma;
+    tab = comp->table.gamma;
 
-      for (i = 0; i < 256; i++)
+    for (i = 0; i < 256; i++)
+    {
+      int j;
+
+      j = (int) ceil(pow(i / 255.0, igamma) * 255.0);
+
+      j = contrast * (j - 128) / 256;
+
+      j += brightness;
+
+      if (i < 128)
+        j = j * midd / 50;
+      else
+        j = (midd * 255 / 100) + (j - 128) * (100 - midd) / 50;
+
+      //j = CLAMP(j, 0, 255);
+
+      //j = CLAMP(j, 0, 255);
+
+      if (comp->spec.bias != 50 || comp->spec.gain != 50)
       {
-        int j;
+        double x, t, b, g;
 
-        j = (int) ceil(pow(i / 255.0, igamma) * 255.0);
+        /* gamma/constrast/brightness result is input to bias */
 
-        j = contrast * (j - 128) / 256;
+        x = j / 255.0;
+        t = (1.0 / dbias - 2) * (1.0 - x);
+        b = x / (t + 1);
 
-        j += brightness;
+        /* bias result is input to gain */
 
-        if (i < 128)
-          j = j * midd / 50;
+        x = b;
+        t = (1.0 / dgain - 2) * (1.0 - 2.0 * x);
+        if (x < 0.5)
+          g = x / (t + 1.0);
         else
-          j = (midd * 255 / 100) + (j - 128) * (100 - midd) / 50;
+          g = (t - x) / (t - 1.0);
+
+        j = (int)(g * 255.0);
 
         //j = CLAMP(j, 0, 255);
-
-        //j = CLAMP(j, 0, 255);
-
-        if (comp->spec.bias != 50 || comp->spec.gain != 50)
-        {
-          double x, t, b, g;
-
-          /* gamma/constrast/brightness result is input to bias */
-
-          x = j / 255.0;
-          t = (1.0 / dbias - 2) * (1.0 - x);
-          b = x / (t + 1);
-
-          /* bias result is input to gain */
-
-          x = b;
-          t = (1.0 / dgain - 2) * (1.0 - 2.0 * x);
-          if (x < 0.5)
-            g = x / (t + 1.0);
-          else
-            g = (t - x) / (t - 1.0);
-
-          j = (int) (g * 255.0);
-
-          //j = CLAMP(j, 0, 255);
-        }
-
-        j = CLAMP(j, 0, 255);
-        tab[i] = j;
       }
 
-      if (comp->spec.flags & tonemap_FLAG_INVERT)
+      j = CLAMP(j, 0, 255);
+      tab[i] = j;
+    }
+
+    if (comp->spec.flags & tonemap_FLAG_INVERT)
+    {
+      for (i = 0; i < 127; i++)
       {
-        for (i = 0; i < 127; i++)
-        {
-          int t;
+        int t;
 
-          t = tab[i];
-          tab[i] = tab[255 - i];
-          tab[255 - i] = t;
-        }
+        t = tab[i];
+        tab[i] = tab[255 - i];
+        tab[255 - i] = t;
       }
+    }
 
-      if (comp->spec.flags & tonemap_FLAG_REFLECT)
-      {
-        for (i = 0; i < 127; i++)
-          tab[255 - i] = tab[i];
-      }
+    if (comp->spec.flags & tonemap_FLAG_REFLECT)
+    {
+      for (i = 0; i < 127; i++)
+        tab[255 - i] = tab[i];
+    }
 
-      if (comp == map->comp && map->flags & FLAG_RGB_IN_SYNC)
-        comp = map->comp + 2; /* skip forward to alpha stage (note comp++) */
+    if (comp == map->comp && map->flags & FLAG_RGB_IN_SYNC)
+      comp = map->comp + 2; /* skip forward to alpha stage (note comp++) */
   }
 
   if (map->flags & FLAG_RGB_IN_SYNC)

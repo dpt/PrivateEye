@@ -162,7 +162,7 @@ static unsigned int *gif_load_palette(int entries)
     for (i = 0; i < entries; i++)
     {
       if ((r = buffer_getbyte()) < 0 || (g = buffer_getbyte()) < 0 ||
-        (b = buffer_getbyte()) < 0)
+          (b = buffer_getbyte()) < 0)
       {
         free(palette);
         return NULL;
@@ -252,7 +252,7 @@ static int gif_load(image_choices *choices, image_t *image)
   S.global_height = buffer[2] + buffer[3] * 256;
 #ifndef NDEBUG
   fprintf(stderr, " w=%d h=%d flags=%x bgindex=%x aspect=%x\n", S.global_width,
-    S.global_height, buffer[4], buffer[5], buffer[6]);
+          S.global_height, buffer[4], buffer[5], buffer[6]);
 #endif
   if (buffer[4] & 0x80)
   {
@@ -296,7 +296,7 @@ static int gif_load(image_choices *choices, image_t *image)
         fprintf(stderr, "> Application\n");
 #endif
         for (blocksize = buffer_getbyte(); blocksize; blocksize =
-          buffer_getbyte())
+               buffer_getbyte())
         {
           buffer_getblock(buffer, blocksize);
           buffer[blocksize] = '\0';
@@ -307,7 +307,7 @@ static int gif_load(image_choices *choices, image_t *image)
             buffer_getblock(buffer, blocksize);
 #ifndef NDEBUG
             fprintf(stderr, "Netscape 2.0, %d, %d\n", buffer[1], buffer[2] +
-            buffer[3] * 256);
+                    buffer[3] * 256);
 #endif
           }
         }
@@ -337,7 +337,7 @@ static int gif_load(image_choices *choices, image_t *image)
         fprintf(stderr, "> Comment\n");
 #endif
         for (blocksize = buffer_getbyte(); blocksize; blocksize =
-          buffer_getbyte())
+               buffer_getbyte())
         {
           buffer_getblock(buffer, blocksize);
 #ifndef NDEBUG
@@ -353,7 +353,7 @@ static int gif_load(image_choices *choices, image_t *image)
         fprintf(stderr, "> Unrecognised extension '%02x'\n", d);
 #endif
         for (blocksize = buffer_getbyte(); blocksize; blocksize =
-          buffer_getbyte())
+               buffer_getbyte())
           buffer_getblock(buffer, blocksize);
       }
       continue;
@@ -391,7 +391,7 @@ static int gif_load(image_choices *choices, image_t *image)
         /* we have a local palette */
         S.bpp = (S.local_bpp == 3) ? 4 :
                 (S.local_bpp  > 4) ? 8 :
-                                    S.local_bpp;
+                                     S.local_bpp;
 
         S.palette = S.local_palette;
       }

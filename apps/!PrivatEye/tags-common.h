@@ -39,51 +39,51 @@ void tags_common_choices_updated(const choices *cs);
 /* The following assume that 'opaque' is the tags_common pointer. */
 
 error tags_common_add_tag(tag_cloud  *tc,
-                           const char *name,
-                           int         length,
-                           void       *opaque);
+                          const char *name,
+                          int         length,
+                          void       *opaque);
 
 /* Delete 'index'. */
 error tags_common_delete_tag(tag_cloud *tc,
-                              int        index,
-                              void      *opaque);
+                             int        index,
+                             void      *opaque);
 
 /* Rename 'index' to 'name'. */
 error tags_common_rename_tag(tag_cloud  *tc,
-                              int         index,
-                              const char *name,
-                              int         length,
-                              void       *opaque);
-
-error tags_common_tag(tag_cloud  *tc,
-                       int         index,
-                       const char *digest,
-                       const char *file_name,
-                       void       *opaque);
-
-error tags_common_detag(tag_cloud  *tc,
-                         int         index,
-                         const char *digest,
-                         void       *opaque);
-
-error tags_common_tagfile(tag_cloud  *tc,
-                           const char *file_name,
-                           int         index,
-                           void       *opaque);
-
-error tags_common_detagfile(tag_cloud  *tc,
-                             const char *file_name,
                              int         index,
+                             const char *name,
+                             int         length,
                              void       *opaque);
 
+error tags_common_tag(tag_cloud  *tc,
+                      int         index,
+                      const char *digest,
+                      const char *file_name,
+                      void       *opaque);
+
+error tags_common_detag(tag_cloud  *tc,
+                        int         index,
+                        const char *digest,
+                        void       *opaque);
+
+error tags_common_tagfile(tag_cloud  *tc,
+                          const char *file_name,
+                          int         index,
+                          void       *opaque);
+
+error tags_common_detagfile(tag_cloud  *tc,
+                            const char *file_name,
+                            int         index,
+                            void       *opaque);
+
 error tags_common_event(tag_cloud       *tc,
-                         tag_cloud_event  event,
-                         void            *opaque);
+                        tag_cloud_event  event,
+                        void            *opaque);
 
 /* ----------------------------------------------------------------------- */
 
 tag_cloud_event tags_common_keyhandler(wimp_key_no  key_no,
-                                         void       *opaque);
+                                       void       *opaque);
 
 /* ----------------------------------------------------------------------- */
 

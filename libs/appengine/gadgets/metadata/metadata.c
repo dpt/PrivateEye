@@ -79,7 +79,7 @@ error metadata_init(void)
   error err;
 
   if (LOCALS.refcount)
-      return error_OK; /* already initialised */
+    return error_OK; /* already initialised */
 
   /* dependencies */
 
@@ -155,7 +155,7 @@ static error metadata_alloc(const void    *opaque_config,
 
   self = malloc(sizeof(*self));
   if (self == NULL)
-      return error_OOM;
+    return error_OOM;
 
   self->config = *config;
 

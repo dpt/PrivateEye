@@ -94,7 +94,7 @@ error stream_stdio_create(FILE *f, int bufsz, stream **s)
 
   sf = malloc(offsetof(stream_file, buffer) + bufsz);
   if (!sf)
-      return error_OOM;
+    return error_OOM;
 
   sf->base.buf     =
   sf->base.end     = sf->buffer; /* force a fill on first use */
