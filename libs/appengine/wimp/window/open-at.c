@@ -1,5 +1,7 @@
+// #include <stdio.h>
 
 #include "oslib/wimp.h"
+#include "oslib/wimpreadsysinfo.h"
 
 #include "appengine/wimp/window.h"
 
@@ -38,15 +40,42 @@ void window_open_with_callback(wimp_w w,
   args.info.w = w;
   wimp_get_window_info_header_only(&args.info);
 
-  args.outline.w = w;
-  wimp_get_window_outline(&args.outline);
+  /* calculate furniture sizes */
 
-  args.left   = args.info.visible.x0 - args.outline.outline.x0;
-  args.bottom = args.info.visible.y0 - args.outline.outline.y0;
-  args.right  = args.outline.outline.x1 - args.info.visible.x1;
-  args.top    = args.outline.outline.y1 - args.info.visible.y1;
+  /* avoid calling wimp_get_window_outline() on unopened windows if we're
+   * on Wimps earlier than the nested Wimp */
+  if ((args.info.flags & wimp_WINDOW_OPEN) != 0 ||
+      (wimpreadsysinfo_version() >= wimp_VERSION_RO38))
+  {
+    args.outline.w = w;
+    wimp_get_window_outline(&args.outline);
 
-  /* fprintf(stderr, "%d %d %d %d\n", args.left, args.bottom, args.right, args.top); */
+    args.left   = args.info.visible.x0 - args.outline.outline.x0;
+    args.bottom = args.info.visible.y0 - args.outline.outline.y0;
+    args.right  = args.outline.outline.x1 - args.info.visible.x1;
+    args.top    = args.outline.outline.y1 - args.info.visible.y1;
+  }
+  else
+  {
+    // newlook: 12x11 at 45x45dpi,  22x11 at 90x45dpi, 20x20 at 90x90dpi
+    // RO3.1: 21x11 on RO3.1 at 90x45dpi
+
+    /* assuming 40 OS units */
+    const int StandardToolSpriteWidth  = 40;
+    const int StandardToolSpriteHeight = 40;
+
+    args.left   = args.right = 1 << vdu_vars[0];
+    args.bottom = args.top   = 1 << vdu_vars[1];
+
+    if (args.info.flags & wimp_WINDOW_TITLE_ICON)
+      args.top = StandardToolSpriteHeight;
+    if (args.info.flags & wimp_WINDOW_VSCROLL)
+      args.right = StandardToolSpriteWidth;
+    if (args.info.flags & wimp_WINDOW_HSCROLL)
+      args.bottom = StandardToolSpriteHeight;
+  }
+
+  // fprintf(stderr, "furn: %d %d %d %d\n", args.left, args.bottom, args.right, args.top);
 
   cb(&args, opaque);
 
