@@ -1,2 +1,13 @@
+*,fd3
+*,ff8
 *.d
 *.o
+*.odf
+iconnames.h
+objs-debug
+objs-memcheck
+objs-module
+objs-normal
+stderr
+stdout
+libs/flex
