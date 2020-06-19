@@ -3,15 +3,20 @@
  * Purpose: Calculates the byte size of a sprite
  * ----------------------------------------------------------------------- */
 
+#include <stddef.h>
+
+#include "oslib/types.h"
 #include "oslib/osspriteop.h"
 
 #include "appengine/vdu/sprite.h"
 
-int sprite_size(int w, int h, int log2bpp)
+size_t sprite_size(int w, int h, int log2bpp, osbool paletted)
 {
-  int rowbytes;
+  size_t headers, palette, rowbytes;
 
+  headers  = sizeof(osspriteop_area) + sizeof(osspriteop_header);
+  palette  = paletted ? (8 << log2bpp) : 0;
   rowbytes = (((w << log2bpp) + 31) & ~31) >> 3;
 
-  return sizeof(osspriteop_area) + sizeof(osspriteop_header) + rowbytes * h;
+  return headers + palette + rowbytes * h;
 }

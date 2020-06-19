@@ -6,6 +6,9 @@
 #ifndef APPENGINE_SPRITE_H
 #define APPENGINE_SPRITE_H
 
+#include <stddef.h>
+
+#include "oslib/types.h"
 #include "oslib/os.h"
 #include "oslib/osspriteop.h"
 
@@ -14,8 +17,8 @@
 /* Returns the N'th sprite in the area */
 osspriteop_header *sprite_select(const osspriteop_area *area, int n);
 
-/* Calculates the byte size of a sprite */
-int sprite_size(int w, int h, int log2bpp);
+/* Calculates the byte size of a sprite (sprite header and area) */
+size_t sprite_size(int w, int h, int log2bpp, osbool paletted);
 
 /* Returns a pointer to the sprite data */
 void *sprite_data(const osspriteop_header *header);

@@ -62,7 +62,7 @@ error thumbnail_create(image_t          *image,
 
   read_current_mode_vars(NULL, NULL, &log2bpp);
 
-  sprimgbytes = sprite_size(w, h, log2bpp);
+  sprimgbytes = sprite_size(w, h, log2bpp, FALSE);
 
   /* allocate an area */
 
