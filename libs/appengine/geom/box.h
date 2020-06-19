@@ -26,6 +26,7 @@ void box_round(T *a, int amount);
 void box_round4(T *a);
 
 int box_could_hold(const T *b, int w, int h);
+void box_set_origin(T *b, int x0, int y0);
 
 #undef T
 
