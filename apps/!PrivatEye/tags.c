@@ -53,16 +53,16 @@ enum
 {
   TagCloud_List,
   TagCloud_Cloud,
-  TagCloud_SmallCloud,
-  TagCloud_UnscaledCloud,
-  TagCloud_SortByCount,
+  TagCloud_ScalingOff,
+  TagCloud_ScalingOn,
   TagCloud_SortByName,
-  TagCloud_SortSelFirst,
+  TagCloud_SortByCount,
+  TagCloud_SelectedFirst,
   TagCloud_Rename,
   TagCloud_Kill,
   TagCloud_New,
   TagCloud_Info,
-  TagCloud_Commit,
+  TagCloud_Commit
 };
 
 /* ---------------------------------------------------------------------- */
@@ -79,11 +79,11 @@ static error declare_keymap(void)
     { "List",             TagCloud_List           },
     { "New",              TagCloud_New            },
     { "Rename",           TagCloud_Rename         },
-    { "SmallCloud",       TagCloud_SmallCloud     },
+    { "ScalingOff",       TagCloud_ScalingOff     },
+    { "ScalingOn",        TagCloud_ScalingOn      },
+    { "SelectedFirst",    TagCloud_SelectedFirst  },
     { "SortByCount",      TagCloud_SortByCount    },
-    { "SortByName",       TagCloud_SortByName     },
-    { "SortSelFirst",     TagCloud_SortSelFirst   },
-    { "UnscaledCloud",    TagCloud_UnscaledCloud  },
+    { "SortByName",       TagCloud_SortByName     }
   };
 
   return viewer_keymap_add("Tag Cloud",
@@ -200,10 +200,13 @@ static tag_cloud_event keyhandler(wimp_key_no key_no, void *opaque)
     case TagCloud_List:         return tag_cloud_EVENT_DISPLAY_LIST;
     case TagCloud_Cloud:        return tag_cloud_EVENT_DISPLAY_CLOUD;
 
+    case TagCloud_ScalingOff:   return tag_cloud_EVENT_SCALING_OFF;
+    case TagCloud_ScalingOn:    return tag_cloud_EVENT_SCALING_ON;
+
     case TagCloud_SortByName:   return tag_cloud_EVENT_SORT_BY_NAME;
     case TagCloud_SortByCount:  return tag_cloud_EVENT_SORT_BY_COUNT;
 
-    case TagCloud_SortSelFirst: return tag_cloud_EVENT_SORT_SELECTED_FIRST;
+    case TagCloud_SelectedFirst: return tag_cloud_EVENT_SORT_SELECTED_FIRST;
 
     case TagCloud_Rename:       return tag_cloud_EVENT_RENAME;
     case TagCloud_Kill:         return tag_cloud_EVENT_KILL;

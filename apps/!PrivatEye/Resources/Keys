@@ -66,9 +66,11 @@ C_R:Rename
 C_S:Commit
 F2:List
 F3:Cloud
-S_F2:SortByName
-S_F3:SortByCount
-C_F3:SortSelFirst
+F4:ScalingOff
+F5:ScalingOn
+F6:SortByName
+F7:SortByCount
+C_F3:SelectedFirst
 
 [Thumbview]
 
