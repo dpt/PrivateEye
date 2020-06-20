@@ -1,43 +1,43 @@
 .PHONY: normal debug all utils clean
 
 normal:	utils
-	make -C libs/appengine $@
-	make -C libs/exiftags $@
-	make -C libs/flex $@
-	make -C libs/fortify $@
-	make -C libs/jpeg $@
-	make -C libs/md5 $@
-	make -C libs/png $@
-	make -C libs/zlib $@
-	make -C apps/!PrivatEye $@
-	make -C apps/!TagCloud $@
+	$(MAKE) -C libs/appengine $@
+	$(MAKE) -C libs/exiftags $@
+	$(MAKE) -C libs/flex $@
+	$(MAKE) -C libs/fortify $@
+	$(MAKE) -C libs/jpeg $@
+	$(MAKE) -C libs/md5 $@
+	$(MAKE) -C libs/png $@
+	$(MAKE) -C libs/zlib $@
+	$(MAKE) -C apps/!PrivatEye $@
+	$(MAKE) -C apps/!TagCloud $@
 
 debug:	utils
-	make -C libs/appengine $@
-	make -C libs/exiftags $@
-	make -C libs/flex $@
-	make -C libs/fortify $@
-	make -C libs/jpeg $@
-	make -C libs/md5 $@
-	make -C libs/png $@
-	make -C libs/zlib $@
-	make -C apps/!PrivatEye $@
-	make -C apps/!TagCloud $@
+	$(MAKE) -C libs/appengine $@
+	$(MAKE) -C libs/exiftags $@
+	$(MAKE) -C libs/flex $@
+	$(MAKE) -C libs/fortify $@
+	$(MAKE) -C libs/jpeg $@
+	$(MAKE) -C libs/md5 $@
+	$(MAKE) -C libs/png $@
+	$(MAKE) -C libs/zlib $@
+	$(MAKE) -C apps/!PrivatEye $@
+	$(MAKE) -C apps/!TagCloud $@
 
 all:	normal debug
 
 utils:
-	make -C utils/templheader normal
+	$(MAKE) -C utils/templheader normal
 
 clean:
-	make -C utils/templheader $@
-	make -C libs/appengine $@
-	make -C libs/exiftags $@
-	make -C libs/flex $@
-	make -C libs/fortify $@
-	make -C libs/jpeg $@
-	make -C libs/md5 $@
-	make -C libs/png $@
-	make -C libs/zlib $@
-	make -C apps/!PrivatEye $@
-	make -C apps/!TagCloud $@
+	$(MAKE) -C utils/templheader $@
+	$(MAKE) -C libs/appengine $@
+	$(MAKE) -C libs/exiftags $@
+	$(MAKE) -C libs/flex $@
+	$(MAKE) -C libs/fortify $@
+	$(MAKE) -C libs/jpeg $@
+	$(MAKE) -C libs/md5 $@
+	$(MAKE) -C libs/png $@
+	$(MAKE) -C libs/zlib $@
+	$(MAKE) -C apps/!PrivatEye $@
+	$(MAKE) -C apps/!TagCloud $@
