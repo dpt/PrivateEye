@@ -16,13 +16,12 @@ cd flex
 # Fetch
 echo "Downloading flex."
 
-export CVSROOT=:pserver:anonymous@riscosopen.org:/home/rool/cvsroot
-
-# Would prefer to have: "for file in [flex, opts, swiextra]: download"
-cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/flex     > flex.h
-cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/opts     > opts.h
-cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/h/swiextra > swiextra.h
-cvs -z9 co -p castle/RiscOS/Sources/Toolbox/Libs/flexlib/c/flex     > flex.c
+git clone https://gitlab.riscosopen.org/RiscOS/Sources/Toolbox/ToolboxLib.git
+mv ./ToolboxLib/flexlib/h/flex flex.h
+mv ./ToolboxLib/flexlib/h/opts opts.h
+mv ./ToolboxLib/flexlib/h/swiextra swiextra.h
+mv ./ToolboxLib/flexlib/c/flex flex.c
+rm -rf ./ToolboxLib
 
 # Write out a Makefile
 
