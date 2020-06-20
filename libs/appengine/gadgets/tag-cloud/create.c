@@ -36,6 +36,8 @@ tag_cloud *tag_cloud_create(tag_cloud_create_flags  flags,
 
   tag_cloud_set_display(tc, tag_cloud_DISPLAY_TYPE_CLOUD);
 
+  tag_cloud_set_scaling(tc, tag_cloud_SCALING_ON);
+
   tag_cloud_internal_set_handlers(1, tc);
 
   if (flags & tag_cloud_CREATE_FLAG_TOOLBAR_DISABLED)

@@ -37,6 +37,10 @@
 
 /* ----------------------------------------------------------------------- */
 
+#define SHOW_BBOXES (0) /* draw bounding boxes (hit areas) around tags */
+
+/* ----------------------------------------------------------------------- */
+
 static event_wimp_handler    tag_cloud_event_null_reason_code,
                              tag_cloud_event_redraw_window_request,
                              tag_cloud_event_open_window_request,
@@ -304,14 +308,28 @@ static int tag_cloud_event_redraw_window_request(wimp_event_no event_no,
                NULL,
                tc->layout.paintstring.used);
 
-    if (0) /* draw bounding boxes */
+    if (SHOW_BBOXES) /* draw bounding boxes */
     {
-      int i;
+      static const os_colour colours[6] =
+      {
+        os_COLOUR_RED,
+        os_COLOUR_GREEN,
+        os_COLOUR_BLUE,
+        os_COLOUR_CYAN,
+        os_COLOUR_MAGENTA,
+        os_COLOUR_YELLOW
+      };
 
-      colourtrans_set_gcol(os_COLOUR_RED, 0, 0, NULL);
+      int i;
 
       for (i = 0; i < tc->ntags; i++)
       {
+        char buf[4];
+
+        sprintf(buf, "%d", i);
+
+        colourtrans_set_gcol(colours[i % 6], 0, 0, NULL);
+
         os_plot(os_MOVE_TO,
                 x + tc->layout.boxes.boxes[i].x0,
                 y + tc->layout.boxes.boxes[i].y0);
@@ -327,6 +345,11 @@ static int tag_cloud_event_redraw_window_request(wimp_event_no event_no,
         os_plot(os_PLOT_SOLID_EX_END | os_PLOT_TO,
                 x + tc->layout.boxes.boxes[i].x0,
                 y + tc->layout.boxes.boxes[i].y0);
+
+        os_plot(os_MOVE_TO,
+                x + tc->layout.boxes.boxes[i].x0,
+                y + tc->layout.boxes.boxes[i].y1);
+        os_write0(buf);
       }
     }
   }
@@ -428,7 +451,6 @@ static void tag_cloud_menu_update(tag_cloud *tc)
     menu_set_menu_flags(m, MAIN_TOOLBAR,
                        (tc->flags & tag_cloud_FLAG_TOOLBAR) ? wimp_MENU_TICKED : 0,
                         wimp_MENU_TICKED);
-
   }
 
   /* Display menu */
@@ -439,6 +461,11 @@ static void tag_cloud_menu_update(tag_cloud *tc)
                             DISPLAY_LIST + tag_cloud_get_display(tc),
                             DISPLAY_LIST,
                             DISPLAY_CLOUD);
+
+  menu_range_tick_exclusive(m,
+                            DISPLAY_SCALING_OFF + tag_cloud_get_scaling(tc),
+                            DISPLAY_SCALING_OFF,
+                            DISPLAY_SCALING_ON);
 
   menu_range_tick_exclusive(m,
                             DISPLAY_SORT_NAME + tag_cloud_get_sort(tc),
@@ -653,6 +680,8 @@ static int tag_cloud_event_mouse_click_toolbar(wimp_event_no event_no,
   if (pointer->buttons == wimp_CLICK_SELECT ||
       pointer->buttons == wimp_CLICK_ADJUST)
   {
+    osbool adjust = FALSE;
+
     switch (pointer->i)
     {
     case TAG_CLOUD_T_B_ADD: /* new tag */
@@ -664,6 +693,7 @@ static int tag_cloud_event_mouse_click_toolbar(wimp_event_no event_no,
       tag_cloud_set_display(tc, (pointer->i == TAG_CLOUD_T_B_DISPLIST) ?
                                  tag_cloud_DISPLAY_TYPE_LIST :
                                  tag_cloud_DISPLAY_TYPE_CLOUD);
+      adjust = (pointer->buttons == wimp_CLICK_ADJUST);
       break;
 
     case TAG_CLOUD_T_B_SORTPOP:   /* sort by count */
@@ -671,12 +701,24 @@ static int tag_cloud_event_mouse_click_toolbar(wimp_event_no event_no,
       tag_cloud_set_sort(tc, (pointer->i == TAG_CLOUD_T_B_SORTPOP) ?
                               tag_cloud_SORT_TYPE_COUNT :
                               tag_cloud_SORT_TYPE_NAME);
+      adjust = (pointer->buttons == wimp_CLICK_ADJUST);
       break;
 
     case TAG_CLOUD_T_O_SELFIRST:
       tag_cloud_toggle_order(tc);
       break;
+
+    case TAG_CLOUD_T_B_SCALEOFF:
+    case TAG_CLOUD_T_B_SCALEON:
+      tag_cloud_set_scaling(tc, (pointer->i == TAG_CLOUD_T_B_SCALEOFF) ?
+                                 tag_cloud_SCALING_OFF :
+                                 tag_cloud_SCALING_ON);
+      adjust = (pointer->buttons == wimp_CLICK_ADJUST);
+      break;
     }
+
+    if (adjust)
+      icon_set_selected(pointer->w, pointer->i, 1);
   }
 
   return event_HANDLED;
@@ -732,6 +774,13 @@ static int tag_cloud_event_key_pressed(wimp_event_no event_no,
 
   case tag_cloud_EVENT_SORT_SELECTED_FIRST:
     tag_cloud_toggle_order(tc);
+    break;
+
+  case tag_cloud_EVENT_SCALING_OFF:
+  case tag_cloud_EVENT_SCALING_ON:
+    tag_cloud_set_scaling(tc, (event == tag_cloud_EVENT_SCALING_OFF) ?
+                               tag_cloud_SCALING_OFF :
+                               tag_cloud_SCALING_ON);
     break;
 
   case tag_cloud_EVENT_RENAME:
@@ -808,17 +857,22 @@ static int tag_cloud_event_menu_selection(wimp_event_no event_no,
   case MAIN_DISPLAY:
     switch (selection->items[1])
     {
-      case DISPLAY_LIST:
-      case DISPLAY_CLOUD:
+    case DISPLAY_LIST:
+    case DISPLAY_CLOUD:
       tag_cloud_set_display(tc, tag_cloud_DISPLAY_TYPE_LIST + (selection->items[1] - DISPLAY_LIST));
       break;
 
-      case DISPLAY_SORT_NAME:
-      case DISPLAY_SORT_COUNT:
+    case DISPLAY_SCALING_OFF:
+    case DISPLAY_SCALING_ON:
+      tag_cloud_set_scaling(tc, tag_cloud_SCALING_OFF + (selection->items[1] - DISPLAY_SCALING_OFF));
+      break;
+
+    case DISPLAY_SORT_NAME:
+    case DISPLAY_SORT_COUNT:
       tag_cloud_set_sort(tc, tag_cloud_SORT_TYPE_NAME + (selection->items[1] - DISPLAY_SORT_NAME));
       break;
 
-      case DISPLAY_SELECTED_FIRST:
+    case DISPLAY_SELECTED_FIRST:
       tag_cloud_toggle_order(tc);
       break;
     }

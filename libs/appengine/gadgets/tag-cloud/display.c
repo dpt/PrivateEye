@@ -12,7 +12,7 @@
 #include "iconnames.h"
 #include "impl.h"
 
-static void display(tag_cloud *tc)
+static void redisplay(tag_cloud *tc)
 {
   tc->flags |= tag_cloud_FLAG_NEW_DISPLAY;
   tag_cloud_redraw(tc);
@@ -34,12 +34,12 @@ void tag_cloud_set_display(tag_cloud *tc, int display_type)
 
   /* avoid updating the display wherever possible */
 
-  if (display_type == tc->display_type)
+  if (tc->display_type == display_type)
     return;
 
   tc->display_type = display_type;
 
-  display(tc);
+  redisplay(tc);
 
   tag_cloud_kick_display_icon(tc);
 }

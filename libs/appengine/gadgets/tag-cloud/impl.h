@@ -48,17 +48,18 @@ tag_cloud_dim;
 
 typedef struct tag_cloud_dims
 {
-  int              gaplength; /* length of the gap string in font units */
+  int              spacespacerlength; /* length of a single space in font units */
+  int              bulletspacerlength; /* length of the gap string in font units */
 
   tag_cloud_dim  *dims;
-  int              allocated;
+  int             allocated;
 }
 tag_cloud_dims;
 
-/* Cached lengths of highlighted tags. */
+/* Cached lengths (widths) of highlighted tags. */
 typedef struct tag_cloud_lengths
 {
-  int              widest;
+  int              widest;    /* font units */
   int             *length;
   int              allocated;
 }
@@ -123,6 +124,8 @@ enum
 
 typedef unsigned int tag_cloud_flags;
 
+#define MAXSCALES (5)
+
 struct tag_cloud
 {
   tag_cloud_config          config;
@@ -154,8 +157,9 @@ struct tag_cloud
 
   int                       sort_type;
   int                       order_type;
-  int                       scaletab[5];
+  int                       scaletab[MAXSCALES];
   int                       display_type;
+  int                       scaling_type;
 
   tag_cloud_scale_data      scale;
 
