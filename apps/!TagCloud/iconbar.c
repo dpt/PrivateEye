@@ -23,7 +23,7 @@ static void clicked(const wimp_pointer *pointer, void *opaque)
 
   if (pointer->buttons & wimp_CLICK_SELECT)
   {
-    make_cloud();
+    error_report(make_cloud());
   }
 }
 

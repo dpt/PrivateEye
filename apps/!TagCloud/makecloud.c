@@ -30,6 +30,7 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
+/* Returns a random integer from 1..mod. */
 static int rnd(int mod)
 {
   return (rand() % mod) + 1;
@@ -37,15 +38,84 @@ static int rnd(int mod)
 
 static const char *randomtagname(size_t *plength)
 {
-  static char buf[10 + 1];
+  static const char cns[] = "bbccccdddddddffffggghhhhhhhhhhklllllllmmmmnnnnnnnnnnnnppprrrrrrrrrrsssssssssssttttttttttttttttvvwwwyyy";
+  static const char vwl[] = "aaaeeeeeiiiooou";
+
+  static char buf[14 + 1];
 
   int length;
   int i;
 
-  length = 10;//rnd(NELEMS(buf) - 1);
+  enum
+  {
+    Run1,
+    Run2,
+    Space1,
+    Run3,
+    Run4,
+    OLimit
+  }
+  ostate;
+
+  enum
+  {
+    Cons1,
+    Vowel1,
+    Vowel2,
+    Limit
+  }
+  state;
+
+  length = rnd(NELEMS(buf) - 1);
+  if (length < 5)
+    length = 5;
+
+  ostate = Run1;
+  state = Cons1;
 
   for (i = 0; i < length; i++)
-    buf[i] = 'a' + rnd(26) - 1;
+  {
+    int c = 0;
+
+    switch (ostate)
+    {
+    default:
+      switch (state)
+      {
+      case Cons1:
+        c = cns[rnd(NELEMS(cns) - 1) - 1];
+        break;
+
+      case Vowel1:
+      case Vowel2:
+        c = vwl[rnd(NELEMS(vwl) - 1) - 1];
+        if (state == Vowel1)
+          if (rnd(100) >= 50)
+            state++;
+        break;
+      }
+
+      state++;
+      if (state >= Limit)
+      {
+        state = Cons1;
+        ostate++;
+      }
+      break;
+
+    case Space1:
+      c = ' ';
+      ostate++;
+    }
+
+    buf[i] = (state == Vowel1 && (ostate == Run1 || ostate == Run3)) ? toupper(c) : tolower(c);
+  }
+
+  if (isspace(buf[i - 1]))
+  {
+    i--;
+    length--;
+  }
 
   buf[i] = '\0';
 
@@ -57,10 +127,11 @@ static const char *randomtagname(size_t *plength)
 
 /* ----------------------------------------------------------------------- */
 
-static int ntags = 150;
-static tag_cloud_tag tags[200];
-static unsigned int highlights[(NELEMS(tags) + 31) / 32];
-static int indices[NELEMS(tags)];
+#define NTAGS 100
+static int ntags = NTAGS;
+static tag_cloud_tag tags[NTAGS];
+static unsigned int highlights[(NTAGS + 31) / 32];
+static int indices[NTAGS];
 
 static error make_tags(void)
 {
@@ -74,6 +145,8 @@ static error make_tags(void)
 
     name = randomtagname(&length);
 
+    // ought to check for dupes here
+
     newname = malloc(length);
     if (newname == NULL)
       return error_OOM;
@@ -82,7 +155,7 @@ static error make_tags(void)
 
     tags[i].name   = newname;
     tags[i].length = length;
-    tags[i].count  = rnd(100);
+    tags[i].count  = rnd(ntags);
   }
 
 #ifdef FORTIFY
@@ -321,8 +394,11 @@ static tag_cloud_event keyhandler(wimp_key_no  key_no,
   case wimp_KEY_F2:                    return tag_cloud_EVENT_DISPLAY_LIST;
   case wimp_KEY_F3:                    return tag_cloud_EVENT_DISPLAY_CLOUD;
 
-  case wimp_KEY_F2 | wimp_KEY_SHIFT:   return tag_cloud_EVENT_SORT_BY_NAME;
-  case wimp_KEY_F3 | wimp_KEY_SHIFT:   return tag_cloud_EVENT_SORT_BY_COUNT;
+  case wimp_KEY_F4:                    return tag_cloud_EVENT_SCALING_OFF;
+  case wimp_KEY_F5:                    return tag_cloud_EVENT_SCALING_ON;
+
+  case wimp_KEY_F6:                    return tag_cloud_EVENT_SORT_BY_NAME;
+  case wimp_KEY_F7:                    return tag_cloud_EVENT_SORT_BY_COUNT;
 
   case wimp_KEY_F3 | wimp_KEY_CONTROL: return tag_cloud_EVENT_SORT_SELECTED_FIRST;
 
@@ -332,7 +408,7 @@ static tag_cloud_event keyhandler(wimp_key_no  key_no,
 
   case 'N' - 'A' + 1:                  return tag_cloud_EVENT_NEW;
 
-  case wimp_KEY_F4:                    return tag_cloud_EVENT_COMMIT;
+  case wimp_KEY_F10:                   return tag_cloud_EVENT_COMMIT;
 
   case wimp_KEY_F2 | wimp_KEY_CONTROL: return tag_cloud_EVENT_CLOSE;
   }
@@ -416,7 +492,7 @@ void makecloud_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-void make_cloud(void)
+error make_cloud(void)
 {
   error             err;
   wimp_window_state state;
@@ -433,9 +509,17 @@ void make_cloud(void)
   }
   else
   {
-    make_tags(); // errors not handled
-    set_tags();
-    set_highlights();
+    err = make_tags(); // errors not handled
+    if (err)
+      goto Failure;
+
+    err = set_tags();
+    if (err)
+      goto Failure;
+
+    err = set_highlights();
+    if (err)
+      goto Failure;
 
     tag_cloud_open(LOCALS.tc);
   }
@@ -447,5 +531,10 @@ void make_cloud(void)
   Fortify_CheckAllMemory();
 #endif
 
-  return;
+  return error_OK;
+
+
+Failure:
+
+  return err;
 }

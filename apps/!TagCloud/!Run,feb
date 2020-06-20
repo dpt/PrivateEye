@@ -1,5 +1,5 @@
 | >!Run for TagCloud
-| by David Thomas, © 2011
+| by David Thomas, © 2011-2020
 
 Obey <Obey$Dir>.!Boot
 
@@ -46,4 +46,4 @@ WimpSlot -min 520K -max 520K
 
 Run <TagCloud$Dir>.Resources.ResFind TagCloud
 
-Run <TagCloud$Dir>.!RunImage %*0
+Run <TagCloud$Dir>.!RunImage %*0 ><TagCloud$Dir>.stdout 2><TagCloud$Dir>.stderr

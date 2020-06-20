@@ -1,8 +1,8 @@
 # Messages for TagCloud
-# © David Thomas, 2011
+# © David Thomas, 2011-2020
 #
 
-version:0.01 (17 Dec 2011)
+version:0.50 (07 June 2020)
 
 task:TagCloud
 icon:!tagcloud
@@ -10,7 +10,7 @@ icon:!tagcloud
 # Menus
 
 menu.iconbar:TagCloud,>Info,Quit
-menu.tagcloud:Tag Cloud,Display{Display,List                 F2,Cloud                F3|Sort by name        ‹F2,Sort by count       ‹F3|Selected tags first ^F3},Tag %s‘{Tag,>Rename  ^R,Delete  ^K,>Info    ^I,},>New tag ^N|Commit|Toolbar
+menu.tagcloud:Tag Cloud,Display{Display,List                 F2,Cloud                F3|Scaling off          F4,Scaling on           F5|Sort by name         F6,Sort by count        F7|Selected tags first ^F3},Tag %s‘{Tag,>Rename  ^R,Delete  ^K,>Info    ^I,},>New tag ^N|Commit F10|Toolbar
 
 # Tag Cloud window
 
