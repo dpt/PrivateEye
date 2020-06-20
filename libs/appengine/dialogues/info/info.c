@@ -183,7 +183,7 @@ void info_set_file_type(dialogue_t *d, bits file_type)
 
   file_type_to_name(file_type, name);
 
-  icon_printf(w, s->displays[0], "%s (%03x)", name, file_type);
+  icon_printf(w, s->displays[0], "%s (&%03x)", name, file_type);
 }
 
 void info_set_info(dialogue_t *d, info_spec_t *specs, int nspecs)
