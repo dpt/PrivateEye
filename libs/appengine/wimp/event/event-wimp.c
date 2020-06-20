@@ -32,7 +32,7 @@ typedef struct wimp_handler_element
 }
 wimp_handler_element;
 
-typedef struct
+typedef struct wimp_handler_array
 {
   wimp_handler_element *entries;   /* the array */
   int                   nentries;  /* number of entries active */
