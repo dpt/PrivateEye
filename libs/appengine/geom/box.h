@@ -17,7 +17,7 @@ int box_contains_point(const T *b, int x, int y);
 int box_is_empty(const T *a);
 int box_intersects(const T *a, const T *b);
 void box_grow(T *b, int change);
-void box_intersection(const T *a, const T *b, T *c);
+int box_intersection(const T *a, const T *b, T *c);
 void box_union(const T *a, const T *b, T *c);
 
 /* Rounds the box's coordinates so that they're a multiple of 'amount'.
