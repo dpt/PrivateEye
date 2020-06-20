@@ -36,18 +36,28 @@
 #include "appengine/base/strings.h"
 #include "appengine/wimp/menu.h"
 
+/* ----------------------------------------------------------------------- */
+
 #ifndef NDEBUG
 #define PRINTERROR(x) printf("Error: " x "\n")
 #else
 #define PRINTERROR(x)
 #endif
 
+/* ----------------------------------------------------------------------- */
+
 enum { TextBufferSize = 64 };
+
+/* ----------------------------------------------------------------------- */
 
 #define MENUWIDTH(x) (((x) + 1) * 16)
 
-static int title_is_indirected = 0;
-static int menu_width          = 0;
+/* ----------------------------------------------------------------------- */
+
+static int menu_width;
+static int title_is_indirected;
+
+/* ----------------------------------------------------------------------- */
 
 static error setup_title(wimp_menu *m, const char *text)
 {
@@ -66,50 +76,56 @@ static error setup_title(wimp_menu *m, const char *text)
     if (m->title_data.indirected_text.text == NULL)
       return error_OOM;
 
-// 'reserved' apparently
-//    m->title_data.indirected_text.validation = NULL;
-//    m->title_data.indirected_text.size = text_len + 1;
+    /* title_data.validation and text_size fields are reserved
+    * (they don't exist in OSLib) */
 
     /* first menu entry should set flags bit 8 */
     title_is_indirected = 1;
   }
 
-  m->title_fg    = 7; /* black */
-  m->title_bg    = 2; /* grey */
-  m->work_fg     = 7; /* black */
-  m->work_bg     = 0; /* white */
-  m->width  = MENUWIDTH(text_len);
-  m->height = 44;
-  m->gap         = 0;
+  m->title_fg = wimp_COLOUR_BLACK;
+  m->title_bg = wimp_COLOUR_LIGHT_GREY;
+  m->work_fg  = wimp_COLOUR_BLACK;
+  m->work_bg  = wimp_COLOUR_WHITE;
+  m->width    = 0; /* filled out at the end */
+  m->height   = 44;
+  m->gap      = 0;
 
-  menu_width = m->width;
+  menu_width = MENUWIDTH(text_len);
 
   return error_OK;
 }
 
-static void setup_entry(wimp_menu *m, int index, const char *text)
+static error setup_entry(wimp_menu *m, int index, const char *text)
 {
-  int           text_len;
+  const wimp_icon_flags icon_flags = (wimp_COLOUR_BLACK << wimp_ICON_FG_COLOUR_SHIFT) |
+                                      wimp_ICON_FILLED |
+                                      wimp_ICON_TEXT;
+
+  int              text_len;
   wimp_menu_entry *e;
 
   e = &m->entries[index];
 
   text_len = strlen(text);
+
+  e->menu_flags = title_is_indirected << 8;
+  e->sub_menu   = NULL;
+
   if (text_len < 12)
   {
     /* ordinary */
-    e->menu_flags = title_is_indirected << 8;
-    e->sub_menu   = NULL;
-    e->icon_flags = 0x07000021; /* non-indirected */
+    e->icon_flags = icon_flags;
     strcpy(e->data.text, text);
   }
   else
   {
     /* indirected */
-    e->menu_flags = title_is_indirected << 8;
-    e->sub_menu   = NULL;
-    e->icon_flags = 0x07000121; /* indirected */
+    e->icon_flags = icon_flags | wimp_ICON_INDIRECTED;
     e->data.indirected_text.text       = str_dup(text);
+    if (e->data.indirected_text.text == NULL)
+      return error_OOM;
+
     e->data.indirected_text.validation = NULL;
     e->data.indirected_text.size       = text_len + 1;
   }
@@ -118,6 +134,8 @@ static void setup_entry(wimp_menu *m, int index, const char *text)
 
   if (MENUWIDTH(text_len) > menu_width)
     menu_width = MENUWIDTH(text_len);
+
+  return error_OK;
 }
 
 static void terminate_menu(wimp_menu *m)
@@ -232,7 +250,7 @@ typedef struct MakeMenus MakeMenus;
 typedef struct
 {
   error       (*add)(MakeMenus *maker, const char *text);
-  wimp_menu     *base;
+  wimp_menu    *base;
   int           cur;  /* current entry */
   int           max;  /* space allocated */
 }
@@ -254,6 +272,7 @@ struct MakeMenus
 
 static error addentry(MakeMenus *maker, const char *text)
 {
+  error            err;
   GrowableMenu    *g;
   wimp_menu_flags  flags;
 
@@ -262,7 +281,7 @@ static error addentry(MakeMenus *maker, const char *text)
   if (g->cur == g->max)
   {
     wimp_menu *base;
-    int       max;
+    int        max;
 
     max = g->max * 2;
     if (max < 2)
@@ -276,7 +295,9 @@ static error addentry(MakeMenus *maker, const char *text)
     g->max  = max;
   }
 
-  setup_entry(g->base, g->cur, text);
+  err = setup_entry(g->base, g->cur, text);
+  if (err)
+    return err;
 
   /* menu flags */
 
