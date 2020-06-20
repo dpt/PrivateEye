@@ -78,7 +78,7 @@ enum
 
   AT_FORCE              = 1 << 7, /* flag: force re-open */
   AT_NOCOVERICONBAR     = 1 << 8, /* flag: avoid covering icon bar */
-  AT_USEVISIBLEAREA     = 1 << 9, /* flag: use visible area, not extent */
+  AT_USEVISIBLEAREA     = 1 << 9  /* flag: use visible area, not extent */
 };
 
 void window_open_at(wimp_w w, window_open_at_flags where);
