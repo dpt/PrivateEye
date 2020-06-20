@@ -3,6 +3,8 @@
  * Purpose: Event library
  * ----------------------------------------------------------------------- */
 
+#include <limits.h>
+
 #include "fortify/fortify.h"
 
 #include "oslib/os.h"
@@ -14,17 +16,20 @@
 #include "event-wimp.h"
 #include "event-message.h"
 
-// FIXME: Group into a LOCALS struct.
-static wimp_poll_flags event_mask     = 0;
-static void           *event_pollword;
-static os_t            event_interval = 0;
+static struct
+{
+  wimp_poll_flags mask;
+  os_t            earliest;
+  void           *pollword;
+}
+LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
 void event_initialise(void)
 {
   /* allocate space for a pollword */
-  xosmodule_alloc(4, &event_pollword);
+  xosmodule_alloc(4, &LOCALS.pollword);
   event_zero_pollword();
 
   event_initialise_message();
@@ -35,31 +40,30 @@ void event_finalise(void)
   event_finalise_wimp();
   event_finalise_message();
 
-  xosmodule_free(event_pollword);
+  xosmodule_free(LOCALS.pollword);
 }
 
 /* ----------------------------------------------------------------------- */
 
+// replace this with one counter per event?
 void event_set_mask(wimp_poll_flags mask)
 {
-  event_mask = mask;
+  LOCALS.mask = mask;
 }
 
-void event_set_interval(os_t t)
+void event_set_earliest(os_t earliest)
 {
-  event_interval = t;
+  LOCALS.earliest = earliest;
 }
-
-/* ----------------------------------------------------------------------- */
 
 void event_zero_pollword(void)
 {
-  *((int *) event_pollword) = 0;
+  *((int *) LOCALS.pollword) = 0;
 }
 
 void *event_get_pollword(void)
 {
-  return event_pollword;
+  return LOCALS.pollword;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -69,19 +73,17 @@ wimp_event_no event_poll(wimp_block *block)
   wimp_poll_flags poll_flags;
   wimp_event_no   event_no;
 
-  poll_flags = event_mask | event_wimp_get_mask();
-
-  if (poll_flags & wimp_MASK_NULL)
+  poll_flags = LOCALS.mask | event_wimp_get_mask();
+  if ((poll_flags & wimp_MASK_NULL) == 0 && LOCALS.earliest > 0)
   {
-    event_no = wimp_poll(poll_flags, block, event_pollword);
+    event_no = wimp_poll_idle(poll_flags,
+                              block,
+                              LOCALS.earliest,
+                              LOCALS.pollword);
   }
   else
   {
-    os_t t;
-
-    t = os_read_monotonic_time() + event_interval;
-
-    event_no = wimp_poll_idle(event_mask, block, t, event_pollword);
+    event_no = wimp_poll(poll_flags, block, LOCALS.pollword);
   }
 
   (void) event_dispatch_wimp(event_no, block);

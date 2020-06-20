@@ -35,10 +35,11 @@ void event_finalise(void);
 
 void event_set_mask(wimp_poll_flags mask);
 
+/* Set earliest time for next null event return. */
+void event_set_earliest(os_t earliest);
+
 void event_zero_pollword(void);
 void *event_get_pollword(void);
-
-void event_set_interval(os_t t);
 
 /* ----------------------------------------------------------------------- */
 

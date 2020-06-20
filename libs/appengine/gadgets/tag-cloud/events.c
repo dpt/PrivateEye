@@ -392,7 +392,7 @@ static int tag_cloud_event_pointer_entering_window(wimp_event_no event_no,
 
   claim_nulls(1, tc);
 
-  event_set_interval(2);
+  event_set_earliest(os_read_monotonic_time() + 2);
 
   return event_HANDLED;
 }

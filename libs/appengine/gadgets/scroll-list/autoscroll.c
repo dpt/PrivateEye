@@ -25,7 +25,7 @@ void scroll_list_autoscroll(scroll_list *sl, int on)
     return;
   }
 
-  event_set_interval(10);
+  event_set_earliest(os_read_monotonic_time() + 10);
 
   info.w                   = sl->w;
   info.pause_zone_sizes.x0 = 0;

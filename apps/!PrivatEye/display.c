@@ -466,7 +466,7 @@ static void scrolling_set_handlers(int reg, viewer_t *viewer)
                             event_ANY_ICON,
                             viewer);
 
-  event_set_interval(0);
+  event_set_earliest(os_read_monotonic_time() + 2);
 }
 
 static int scrolling_event_null_reason_code(wimp_event_no event_no,
