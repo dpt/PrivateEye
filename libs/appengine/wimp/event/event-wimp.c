@@ -120,6 +120,15 @@ wimp_poll_flags event_wimp_get_mask(void)
  * current event handler will pick it up too.
  */
 
+static int wimp_handler_nop(wimp_event_no event_no,
+                            wimp_block   *block)
+{
+  NOT_USED(event_no);
+  NOT_USED(block);
+
+  return event_NOT_HANDLED;
+}
+
 /* event handler which deals with events with no associated handles */
 static int wimp_handler_vague(wimp_event_no event_no,
                               wimp_block   *block)
@@ -221,26 +230,26 @@ typedef int (wimp_handler)(wimp_event_no event_no,
 
 static wimp_handler *const wimp_handlers[MAX_WIMP_HANDLERS] =
 {
-  /* wimp_NULL_REASON_CODE         */ wimp_handler_vague,
-  /* wimp_REDRAW_WINDOW_REQUEST    */ wimp_handler_window,
-  /* wimp_OPEN_WINDOW_REQUEST      */ wimp_handler_window,
-  /* wimp_CLOSE_WINDOW_REQUEST     */ wimp_handler_window,
-  /* wimp_POINTER_LEAVING_WINDOW   */ wimp_handler_window,
-  /* wimp_POINTER_ENTERING_WINDOW  */ wimp_handler_window,
-  /* wimp_MOUSE_CLICK              */ wimp_handler_window_and_icon,
-  /* wimp_USER_DRAG_BOX            */ wimp_handler_vague,
-  /* wimp_KEY_PRESSED              */ wimp_handler_window_and_icon,
-  /* wimp_MENU_SELECTION           */ wimp_handler_vague,
-  /* wimp_SCROLL_REQUEST           */ wimp_handler_window_and_icon, /* we differ from DeskLib here */
-  /* wimp_LOSE_CARET               */ wimp_handler_window_and_icon,
-  /* wimp_GAIN_CARET               */ wimp_handler_window_and_icon,
-  /* wimp_POLLWORD_NON_ZERO        */ wimp_handler_vague,
-  /* unused                        */ NULL,
-  /* unused                        */ NULL,
-  /* unused                        */ NULL,
-  /* wimp_USER_MESSAGE             */ wimp_handler_vague,
-  /* wimp_USER_MESSAGE_RECORDED    */ wimp_handler_vague,
-  /* wimp_USER_MESSAGE_ACKNOWLEDGE */ wimp_handler_vague,
+  /*  0 wimp_NULL_REASON_CODE         */ wimp_handler_vague,
+  /*  1 wimp_REDRAW_WINDOW_REQUEST    */ wimp_handler_window,
+  /*  2 wimp_OPEN_WINDOW_REQUEST      */ wimp_handler_window,
+  /*  3 wimp_CLOSE_WINDOW_REQUEST     */ wimp_handler_window,
+  /*  4 wimp_POINTER_LEAVING_WINDOW   */ wimp_handler_window,
+  /*  5 wimp_POINTER_ENTERING_WINDOW  */ wimp_handler_window,
+  /*  6 wimp_MOUSE_CLICK              */ wimp_handler_window_and_icon,
+  /*  7 wimp_USER_DRAG_BOX            */ wimp_handler_vague,
+  /*  8 wimp_KEY_PRESSED              */ wimp_handler_window_and_icon,
+  /*  9 wimp_MENU_SELECTION           */ wimp_handler_vague,
+  /* 10 wimp_SCROLL_REQUEST           */ wimp_handler_window_and_icon, /* we differ from DeskLib here */
+  /* 11 wimp_LOSE_CARET               */ wimp_handler_window_and_icon,
+  /* 12 wimp_GAIN_CARET               */ wimp_handler_window_and_icon,
+  /* 13 wimp_POLLWORD_NON_ZERO        */ wimp_handler_vague,
+  /* 14 unused                        */ wimp_handler_nop,
+  /* 15 unused                        */ wimp_handler_nop,
+  /* 16 unused                        */ wimp_handler_nop,
+  /* 17 wimp_USER_MESSAGE             */ wimp_handler_vague,
+  /* 18 wimp_USER_MESSAGE_RECORDED    */ wimp_handler_vague,
+  /* 19 wimp_USER_MESSAGE_ACKNOWLEDGE */ wimp_handler_vague,
 };
 
 /* ----------------------------------------------------------------------- */
@@ -249,7 +258,10 @@ static wimp_handler *const wimp_handlers[MAX_WIMP_HANDLERS] =
 
 int event_dispatch_wimp(wimp_event_no event_no, wimp_block *block)
 {
-  return wimp_handlers[event_no](event_no, block);
+  if (event_no < MAX_WIMP_HANDLERS)
+    return wimp_handlers[event_no](event_no, block);
+  else
+    return event_NOT_HANDLED;
 }
 
 void event_finalise_wimp(void)
