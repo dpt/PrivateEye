@@ -85,6 +85,9 @@ typedef enum tag_cloud_event
 
   tag_cloud_EVENT_SORT_SELECTED_FIRST, /* note: this toggles the state */
 
+  tag_cloud_EVENT_SCALING_OFF,
+  tag_cloud_EVENT_SCALING_ON,
+
   tag_cloud_EVENT_INFO,
   tag_cloud_EVENT_KILL,
   tag_cloud_EVENT_NEW,
@@ -249,6 +252,16 @@ void tag_cloud_set_order(T *tc, int order_type);
 void tag_cloud_toggle_order(T *tc);
 
 int tag_cloud_get_order(T *tc);
+
+/* ----------------------------------------------------------------------- */
+
+#define tag_cloud_SCALING_OFF    0
+#define tag_cloud_SCALING_ON     1
+#define tag_cloud_SCALING__LIMIT 2
+
+void tag_cloud_set_scaling(T *tc, int scaling_type);
+
+int tag_cloud_get_scaling(T *tc);
 
 /* ----------------------------------------------------------------------- */
 

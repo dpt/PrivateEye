@@ -64,6 +64,9 @@ void tag_cloud_attach_toolbar(tag_cloud *tc)
 
   icon_set_selected(tc->toolbar_w, TAG_CLOUD_T_O_SELFIRST,
                     tc->flags & tag_cloud_FLAG_SORT_SEL_FIRST);
+
+  /* toolbar icons need to match the order of tc->scale_type */
+  icon_set_radio(tc->toolbar_w, TAG_CLOUD_T_B_SCALEOFF + tc->scaling_type);
 }
 
 void tag_cloud_detach_toolbar(tag_cloud *tc)

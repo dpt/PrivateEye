@@ -1,4 +1,4 @@
-/* Icon names exported by WinEd 2.84 */
+/* Icon names exported by WinEd 2.84 + capitalised */
 
 /* Icons for window "tag_new" */
 typedef enum {
@@ -22,5 +22,7 @@ typedef enum {
   TAG_CLOUD_T_B_SORTALPHA = 3,
   TAG_CLOUD_T_B_SORTPOP = 4,
   TAG_CLOUD_T_O_SELFIRST = 5,
-  TAG_CLOUD_T_D_INFO = 6
+  TAG_CLOUD_T_D_INFO = 6,
+  TAG_CLOUD_T_B_SCALEOFF = 7,
+  TAG_CLOUD_T_B_SCALEON = 8
 } icons_tag_cloud_t;

@@ -31,8 +31,11 @@
 
 /* ----------------------------------------------------------------------- */
 
-#define SPACESTRING    " \xB7 " /* small bullet */
-#define SPACESTRINGLEN 3
+#define SPACE_SPACER      " " /* a single space */
+#define SPACE_SPACER_LEN  1
+
+#define BULLET_SPACER     " \xB7 " /* small bullet */
+#define BULLET_SPACER_LEN 3
 
 /* ----------------------------------------------------------------------- */
 
@@ -160,18 +163,27 @@ static char *set_transform(char *s, int a, int b, int c, int d)
 
 static error scales_calc(tag_cloud *tc)
 {
-  if (tc->display_type == tag_cloud_DISPLAY_TYPE_CLOUD)
+  if (tc->scaling_type == tag_cloud_SCALING_ON)
   {
     /* del.icio.us uses 80,90,100,115,150% { -4, -2, 0, 3, 10 } */
     /* differences from 100% divided by 5. */
-    static const signed char scaletab[] = { 0, 2, 4, 7, 14 };
+    static const signed char scaletab[MAXSCALES] = { 0, 2, 4, 7, 14 };
 
     int *ps;
     int  i;
 
     ps = &tc->scaletab[0];
-    for (i = 0; i < NELEMS(scaletab); i++)
+    for (i = 0; i < MAXSCALES; i++)
       *ps++ = (1 << 8) * (100 + tc->config.scale * scaletab[i] * 5 / 100) / 100;
+  }
+  else
+  {
+    int *ps;
+    int  i;
+
+    ps = &tc->scaletab[0];
+    for (i = 0; i < MAXSCALES; i++)
+      *ps++ = (1 << 8);
   }
 
   return error_OK;
@@ -343,17 +355,30 @@ static error metrics_calc(tag_cloud *tc)
                      NULL);
   }
 
-  /* measure the length of the gap string */
+  /* measure the length of a single space spacer string */
 
   font_scan_string(tc->layout.font,
-                   SPACESTRING,
+                   SPACE_SPACER,
                    font_GIVEN_LENGTH | font_GIVEN_FONT | font_KERN,
                    LargeWidth, LargeWidth,
                    NULL,
                    NULL,
-                   SPACESTRINGLEN,
+                   SPACE_SPACER_LEN,
                    NULL,
-                  &dims->gaplength, NULL,
+                  &dims->spacespacerlength, NULL,
+                   NULL);
+
+  /* measure the length of the bullet spacer string */
+
+  font_scan_string(tc->layout.font,
+                   BULLET_SPACER,
+                   font_GIVEN_LENGTH | font_GIVEN_FONT | font_KERN,
+                   LargeWidth, LargeWidth,
+                   NULL,
+                   NULL,
+                   BULLET_SPACER_LEN,
+                   NULL,
+                  &dims->bulletspacerlength, NULL,
                    NULL);
 
   return error_OK;
@@ -645,25 +670,478 @@ void tag_cloud_layout_discard(tag_cloud *tc)
 
 /* ----------------------------------------------------------------------- */
 
+typedef struct layout_state
+{
+  int       width;
+  os_colour colours[3];
+  char     *p;
+}
+layout_state;
+
+static error layout_list(tag_cloud *tc, layout_state *state)
+{
+  error err;
+  int   width;
+  char *p;
+  int   scaledw;
+  int   y;
+  int   line;
+  int   widest;
+  int   ncols;
+  int   i;
+  int   largestscale = 0; /* initialised to quiet compiler warning */
+
+  width   = state->width;
+  p       = state->p;
+  scaledw = (width - (tc->layout.padding * 2)) * font_OS_UNIT;
+  y       = 0;
+  line    = 0;
+
+  /* find out how many tags will fit on all lines */
+  widest  = tc->layout.lengths.widest;
+  ncols   = scaledw / widest;
+  if (ncols < 1)
+    ncols = 1;
+
+  for (i = 0; i < tc->ntags; i += ncols)
+  {
+    int x;
+    int j_end;
+    int totalwidth;
+    int j;
+    int last_x_move, last_y_move;
+    int lineheight;
+
+    /* allow space for stub moves which we'll insert later */
+    err = paintstring_ensure(tc, sizeof_MOVE_X + sizeof_MOVE_Y, &p);
+    if (err)
+      return err;
+
+    /* remember these values as offsets in case the block is moved */
+    last_x_move = p - tc->layout.paintstring.string;
+    p += sizeof_MOVE_X;
+    last_y_move = p - tc->layout.paintstring.string;
+    p += sizeof_MOVE_Y;
+
+    tc->layout.paintstring.used = p - tc->layout.paintstring.string;
+
+    largestscale = 0;
+
+    /* emit a line of tags */
+
+    x = tc->layout.padding * font_OS_UNIT; /* left hand padding */
+
+    j_end = MIN(tc->ntags, i + ncols);
+    for (j = i; j < j_end; j++)
+    {
+      int         index;
+      size_t      l;
+      const char *s;
+      int         highlight;
+      int         hover;
+      int         scale;
+      os_box      b;
+
+      index = tc->sorted[j];
+
+      s = (const char *) atom_get(tc->dict, tc->entries[index].atom, &l);
+
+      l--; /* discount terminator */
+
+      /* allocate enough spare space to keep us going (worst case) */
+
+      err = paintstring_ensure(tc,
+                               SPACE_SPACER_LEN +
+                               sizeof_COLOUR    +
+                               sizeof_HANDLE    +
+                               sizeof_UNDERLINE +
+                               sizeof_TRANSFORM +
+                               l                +
+                               sizeof_TRANSFORM +
+                               sizeof_UNDERLINE +
+                               sizeof_HANDLE    +
+                               sizeof_COLOUR    +
+                               sizeof_MOVE_X,
+                              &p);
+      if (err)
+        return err;
+
+      /* if not the first token on the line insert a spacer */
+
+      if (j > i)
+      {
+        memcpy(p, SPACE_SPACER, SPACE_SPACER_LEN);
+        p += SPACE_SPACER_LEN;
+        x += tc->layout.dims.spacespacerlength;
+      }
+
+      highlight = tag_cloud_is_highlighted(tc, index);
+      if (highlight)
+      {
+        p = set_colour(p, state->colours[0], state->colours[2]);
+        p = set_handle(p, tc->layout.bold_font);
+      }
+
+      hover = (index == tc->hover.index);
+      if (hover)
+        p = set_underline(p, -32, 24);
+
+      scale = tc->layout.dims.dims[index].scale;
+      if (scale > largestscale)
+        largestscale = scale;
+      scale = tc->scaletab[scale] << 8;
+      p = set_transform(p, scale, 0, 0, scale);
+
+      /* emit the tag text */
+
+      memcpy(p, s, l);
+      p += l;
+
+      /* restore */
+
+      p = set_transform(p, 1 << 16, 0, 0, 1 << 16);
+
+      if (hover)
+        p = set_underline(p, -32, 0);
+
+      if (highlight)
+      {
+        p = set_handle(p, tc->layout.font);
+        p = set_colour(p, state->colours[0], state->colours[1]);
+      }
+
+      if (j + 1 < j_end)
+      {
+        /* move to next position */
+        p = move_x(p, widest - tc->layout.lengths.length[index]);
+      }
+
+      tc->layout.paintstring.used = p - tc->layout.paintstring.string;
+
+      /* remember where the tag was placed */
+
+      b.x0 = x;
+      b.x1 = x + tc->layout.lengths.length[index];
+      b.y0 = (tc->layout.descender >> 8) * scale / 65536;
+      b.y1 = tc->layout.font_size * scale / 65536;
+
+      tc->layout.boxes.boxes[index] = b;
+
+      x += widest;
+      totalwidth = b.x1 - tc->layout.padding * font_OS_UNIT;
+    }
+
+    /* set the line position */
+
+    /* zero in this layout mode */
+    (void) move_x(tc->layout.paintstring.string + last_x_move, 0);
+
+    /* vertically space the line */
+
+    /* the first line drops by font size; subsequent lines drop by leading */
+    lineheight = (line == 0) ? tc->layout.font_size : tc->layout.leading;
+    lineheight = lineheight * tc->scaletab[largestscale] / 256;
+    (void) move_y(tc->layout.paintstring.string + last_y_move,
+                  -lineheight * font_OS_UNIT);
+    y -= lineheight;
+
+    /* (if not the last line,) reset the line horizontally */
+
+    if (i + ncols < tc->ntags)
+    {
+      err = paintstring_ensure(tc, sizeof_MOVE_X, &p);
+      if (err)
+        return err;
+
+      p = move_x(p, -totalwidth);
+
+      tc->layout.paintstring.used = p - tc->layout.paintstring.string;
+    }
+
+    /* now we know where all the boxes lie on this line, we can adjust their
+     * positions */
+
+    for (j = i; j < j_end; j++)
+    {
+      int    index;
+      os_box b;
+
+      index = tc->sorted[j];
+
+      b = tc->layout.boxes.boxes[index];
+
+      /* these need scaling into OS units */
+      b.x0 = b.x0 / font_OS_UNIT;
+      b.x1 = b.x1 / font_OS_UNIT;
+
+      b.y0 += y - tc->layout.padding;
+      b.y1 += y - tc->layout.padding;
+
+      tc->layout.boxes.boxes[index] = b;
+
+      /* round the boxes to whole pixels */
+      box_round4(&tc->layout.boxes.boxes[index]);
+    }
+
+    line++;
+  }
+
+  /* now add space for descenders */
+  {
+    int lineheight;
+
+    lineheight = tc->layout.leading - tc->layout.font_size;
+    lineheight = lineheight * tc->scaletab[largestscale] / 256;
+    y -= lineheight;
+  }
+
+  tc->layout.height = -y + 2 * tc->layout.padding; /* OS units */
+
+  return error_OK;
+}
+
+static error layout_cloud(tag_cloud *tc, layout_state *state)
+{
+  error  err;
+  int    width;
+  char  *p;
+  int    scaledw;
+  int    linestart;
+  int    y;
+  int    line;
+  int    i;
+  int    j;
+  int    largestscale = 0; /* initialised to quiet compiler warning */
+
+  width     = state->width;
+  p         = state->p;
+  scaledw   = (width - (tc->layout.padding * 2)) * font_OS_UNIT;
+  linestart = 0;
+  y         = 0;
+  line      = 0;
+
+  i = 0; /* an index into sorted[] */
+  while (i < tc->ntags)
+  {
+    int x;
+    int totalwidth;
+    int remain;
+    int last_x_move, last_y_move;
+    int lineheight;
+
+    /* find out how many tags will fit on this line */
+
+    x = tc->layout.lengths.length[tc->sorted[i]];
+    i++; /* let at least one always fit */
+
+    while (i < tc->ntags)
+    {
+      int x1;
+
+      x1 = x +
+           tc->layout.dims.bulletspacerlength +
+           tc->layout.lengths.length[tc->sorted[i]];
+      if (x1 >= scaledw)
+        break;
+
+      x = x1;
+      i++;
+    }
+
+    /* 'i' is the index of the first which didn't fit */
+
+    totalwidth = x;
+
+    remain = scaledw - totalwidth;
+
+    /* allow space for stub moves which we'll insert later */
+    err = paintstring_ensure(tc, sizeof_MOVE_X + sizeof_MOVE_Y, &p);
+    if (err)
+      return err;
+
+    /* remember these values as offsets in case the block is moved */
+    last_x_move = p - tc->layout.paintstring.string;
+    p += sizeof_MOVE_X;
+    last_y_move = p - tc->layout.paintstring.string;
+    p += sizeof_MOVE_Y;
+
+    tc->layout.paintstring.used = p - tc->layout.paintstring.string;
+
+    largestscale = 0;
+
+    /* emit a line of tags */
+
+    x = tc->layout.padding * font_OS_UNIT; /* left hand padding */
+
+    for (j = linestart; j < i; j++)
+    {
+      int         index;
+      size_t      l;
+      const char *s;
+      int         highlight;
+      int         hover;
+      int         scale;
+      os_box      b;
+
+      index = tc->sorted[j];
+
+      s = (const char *) atom_get(tc->dict, tc->entries[index].atom, &l);
+
+      l--; /* discount terminator */
+
+      /* allocate enough spare space to keep us going (worst case) */
+
+      err = paintstring_ensure(tc,
+                               BULLET_SPACER_LEN +
+                               sizeof_COLOUR     +
+                               sizeof_HANDLE     +
+                               sizeof_UNDERLINE  +
+                               sizeof_TRANSFORM  +
+                               l                 +
+                               sizeof_TRANSFORM  +
+                               sizeof_UNDERLINE  +
+                               sizeof_HANDLE     +
+                               sizeof_COLOUR,
+                              &p);
+      if (err)
+        return err;
+
+      /* if not the first token on the line insert a spacer */
+
+      if (j > linestart)
+      {
+        memcpy(p, BULLET_SPACER, BULLET_SPACER_LEN);
+        p += BULLET_SPACER_LEN;
+        x += tc->layout.dims.bulletspacerlength;
+      }
+
+      highlight = tag_cloud_is_highlighted(tc, index);
+      if (highlight)
+      {
+        p = set_colour(p, state->colours[0], state->colours[2]);
+        p = set_handle(p, tc->layout.bold_font);
+      }
+
+      hover = (index == tc->hover.index);
+      if (hover)
+        p = set_underline(p, -32, 24);
+
+      scale = tc->layout.dims.dims[index].scale;
+      if (scale > largestscale)
+        largestscale = scale;
+      scale = tc->scaletab[scale] << 8;
+      p = set_transform(p, scale, 0, 0, scale);
+
+      /* emit the tag text */
+
+      memcpy(p, s, l);
+      p += l;
+
+      /* restore */
+
+      p = set_transform(p, 1 << 16, 0, 0, 1 << 16);
+
+      if (hover)
+        p = set_underline(p, -32, 0);
+
+      if (highlight)
+      {
+        p = set_handle(p, tc->layout.font);
+        p = set_colour(p, state->colours[0], state->colours[1]);
+      }
+
+      tc->layout.paintstring.used = p - tc->layout.paintstring.string;
+
+      /* remember where the tag was placed */
+
+      b.x0 = x;
+      b.x1 = x + tc->layout.lengths.length[index];
+      b.y0 = (tc->layout.descender >> 8) * scale / 65536;
+      b.y1 = tc->layout.font_size * scale / 65536;
+
+      tc->layout.boxes.boxes[index] = b;
+
+      x = b.x1; /* x += length[index]; */
+    }
+
+    /* set the line position */
+
+    /* horizontally centre the line */
+
+    (void) move_x(tc->layout.paintstring.string + last_x_move, remain / 2);
+
+    /* vertically space the line */
+
+    /* the first line drops by font size; subsequent lines drop by leading */
+    lineheight = (line == 0) ? tc->layout.font_size : tc->layout.leading;
+    lineheight = lineheight * tc->scaletab[largestscale] / 256;
+    (void) move_y(tc->layout.paintstring.string + last_y_move,
+                  -lineheight * font_OS_UNIT);
+    y -= lineheight;
+
+    /* if not the last line, reset the line horizontally */
+
+    if (i < tc->ntags)
+    {
+      err = paintstring_ensure(tc, sizeof_MOVE_X, &p);
+      if (err)
+        return err;
+
+      p = move_x(p, -(remain / 2 + totalwidth));
+
+      tc->layout.paintstring.used = p - tc->layout.paintstring.string;
+    }
+
+    /* now we know where all the boxes lie on this line, we can adjust their
+     * positions */
+
+    for (j = linestart; j < i; j++)
+    {
+      int    index;
+      os_box b;
+
+      index = tc->sorted[j];
+
+      b = tc->layout.boxes.boxes[index];
+
+      /* these need scaling into OS units */
+      b.x0 = (b.x0 + remain / 2) / font_OS_UNIT;
+      b.x1 = (b.x1 + remain / 2) / font_OS_UNIT;
+
+      b.y0 += y - tc->layout.padding;
+      b.y1 += y - tc->layout.padding;
+
+      tc->layout.boxes.boxes[index] = b;
+
+      /* round the boxes to whole pixels */
+      box_round4(&tc->layout.boxes.boxes[index]);
+    }
+
+    linestart = i;
+    line++;
+  }
+
+  /* now add space for descenders */
+  {
+    int lineheight;
+
+    lineheight = tc->layout.leading - tc->layout.font_size;
+    lineheight = lineheight * tc->scaletab[largestscale] / 256;
+    y -= lineheight;
+  }
+
+  tc->layout.height = -y + 2 * tc->layout.padding; /* OS units */
+
+  return error_OK;
+}
+
 error tag_cloud_layout(tag_cloud *tc, int width)
 {
-  error      err = error_OK;
-  int        i;
-  int        totalwidth;
-  os_colour  colours[3];
-  char      *p;
-  int        x;
-  int        linestart;
-  int        j;
-  int        scaledw;
-  int        last_x_move;
-  int        last_y_move;
-  int        y;
-  int        line;
-  int        largestscale = 0; /* initialised to quiet compiler warning */
-  int        lineheight;
-
-  // fprintf(stderr, "tag_cloud_layout %p\n", tc);
+  error         err = error_OK;
+  layout_state  state;
+  os_colour     colours[3];
+  char         *p;
+  error       (*layoutfn)(tag_cloud *, layout_state *);
 
   if (FORCE_FULL_LAYOUT)
     tc->flags |= tag_cloud_FLAG_NEW_ALL;
@@ -760,221 +1238,28 @@ error tag_cloud_layout(tag_cloud *tc, int width)
 
   tc->layout.paintstring.used = p - tc->layout.paintstring.string;
 
+  /* layout */
 
-  linestart = 0;
+  state.width   = width;
+  memcpy(&state.colours, &colours, sizeof(colours));
+  state.p       = p;
 
-  i = 0; /* index into sorted[] */
-
-  scaledw = (width - 2 * tc->layout.padding) * font_OS_UNIT;
-
-  y = 0;
-
-  line = 0;
-
-  while (i < tc->ntags)
+  switch (tc->display_type)
   {
-    int    index;
-    int    remain;
-    os_box b;
+  case tag_cloud_DISPLAY_TYPE_LIST:
+    layoutfn = layout_list;
+    break;
 
-    /* find out how many tags will fit on this line */
-
-    x = tc->layout.lengths.length[tc->sorted[i]];
-    i++; /* let at least one always fit */
-
-    while (i < tc->ntags)
-    {
-      int x1;
-
-      x1 = x +
-           tc->layout.dims.gaplength +
-           tc->layout.lengths.length[tc->sorted[i]];
-      if (x1 >= scaledw)
-        break;
-
-      x = x1;
-      i++;
-    }
-
-    /* 'i' is the index of the first which didn't fit */
-
-    totalwidth = x;
-
-    remain = scaledw - totalwidth;
-
-    /* allow space for stub moves which we'll insert later */
-    err = paintstring_ensure(tc, sizeof_MOVE_X + sizeof_MOVE_Y, &p);
-    if (err)
-      return err;
-
-    /* remember these values as offsets in case the block is moved */
-    last_x_move = p - tc->layout.paintstring.string;
-    p += sizeof_MOVE_X;
-    last_y_move = p - tc->layout.paintstring.string;
-    p += sizeof_MOVE_Y;
-
-    tc->layout.paintstring.used = p - tc->layout.paintstring.string;
-
-    largestscale = 0;
-
-    /* emit a line of tags */
-
-    x = tc->layout.padding * font_OS_UNIT; /* left hand padding */
-
-    for (j = linestart; j < i; j++)
-    {
-      size_t      l;
-      const char *s;
-      int         highlight;
-      int         hover;
-      int         scale;
-
-      index = tc->sorted[j];
-
-      s = (const char *) atom_get(tc->dict, tc->entries[index].atom, &l);
-
-      l--; /* discount terminator */
-
-      /* allocate enough to keep us in business (worst case) */
-
-      err = paintstring_ensure(tc,
-                               SPACESTRINGLEN   +
-                               sizeof_COLOUR    +
-                               sizeof_HANDLE    +
-                               sizeof_UNDERLINE +
-                               sizeof_TRANSFORM +
-                               l                +
-                               sizeof_TRANSFORM +
-                               sizeof_UNDERLINE +
-                               sizeof_HANDLE    +
-                               sizeof_COLOUR,
-                              &p);
-      if (err)
-        return err;
-
-      /* if not the first token on the line insert a space */
-
-      if (j > linestart)
-      {
-        memcpy(p, SPACESTRING, SPACESTRINGLEN);
-        p += SPACESTRINGLEN;
-        x += tc->layout.dims.gaplength;
-      }
-
-      highlight = tag_cloud_is_highlighted(tc, index);
-      if (highlight)
-      {
-        p = set_colour(p, colours[0], colours[2]);
-        p = set_handle(p, tc->layout.bold_font);
-      }
-
-      hover = (index == tc->hover.index);
-      if (hover)
-        p = set_underline(p, -32, 24);
-
-      scale = tc->layout.dims.dims[index].scale;
-      if (scale > largestscale)
-        largestscale = scale;
-      scale = tc->scaletab[scale] << 8;
-      p = set_transform(p, scale, 0, 0, scale);
-
-      /* emit the tag text */
-
-      memcpy(p, s, l);
-      p += l;
-
-      /* restore */
-
-      p = set_transform(p, 1 << 16, 0, 0, 1 << 16);
-
-      if (hover)
-        p = set_underline(p, -32, 0);
-
-      if (highlight)
-      {
-        p = set_handle(p, tc->layout.font);
-        p = set_colour(p, colours[0], colours[1]);
-      }
-
-      tc->layout.paintstring.used = p - tc->layout.paintstring.string;
-
-      /* remember where the tag was placed */
-
-      b.x0 = x;
-      b.x1 = x + tc->layout.lengths.length[index];
-      b.y0 = (tc->layout.descender >> 8) * scale / 65536;
-      b.y1 = tc->layout.font_size * scale / 65536;
-
-      tc->layout.boxes.boxes[index] = b;
-
-      x = b.x1; /* x += length[index]; */
-    }
-
-    /* set the line position */
-
-    /* horizontally centre the line */
-
-    (void) move_x(tc->layout.paintstring.string + last_x_move, remain / 2);
-
-    /* vertically space the line */
-
-    /* the first line drops by font size; subsequent lines drop by leading */
-    lineheight = (line == 0) ? tc->layout.font_size : tc->layout.leading;
-    lineheight = lineheight * tc->scaletab[largestscale] / 256;
-    (void) move_y(tc->layout.paintstring.string + last_y_move,
-                  -lineheight * font_OS_UNIT);
-    y -= lineheight;
-
-    /* if not the last line, reset the line horizontally */
-
-    if (i < tc->ntags)
-    {
-      err = paintstring_ensure(tc, sizeof_MOVE_X, &p);
-      if (err)
-        return err;
-
-      p = move_x(p, -(remain / 2 + totalwidth));
-
-      tc->layout.paintstring.used = p - tc->layout.paintstring.string;
-    }
-
-    /* now we know where all the boxes lie on this line, we can adjust their
-     * positions */
-
-    for (j = linestart; j < i; j++)
-    {
-      index = tc->sorted[j];
-
-      b = tc->layout.boxes.boxes[index];
-
-      /* these need scaling into OS units */
-      b.x0 = (b.x0 + remain / 2) / font_OS_UNIT;
-      b.x1 = (b.x1 + remain / 2) / font_OS_UNIT;
-
-      b.y0 += y - tc->layout.padding;
-      b.y1 += y - tc->layout.padding;
-
-      tc->layout.boxes.boxes[index] = b;
-
-      /* round the boxes to whole pixels */
-      box_round4(&tc->layout.boxes.boxes[index]);
-    }
-
-    linestart = i;
-    line++;
+  case tag_cloud_DISPLAY_TYPE_CLOUD:
+    layoutfn = layout_cloud;
+    break;
   }
 
-  /* now add space for descenders */
-  lineheight = tc->layout.leading - tc->layout.font_size;
-  lineheight = lineheight * tc->scaletab[largestscale] / 256;
-  y -= lineheight;
+  err = layoutfn(tc, &state);
+  if (err)
+    goto cleanup;
 
-#ifndef NDEBUG
-  fprintf(stderr, "paintstring.used = %d\n", tc->layout.paintstring.used);
-#endif
-
-  tc->layout.width  = width;
-  tc->layout.height = -y + 2 * tc->layout.padding; /* OS units */
+  tc->layout.width = width;
 
 cleanup:
 
