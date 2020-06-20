@@ -1,8 +1,8 @@
 # Messages for PrivateEye
-# © David Thomas, 1999-2018
+# © David Thomas, 1999-2020
 #
 
-version:3.01 (19 Jan 2018)
+version:3.02 (xx Jun 2020)
 
 task:PrivateEye
 icon:!privateye
@@ -11,13 +11,13 @@ workspace.image:PrivateEye images
 
 # Menus
 
-menu.iconbar:PrivateEye,>Info,Close all{Close all,Image viewers},Empty cache,Choices...,Quit
-menu.image:PrivateEye,File{File,>Info        ‹F1,>Source info ^F1,Metadata    ‹^F1,Histogram    ^I|New view     ^N},>Save        F3,Edit{Edit,Effects...        ^E,Rotate...         ^O|Convert to Sprite ^S|Copy to clipboard ^C,Clear clipboard},>Scale view F11
+menu.iconbar:PrivateEye,>Info,New{New,Canvas},Close all{Close all,Image viewers,Thumbnail viewers,Canvas viewers},Empty cache,Search tags...,Choices...,Quit
+menu.image:PrivateEye,File{File,>Info        ‹F1,>Source info ^F1,Metadata    ‹^F1,Histogram    ^I,Tags         ^G|New view     ^N},>Save        F3,Edit{Edit,Effects...        ^E,Rotate...         ^O|Convert to Sprite ^S|Copy to clipboard ^C,Clear clipboard},>Scale view F11
 menu.metadata:Metadata,Expand all,Collapse all
 menu.histogram:Components,Luma,Red,Green,Blue,Alpha
-menu.tagcloud:Tag Cloud,Display{Display,List                 F2,Cloud                F3|Sort by name        ‹F2,Sort by count       ‹F3|Selected tags first ^F3},Tag %s‘{Tag,>Rename  ^R,Delete  ^K,>Info    ^I,},>New tag ^N|Commit|Toolbar
+menu.tagcloud:Tag Cloud,Display{Display,List                 F2,Cloud                F3|Scaling off          F4,Scaling on           F5|Sort by name         F6,Sort by count        F7|Selected tags first ^F3},Tag %s‘{Tag,>Rename  ^R,Delete  ^K,>Info    ^I,},>New tag ^N|Commit F10|Toolbar
 menu.thumbview:PrivateEye,Display{Display,Large thumbnails,Small thumbnails,Full info horizontal,Full info vertical},Image %s‘{Image,>Tag,Rotate...},Select all,Clear selection,Options{Options,Auto-rotate}
-#menu.canvas:PrivateEye,Canvas1{Canvas1,Option1,Option2,Option3},Canvas2,Canvas3
+menu.canvas:PrivateEye,Canvas1{Canvas1,Option1,Option2,Option3},Canvas2,Canvas3
 
 # Choices Menus
 
