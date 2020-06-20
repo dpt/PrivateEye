@@ -34,6 +34,7 @@ typedef unsigned long int error;
 #define error_STOP_WALK                         (error_BASE_GENERAL     + 2)
 #define error_OS                                (error_BASE_GENERAL     + 3)
 #define error_BAD_ARG                           (error_BASE_GENERAL     + 4)
+#define error_UNAVAILABLE                       (error_BASE_GENERAL     + 5)
 
 #define error_FILE_OPEN_FAILED                  (error_BASE_FILE        + 0)
 
