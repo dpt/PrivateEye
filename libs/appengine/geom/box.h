@@ -20,9 +20,9 @@ void box_grow(T *b, int change);
 int box_intersection(const T *a, const T *b, T *c);
 void box_union(const T *a, const T *b, T *c);
 
-/* Rounds the box's coordinates so that they're a multiple of 'amount'.
- * x0+y0 are rounded down. x1+y1 are rounded up. */
-void box_round(T *a, int amount);
+/* Rounds the box's coordinates so that they're a multiple of the amounts
+ * given. x0 and y0 are rounded down. x1 and y1 are rounded up. */
+void box_round(T *a, int log2x, int log2y);
 void box_round4(T *a);
 
 int box_could_hold(const T *b, int w, int h);
