@@ -14,6 +14,7 @@
 #include "oslib/osfile.h"
 #include "oslib/osspriteop.h"
 #include "oslib/wimp.h"
+#include "oslib/wimpreadsysinfo.h"
 #include "oslib/wimpspriteop.h"
 
 #include "appengine/wimp/dialogue.h"
@@ -209,13 +210,17 @@ void info_set_info(dialogue_t *d, info_spec_t *specs, int nspecs)
 
 static void resize_icon_x(wimp_w w, wimp_i i, int x0, int x1)
 {
-  wimp_icon_state state;
+  if (wimpreadsysinfo_version() >= wimp_VERSION_RO35)
+  {
+    wimp_icon_state state;
 
-  state.w = w;
-  state.i = i;
-  wimp_get_icon_state(&state);
+    state.w = w;
+    state.i = i;
+    wimp_get_icon_state(&state);
 
-  wimp_resize_icon(w, i, x0, state.icon.extent.y0, x1, state.icon.extent.y1);
+    wimp_resize_icon(w, i, x0, state.icon.extent.y0,
+                           x1, state.icon.extent.y1);
+  }
 }
 
 /* Read the OS unit width of the sprite. */
@@ -248,9 +253,11 @@ static int get_sprite_width(const char *validation)
 
 void info_layout(dialogue_t *d)
 {
-#define LABELGAP         8 /* gap between labels */
-#define SPRITEICONBORDER 22
+#define LABELGAP         (8)  /* gap between labels and displays */
+#define SPRITEICONBORDER (22) /* border per-side for the sprite icon */
+#define TEXTICONBORDER   (4)  /* border per-side at edges of text */
 
+  osbool          have_textop;
   info_t         *s;
   wimp_w          w;
   wimp_icon_state istate;
@@ -260,6 +267,10 @@ void info_layout(dialogue_t *d)
   int             spriteiconwidth;
   int             spritewidth;
   os_box          box;
+
+  have_textop = (wimpreadsysinfo_version() >= wimp_VERSION_RO35);
+  if (!have_textop)
+    return;
 
   s = (info_t *) d;
 
@@ -296,20 +307,17 @@ void info_layout(dialogue_t *d)
 
     len = str_len(str);
     width = wimptextop_string_width(str, len);
-    width += 8; /* border width */
+    width += 2 * TEXTICONBORDER;
 
     /* add on sprite width */
     if (s->file_type_icon >= 0 && i < 2)
       width += spriteiconwidth;
 
-    width += s->padding;
-
     if (width > maxwidth)
       maxwidth = width;
   }
 
-  /* pad */
-  maxwidth += 16 * 2;
+  maxwidth += s->padding;
 
   /* calculate leftmost bound of display icons */
   istate.i = 0;

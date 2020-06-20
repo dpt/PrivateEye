@@ -9,6 +9,7 @@
 
 #include "appengine/types.h"
 #include "appengine/base/messages.h"
+#include "appengine/dialogues/info.h"
 #include "appengine/dialogues/prog-info.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/help.h"

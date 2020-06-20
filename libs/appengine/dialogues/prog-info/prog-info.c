@@ -30,6 +30,7 @@ dialogue_t *proginfo_create(void)
   d = &s->info.dialogue;
 
   info_construct(&s->info, "prog_info");
+  info_set_padding(d, 32); /* 16 on either side */
 
   w = dialogue_get_window(d);
 
