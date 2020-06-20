@@ -1,13 +1,14 @@
 *,fd3
 *,ff8
+*.a
 *.d
 *.o
 *.odf
 iconnames.h
+libs/flex
 objs-debug
 objs-memcheck
 objs-module
 objs-normal
 stderr
 stdout
-libs/flex

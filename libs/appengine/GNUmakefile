@@ -1,20 +1,29 @@
-# GNU makefile for appengine
+# GNU makefile for AppEngine
+#
 
-include ../../common.mk
+HERE		:= $(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-# Tools
+include $(APPENGINE_ROOT)/common.mk
 
+# Include paths
+#
 ccflags		+= $(generalinc) $(flexinc) $(oslibinc) $(zlibinc)
+
 # Nobble TCP/IP-dependent stuff as we've no headers for it at the moment.
 ccflags		+= -DAPPENGINE_NO_TCPIP
 
 # Library references
-
+#
 libraries_test	= $(oslib) $(fortifydbg)
 
+# Lib
+#
 lib		= appengine.a
 libdbg		= appenginedbg.a
 libmod		= appendingmod.a
+
+# App
+#
 testapp		= aetest,ff8
 
 # Read all objects from the filesys then swap '.c' or '.s' for '.o'.
@@ -24,45 +33,49 @@ testapp		= aetest,ff8
 # is this getting /all/ source files or just those three levels deep?
 
 # target dirs need to be chosen based on cpu
-cobjs		= $(shell find . -name 'test' -prune -o -name 'target' -prune -o -name '*.c' -print)
-aobjs		= $(shell find . -name 'test' -prune -o -name 'target' -prune -o -name '*.s' -print)
+cobjs		= $(shell find $(HERE) -name 'test' -prune -o -name 'target' -prune -o -name '*.c' -print)
+aobjs		= $(shell find $(HERE) -name 'test' -prune -o -name 'target' -prune -o -name '*.s' -print)
 objs		= $(cobjs:.c=.o) $(aobjs:.s=.o)
 objsdbg		= $(objs:.o=.odf)
 objsmod		= $(objs:.o=.om)
-objstst		= $(patsubst %.c, %.odf, $(shell find . -wholename '*/test/*.c' -print))
+objstst		= $(patsubst %.c, %.odf, $(shell find $(HERE) -wholename '*/test/*.c' -print))
 
-# Targets:
+# Targets
+#
+.PHONY:		normal debug module all clean
 
-.PHONY:	normal debug module all
-
-$(lib):	$(objs)
-	$(libfile) $@ $(objs)
+$(lib):		$(objs)
+		$(libfile) $@ $(objs)
 
 $(libdbg):	$(objsdbg)
-	$(libfile) $@ $(objsdbg)
+		$(libfile) $@ $(objsdbg)
 
 $(libmod):	$(objsmod)
-	$(libfile) $@ $(objsmod)
+		$(libfile) $@ $(objsmod)
 
-normal:	$(lib)
-	@echo 'normal' built
+normal:		$(lib)
+		@echo 'normal' built
 
-debug:	$(libdbg)
-	@echo 'debug' built
+debug:		$(libdbg)
+		@echo 'debug' built
 
-module:	$(libmod)
-	@echo 'module' built
+module:		$(libmod)
+		@echo 'module' built
 
 $(testapp):	$(objstst) $(libdbg)
-	$(link) -o $@ $(objstst) $(libdbg) $(libraries_test)
+		$(link) -o $@ $(objstst) $(libdbg) $(libraries_test)
 
-test:	$(testapp)
-	@echo 'test' built
+test:		$(testapp)
+		@echo 'test' built
 
-all:	normal debug module
-	@echo 'all' built
+all:		normal debug module
+		@echo 'all' built
+
+clean:
+		-rm -f $(objs) $(objsdbg) $(objsmod) $(objstst) $(lib) $(libdbg) $(libmod) $(testapp) $(deps)
+		@echo Cleaned
 
 # Dependencies
 
--include $(objs:.o=.d)
-
+deps		= $(objs:.o=.d)
+-include $(deps)

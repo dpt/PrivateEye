@@ -1,79 +1,87 @@
-# Common GNU makefile for PrivateEye & co.
+# Common GNU makefile for AppEngine-based applications
+#
 
-# Tools
+APPENGINE_ROOT	?= $(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
+# Toolchain
+#
 prefix		= $(GCCSDK_INSTALL_CROSSBIN)/arm-unknown-riscos-
 
+# Toolchain tools
+#
 asm_		= $(GCCSDK_INSTALL_CROSSBIN)/asasm
 cc_		= $(prefix)gcc
 libfile_	= $(prefix)ar
 link_		= $(prefix)gcc
-templheadr_     = ../../utils/templheader/templheadr
 
-# Tool flags:
+# Our tools
+#
+templheadr_     = $(APPENGINE_ROOT)/utils/templheader/templheadr
 
+# Tool flags
+#
 asmflags	= -pedantic -cpu=ARM6 -Uppercase
-
-ccflags		= -c -std=c99 -mlibscl -mhard-float $(throwback) $(cpu) $(warnings)
+cstd		= -std=c99
+scl		= -mlibscl -mhard-float
+ccflags		= -c $(cstd) $(scl) $(throwback) $(cpu) $(warnings)
 ccflags		+= -mpoke-function-name
 # create foo.d with dependency information as well as compiling foo.c
 ccflags		+= -MMD
-
 libfileflags	= rc
-
-linkflags	= $(throwback) -mlibscl -mhard-float
-
+linkflags	= $(scl) $(throwback)
 templheadrflags	=
 
 # C compiler options
-
-cpu		= -mtune=xscale -march=armv3
+#
+cpu		= -march=armv3 -mtune=xscale
 throwback	= -mthrowback
 warnings	= -Wall -Wundef -Wpointer-arith -Wuninitialized \
 		  -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wunused \
 		  -Wmissing-prototypes -Wmissing-declarations -Wnested-externs \
-		  -Winline -Wno-unused -Wno-long-long -W -Wcast-qual -Wshadow
+		  -Winline -Wno-unused -Wno-long-long -W -Wcast-qual -Wshadow \
+		  -pedantic
 
-# Library references
-# These are specified relative to the root dir where apps/libs live.
-
-generalinc	= -I../../libs
-
-appengine	= ../../libs/appengine/appengine.a
-appenginedbg	= ../../libs/appengine/appenginedbg.a
-
-exiftags	= ../../libs/exiftags/exiftags.a
-exiftagsdbg	= ../../libs/exiftags/exiftagsdbg.a
-
-flex		= ../../libs/flex/libflex.a
-flexdbg		= ../../libs/flex/libflexdbg.a
-flexinc		= -I../../libs/flex
-
-fortify		= ../../libs/fortify/libfortify.a
-fortifydbg	= ../../libs/fortify/libfortifydbg.a
-
-libjpeg		= ../../libs/jpeg/libjpeg.a
-libjpegdbg	= ../../libs/jpeg/libjpegdbg.a
-
-libjpegtran	= ../../libs/jpeg/libtrans.a
-libjpegtrandbg	= ../../libs/jpeg/libtransdbg.a
-
-libpng		= ../../libs/png/libpng.a
-libpngdbg	= ../../libs/png/libpngdbg.a
-
-md5		= ../../libs/md5/libmd5.a
-md5dbg		= ../../libs/md5/libmd5dbg.a
-
+# Toolchain library references
+#
 oslib		= -L$(GCCSDK_INSTALL_ENV)/lib -lOSLib32
 oslibdbg	= $(oslib)
 oslibinc	= -I$(GCCSDK_INSTALL_ENV)/include
 
-zlib		= ../../libs/zlib/zlib.a
-zlibdbg		= ../../libs/zlib/zlibdbg.a
-zlibinc		= -I../../libs/zlib
+# Our library references
+#
+generalinc	= -I$(APPENGINE_ROOT)/libs
+
+appengine	= $(APPENGINE_ROOT)/libs/appengine/appengine.a
+appenginedbg	= $(APPENGINE_ROOT)/libs/appengine/appenginedbg.a
+
+exiftags	= $(APPENGINE_ROOT)/libs/exiftags/exiftags.a
+exiftagsdbg	= $(APPENGINE_ROOT)/libs/exiftags/exiftagsdbg.a
+
+flex		= $(APPENGINE_ROOT)/libs/flex/libflex.a
+flexdbg		= $(APPENGINE_ROOT)/libs/flex/libflexdbg.a
+flexinc		= -I$(APPENGINE_ROOT)/libs/flex
+
+fortify		= $(APPENGINE_ROOT)/libs/fortify/libfortify.a
+fortifydbg	= $(APPENGINE_ROOT)/libs/fortify/libfortifydbg.a
+
+libjpeg		= $(APPENGINE_ROOT)/libs/jpeg/libjpeg.a
+libjpegdbg	= $(APPENGINE_ROOT)/libs/jpeg/libjpegdbg.a
+
+libjpegtran	= $(APPENGINE_ROOT)/libs/jpeg/libtrans.a
+libjpegtrandbg	= $(APPENGINE_ROOT)/libs/jpeg/libtransdbg.a
+
+libpng		= $(APPENGINE_ROOT)/libs/png/libpng.a
+libpngdbg	= $(APPENGINE_ROOT)/libs/png/libpngdbg.a
+
+md5		= $(APPENGINE_ROOT)/libs/md5/libmd5.a
+md5dbg		= $(APPENGINE_ROOT)/libs/md5/libmd5dbg.a
+
+zlib		= $(APPENGINE_ROOT)/libs/zlib/zlib.a
+zlibdbg		= $(APPENGINE_ROOT)/libs/zlib/zlibdbg.a
+zlibinc		= -I$(APPENGINE_ROOT)/libs/zlib
 
 # Combined tools and flags
-
+#
 asm		= $(asm_) $(asmflags)
 cc		= $(cc_) $(ccflags)
 every		= $(every_) $(everyflags)
@@ -82,7 +90,7 @@ link		= $(link_) $(linkflags)
 templheadr      = $(templheadr_) $(templheadrflags)
 
 # Rule Patterns
-
+#
 .SUFFIXES:	.o .odf .om
 
 .c.o:;		$(cc) -O2 -DNDEBUG $< -o $@
@@ -91,16 +99,3 @@ templheadr      = $(templheadr_) $(templheadrflags)
 .s.o:;		$(asm) $< -o $@
 .s.odf:;	$(asm) $< -o $@
 .s.om:;		$(asm) $< -o $@
-
-# Targets:
-
-# A problem is that this becomes the first encountered rule, causing the
-# default rule to become make clean.
-.PHONY: clean
-
-clean:
-#	-find -E . \( -regex '.*\.(o|odf|om|a|d)' -or -name '*,ff8' \) -delete
-#	-find -regextype posix-extended . \( -regex '.*\.(o|odf|om|a|d)' -or -name '*,ff8' \) -delete
-	-find . \( -regex '.*\.\(o\|odf\|om\|a\|d\)' -or -name '*,ff8' \) -delete
-	@echo Cleaned
-

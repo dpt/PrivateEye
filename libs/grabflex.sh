@@ -28,32 +28,36 @@ rm -rf ./ToolboxLib
 cat > GNUmakefile <<EOF
 # GNU makefile for flex
 
-include ../../common.mk
+include $(APPENGINE_ROOT)/common.mk
 
-lib			= libflex.a
+lib	= libflex.a
 libdbg	= libflexdbg.a
 
-objs		= flex.o
-objsdbg	= \$(objs:.o=.odf)
+objs	= flex.o
+objsdbg	= $(objs:.o=.odf)
 
-.PHONY:	normal debug all
+.PHONY:	normal debug all clean
 
-\$(lib):	\$(objs)
-	\$(libfile) \$@ \$(objs)
+$(lib):	$(objs)
+	$(libfile) $@ $(objs)
 
-\$(libdbg):	\$(objsdbg)
-	\$(libfile) \$@ \$(objsdbg)
+$(libdbg):	$(objsdbg)
+	$(libfile) $@ $(objsdbg)
 
-normal: \$(lib)
+normal: $(lib)
 	@echo 'normal' built
 
-debug:	\$(libdbg)
+debug:	$(libdbg)
 	@echo 'debug' built
 
 all:	normal debug
 	@echo 'all' built
 
--include \$(objs:.o=.d)
+clean:
+	-rm -rf $(objs) $(objsdbg) $(lib) $(libdbg)
+	@echo Cleaned
+
+-include $(objs:.o=.d)
 EOF
 
 cd -

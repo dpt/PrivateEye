@@ -18,4 +18,4 @@ all:	normal
 	@echo 'all' built
 
 clean:
-	-rm templheadr.o
+	-rm -f templheadr.o templheadr

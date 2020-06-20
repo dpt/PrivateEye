@@ -1,10 +1,12 @@
 # GNU makefile for Fortify
 
-include ../../common.mk
+HERE		:= $(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-# Tools
+include $(APPENGINE_ROOT)/common.mk
 
-ccflags		+= -I..
+# Include paths
+
+ccflags		+= -I$(HERE)/..
 
 # Library references
 
@@ -14,26 +16,29 @@ libdbg		= libfortifydbg.a
 objs		= fortify.o
 objsdbg		= $(objs:.o=.odf)
 
-# Targets:
+# Targets
 
-.PHONY:	normal debug all
+.PHONY:	normal debug all clean
 
-$(lib):	$(objs)
-	$(libfile) $@ $(objs)
+$(lib):		$(objs)
+		$(libfile) $@ $(objs)
 
 $(libdbg):	$(objsdbg)
-	$(libfile) $@ $(objsdbg)
+		$(libfile) $@ $(objsdbg)
 
-normal:	$(lib)
-	@echo 'normal' built
+normal:		$(lib)
+		@echo 'normal' built
 
-debug:	$(libdbg)
-	@echo 'debug' built
+debug:		$(libdbg)
+		@echo 'debug' built
 
-all:	normal debug
-	@echo 'all' built
+all:		normal debug
+		@echo 'all' built
+
+clean:
+		-rm -f $(objs) $(objsdbg) $(lib) $(libdbg)
+		@echo Cleaned
 
 # Dependencies
 
 -include $(objs:.o=.d)
-

@@ -1,10 +1,12 @@
 # GNU makefile for zlib
 
-include ../../common.mk
+HERE    	:= $(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-# Tools
+include $(APPENGINE_ROOT)/common.mk
 
-ccflags		+= -I.
+# Include paths
+
+ccflags		+= -I$(HERE)
 
 # Library references
 
@@ -16,24 +18,28 @@ objsdbg		= $(objs:.o=.odf)
 
 # Targets:
 
-.PHONY:	normal debug all
+.PHONY:		normal debug all
 
-$(lib):	$(objs)
-	$(libfile) $@ $(objs)
+$(lib):		$(objs)
+		$(libfile) $@ $(objs)
 
 $(libdbg):	$(objsdbg)
-	$(libfile) $@ $(objsdbg)
+		$(libfile) $@ $(objsdbg)
 
-normal:	$(lib)
-	@echo 'normal' built
+normal:		$(lib)
+		@echo 'normal' built
 
-debug:	$(libdbg)
-	@echo 'debug' built
+debug:		$(libdbg)
+		@echo 'debug' built
 
-all:	normal debug
-	@echo 'all' built
+all:		normal debug
+		@echo 'all' built
+
+clean:
+		-rm -f $(objs) $(objsdbg) $(lib) $(libdbg) $(deps)
+		@echo Cleaned
 
 # Dependencies
 
--include $(objs:.o=.d)
-
+deps		= $(objs:.o=.d)
+-include $(deps)
