@@ -64,8 +64,7 @@ libpngdbg	= ../../libs/png/libpngdbg.a
 md5		= ../../libs/md5/libmd5.a
 md5dbg		= ../../libs/md5/libmd5dbg.a
 
-# OSLib32H -> hard float variant
-oslib		= -L$(GCCSDK_INSTALL_ENV)/lib -lOSLib32H
+oslib		= -L$(GCCSDK_INSTALL_ENV)/lib -lOSLib32
 oslibdbg	= $(oslib)
 oslibinc	= -I$(GCCSDK_INSTALL_ENV)/include
 
