@@ -209,6 +209,8 @@ static int wimp_handler_window_and_icon(wimp_event_no event_no,
       if (e->handler(event_no, block, e->handle))
         return event_HANDLED;
 
+  // todo: add a default key handler?
+
   return event_NOT_HANDLED;
 }
 

@@ -45,7 +45,6 @@ void event_finalise(void)
 
 /* ----------------------------------------------------------------------- */
 
-// replace this with one counter per event?
 void event_set_mask(wimp_poll_flags mask)
 {
   LOCALS.mask = mask;

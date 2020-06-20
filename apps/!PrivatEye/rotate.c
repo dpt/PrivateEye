@@ -414,7 +414,7 @@ static void draw_indicator(int x, int y)
                (osspriteop_id) sprites[a],
                                x,y,
                                osspriteop_USE_MASK,
-                               NULL,
+                               NULL, //need factors!
                                LOCALS.indicator.trans_tab);
 }
 
