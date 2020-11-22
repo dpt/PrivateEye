@@ -8,8 +8,17 @@ build:
 	Obey MakeMake
 	Dir ^.^.libs.exiftags
 	Obey MakeMake
+	Dir ^.^.libs.jpeg
+	CDir o
+	CDir odf
 	Dir ^.^.libs.md5
 	Obey MakeMake
+	Dir ^.^.libs.png
+	CDir o
+	CDir odf
+	Dir ^.^.libs.zlib
+	CDir o
+	CDir odf
 	Dir ^.^.apps.!PrivatEye
 	Obey MakeMake
 	Dir ^.^.apps.!TagCloud
