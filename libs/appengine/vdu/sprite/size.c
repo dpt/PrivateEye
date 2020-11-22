@@ -15,7 +15,7 @@ size_t sprite_size(int w, int h, int log2bpp, osbool paletted)
   size_t headers, palette, rowbytes;
 
   headers  = sizeof(osspriteop_area) + sizeof(osspriteop_header);
-  palette  = paletted ? (8 << log2bpp) : 0;
+  palette  = paletted ? (8 << (1 << log2bpp)) : 0;
   rowbytes = (((w << log2bpp) + 31) & ~31) >> 3;
 
   return headers + palette + rowbytes * h;
