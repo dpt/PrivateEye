@@ -9,8 +9,8 @@ normal:	utils
 	$(MAKE) -C libs/md5 $@
 	$(MAKE) -C libs/png $@
 	$(MAKE) -C libs/zlib $@
-	$(MAKE) -C apps/!PrivatEye $@
-	$(MAKE) -C apps/!TagCloud $@
+	$(MAKE) -C apps/PrivateEye/!PrivatEye $@
+	$(MAKE) -C apps/TagCloud/!TagCloud $@
 
 debug:	utils
 	$(MAKE) -C libs/appengine $@
@@ -21,8 +21,8 @@ debug:	utils
 	$(MAKE) -C libs/md5 $@
 	$(MAKE) -C libs/png $@
 	$(MAKE) -C libs/zlib $@
-	$(MAKE) -C apps/!PrivatEye $@
-	$(MAKE) -C apps/!TagCloud $@
+	$(MAKE) -C apps/PrivateEye/!PrivatEye $@
+	$(MAKE) -C apps/TagCloud/!TagCloud $@
 
 all:	normal debug
 
@@ -39,5 +39,5 @@ clean:
 	$(MAKE) -C libs/md5 $@
 	$(MAKE) -C libs/png $@
 	$(MAKE) -C libs/zlib $@
-	$(MAKE) -C apps/!PrivatEye $@
-	$(MAKE) -C apps/!TagCloud $@
+	$(MAKE) -C apps/PrivateEye/!PrivatEye $@
+	$(MAKE) -C apps/TagCloud/!TagCloud $@

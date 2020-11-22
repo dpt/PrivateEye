@@ -1,0 +1,10 @@
+Package: TinctDocs
+Version: 0.14-1
+Section: Documentation
+Priority: Optional
+Maintainer: David Thomas <dave@davespace.co.uk>
+Standards-Version: 0.6.0
+Environment: any
+Licence: Free
+Description: Tinct manual and license
+Homepage: http://www.tinct.net/Downloads/Tinct.asp

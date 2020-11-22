@@ -1,0 +1,31 @@
+Package: PrivateEye
+Version: 3.02-1
+Section: Graphics
+Priority: Optional
+Maintainer: David Thomas <dave@davespace.co.uk>
+Standards-Version: 0.6.0
+Environment: arm
+Licence: Free
+Description: Multi-format image viewer and editor
+ * Loads and displays bitmap and vector images
+ * Sprites, JPEGs, GIFs and PNGs
+ * DrawFiles and ArtWorks
+ * Bitmap effects
+ * Adjust gamma, brightness and contrast
+ * Blur and sharpen
+ * Change saturation and apply histogram effects
+ * Alpha channel support
+ * Bitmap rotation with interactive preview
+ * Rotation is lossless for JPEGs
+ * Native JPEG display using SpriteExtend
+ * Inbuilt lossless ”cleaning• transparently loads progressive JPEGs
+ * JFIF, Exif and Adobe metadata information display
+ * Multiple-channel histogram
+ * Display images may be saved
+ * Convert JPEGs, GIFs and PNGs to into Sprites
+ * Any number of images may be open concurrently
+ * Customisable key map
+ * Lots of interactive help (use it!)
+Homepage: http://www.davespace.co.uk/risc.os/privateeye.html
+Components: Apps.Graphics.!PrivatEye (Movable)
+Depends: Tinct (>= 0.14-1)
