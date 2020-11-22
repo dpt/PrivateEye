@@ -1,14 +1,39 @@
-*,fd3
-*,ff8
-*.a
+# Ignore generated objects
 *.d
 *.o
 *.odf
-iconnames.h
-libs/flex
+
+# Ignore generated executables
+*,fd3
+*,ff8
+
+# Ignore Makatic generated object file lists
+objs-apps
 objs-debug
 objs-memcheck
 objs-module
 objs-normal
+
+# Ignore generated headers
+iconnames.h
+
+# Ignore generated tools
+utils/templheader/templheadr
+
+# Ignore generated libraries
+*.a
+libs/exoquant/exoquant,ffd
+libs/flex
+libs/png/libpng,ffd
+libs/zlib/zlib,ffd
+
+# Ignore generated Makefiles
+apps/PrivateEye/!PrivatEye/Makefile,fe1
+apps/TagCloud/!TagCloud/Makefile,fe1
+libs/appengine/Makefile,fe1
+utils/templheader/Makefile,fe1
+
+# Ignore scratch files
 stderr
 stdout
+x
