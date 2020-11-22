@@ -69,10 +69,7 @@ dialogue_t *save_create(void)
 
   dialogue_construct(&s->dialogue, "save", SAVE_B_SAVE, SAVE_B_CANCEL);
 
-  dialogue_set_handlers(&s->dialogue,
-                         save_event_mouse_click,
-                         NULL,
-                         NULL);
+  dialogue_set_mouse_click_handler(&s->dialogue, save_event_mouse_click);
 
   return &s->dialogue;
 }
@@ -141,7 +138,7 @@ static int save_event_mouse_click(wimp_event_no event_no,
       {
         char sprite[osspriteop_NAME_LIMIT];
 
-        sprintf(sprite, "file_%3x", s->file_type);
+        file_type_to_sprite_name(s->file_type, sprite);
 
         drag_icon(pointer->w, pointer->i,
                   pointer->pos.x, pointer->pos.y,
@@ -245,16 +242,16 @@ error save_set_file_name(dialogue_t *d, const char *file_name)
 void save_set_file_type(dialogue_t *d, bits file_type)
 {
   save_t *s = (save_t *) d;
-  wimp_w  win;
+  wimp_w  w;
+  char    sprname[osspriteop_NAME_LIMIT];
 
   s->file_type = file_type;
 
-  win = dialogue_get_window(d);
+  w = dialogue_get_window(d);
 
-  icon_validation_printf(win,
-                         SAVE_I_ICON,
-                        "Ni_icon;Sfile_%3x",
-                         s->file_type);
+  file_type_to_sprite_name(file_type, sprname);
+
+  icon_validation_printf(w, SAVE_I_ICON, "Ni_icon;S%s", sprname);
 }
 
 void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)

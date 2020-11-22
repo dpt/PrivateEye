@@ -834,10 +834,8 @@ static error init_blur(void)
   if (err)
     return err;
 
-  dialogue_set_handlers(&GLOBALS.effects_blr_d,
-                         blur_event_mouse_click,
-                         NULL,
-                         NULL);
+  dialogue_set_mouse_click_handler(&GLOBALS.effects_blr_d,
+                                    blur_event_mouse_click);
 
   return error_OK;
 }

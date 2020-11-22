@@ -71,6 +71,7 @@ struct T
 
   event_wimp_handler    *mouse_click;
   event_wimp_handler    *key_pressed;
+  event_message_handler *menu_warning;
   event_message_handler *menus_deleted;
 };
 
@@ -94,11 +95,15 @@ void dialogue_set_fillout_handler(T                *d,
                                   void             *opaque);
 
 /* These handler routines are called for events which the dialogue code does
- * not know how to handle. They may be NULL. */
-void dialogue_set_handlers(T                     *d,
-                           event_wimp_handler    *mouse_click,
-                           event_wimp_handler    *key_pressed,
-                           event_message_handler *menus_deleted);
+ * not know how to handle. */
+void dialogue_set_mouse_click_handler(T                  *d,
+                                      event_wimp_handler *mouse_click);
+void dialogue_set_key_pressed_handler(T                  *d,
+                                      event_wimp_handler *key_pressed);
+void dialogue_set_menu_warning_handler(T                  *d,
+                                       event_message_handler *menu_warning);
+void dialogue_set_menus_deleted_handler(T                  *d,
+                                        event_message_handler *menus_deleted);
 
 void dialogue_show(T *d);
 void dialogue_show_here(T *d, int x, int y);

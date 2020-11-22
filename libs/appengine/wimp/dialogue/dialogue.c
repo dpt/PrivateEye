@@ -3,6 +3,7 @@
  * Purpose: Dialogue base class
  * ----------------------------------------------------------------------- */
 
+#include <assert.h>
 #include <ctype.h>
 #include <stddef.h>
 
@@ -25,8 +26,8 @@
 static event_wimp_handler    dialogue_event_mouse_click,
                              dialogue_event_key_pressed;
 
-static event_message_handler dialogue_message_menus_deleted,
-                             dialogue_message_menu_warning;
+static event_message_handler dialogue_message_menu_warning,
+                             dialogue_message_menus_deleted;
 
 /* ----------------------------------------------------------------------- */
 
@@ -162,6 +163,29 @@ static int dialogue_event_key_pressed(wimp_event_no event_no,
   return event_HANDLED;
 }
 
+static int dialogue_message_menu_warning(wimp_message *message, void *handle)
+{
+  wimp_message_menu_warning *warning;
+  dialogue_t                *d;
+
+  warning = (wimp_message_menu_warning *) &message->data;
+  d       = handle;
+
+  if (d->menu_warning)
+    d->menu_warning(message, handle);
+
+  /* This code is similar to that in dialogue_show. */
+
+  if (d->fillout)
+    d->fillout(d, d->opaque); /* get the dialogue filled out */
+
+  wimp_create_sub_menu(warning->sub_menu, warning->pos.x, warning->pos.y);
+
+  d->flags |= dialogue_FLAG_OPEN;
+
+  return event_HANDLED;
+}
+
 static int dialogue_message_menus_deleted(wimp_message *message,
                                           void         *handle)
 {
@@ -177,26 +201,6 @@ static int dialogue_message_menus_deleted(wimp_message *message,
     d->menus_deleted(message, handle);
 
   d->flags &= ~dialogue_FLAG_OPEN;
-
-  return event_HANDLED;
-}
-
-static int dialogue_message_menu_warning(wimp_message *message, void *handle)
-{
-  wimp_message_menu_warning *warning;
-  dialogue_t                *d;
-
-  warning = (wimp_message_menu_warning *) &message->data;
-  d       = handle;
-
-  /* This code is similar to that in dialogue_show. */
-
-  if (d->fillout)
-    d->fillout(d, d->opaque); /* get the dialogue filled out */
-
-  wimp_create_sub_menu(warning->sub_menu, warning->pos.x, warning->pos.y);
-
-  d->flags |= dialogue_FLAG_OPEN;
 
   return event_HANDLED;
 }
@@ -323,7 +327,8 @@ error dialogue_construct(dialogue_t *d,
 {
   error err;
 
-  d->w = window_create(name);
+  d->flags = 0;
+  d->w     = window_create(name);
 
   err = help_add_window(d->w, name);
   if (err)
@@ -334,9 +339,15 @@ error dialogue_construct(dialogue_t *d,
 
   assign_key_actions(d);
 
-  dialogue_register_handlers(1, d);
+  d->fillout       = NULL;
+  d->opaque        = NULL;
 
-  d->flags = 0;
+  d->mouse_click   = NULL;
+  d->key_pressed   = NULL;
+  d->menu_warning  = NULL;
+  d->menus_deleted = NULL;
+
+  dialogue_register_handlers(1, d);
 
   return error_OK;
 }
@@ -358,13 +369,31 @@ void dialogue_set_fillout_handler(dialogue_t       *d,
   d->opaque  = opaque;
 }
 
-void dialogue_set_handlers(dialogue_t            *d,
-                           event_wimp_handler    *mouse_click,
-                           event_wimp_handler    *key_pressed,
-                           event_message_handler *menus_deleted)
+void dialogue_set_mouse_click_handler(dialogue_t         *d,
+                                      event_wimp_handler *mouse_click)
 {
-  d->mouse_click   = mouse_click;
-  d->key_pressed   = key_pressed;
+  assert(d->mouse_click == NULL);
+  d->mouse_click = mouse_click;
+}
+
+void dialogue_set_key_pressed_handler(dialogue_t         *d,
+                                      event_wimp_handler *key_pressed)
+{
+  assert(d->key_pressed == NULL);
+  d->key_pressed = key_pressed;
+}
+
+void dialogue_set_menu_warning_handler(dialogue_t            *d,
+                                       event_message_handler *menu_warning)
+{
+  assert(d->menu_warning == NULL);
+  d->menu_warning = menu_warning;
+}
+
+void dialogue_set_menus_deleted_handler(dialogue_t            *d,
+                                        event_message_handler *menus_deleted)
+{
+  assert(d->menus_deleted == NULL);
   d->menus_deleted = menus_deleted;
 }
 

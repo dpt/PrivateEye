@@ -55,10 +55,7 @@ dialogue_t *name_create(const char *template)
                                 name_default_fillout,
                                 n);
 
-  dialogue_set_handlers(&n->dialogue,
-                         name_event_mouse_click,
-                         NULL,
-                         NULL);
+  dialogue_set_mouse_click_handler(&n->dialogue, name_event_mouse_click);
 
   return &n->dialogue;
 }
