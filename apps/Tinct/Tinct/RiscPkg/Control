@@ -1,0 +1,12 @@
+Package: Tinct
+Version: 0.14-1
+Section: System
+Priority: Optional
+Maintainer: David Thomas <dave@davespace.co.uk>
+Standards-Version: 0.6.0
+Environment: arm
+Licence: Free
+Description: High-speed alpha-blended sprite renderer
+ Tinct provides RISC OS applications with support for high speed rendering of opaque and alpha-blended sprites with optional image enhancement.
+Homepage: http://www.tinct.net/Downloads/Tinct.asp
+Recommends: TinctDocs (>= 0.14-1)

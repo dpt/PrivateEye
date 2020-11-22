@@ -1,0 +1,10 @@
+Package: TagCloud
+Version: 0.50-1
+Section: Utilities
+Priority: Optional
+Maintainer: David Thomas <dave@davespace.co.uk>
+Standards-Version: 0.6.0
+Environment: arm
+Licence: Free
+Description: Tag Cloud test app
+Components: Apps.Utilities.!TagCloud (Movable)

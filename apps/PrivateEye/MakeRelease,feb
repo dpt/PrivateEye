@@ -1,0 +1,42 @@
+| >MkRelease
+
+Set APP !PrivatEye
+Set ARC privateeye
+Set V 302-1
+
+Set MkRelease$Dir <Obey$Dir>
+Dir <MkRelease$Dir>
+
+Set C <Obey$Dir>.<ARC><V>-release
+CDir <C>
+
+Copy Package.* 		<C>.* ~CFR~V
+
+Set D <C>.Apps.Graphics.<APP>
+CDir <D>
+|
+| Build app
+|
+Copy <APP>.!Boot                  <D>.* ~CFR~V
+Copy <APP>.!Help                  <D>.* ~CFR~V
+Copy <APP>.!Run                   <D>.* ~CFR~V
+Copy <APP>.!RunImage              <D>.* ~CFR~V
+|squeeze508 -f -v <D>.!RunImage
+Copy <APP>.*Sprites*              <D>.* ~CFR~V
+Copy <APP>.AppEngine              <D>.* ~CFR~V
+|
+CDir <D>.Resources
+Copy <APP>.Resources.Keys         <D>.Resources.* ~CFR~V
+Copy <APP>.Resources.PhotoCheck   <D>.Resources.* ~CFR~V
+Copy <APP>.Resources.ResFind      <D>.Resources.* ~CFR~V
+Copy <APP>.Resources.Sprites      <D>.Resources.* ~CFR~V
+|
+CDir <D>.Resources.UK
+Copy <APP>.Resources.UK.Messages  <D>.Resources.UK.* ~CFR~V
+Copy <APP>.Resources.UK.Templates <D>.Resources.UK.* ~CFR~V
+|
+| Zip up
+| Note: zip doesn't seem to expand system vars. Must be literal here.
+|
+Dir <C>
+Do zip -9mru ^.<ARC><V>/zip * -x /svn.* *./svn.*
