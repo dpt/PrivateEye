@@ -102,6 +102,8 @@ int icon_button_type(const char *validation);
 /* Scans the validation string for an S<n> command and returns n. */
 void icon_sprite_name(const char *validation, char *name);
 
+void file_type_to_sprite_name(bits file_type, char name[osspriteop_NAME_LIMIT]);
+
 /* ----------------------------------------------------------------------- */
 
 /* Dragging */

@@ -70,10 +70,8 @@ dialogue_t *scale_create(void)
   s->step = 1;
   s->mult = 1;
 
-  dialogue_set_handlers(&s->dialogue,
-                         scale_event_mouse_click,
-                         scale_event_key_pressed,
-                         NULL);
+  dialogue_set_mouse_click_handler(&s->dialogue, scale_event_mouse_click);
+  dialogue_set_key_pressed_handler(&s->dialogue, scale_event_key_pressed);
 
   return &s->dialogue;
 }

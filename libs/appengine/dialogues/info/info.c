@@ -72,10 +72,8 @@ void info_construct(info_t *s, const char *template)
 
   dialogue_construct(&s->dialogue, template, -1, -1);
 
-  dialogue_set_handlers(&s->dialogue,
-                         info_event_mouse_click,
-                         NULL,
-                         NULL);
+  dialogue_set_mouse_click_handler(&s->dialogue,
+                                   info_event_mouse_click);
 
   w = dialogue_get_window(&s->dialogue);
 
@@ -141,33 +139,12 @@ static int info_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static void file_type_to_sprite_name(bits file_type, char name[12])
-{
-  switch (file_type)
-  {
-  case osfile_TYPE_UNTYPED:
-    strcpy(name, "file_xxx");
-    break;
-
-  case osfile_TYPE_DIR:
-    strcpy(name, "directory");
-    break;
-
-  case osfile_TYPE_APPLICATION:
-    strcpy(name, "application");
-    break;
-
-  default:
-    sprintf(name, "file_%03x", file_type);
-    break;
-  }
-}
-
 void info_set_file_type(dialogue_t *d, bits file_type)
 {
   info_t *s;
   wimp_w  w;
-  char    name[12];
+  char    sprname[osspriteop_NAME_LIMIT];
+  char    name[8];
 
   s = (info_t *) d;
 
@@ -176,10 +153,10 @@ void info_set_file_type(dialogue_t *d, bits file_type)
 
   w = dialogue_get_window(d);
 
-  file_type_to_sprite_name(file_type, name);
+  file_type_to_sprite_name(file_type, sprname);
 
   /* WatchMe: Need space in template. */
-  icon_validation_printf(w, s->file_type_icon, "Nd_icon;S%s;R2", name);
+  icon_validation_printf(w, s->file_type_icon, "Nd_icon;S%s;R2", sprname);
 
   file_type_to_name(file_type, name);
 

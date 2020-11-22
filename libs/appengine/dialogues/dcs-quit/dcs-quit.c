@@ -74,10 +74,8 @@ static error dcs_create(const char *name, dialogue_t **new_d)
   if (err)
     goto failure;
 
-  dialogue_set_handlers(&s->dialogue,
-                         dcs_event_mouse_click,
-                         NULL,
-                         dcs_message_menus_deleted);
+  dialogue_set_mouse_click_handler(&s->dialogue, dcs_event_mouse_click);
+  dialogue_set_menus_deleted_handler(&s->dialogue, dcs_message_menus_deleted);
 
   *new_d = &s->dialogue;
 
