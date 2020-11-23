@@ -19,11 +19,11 @@ build:
 	Dir ^.^.libs.zlib
 	CDir o
 	CDir odf
-	Dir ^.^.apps.!PrivatEye
+	Dir ^.^.apps.PrivateEye.!PrivatEye
 	Obey MakeMake
-	Dir ^.^.apps.!TagCloud
+	Dir ^.^.^.apps.TagCloud.!TagCloud
 	Obey MakeMake
-	Dir ^.^
+	Dir ^.^.^
 
 normal:	utils
 	Dir libs.appengine
@@ -40,11 +40,11 @@ normal:	utils
 	amu -f MakefileRO $@
 	Dir ^.^.libs.zlib
 	amu -f MakefileRO $@
-	Dir ^.^.apps.!PrivatEye
+	Dir ^.^.apps.PrivateEye.!PrivatEye
 	amu $@
-	Dir ^.^.apps.!TagCloud
+	Dir ^.^.^.apps.TagCloud.!TagCloud
 	amu $@
-	Dir ^.^
+	Dir ^.^.^
 
 debug:	utils
 	Dir libs.appengine
@@ -61,11 +61,11 @@ debug:	utils
 	amu -f MakefileRO $@
 	Dir ^.^.libs.zlib
 	amu -f MakefileRO $@
-	Dir ^.^.apps.!PrivatEye
+	Dir ^.^.apps.PrivateEye.!PrivatEye
 	amu $@
-	Dir ^.^.apps.!TagCloud
+	Dir ^.^.^.apps.TagCloud.!TagCloud
 	amu $@
-	Dir ^.^
+	Dir ^.^.^
 
 all:	build normal debug
 
@@ -92,8 +92,8 @@ clean:
 	-amu -f MakefileRO $@
 	Dir ^.^.libs.zlib
 	-amu -f MakefileRO $@
-	Dir ^.^.apps.!PrivatEye
+	Dir ^.^.apps.PrivateEye.!PrivatEye
 	-amu $@
-	Dir ^.^.apps.!TagCloud
+	Dir ^.^.^.apps.TagCloud.!TagCloud
 	-amu $@
-	Dir ^.^
+	Dir ^.^.^
