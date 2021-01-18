@@ -11,7 +11,6 @@
 #   architecture, Fortify enabled, and so on).
 # - Generate a version number for the library and place it in a header.
 # - Perhaps drop the C target to C90.
-# - Choose the march/mtune in here, not in riscos.cmake.
 
 if (NOT DEFINED ENV{GCCSDK_INSTALL_ENV})
     message(FATAL_ERROR "GCCSDK_INSTALL_ENV is not set")
@@ -24,6 +23,16 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules/)
+
+set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG" CACHE STRING "" FORCE) # overwrite default of '-O3 -NDEBUG'
+
+# For now, just divide it into ancient or modern ARM (pivot=ARMv5).
+option(APPENGINE_ARMV5 "Utilise ARMv5" OFF)
+if(APPENGINE_ARMV5)
+    string(APPEND CMAKE_C_FLAGS " -march=armv5 -mtune=xscale" CACHE STRING "" FORCE)
+else()
+    string(APPEND CMAKE_C_FLAGS " -march=armv2 -mtune=arm2" CACHE STRING "" FORCE)
+endif()
 
 # ASM_ASASM is our CMake name for the GCCSDK objasm-format assembler 'asasm'.
 project(AppEngine VERSION 0.6.8 DESCRIPTION "RISC OS application library" LANGUAGES C ASM_ASASM)
@@ -593,12 +602,10 @@ set(ARM_AFTER_V5_SOURCES
     ${CMAKE_SOURCE_DIR}/base/bitwise/target/arm-v5/clz.s)
 
 set(ALL_SOURCES ${PUBLIC_HEADERS} ${GENERIC_SOURCES} ${ARM_SOURCES})
-# For now, just divide it into ancient or modern ARM.
-option(APPENGINE_MODERN_ARM "Enable ARMv5T and later" OFF)
-if(APPENGINE_MODERN_ARM)
-    list(APPEND ALL_SOURCES ${ARM_AFTER_V3M_SOURCES} ${ARM_AFTER_V5T_SOURCES})
+if(APPENGINE_ARMV5)
+    list(APPEND ALL_SOURCES ${ARM_AFTER_V3M_SOURCES} ${ARM_AFTER_V5_SOURCES})
 else()
-    list(APPEND ALL_SOURCES ${ARM_BEFORE_V3M_SOURCES} ${ARM_BEFORE_V5T_SOURCES})
+    list(APPEND ALL_SOURCES ${ARM_BEFORE_V3M_SOURCES} ${ARM_BEFORE_V5_SOURCES})
 endif()
 
 target_sources(${LIBRARY} PRIVATE ${ALL_SOURCES})

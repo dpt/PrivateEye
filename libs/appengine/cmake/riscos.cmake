@@ -7,8 +7,7 @@ set(CMAKE_CXX_COMPILER ${crossbin}/${prefix}g++)
 set(CMAKE_C_COMPILER ${crossbin}/${prefix}gcc)
 
 set(CMAKE_ASM_ASASM_FLAGS "-Pedantic -cpu StrongARM -fpu FPA10" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS "-mlibscl -mhard-float -mpoke-function-name -march=armv2 -mtune=arm2" CACHE STRING "" FORCE)
-# consider: -static -O2 -fno-strict-aliasing
+set(CMAKE_C_FLAGS "-mlibscl -mhard-float -mpoke-function-name" CACHE STRING "" FORCE)
 
 set(CMAKE_FIND_ROOT_PATH ${crossbin})
 
