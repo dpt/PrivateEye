@@ -7,8 +7,6 @@
 
 # TODO
 #
-# - Build the test executable which lives in ${CMAKE_SOURCE_DIR}/test.
-# - Setup install() rules.
 # - Produce libraries with variant names for the options chosen (ARM
 #   architecture, Fortify enabled, and so on).
 # - Generate a version number for the library and place it in a header.
@@ -39,16 +37,21 @@ if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     message(STATUS "AppEngine: Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
-set(TARGET appengine)
+set(LIBRARY appengine)
 
-add_library(${TARGET})
+add_library(${LIBRARY})
 
-set_target_properties(${TARGET} PROPERTIES
+set_target_properties(${LIBRARY} PROPERTIES
     VERSION 0.6.8
     DESCRIPTION "RISC OS application library"
-    C_STANDARD 99)
+    C_STANDARD 99
+    PREFIX ""  # remove 'lib' prefix
+    ARCHIVE_OUTPUT_NAME_DEBUG appengine-debug
+    ARCHIVE_OUTPUT_NAME_RELEASE appengine
+    ARCHIVE_OUTPUT_NAME_RELWITHDEBINFO appengine-relwithdebinfo
+    ARCHIVE_OUTPUT_NAME_MINSIZEREL appengine-minsizerel)
 
-target_include_directories(${TARGET} PUBLIC
+target_include_directories(${LIBRARY} PUBLIC
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/app
     ${CMAKE_SOURCE_DIR}/base
@@ -67,7 +70,7 @@ target_include_directories(${TARGET} PUBLIC
 # Look for includes in the 'libs' dir so that #include "fortify/fortify.h"
 # works. Also look in the 'flex' and 'zlib' dirs directly since includers of
 # those headers omit the parent directory.
-target_include_directories(${TARGET} PRIVATE
+target_include_directories(${LIBRARY} PRIVATE
     ${CMAKE_SOURCE_DIR}/..
     ${CMAKE_SOURCE_DIR}/../flex
     ${CMAKE_SOURCE_DIR}/../zlib)
@@ -146,7 +149,6 @@ set(PUBLIC_HEADERS
     ${CMAKE_SOURCE_DIR}/io/stream-stdio.h
     ${CMAKE_SOURCE_DIR}/io/stream.h
     ${CMAKE_SOURCE_DIR}/net/internet.h
-    ${CMAKE_SOURCE_DIR}/test/txtscr.h
     ${CMAKE_SOURCE_DIR}/text/txtfmt.h
     ${CMAKE_SOURCE_DIR}/types.h
     ${CMAKE_SOURCE_DIR}/vdu/font.h
@@ -208,7 +210,6 @@ set(PRIVATE_HEADERS
 set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/app/choices/choices.c
     ${CMAKE_SOURCE_DIR}/app/keymap/keymap.c
-    ${CMAKE_SOURCE_DIR}/app/wire/test/test.c
     ${CMAKE_SOURCE_DIR}/app/wire/wire.c
     ${CMAKE_SOURCE_DIR}/base/appengine/heap.c
     ${CMAKE_SOURCE_DIR}/base/appengine/resource.c
@@ -245,7 +246,6 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/base/oserror/report-block.c
     ${CMAKE_SOURCE_DIR}/base/oserror/report.c
     ${CMAKE_SOURCE_DIR}/base/pack/pack.c
-    ${CMAKE_SOURCE_DIR}/base/pack/test/test.c
     ${CMAKE_SOURCE_DIR}/base/pack/unpack.c
     ${CMAKE_SOURCE_DIR}/base/primes/primes.c
     ${CMAKE_SOURCE_DIR}/base/strings/str_branch.c
@@ -268,17 +268,14 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/databases/pickle/hash-reader.c
     ${CMAKE_SOURCE_DIR}/databases/pickle/hash-writer.c
     ${CMAKE_SOURCE_DIR}/databases/pickle/pickle.c
-    ${CMAKE_SOURCE_DIR}/databases/pickle/test/test.c
     ${CMAKE_SOURCE_DIR}/databases/pickle/unpickle.c
     ${CMAKE_SOURCE_DIR}/databases/tag-db/tag-db.c
-    ${CMAKE_SOURCE_DIR}/databases/tag-db/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/array/delelem.c
     ${CMAKE_SOURCE_DIR}/datastruct/array/delelems.c
     ${CMAKE_SOURCE_DIR}/datastruct/array/grow.c
     ${CMAKE_SOURCE_DIR}/datastruct/array/shrinkwrap.c
     ${CMAKE_SOURCE_DIR}/datastruct/array/squeeze.c
     ${CMAKE_SOURCE_DIR}/datastruct/array/stretch.c
-    ${CMAKE_SOURCE_DIR}/datastruct/array/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/atom/create.c
     ${CMAKE_SOURCE_DIR}/datastruct/atom/delete-block.c
     ${CMAKE_SOURCE_DIR}/datastruct/atom/delete.c
@@ -287,9 +284,7 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/datastruct/atom/get.c
     ${CMAKE_SOURCE_DIR}/datastruct/atom/new.c
     ${CMAKE_SOURCE_DIR}/datastruct/atom/set.c
-    ${CMAKE_SOURCE_DIR}/datastruct/atom/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/bitarr/count.c
-    ${CMAKE_SOURCE_DIR}/datastruct/bitarr/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/bitvec/and.c
     ${CMAKE_SOURCE_DIR}/datastruct/bitvec/clear-all.c
     ${CMAKE_SOURCE_DIR}/datastruct/bitvec/clear.c
@@ -304,7 +299,6 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/datastruct/bitvec/or.c
     ${CMAKE_SOURCE_DIR}/datastruct/bitvec/set-all.c
     ${CMAKE_SOURCE_DIR}/datastruct/bitvec/set.c
-    ${CMAKE_SOURCE_DIR}/datastruct/bitvec/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/bitvec/toggle.c
     ${CMAKE_SOURCE_DIR}/datastruct/hash/create.c
     ${CMAKE_SOURCE_DIR}/datastruct/hash/destroy.c
@@ -312,7 +306,6 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/datastruct/hash/lookup-node.c
     ${CMAKE_SOURCE_DIR}/datastruct/hash/lookup.c
     ${CMAKE_SOURCE_DIR}/datastruct/hash/remove.c
-    ${CMAKE_SOURCE_DIR}/datastruct/hash/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/hash/walk-cont.c
     ${CMAKE_SOURCE_DIR}/datastruct/hash/walk.c
     ${CMAKE_SOURCE_DIR}/datastruct/hlist/append.c
@@ -329,7 +322,6 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/datastruct/list/find.c
     ${CMAKE_SOURCE_DIR}/datastruct/list/init.c
     ${CMAKE_SOURCE_DIR}/datastruct/list/remove.c
-    ${CMAKE_SOURCE_DIR}/datastruct/list/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/list/walk.c
     ${CMAKE_SOURCE_DIR}/datastruct/ntree/copy.c
     ${CMAKE_SOURCE_DIR}/datastruct/ntree/delete.c
@@ -350,7 +342,6 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/datastruct/ntree/prepend.c
     ${CMAKE_SOURCE_DIR}/datastruct/ntree/prev-sibling.c
     ${CMAKE_SOURCE_DIR}/datastruct/ntree/set-data.c
-    ${CMAKE_SOURCE_DIR}/datastruct/ntree/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/ntree/unlink.c
     ${CMAKE_SOURCE_DIR}/datastruct/ntree/walk.c
     ${CMAKE_SOURCE_DIR}/datastruct/vector/clear.c
@@ -360,7 +351,6 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/datastruct/vector/length.c
     ${CMAKE_SOURCE_DIR}/datastruct/vector/set-length.c
     ${CMAKE_SOURCE_DIR}/datastruct/vector/set-width.c
-    ${CMAKE_SOURCE_DIR}/datastruct/vector/test/test.c
     ${CMAKE_SOURCE_DIR}/datastruct/vector/width.c
     ${CMAKE_SOURCE_DIR}/dialogues/dcs-quit/dcs-quit.c
     ${CMAKE_SOURCE_DIR}/dialogues/info/info.c
@@ -425,9 +415,7 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/geom/box/set-origin.c
     ${CMAKE_SOURCE_DIR}/geom/box/union.c
     ${CMAKE_SOURCE_DIR}/geom/layout/layout.c
-    ${CMAKE_SOURCE_DIR}/geom/layout/test/test.c
     ${CMAKE_SOURCE_DIR}/geom/packer/packer.c
-    ${CMAKE_SOURCE_DIR}/geom/packer/test/test.c
     ${CMAKE_SOURCE_DIR}/geom/trfm/trfm.c
     ${CMAKE_SOURCE_DIR}/graphics/artworks/callback.c
     ${CMAKE_SOURCE_DIR}/graphics/colour/name.c
@@ -467,7 +455,6 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/io/filing/buffer.c
     ${CMAKE_SOURCE_DIR}/io/filing/filetype.c
     ${CMAKE_SOURCE_DIR}/io/filing/scan.c
-    ${CMAKE_SOURCE_DIR}/io/filing/test/test.c
     ${CMAKE_SOURCE_DIR}/io/md5/md5.c
     ${CMAKE_SOURCE_DIR}/io/stream/stream-mem.c
     ${CMAKE_SOURCE_DIR}/io/stream/stream-mtfcomp.c
@@ -475,12 +462,9 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/io/stream/stream-packbitsdecomp.c
     ${CMAKE_SOURCE_DIR}/io/stream/stream-stdio.c
     ${CMAKE_SOURCE_DIR}/io/stream/stream.c
-    ${CMAKE_SOURCE_DIR}/io/stream/test/test.c
     ${CMAKE_SOURCE_DIR}/net/internet/mime_fromfiletype.c
     ${CMAKE_SOURCE_DIR}/net/internet/mime_tofiletype.c
     ${CMAKE_SOURCE_DIR}/net/internet/uri_decode.c
-    ${CMAKE_SOURCE_DIR}/test/main/main.c
-    ${CMAKE_SOURCE_DIR}/test/txtscr/txtscr.c
     ${CMAKE_SOURCE_DIR}/text/lang/emit.c
     ${CMAKE_SOURCE_DIR}/text/lang/error.c
     ${CMAKE_SOURCE_DIR}/text/lang/eval.c
@@ -488,11 +472,8 @@ set(GENERIC_SOURCES
     ${CMAKE_SOURCE_DIR}/text/lang/main.c
     ${CMAKE_SOURCE_DIR}/text/lang/parse.c
     ${CMAKE_SOURCE_DIR}/text/lang/sym.c
-    ${CMAKE_SOURCE_DIR}/text/lang/test/test.c
-    ${CMAKE_SOURCE_DIR}/text/txtfmt/test/test.c
     ${CMAKE_SOURCE_DIR}/text/txtfmt/txtfmt.c
     ${CMAKE_SOURCE_DIR}/vdu/font/match.c
-    ${CMAKE_SOURCE_DIR}/vdu/font/test/test.c
     ${CMAKE_SOURCE_DIR}/vdu/screen/factors.c
     ${CMAKE_SOURCE_DIR}/vdu/screen/mode-vars.c
     ${CMAKE_SOURCE_DIR}/vdu/screen/pixel-size.c
@@ -620,27 +601,98 @@ else()
     list(APPEND ALL_SOURCES ${ARM_BEFORE_V3M_SOURCES} ${ARM_BEFORE_V5T_SOURCES})
 endif()
 
-target_sources(${TARGET} PRIVATE ${ALL_SOURCES})
+target_sources(${LIBRARY} PRIVATE ${ALL_SOURCES})
 
 # I'm using a generator expression here to stop asasm from receiving the C
 # compiler's set of options.
-target_compile_options(${TARGET}
+target_compile_options(${LIBRARY}
     PRIVATE $<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-Wall -Wextra -pedantic>)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_definitions(${TARGET} PRIVATE APPENGINE_DEBUG)
+    target_compile_definitions(${LIBRARY} PRIVATE APPENGINE_DEBUG)
 endif()
 
-# Dependencies
+# Library dependencies
 #
 
 # OSLib
-target_include_directories(${TARGET} PRIVATE
-    $ENV{GCCSDK_INSTALL_ENV}/include)
-target_link_libraries(${TARGET}
-    $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
+target_include_directories(${LIBRARY} PRIVATE $ENV{GCCSDK_INSTALL_ENV}/include)
+target_link_libraries(${LIBRARY} $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
 
 if(USE_FORTIFY)
-    target_compile_definitions(${TARGET} PRIVATE FORTIFY)
-#    target_link_libraries(${TARGET} PUBLIC Fortify) # will be needed for the text executable
+    target_compile_definitions(${LIBRARY} PRIVATE FORTIFY)
+    target_link_libraries(${LIBRARY} PUBLIC Fortify)
 endif()
+
+
+
+# Self-test executable
+#
+
+set(TEST aetest)
+
+set(TEST_SOURCES
+    ${CMAKE_SOURCE_DIR}/app/wire/test/test.c
+    ${CMAKE_SOURCE_DIR}/base/pack/test/test.c
+    ${CMAKE_SOURCE_DIR}/databases/pickle/test/test.c
+    ${CMAKE_SOURCE_DIR}/databases/tag-db/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/array/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/atom/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/bitarr/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/bitvec/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/hash/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/list/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/ntree/test/test.c
+    ${CMAKE_SOURCE_DIR}/datastruct/vector/test/test.c
+    ${CMAKE_SOURCE_DIR}/geom/layout/test/test.c
+    ${CMAKE_SOURCE_DIR}/geom/packer/test/test.c
+    ${CMAKE_SOURCE_DIR}/io/filing/test/test.c
+    ${CMAKE_SOURCE_DIR}/io/stream/test/test.c
+    ${CMAKE_SOURCE_DIR}/test/main/main.c
+    ${CMAKE_SOURCE_DIR}/test/txtscr.h
+    ${CMAKE_SOURCE_DIR}/test/txtscr/txtscr.c
+    ${CMAKE_SOURCE_DIR}/text/lang/test/test.c
+    ${CMAKE_SOURCE_DIR}/text/txtfmt/test/test.c
+    ${CMAKE_SOURCE_DIR}/vdu/font/test/test.c)
+
+# Avoid a warning from CMake
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
+add_executable(${TEST}
+    ${TEST_SOURCES})
+
+set_target_properties(${TEST} PROPERTIES
+    DESCRIPTION "AppEngine test program"
+    C_STANDARD 99
+    OUTPUT_NAME_DEBUG AETestD,ff8
+    OUTPUT_NAME_RELEASE AETest,ff8
+    OUTPUT_NAME_RELWITHDEBINFO AETestR,ff8
+    OUTPUT_NAME_MINSIZEREL AETestM,ff8)
+
+target_include_directories(${TEST} PRIVATE
+    ${CMAKE_SOURCE_DIR}/..)
+
+# AETest dependencies
+#
+
+# OSLib
+target_include_directories(${TEST} PRIVATE $ENV{GCCSDK_INSTALL_ENV}/include)
+
+if(USE_FORTIFY)
+    target_compile_definitions(${TEST} PRIVATE FORTIFY)
+    target_link_libraries(${TEST} PUBLIC Fortify)
+endif()
+
+# Of course, AETest depends on AppEngine.
+target_link_libraries(${TEST} ${LIBRARY})
+
+
+
+# Note: This affects everything built by this file.
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR} CACHE PATH "CMake install prefix" FORCE)
+
+# Install library & AETest into root of build directory.
+install(TARGETS ${LIBRARY} ${TEST}
+    CONFIGURATIONS Debug Release RelWithDebInfo MinSizeRel
+    ARCHIVE DESTINATION .
+    RUNTIME DESTINATION .)
