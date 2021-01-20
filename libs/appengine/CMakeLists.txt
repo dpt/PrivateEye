@@ -14,10 +14,6 @@
 # - Perhaps drop the C target to C90.
 # - Depend on DPTLib, remove overlaps like the database code.
 
-if (NOT DEFINED ENV{GCCSDK_INSTALL_ENV})
-    message(FATAL_ERROR "GCCSDK_INSTALL_ENV is not set")
-endif()
-
 cmake_minimum_required(VERSION 3.18)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -26,20 +22,35 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules/)
 
-set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG" CACHE STRING "" FORCE) # overwrite default of '-O3 -NDEBUG'
-
-# For now, just divide it into ancient or modern ARM (pivot=ARMv5).
-option(APPENGINE_ARMV5 "Utilise ARMv5" OFF)
-if(APPENGINE_ARMV5)
-    string(APPEND CMAKE_C_FLAGS " -march=armv5 -mtune=xscale" CACHE STRING "" FORCE)
-    string(APPEND CMAKE_ASASM_FLAGS "-cpu StrongARM -fpu FPA10" CACHE STRING "" FORCE)
-else()
-    string(APPEND CMAKE_C_FLAGS " -march=armv2 -mtune=arm2" CACHE STRING "" FORCE)
-    string(APPEND CMAKE_ASASM_FLAGS "-cpu ARM2 -fpu FPA10" CACHE STRING "" FORCE)
-endif()
-
 # ASM_ASASM is our CMake name for the GCCSDK objasm-format assembler 'asasm'.
 project(AppEngine VERSION 0.6.8 DESCRIPTION "DPT's RISC OS application library" LANGUAGES C ASM_ASASM)
+
+# The values set in the toolchain file aren't available until this point.
+
+if(NOT DEFINED TARGET_RISCOS)
+    message(FATAL_ERROR "AppEngine builds for RISC OS only")
+endif()
+
+if(TARGET_RISCOS AND NOT DEFINED ENV{GCCSDK_INSTALL_ENV})
+    message(FATAL_ERROR "GCCSDK_INSTALL_ENV is not set")
+endif()
+
+if(TARGET_RISCOS)
+    set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG" CACHE STRING "" FORCE) # overwrite default of '-O3 -NDEBUG'
+
+    # I tried to get this to live in riscos.cmake but was defeated.
+    set(CMAKE_EXECUTABLE_SUFFIX ,ff8)
+
+    # For now, divide assembly targets into ancient or modern ARM (pivot=ARMv5).
+    option(APPENGINE_ARMV5 "Utilise ARMv5" OFF)
+    if(APPENGINE_ARMV5)
+        string(APPEND CMAKE_C_FLAGS " -march=armv5 -mtune=xscale")
+        string(APPEND CMAKE_ASASM_FLAGS "-cpu StrongARM -fpu FPA10")
+    else()
+        string(APPEND CMAKE_C_FLAGS " -march=armv2 -mtune=arm2")
+        string(APPEND CMAKE_ASASM_FLAGS "-cpu ARM2 -fpu FPA10")
+    endif()
+endif()
 
 # If this is enabled then the final binary will need to be linked against
 # Fortify too.
@@ -50,13 +61,13 @@ if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     message(STATUS "AppEngine: Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
-set(LIBRARY AppEngine)
+set(LIBRARY ${PROJECT_NAME})
 
 add_library(${LIBRARY})
 
 set_target_properties(${LIBRARY} PROPERTIES
     VERSION 0.6.8
-    DESCRIPTION "DPT's RISC OS application library"
+    DESCRIPTION "DPT's RISC OS application C library"
     C_STANDARD 99
     PREFIX ""  # remove 'lib' prefix
     ARCHIVE_OUTPUT_NAME_DEBUG ${LIBRARY}-debug
@@ -603,8 +614,9 @@ target_sources(${LIBRARY} PRIVATE ${ALL_SOURCES})
 
 # Ensure that compilers and assemblers don't receive each other's options.
 target_compile_options(${LIBRARY}
-    PRIVATE $<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-Wall -Wextra -pedantic>
-            $<$<COMPILE_LANGUAGE:ASM_ASASM>:-Pedantic>)
+    PRIVATE
+    $<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-Wall -Wextra -pedantic>
+    $<$<COMPILE_LANGUAGE:ASM_ASASM>:-Pedantic>)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(${LIBRARY} PRIVATE $<UPPER_CASE:${LIBRARY}>_DEBUG)
@@ -613,9 +625,11 @@ endif()
 # Library dependencies
 #
 
-# OSLib (& anything else in GCCSDK)
-target_include_directories(${LIBRARY} PUBLIC $ENV{GCCSDK_INSTALL_ENV}/include)
-target_link_libraries(${LIBRARY} PUBLIC $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
+if(TARGET_RISCOS)
+    # OSLib (& anything else in GCCSDK)
+    target_include_directories(${LIBRARY} PUBLIC $ENV{GCCSDK_INSTALL_ENV}/include)
+    target_link_libraries(${LIBRARY} PUBLIC $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
+endif()
 
 if(USE_FORTIFY)
     target_compile_definitions(${LIBRARY} PRIVATE FORTIFY)
@@ -623,11 +637,10 @@ if(USE_FORTIFY)
 endif()
 
 
-
 # Self-test executable
 #
 
-set(TEST AppEngineTest)
+set(TEST ${PROJECT_NAME}Test)
 
 set(TEST_SOURCES
     app/wire/test/test.c
@@ -661,10 +674,10 @@ add_executable(${TEST} ${TEST_SOURCES})
 set_target_properties(${TEST} PROPERTIES
     DESCRIPTION "AppEngine test program"
     C_STANDARD 99
-    OUTPUT_NAME_DEBUG ${TEST}-debug,ff8
-    OUTPUT_NAME_RELEASE ${TEST},ff8
-    OUTPUT_NAME_RELWITHDEBINFO ${TEST}-relwithdebinfo,ff8
-    OUTPUT_NAME_MINSIZEREL ${TEST}-minsizerel,ff8)
+    OUTPUT_NAME_DEBUG ${TEST}-debug
+    OUTPUT_NAME_RELEASE ${TEST}
+    OUTPUT_NAME_RELWITHDEBINFO ${TEST}-relwithdebinfo
+    OUTPUT_NAME_MINSIZEREL ${TEST}-minsizerel)
 
 target_include_directories(${TEST} PRIVATE ..)
 
