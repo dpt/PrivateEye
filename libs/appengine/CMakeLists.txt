@@ -12,7 +12,6 @@
 #   architecture, Fortify enabled, and so on).
 # - Generate a version number for the library and place it in a header.
 # - Perhaps drop the C target to C90.
-# - Depend on DPTLib, remove overlaps like the database code.
 
 cmake_minimum_required(VERSION 3.18)
 
@@ -105,21 +104,7 @@ set(PUBLIC_HEADERS
     base/primes.h
     base/strings.h
     base/utils.h
-    databases/digest-db.h
-    databases/filename-db.h
-    databases/pickle-reader-hash.h
-    databases/pickle-writer-hash.h
-    databases/pickle.h
-    databases/tag-db.h
     datastruct/array.h
-    datastruct/atom.h
-    datastruct/bitarr.h
-    datastruct/bitvec.h
-    datastruct/hash.h
-    datastruct/hlist.h
-    datastruct/list.h
-    datastruct/ntree.h
-    datastruct/vector.h
     dialogues/dcs-quit.h
     dialogues/info.h
     dialogues/name.h
@@ -137,9 +122,6 @@ set(PUBLIC_HEADERS
     gadgets/tag-cloud.h
     gadgets/tonemap-gadget.h
     gadgets/treeview.h
-    geom/box.h
-    geom/layout.h
-    geom/packer.h
     geom/trfm.h
     graphics/artworks.h
     graphics/awrender.h
@@ -154,11 +136,6 @@ set(PUBLIC_HEADERS
     io/basic.h
     io/filing.h
     io/md5.h
-    io/stream-mem.h
-    io/stream-mtfcomp.h
-    io/stream-packbits.h
-    io/stream-stdio.h
-    io/stream.h
     net/internet.h
     text/txtfmt.h
     types.h
@@ -190,7 +167,6 @@ set(PRIVATE_HEADERS
     gadgets/tag-cloud/iconnames.h
     gadgets/tag-cloud/impl.h
     gadgets/tag-cloud/menunames.h
-    geom/packer/impl.h
     graphics/drawable/drawable-artworks.h
     graphics/drawable/drawable-bitmap.h
     graphics/drawable/drawable-drawfile.h
@@ -206,14 +182,6 @@ set(PRIVATE_HEADERS
     graphics/image/png.h
     graphics/image/sprite.h
     graphics/sprite-effects/convolve.h
-    text/lang/emit.h
-    text/lang/error.h
-    text/lang/eval.h
-    text/lang/lex.h
-    text/lang/parse.h
-    text/lang/sym.h
-    text/lang/tokens.h
-    text/lang/tree.h
     wimp/event/event-message.h
     wimp/event/event-wimp.h
     wimp/window/open.h)
@@ -273,96 +241,12 @@ set(GENERIC_SOURCES
     base/strings/strnncasecmp.c
     base/utils/degs-to-rads.c
     base/utils/gcd.c
-    databases/digest-db/digest-db.c
-    databases/filename-db/filename-db.c
-    databases/pickle/delete.c
-    databases/pickle/hash-reader.c
-    databases/pickle/hash-writer.c
-    databases/pickle/pickle.c
-    databases/pickle/unpickle.c
-    databases/tag-db/tag-db.c
     datastruct/array/delelem.c
     datastruct/array/delelems.c
     datastruct/array/grow.c
     datastruct/array/shrinkwrap.c
     datastruct/array/squeeze.c
     datastruct/array/stretch.c
-    datastruct/atom/create.c
-    datastruct/atom/delete-block.c
-    datastruct/atom/delete.c
-    datastruct/atom/destroy.c
-    datastruct/atom/for-block.c
-    datastruct/atom/get.c
-    datastruct/atom/new.c
-    datastruct/atom/set.c
-    datastruct/bitarr/count.c
-    datastruct/bitvec/and.c
-    datastruct/bitvec/clear-all.c
-    datastruct/bitvec/clear.c
-    datastruct/bitvec/count.c
-    datastruct/bitvec/create.c
-    datastruct/bitvec/destroy.c
-    datastruct/bitvec/ensure.c
-    datastruct/bitvec/eq.c
-    datastruct/bitvec/get.c
-    datastruct/bitvec/length.c
-    datastruct/bitvec/next.c
-    datastruct/bitvec/or.c
-    datastruct/bitvec/set-all.c
-    datastruct/bitvec/set.c
-    datastruct/bitvec/toggle.c
-    datastruct/hash/create.c
-    datastruct/hash/destroy.c
-    datastruct/hash/insert.c
-    datastruct/hash/lookup-node.c
-    datastruct/hash/lookup.c
-    datastruct/hash/remove.c
-    datastruct/hash/walk-cont.c
-    datastruct/hash/walk.c
-    datastruct/hlist/append.c
-    datastruct/hlist/copy.c
-    datastruct/hlist/free.c
-    datastruct/hlist/length.c
-    datastruct/hlist/list.c
-    datastruct/hlist/map.c
-    datastruct/hlist/pop.c
-    datastruct/hlist/push.c
-    datastruct/hlist/reverse.c
-    datastruct/hlist/to-array.c
-    datastruct/list/add-head.c
-    datastruct/list/find.c
-    datastruct/list/init.c
-    datastruct/list/remove.c
-    datastruct/list/walk.c
-    datastruct/ntree/copy.c
-    datastruct/ntree/delete.c
-    datastruct/ntree/depth.c
-    datastruct/ntree/first-child.c
-    datastruct/ntree/free.c
-    datastruct/ntree/get-data.c
-    datastruct/ntree/insert-after.c
-    datastruct/ntree/insert-before.c
-    datastruct/ntree/insert.c
-    datastruct/ntree/last-child.c
-    datastruct/ntree/max-height.c
-    datastruct/ntree/n-nodes.c
-    datastruct/ntree/new.c
-    datastruct/ntree/next-sibling.c
-    datastruct/ntree/nth-child.c
-    datastruct/ntree/parent.c
-    datastruct/ntree/prepend.c
-    datastruct/ntree/prev-sibling.c
-    datastruct/ntree/set-data.c
-    datastruct/ntree/unlink.c
-    datastruct/ntree/walk.c
-    datastruct/vector/clear.c
-    datastruct/vector/create.c
-    datastruct/vector/destroy.c
-    datastruct/vector/get.c
-    datastruct/vector/length.c
-    datastruct/vector/set-length.c
-    datastruct/vector/set-width.c
-    datastruct/vector/width.c
     dialogues/dcs-quit/dcs-quit.c
     dialogues/info/info.c
     dialogues/name/name.c
@@ -414,19 +298,6 @@ set(GENERIC_SOURCES
     gadgets/tag-cloud/toolbar.c
     gadgets/tonemap-gadget/tonemap-gadget.c
     gadgets/treeview/treeview.c
-    geom/box/contains-box.c
-    geom/box/contains-point.c
-    geom/box/could-hold.c
-    geom/box/grow.c
-    geom/box/intersection.c
-    geom/box/intersects.c
-    geom/box/is-empty.c
-    geom/box/round.c
-    geom/box/round4.c
-    geom/box/set-origin.c
-    geom/box/union.c
-    geom/layout/layout.c
-    geom/packer/packer.c
     geom/trfm/trfm.c
     graphics/artworks/callback.c
     graphics/colour/name.c
@@ -467,22 +338,9 @@ set(GENERIC_SOURCES
     io/filing/filetype.c
     io/filing/scan.c
     io/md5/md5.c
-    io/stream/stream-mem.c
-    io/stream/stream-mtfcomp.c
-    io/stream/stream-packbitscomp.c
-    io/stream/stream-packbitsdecomp.c
-    io/stream/stream-stdio.c
-    io/stream/stream.c
     net/internet/mime_fromfiletype.c
     net/internet/mime_tofiletype.c
     net/internet/uri_decode.c
-    text/lang/emit.c
-    text/lang/error.c
-    text/lang/eval.c
-    text/lang/lex.c
-    text/lang/main.c
-    text/lang/parse.c
-    text/lang/sym.c
     text/txtfmt/txtfmt.c
     vdu/font/match.c
     vdu/screen/factors.c
@@ -645,24 +503,9 @@ set(TEST ${PROJECT_NAME}Test)
 set(TEST_SOURCES
     app/wire/test/test.c
     base/pack/test/test.c
-    databases/pickle/test/test.c
-    databases/tag-db/test/test.c
     datastruct/array/test/test.c
-    datastruct/atom/test/test.c
-    datastruct/bitarr/test/test.c
-    datastruct/bitvec/test/test.c
-    datastruct/hash/test/test.c
-    datastruct/list/test/test.c
-    datastruct/ntree/test/test.c
-    datastruct/vector/test/test.c
-    geom/layout/test/test.c
-    geom/packer/test/test.c
     io/filing/test/test.c
-    io/stream/test/test.c
     test/main/main.c
-    test/txtscr.h
-    test/txtscr/txtscr.c
-    text/lang/test/test.c
     text/txtfmt/test/test.c
     vdu/font/test/test.c)
 
