@@ -16,6 +16,8 @@
 #include "oslib/wimp.h"
 #include "oslib/wimpreadsysinfo.h"
 
+#include "datastruct/atom.h"
+
 #include "appengine/types.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/help.h"
@@ -25,7 +27,6 @@
 #include "appengine/base/messages.h"
 #include "appengine/base/numstr.h"
 #include "appengine/base/os.h"
-#include "appengine/datastruct/atom.h"
 #include "appengine/dialogues/info.h"
 #include "appengine/dialogues/name.h"
 

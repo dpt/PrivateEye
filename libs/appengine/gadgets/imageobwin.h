@@ -14,8 +14,9 @@
 #ifndef APPENGINE_IMAGEOBWIN_H
 #define APPENGINE_IMAGEOBWIN_H
 
+#include "datastruct/list.h"
+
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
 #include "appengine/wimp/event.h"

@@ -12,7 +12,8 @@
 #include "oslib/types.h"
 #include "oslib/osfile.h"
 
-#include "appengine/datastruct/list.h"
+#include "datastruct/list.h"
+
 #include "appengine/graphics/image-observer.h"
 #include "appengine/io/md5.h"
 
@@ -201,7 +202,7 @@ void image_map(image_map_callback *fn, void *opaque)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list_walk(&list_anchor, (list_walk_callback *) fn, opaque);
+  list_walk(&list_anchor, (list_walk_callback_t *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */

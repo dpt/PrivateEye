@@ -26,6 +26,9 @@
 #include "exiftags/exif.h"
 #include "exiftags/jpeg.h"
 
+#include "datastruct/list.h"
+#include "datastruct/ntree.h"
+
 #include "appengine/types.h"
 #include "appengine/base/bsearch.h"
 #include "appengine/base/bytesex.h"
@@ -33,8 +36,6 @@
 #include "appengine/base/oserror.h"
 #include "appengine/base/pack.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/list.h"
-#include "appengine/datastruct/ntree.h"
 
 #include "jpeg.h"
 

@@ -13,7 +13,8 @@
 #include "oslib/colourtrans.h"
 #include "oslib/wimp.h"
 
-#include "appengine/geom/box.h"
+#include "geom/box.h"
+
 #include "appengine/app/choices.h"
 #include "appengine/base/oserror.h"
 #include "appengine/base/messages.h"

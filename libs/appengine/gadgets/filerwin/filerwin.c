@@ -13,14 +13,15 @@
 #include "oslib/wimpreadsysinfo.h"
 #include "oslib/wimpspriteop.h"
 
-#include "appengine/types.h"
-#include "appengine/geom/box.h"
+#include "datastruct/bitvec.h"
+#include "geom/box.h"
+
 #include "appengine/base/errors.h"
-#include "appengine/wimp/event.h"
 #include "appengine/base/os.h"
+#include "appengine/types.h"
 #include "appengine/vdu/screen.h"
+#include "appengine/wimp/event.h"
 #include "appengine/wimp/window.h"
-#include "appengine/datastruct/bitvec.h"
 
 #include "appengine/gadgets/filerwin.h"
 

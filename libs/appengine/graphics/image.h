@@ -12,9 +12,10 @@
 #include "oslib/os.h"
 #include "oslib/wimp.h"
 
-#include "appengine/datastruct/list.h"
+#include "datastruct/list.h"
+#include "datastruct/ntree.h"
+
 #include "appengine/vdu/sprite.h"
-#include "appengine/datastruct/ntree.h"
 
 #define T image_t
 

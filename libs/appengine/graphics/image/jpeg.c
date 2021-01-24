@@ -20,10 +20,11 @@
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/ntree.h"
+
 #include "appengine/base/messages.h"
 #include "appengine/base/oserror.h"
 #include "appengine/base/utils.h"
-#include "appengine/datastruct/ntree.h"
 #include "appengine/graphics/jpegtran.h"
 #include "appengine/vdu/sprite.h"
 

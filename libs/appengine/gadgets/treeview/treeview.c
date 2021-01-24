@@ -13,11 +13,12 @@
 #include "oslib/osspriteop.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/bitvec.h"
+#include "datastruct/ntree.h"
+#include "geom/box.h"
+
 #include "appengine/types.h"
 #include "appengine/base/bsearch.h"
-#include "appengine/datastruct/bitvec.h"
-#include "appengine/datastruct/ntree.h"
-#include "appengine/geom/box.h"
 #include "appengine/text/txtfmt.h"
 #include "appengine/wimp/window.h"
 

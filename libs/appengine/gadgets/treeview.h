@@ -8,8 +8,9 @@
 
 #include "oslib/wimp.h"
 
+#include "datastruct/ntree.h"
+
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/ntree.h"
 
 #define T treeview_t
 

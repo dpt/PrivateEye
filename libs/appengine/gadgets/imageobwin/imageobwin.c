@@ -13,11 +13,12 @@
 #include "oslib/osbyte.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/types.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
 #include "appengine/wimp/event.h"

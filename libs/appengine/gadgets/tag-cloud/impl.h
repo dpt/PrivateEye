@@ -9,9 +9,10 @@
 #include "oslib/font.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/bitvec.h"
+#include "datastruct/atom.h"
+
 #include "appengine/wimp/dialogue.h"
-#include "appengine/datastruct/bitvec.h"
-#include "appengine/datastruct/atom.h"
 #include "appengine/base/errors.h"
 
 #include "appengine/gadgets/tag-cloud.h"

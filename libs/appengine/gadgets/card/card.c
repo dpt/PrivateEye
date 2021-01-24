@@ -12,9 +12,10 @@
 #include "oslib/colourtrans.h"
 #include "oslib/os.h"
 
+#include "geom/box.h"
+
 #include "appengine/types.h"
 #include "appengine/gadgets/card.h"
-#include "appengine/geom/box.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/vdu/sprite.h"
 #include "appengine/wimp/window.h"

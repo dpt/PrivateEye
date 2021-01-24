@@ -6,9 +6,10 @@
 
 #include "oslib/types.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/list.h"
 
 #include "appengine/app/wire.h"
 
@@ -55,7 +56,7 @@ void wire_fin(void)
 {
   /* inefficient: we walk list twice */
 
-  list_walk(&LOCALS.anchor, (list_walk_callback *) fin_cb, NULL);
+  list_walk(&LOCALS.anchor, (list_walk_callback_t *) fin_cb, NULL);
 }
 
 /* ----------------------------------------------------------------------- */

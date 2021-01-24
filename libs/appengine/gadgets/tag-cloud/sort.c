@@ -13,10 +13,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "datastruct/atom.h"
+
 #include "appengine/types.h"
 #include "appengine/wimp/icon.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/atom.h"
 
 #include "appengine/gadgets/tag-cloud.h"
 

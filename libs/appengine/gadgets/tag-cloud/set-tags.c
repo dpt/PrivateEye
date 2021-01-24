@@ -9,8 +9,9 @@
 
 #include "fortify/fortify.h"
 
+#include "datastruct/atom.h"
+
 #include "appengine/base/bitwise.h"
-#include "appengine/datastruct/atom.h"
 #include "appengine/wimp/icon.h"
 #include "appengine/base/messages.h"
 

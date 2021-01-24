@@ -8,8 +8,9 @@
 
 #include "fortify/fortify.h"
 
+#include "datastruct/bitvec.h"
+
 #include "appengine/base/bsearch.h"
-#include "appengine/datastruct/bitvec.h"
 #include "appengine/gadgets/tag-cloud.h"
 
 #include "impl.h"

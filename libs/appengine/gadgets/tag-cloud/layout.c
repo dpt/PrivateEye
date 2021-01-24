@@ -16,10 +16,11 @@
 #include "oslib/wimpreadsysinfo.h"
 #include "oslib/osfile.h"
 
+#include "datastruct/atom.h"
+#include "geom/box.h"
+
 #include "appengine/types.h"
 #include "appengine/base/bitwise.h"
-#include "appengine/datastruct/atom.h"
-#include "appengine/geom/box.h"
 #include "appengine/wimp/event.h"
 #include "appengine/vdu/font.h"
 
