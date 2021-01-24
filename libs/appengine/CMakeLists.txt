@@ -4,7 +4,7 @@
 #
 # Copyright (c) David Thomas, 2021
 #
-# vim: sw=4
+# vim: sw=4 ts=8 et
 
 # TODO
 #
@@ -20,6 +20,9 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules/)
+
+include(ExternalProject)
+
 
 # ASM_ASASM is our CMake name for the GCCSDK objasm-format assembler 'asasm'.
 project(AppEngine VERSION 0.6.8 DESCRIPTION "DPT's RISC OS application library" LANGUAGES C ASM_ASASM)
@@ -41,8 +44,8 @@ if(TARGET_RISCOS)
     set(CMAKE_EXECUTABLE_SUFFIX ,ff8)
 
     # For now, divide assembly targets into ancient or modern ARM (pivot=ARMv5).
-    option(APPENGINE_ARMV5 "Utilise ARMv5" OFF)
-    if(APPENGINE_ARMV5)
+    option(ARMV5 "Utilise ARMv5" OFF)
+    if(ARMV5)
         string(APPEND CMAKE_C_FLAGS " -march=armv5 -mtune=xscale")
         string(APPEND CMAKE_ASM_ASASM_FLAGS "-cpu XScale -fpu FPA10")
     else()
@@ -60,9 +63,29 @@ if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     message(STATUS "AppEngine: Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
+# Import DPTLib
+#
+
+set(DPTLIB_INSTALL_DIR ${CMAKE_BINARY_DIR}/DPTLib)
+set(DPTLIB_INCLUDE ${DPTLIB_INSTALL_DIR}/include)
+set(DPTLIB_LIB ${DPTLIB_INSTALL_DIR}/DPTLib.a)
+if(TARGET_RISCOS AND ARMV5)
+    set(DPTLIB_ARM_ARCH -DARMV5=1)
+endif()
+# BUILD_BYPRODUCTS must be specified in this command otherwise ninja won't
+# know when to build the library.
+ExternalProject_Add(DPTLib
+    GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
+    GIT_TAG HEAD
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${DPTLIB_INSTALL_DIR} -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} ${DPTLIB_ARM_ARCH}
+    BUILD_BYPRODUCTS ${DPTLIB_LIB})
+
+
 set(LIBRARY ${PROJECT_NAME})
 
 add_library(${LIBRARY})
+
+add_dependencies(${LIBRARY} DPTLib)  # need it for headers, lib - how to express that?
 
 set_target_properties(${LIBRARY} PROPERTIES
     VERSION 0.6.8
@@ -79,6 +102,7 @@ set_target_properties(${LIBRARY} PROPERTIES
 # those headers omit the parent directory.
 target_include_directories(${LIBRARY}
     PUBLIC
+    ${DPTLIB_INCLUDE}
     ${CMAKE_SOURCE_DIR}
     PRIVATE
     ..
@@ -462,7 +486,7 @@ set(ARM_AFTER_V5_SOURCES
     base/bitwise/target/arm-v5/clz.s)
 
 set(ALL_SOURCES ${PUBLIC_HEADERS} ${GENERIC_SOURCES} ${ARM_SOURCES})
-if(APPENGINE_ARMV5)
+if(ARMV5)
     list(APPEND ALL_SOURCES ${ARM_AFTER_V3M_SOURCES} ${ARM_AFTER_V5_SOURCES})
 else()
     list(APPEND ALL_SOURCES ${ARM_BEFORE_V3M_SOURCES} ${ARM_BEFORE_V5_SOURCES})
@@ -490,53 +514,73 @@ if(TARGET_RISCOS)
 endif()
 
 if(USE_FORTIFY)
-    target_compile_definitions(${LIBRARY} PRIVATE FORTIFY)
+    target_compile_definitions(${LIBRARY} PUBLIC FORTIFY)
     target_link_libraries(${LIBRARY} PUBLIC Fortify)
 endif()
-
-
-# Self-test executable
-#
-
-set(TEST ${PROJECT_NAME}Test)
-
-set(TEST_SOURCES
-    app/wire/test/test.c
-    base/pack/test/test.c
-    datastruct/array/test/test.c
-    io/filing/test/test.c
-    test/main/main.c
-    text/txtfmt/test/test.c
-    vdu/font/test/test.c)
-
-# Avoid a warning from CMake
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-
-add_executable(${TEST} ${TEST_SOURCES})
-
-set_target_properties(${TEST} PROPERTIES
-    DESCRIPTION "AppEngine test program"
-    C_STANDARD 99
-    OUTPUT_NAME_DEBUG ${TEST}-debug
-    OUTPUT_NAME_RELEASE ${TEST}
-    OUTPUT_NAME_RELWITHDEBINFO ${TEST}-relwithdebinfo
-    OUTPUT_NAME_MINSIZEREL ${TEST}-minsizerel)
-
-target_include_directories(${TEST} PRIVATE ..)
-
-# AETest dependencies
-# Of course, AETest depends on AppEngine.
-target_link_libraries(${TEST} ${LIBRARY})
 
 
 # Installation
 #
 
-# Note: This affects everything built by this file.
-set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR} CACHE PATH "CMake install prefix" FORCE)
+# Set install location
+# - We can't use set(...) with FORCE because that will override any passed-in
+#   configuration values.
+# - We can't use set(...) without FORCE because that won't override the default
+#   value...
+# - So, just check for the default value and override it if set.
+if(${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local")
+    set(CMAKE_INSTALL_PREFIX "install" CACHE PATH "CMake install prefix" FORCE)
+endif()
 
-# Install library & test program into root of build directory.
-install(TARGETS ${LIBRARY} ${TEST}
-    CONFIGURATIONS Debug Release RelWithDebInfo MinSizeRel
-    ARCHIVE DESTINATION .
-    RUNTIME DESTINATION .)
+# Install headers and library
+# - We have to use EXCLUDE_FROM_ALL to stop the PUBLIC_HEADERs getting
+#   installed by install(TARGETS ...).
+install(TARGETS ${LIBRARY} ARCHIVE
+    PUBLIC_HEADER EXCLUDE_FROM_ALL)
+# - We can't use install(TARGETS ... PUBLIC_HEADER) to install headers, as
+#   expected, since that flattens the include directory's hierarchy. Use
+#   install(DIRECTORY ...) instead.
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
+    FILES_MATCHING PATTERN "*.h")
+
+
+# Self-test executable
+#
+
+option(BUILD_TESTS "Build test program" OFF)
+
+if(BUILD_TESTS)
+    set(TEST ${PROJECT_NAME}Test)
+
+    set(TEST_SOURCES
+        app/wire/test/test.c
+        base/pack/test/test.c
+        datastruct/array/test/test.c
+        io/filing/test/test.c
+        test/main/main.c
+        text/txtfmt/test/test.c
+        vdu/font/test/test.c)
+
+    # Avoid a warning from CMake
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
+    add_executable(${TEST} ${TEST_SOURCES})
+
+    set_target_properties(${TEST} PROPERTIES
+        DESCRIPTION "AppEngine test program"
+        C_STANDARD 99
+        OUTPUT_NAME_DEBUG ${TEST}-debug
+        OUTPUT_NAME_RELEASE ${TEST}
+        OUTPUT_NAME_RELWITHDEBINFO ${TEST}-relwithdebinfo
+        OUTPUT_NAME_MINSIZEREL ${TEST}-minsizerel)
+
+    target_include_directories(${TEST} PRIVATE ..)
+
+    # AETest dependencies
+    # Of course, AETest depends on AppEngine.
+    target_link_libraries(${TEST} ${LIBRARY})
+
+    install(TARGETS ${TEST} RUNTIME
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+endif()
