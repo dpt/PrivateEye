@@ -21,7 +21,7 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules/)
 
-include(ExternalProject)
+include(FetchContent)
 
 
 # ASM_ASASM is our CMake name for the GCCSDK objasm-format assembler 'asasm'.
@@ -67,27 +67,16 @@ endif()
 
 # Import DPTLib
 #
-
-set(DPTLIB_INSTALL_DIR ${CMAKE_BINARY_DIR}/DPTLib)
-set(DPTLIB_INCLUDE ${DPTLIB_INSTALL_DIR}/include)
-set(DPTLIB_LIB ${DPTLIB_INSTALL_DIR}/DPTLib.a)
-if(TARGET_RISCOS AND ARMV5)
-    set(DPTLIB_ARM_ARCH -DARMV5=1)
-endif()
-# BUILD_BYPRODUCTS must be specified in this command otherwise ninja won't
-# know when to build the library.
-ExternalProject_Add(DPTLib
+FetchContent_Declare(DPTLib
     GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
-    GIT_TAG HEAD
-    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${DPTLIB_INSTALL_DIR} -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} ${DPTLIB_ARM_ARCH}
-    BUILD_BYPRODUCTS ${DPTLIB_LIB})
-
+    GIT_TAG HEAD)
+FetchContent_MakeAvailable(DPTLib)
 
 set(LIBRARY ${PROJECT_NAME})
 
 add_library(${LIBRARY})
 
-add_dependencies(${LIBRARY} DPTLib)  # need it for headers, lib - how to express that?
+target_link_libraries(${LIBRARY} PUBLIC DPTLib)
 
 set_target_properties(${LIBRARY} PROPERTIES
     VERSION 0.6.8
