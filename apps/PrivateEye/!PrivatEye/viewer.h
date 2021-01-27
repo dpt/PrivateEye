@@ -10,10 +10,11 @@
 #include "oslib/os.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/app/choices.h"
 #include "appengine/graphics/drawable.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/wimp/window.h"
 
 #include "zones.h"

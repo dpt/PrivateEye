@@ -6,9 +6,10 @@
 #ifndef TAGS_COMMON_H
 #define TAGS_COMMON_H
 
+#include "databases/filename-db.h"
+
 #include "appengine/app/choices.h"
 #include "appengine/base/errors.h"
-#include "appengine/databases/filename-db.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image.h"
 
@@ -17,15 +18,15 @@
 // this name isn't quite right. this is non-common stuff which tags_common needs to know about. so a 'tags_common instance' data.
 typedef struct tags_common
 {
-  tagdb     *db;
-  tagdb_tag *indextotag; /* maps tag cloud indices to tagdb indices */
-  int        nindextotag;
+  tagdb_t     *db;
+  tagdb_tag_t *indextotag; /* maps tag cloud indices to tagdb indices */
+  int          nindextotag;
 }
 tags_common;
 
 /* ----------------------------------------------------------------------- */
 
-tagdb *tags_common_get_db(void);
+tagdb_t *tags_common_get_db(void);
 
 filenamedb_t *tags_common_get_filename_db(void);
 

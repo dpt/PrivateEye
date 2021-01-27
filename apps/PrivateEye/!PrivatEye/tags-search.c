@@ -15,11 +15,12 @@
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
+#include "databases/filename-db.h"
+#include "databases/tag-db.h"
+
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/os.h"
-#include "appengine/databases/filename-db.h"
-#include "appengine/databases/tag-db.h"
 #include "appengine/datastruct/array.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/help.h"
@@ -288,7 +289,7 @@ static error tags_search_search(void)
   {
     /* this function matches all tags */
     err = tagdb_enumerate_ids_by_tags(tags_common_get_db(),
-                        (tagdb_tag *) LOCALS.indices.indices,
+                      (tagdb_tag_t *) LOCALS.indices.indices,
                                       LOCALS.indices.nindices,
                                      &cont,
                                       buf, sizeof(buf));

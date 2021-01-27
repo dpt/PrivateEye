@@ -19,6 +19,8 @@
 #include "oslib/os.h"
 #include "oslib/osfile.h"
 
+#include "geom/box.h"
+
 #include "appengine/app/choices.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
@@ -26,7 +28,6 @@
 #include "appengine/base/strings.h"
 #include "appengine/datastruct/array.h"
 #include "appengine/dialogues/dcs-quit.h"
-#include "appengine/geom/box.h"
 #include "appengine/graphics/drawable.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
@@ -285,7 +286,7 @@ void viewer_map(viewer_map_callback *fn, void *opaque)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list_walk(&list_anchor, (list_walk_callback *) fn, opaque);
+  list_walk(&list_anchor, (list_walk_callback_t *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */

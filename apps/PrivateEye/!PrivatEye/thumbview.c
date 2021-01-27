@@ -22,6 +22,12 @@
 #include "oslib/osgbpb.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/atom.h"
+#include "datastruct/list.h"
+#include "geom/box.h"
+#include "geom/layout.h"
+#include "geom/packer.h"
+
 #include "appengine/types.h"
 #include "appengine/app/keymap.h"
 #include "appengine/app/wire.h"
@@ -31,14 +37,9 @@
 #include "appengine/base/numstr.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/atom.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/gadgets/card.h"
 #include "appengine/gadgets/filerwin.h"
 #include "appengine/gadgets/tag-cloud.h"
-#include "appengine/geom/box.h"
-#include "appengine/geom/layout.h"
-#include "appengine/geom/packer.h"
 #include "appengine/graphics/drawable.h"
 #include "appengine/io/filing.h"
 #include "appengine/vdu/screen.h"
@@ -226,7 +227,7 @@ typedef int (thumbview_map_callback)(thumbview *tv, void *opaque);
 /* Call the specified function for every thumbview window. */
 static void thumbview_map(thumbview_map_callback *fn, void *opaque)
 {
-  list_walk(&LOCALS.list_anchor, (list_walk_callback *) fn, opaque);
+  list_walk(&LOCALS.list_anchor, (list_walk_callback_t *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -951,9 +952,9 @@ static error layout(thumbview *tv)
 
   unsigned int   flags;
   packer_t      *packer;
-  layout_spec    spec;
+  layout_spec_t  spec;
   int            i;
-  layout_element els[8];
+  layout_element_t els[8];
   os_box         boxes[8];
   os_box         used;
   int            y;
@@ -1099,7 +1100,7 @@ static error layout(thumbview *tv)
   if (flags & FILEN)
     tv->layout.elements[ElementIndex_Filename]  = boxes[i++];
 
-  used = *packer_get_consumed_area(packer);
+  used = * (os_box*) packer_get_consumed_area(packer);  // DPT FIX CONVERSION
 
   /* Re-add the margins, which get_consumed_area does not account for. */
 
