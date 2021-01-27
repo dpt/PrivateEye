@@ -47,11 +47,13 @@ if(TARGET_RISCOS)
     option(ARMV5 "Utilise ARMv5" OFF)
     if(ARMV5)
         string(APPEND CMAKE_C_FLAGS " -march=armv5 -mtune=xscale")
-        string(APPEND CMAKE_ASM_ASASM_FLAGS "-cpu XScale -fpu FPA10")
+        string(APPEND CMAKE_ASM_ASASM_FLAGS " -cpu XScale -fpu FPA10")
     else()
         string(APPEND CMAKE_C_FLAGS " -march=armv2 -mtune=arm2")
-        string(APPEND CMAKE_ASM_ASASM_FLAGS "-cpu ARM2 -fpu FPA10")
+        string(APPEND CMAKE_ASM_ASASM_FLAGS " -cpu ARM2 -fpu FPA10")
     endif()
+
+    # TODO: It's possible that those flags are already present so the appends above may be redundant. Apply it to targets instead?
 endif()
 
 # If this is enabled then the final binary will need to be linked against
