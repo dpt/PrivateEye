@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules/)
+list(APPEND CMAKE_MODULE_PATH $ENV{APPENGINE_ROOT}/cmake/Modules)
 
 include(FetchContent)
 
@@ -28,37 +28,14 @@ include(FetchContent)
 project(AppEngine VERSION 0.6.8 DESCRIPTION "DPT's RISC OS application library" LANGUAGES C ASM_ASASM)
 
 # The values set in the toolchain file aren't available until this point.
-
 if(NOT DEFINED TARGET_RISCOS)
     message(FATAL_ERROR "AppEngine builds for RISC OS only")
 endif()
 
-if(TARGET_RISCOS AND NOT DEFINED ENV{GCCSDK_INSTALL_ENV})
-    message(FATAL_ERROR "GCCSDK_INSTALL_ENV is not set")
-endif()
-
 if(TARGET_RISCOS)
-    set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG" CACHE STRING "" FORCE) # overwrite default of '-O3 -NDEBUG'
-
-    # I tried to get this to live in riscos.cmake but was defeated.
-    set(CMAKE_EXECUTABLE_SUFFIX ,ff8)
-
-    # For now, divide assembly targets into ancient or modern ARM (pivot=ARMv5).
-    option(ARMV5 "Utilise ARMv5" OFF)
-    if(ARMV5)
-        string(APPEND CMAKE_C_FLAGS " -march=armv5 -mtune=xscale")
-        string(APPEND CMAKE_ASM_ASASM_FLAGS " -cpu XScale -fpu FPA10")
-    else()
-        string(APPEND CMAKE_C_FLAGS " -march=armv2 -mtune=arm2")
-        string(APPEND CMAKE_ASM_ASASM_FLAGS " -cpu ARM2 -fpu FPA10")
-    endif()
-
+    riscos_set_flags()
     # TODO: It's possible that those flags are already present so the appends above may be redundant. Apply it to targets instead?
 endif()
-
-# If this is enabled then the final binary will need to be linked against
-# Fortify too.
-option(USE_FORTIFY "Use Fortify" OFF)
 
 # Referencing CMAKE_TOOLCHAIN_FILE avoids a warning on rebuilds.
 if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
@@ -66,37 +43,40 @@ if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
 endif()
 
 # Import DPTLib
-#
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
     GIT_TAG HEAD)
 FetchContent_MakeAvailable(DPTLib)
 
-set(LIBRARY ${PROJECT_NAME})
+# Import Fortify
+# If this is enabled then the final binary will need to be linked against
+# Fortify too.
+option(USE_FORTIFY "Use Fortify" OFF)
+if(USE_FORTIFY)
+    add_subdirectory($ENV{APPENGINE_ROOT}/libs/fortify fortify-build)
+endif()
 
-add_library(${LIBRARY})
+add_library(AppEngine)
 
-target_link_libraries(${LIBRARY} PUBLIC DPTLib)
+target_link_libraries(AppEngine PUBLIC DPTLib)
 
-set_target_properties(${LIBRARY} PROPERTIES
+set_target_properties(AppEngine PROPERTIES
     VERSION 0.6.8
     DESCRIPTION "DPT's RISC OS application C library"
     C_STANDARD 99
     PREFIX ""  # remove 'lib' prefix
-    ARCHIVE_OUTPUT_NAME_DEBUG ${LIBRARY}-debug
-    ARCHIVE_OUTPUT_NAME_RELEASE ${LIBRARY}
-    ARCHIVE_OUTPUT_NAME_RELWITHDEBINFO ${LIBRARY}-relwithdebinfo
-    ARCHIVE_OUTPUT_NAME_MINSIZEREL ${LIBRARY}-minsizerel)
+    ARCHIVE_OUTPUT_NAME_DEBUG AppEngine-debug
+    ARCHIVE_OUTPUT_NAME_RELEASE AppEngine
+    ARCHIVE_OUTPUT_NAME_RELWITHDEBINFO AppEngine-relwithdebinfo
+    ARCHIVE_OUTPUT_NAME_MINSIZEREL AppEngine-minsizerel)
 
 # Look for includes in the 'libs' dir so that #include "fortify/fortify.h"
 # works. Also look in the 'flex' and 'zlib' dirs directly since includers of
 # those headers omit the parent directory.
-target_include_directories(${LIBRARY}
+target_include_directories(AppEngine
     PUBLIC
-    ${DPTLIB_INCLUDE}
-    ${CMAKE_SOURCE_DIR}
+    .. # AppEngine headers are found relative to our parent dir
     PRIVATE
-    ..
     ../flex
     ../zlib)
 
@@ -483,16 +463,16 @@ else()
     list(APPEND ALL_SOURCES ${ARM_BEFORE_V3M_SOURCES} ${ARM_BEFORE_V5_SOURCES})
 endif()
 
-target_sources(${LIBRARY} PRIVATE ${ALL_SOURCES})
+target_sources(AppEngine PRIVATE ${ALL_SOURCES})
 
 # Ensure that compilers and assemblers don't receive each other's options.
-target_compile_options(${LIBRARY}
+target_compile_options(AppEngine
     PRIVATE
     $<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-Wall -Wextra -pedantic>
     $<$<COMPILE_LANGUAGE:ASM_ASASM>:-Pedantic>)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_definitions(${LIBRARY} PRIVATE $<UPPER_CASE:${LIBRARY}>_DEBUG)
+    target_compile_definitions(AppEngine PRIVATE APPENGINE_DEBUG)
 endif()
 
 # Library dependencies
@@ -500,13 +480,12 @@ endif()
 
 if(TARGET_RISCOS)
     # OSLib (& anything else in GCCSDK)
-    target_include_directories(${LIBRARY} PUBLIC $ENV{GCCSDK_INSTALL_ENV}/include)
-    target_link_libraries(${LIBRARY} PUBLIC $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
+    target_include_directories(AppEngine PUBLIC $ENV{GCCSDK_INSTALL_ENV}/include)
+    target_link_libraries(AppEngine PUBLIC $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
 endif()
 
 if(USE_FORTIFY)
-    target_compile_definitions(${LIBRARY} PUBLIC FORTIFY)
-    target_link_libraries(${LIBRARY} PUBLIC Fortify)
+    target_link_libraries(AppEngine PUBLIC Fortify)
 endif()
 
 
@@ -526,7 +505,7 @@ endif()
 # Install headers and library
 # - We have to use EXCLUDE_FROM_ALL to stop the PUBLIC_HEADERs getting
 #   installed by install(TARGETS ...).
-install(TARGETS ${LIBRARY} ARCHIVE
+install(TARGETS AppEngine ARCHIVE
     PUBLIC_HEADER EXCLUDE_FROM_ALL)
 # - We can't use install(TARGETS ... PUBLIC_HEADER) to install headers, as
 #   expected, since that flattens the include directory's hierarchy. Use
@@ -542,8 +521,6 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
 option(BUILD_TESTS "Build test program" OFF)
 
 if(BUILD_TESTS)
-    set(TEST ${PROJECT_NAME}Test)
-
     set(TEST_SOURCES
         app/wire/test/test.c
         base/pack/test/test.c
@@ -556,22 +533,21 @@ if(BUILD_TESTS)
     # Avoid a warning from CMake
     set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
-    add_executable(${TEST} ${TEST_SOURCES})
+    add_executable(AppEngineTest ${TEST_SOURCES})
 
-    set_target_properties(${TEST} PROPERTIES
+    set_target_properties(AppEngineTest PROPERTIES
         DESCRIPTION "AppEngine test program"
         C_STANDARD 99
-        OUTPUT_NAME_DEBUG ${TEST}-debug
-        OUTPUT_NAME_RELEASE ${TEST}
-        OUTPUT_NAME_RELWITHDEBINFO ${TEST}-relwithdebinfo
-        OUTPUT_NAME_MINSIZEREL ${TEST}-minsizerel)
+        OUTPUT_NAME_DEBUG AppEngineTest-debug
+        OUTPUT_NAME_RELEASE AppEngineTest
+        OUTPUT_NAME_RELWITHDEBINFO AppEngineTest-relwithdebinfo
+        OUTPUT_NAME_MINSIZEREL AppEngineTest-minsizerel)
 
-    target_include_directories(${TEST} PRIVATE ..)
 
     # AETest dependencies
     # Of course, AETest depends on AppEngine.
-    target_link_libraries(${TEST} ${LIBRARY})
+    target_link_libraries(AppEngineTest AppEngine)
 
-    install(TARGETS ${TEST} RUNTIME
+    install(TARGETS AppEngineTest RUNTIME
         DESTINATION ${CMAKE_INSTALL_PREFIX})
 endif()
