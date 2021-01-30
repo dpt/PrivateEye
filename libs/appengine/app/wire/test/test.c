@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef FORTIFY
 #include "fortify/fortify.h"
+#endif
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"

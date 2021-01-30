@@ -6,7 +6,9 @@
 
 #include <limits.h>
 
+#ifdef FORTIFY
 #include "fortify/fortify.h"
+#endif
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
