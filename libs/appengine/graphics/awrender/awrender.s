@@ -22,7 +22,7 @@ StackSize       EQU     1024
 ; This code doesn't actually extend/check the stack size, but APCS defines
 ; that there should be plenty, and it seems to cope with every file tried
 
-        AREA    |AWRender$$Data|, DATA
+        AREA    |AWRender$$Data|, DATA, NOINIT
 
 callback_handler
         DCD     0
