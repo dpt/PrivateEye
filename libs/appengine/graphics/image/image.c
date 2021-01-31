@@ -238,13 +238,11 @@ static error destroy_metadata_callback(ntree_t *t, void *opaque)
 
 void image_destroy_metadata(ntree_t *metadata)
 {
-  error err;
-
-  err = ntree_walk(metadata,
-                   ntree_WALK_POST_ORDER | ntree_WALK_ALL,
-                   0,
-                   destroy_metadata_callback,
-                   NULL);
+  (void) ntree_walk(metadata,
+                    ntree_WALK_POST_ORDER | ntree_WALK_ALL,
+                    0,
+                    destroy_metadata_callback,
+                    NULL);
 
   ntree_delete(metadata);
 }
