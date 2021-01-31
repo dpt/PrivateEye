@@ -200,23 +200,21 @@ static int jpeg_rotate(image_choices *choices, image_t *image, int angle)
    * when the 'trim' flag is in effect. */
 
   {
-    os_error        *e;
-    jpeg_info_flags  flags;
-    int              width, height;
-    int              xdpi, ydpi;
+    jpeg_info_flags flags;
+    int             width, height;
+    int             xdpi, ydpi;
 
     /* Rotate +/-90, Transpose, Transverse all change the image dimensions.
      * Also if -trim is enabled. In those cases, re-read them. */
 
-    e = EC(xjpeginfo_dimensions((jpeg_image *) newdata,
-                                 newlength,
-                                &flags,
-                                &width,
-                                &height,
-                                &xdpi,
-                                &ydpi,
-                                 NULL));
-
+    (void) EC(xjpeginfo_dimensions((jpeg_image *) newdata,
+                                                  newlength,
+                                                 &flags,
+                                                 &width,
+                                                 &height,
+                                                 &xdpi,
+                                                 &ydpi,
+                                                  NULL));
     image->display.dims.bm.width  = width;
     image->display.dims.bm.height = height;
   }
@@ -270,7 +268,6 @@ static int jpeg_to_spr_common(image_t *image)
   int                sprimgbytes;
   osspriteop_area   *area;
   osspriteop_header *header;
-  byte              *sptr;
   int                c0, c1, c2, c3;
 
   hourglass_on();
@@ -336,8 +333,6 @@ static int jpeg_to_spr_common(image_t *image)
 
     make_grey_palette(3, palette);
   }
-
-  sptr = (byte *) header + 44 + sprpalbytes;
 
   osspriteop_switch_output_to_sprite(osspriteop_PTR,
                                      area,
