@@ -541,6 +541,7 @@ void png_export_methods(image_choices *choices, image_t *image)
     bitmap_unload,
     bitmap_histogram,
     bitmap_rotate,
+    NULL,
     NULL
   };
 

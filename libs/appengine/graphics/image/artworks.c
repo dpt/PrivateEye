@@ -138,6 +138,7 @@ void artworks_export_methods(image_choices *choices, image_t *image)
     artworks_unload,
     NULL,
     NULL,
+    NULL,
     NULL
   };
 

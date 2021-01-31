@@ -256,7 +256,7 @@ static int jpeg_to_spr_common(image_t *image)
     bitmap_histogram,
     bitmap_rotate,
     NULL,
-    NULL,
+    NULL
   };
 
   os_error          *e;

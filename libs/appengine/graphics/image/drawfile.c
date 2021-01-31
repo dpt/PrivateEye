@@ -101,6 +101,7 @@ void drawfile_export_methods(image_choices *choices, image_t *image)
     drawfile_unload,
     NULL,
     NULL,
+    NULL,
     NULL
   };
 
