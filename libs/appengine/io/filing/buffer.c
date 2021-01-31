@@ -51,7 +51,7 @@ void buffer_stop(void)
 
   heap_delete(h);
 
-  EC(_swix(OS_Find, _INR(0,1), 0x00, handle));
+  (void) EC(_swix(OS_Find, _INR(0,1), 0x00, handle));
 }
 
 static int buffer_refill(void)
@@ -92,6 +92,8 @@ int buffer_getblock(char *to, size_t block_size)
   copied = 0;
   while (block_size)
   {
+    size_t bufbytes;
+
     if (buffer_ptr == buffer_end)
     {
       read = buffer_refill();
@@ -100,8 +102,9 @@ int buffer_getblock(char *to, size_t block_size)
       else if (read == 0) /* eof */
         return copied;
     }
-    if (block_size > buffer_end - buffer_ptr)   /* bytes in buffer */
-      copy = buffer_end - buffer_ptr;
+    bufbytes = buffer_end - buffer_ptr;
+    if (block_size > bufbytes)
+      copy = bufbytes;
     else
       copy = block_size;
     memcpy((char *) to, (char *) buffer_ptr, copy);
