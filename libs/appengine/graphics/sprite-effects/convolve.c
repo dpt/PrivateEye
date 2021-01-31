@@ -530,7 +530,6 @@ static error convolve_888(const convolve_lut *lut,
   const Pixel888  *ip;
   Pixel888        *op;
   convolve_888_fn *fn;
-  int              bias;
 
   /* buffer and pad the input */
 
@@ -550,8 +549,6 @@ static error convolve_888(const convolve_lut *lut,
 
   ip = buf;
   op = dst;
-
-  bias = lut->bias;
 
   switch (lut->stages)
   {
