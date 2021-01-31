@@ -44,12 +44,12 @@ awrender_file_init
 ; a2 =  callback handler
 ; a3 =  document size
 ; a4 =  user handle
-        STMFD   sp!, {v1-v6, lr}
+        PUSH    {v1-v6, lr}
         LDR     v1, = callback_handler
         STMIA   v1, {a2, a4, sl, fp}
         MOV     v1, a1
         SWI     XAWRender_FileInitAddress
-        LDMVSFD sp!, {v1-v6, pc}
+        POPVS   {v1-v6, pc}
         MOV     v1, r0
         MOV     r12, r1
         MOV     r0, v1
@@ -59,7 +59,7 @@ awrender_file_init
         MOVVC   a1, #0
         LDR     v1, = apcs_regs
         LDMIA   v1, {sl, fp}
-        LDMFD   sp!, {v1-v6, pc}
+        POP     {v1-v6, pc}
 
 awrender_render
 ; a1 => document in resizable block
@@ -73,7 +73,7 @@ awrender_render
 ; s12 = output destination
 ; s16 = user handle
         MOV     ip, sp
-        STMFD   sp!, {v1-v6, lr}
+        PUSH    {v1-v6, lr}
         LDR     v1, = callback_handler
         LDR     v2, [ip, #4]
         LDR     v3, [ip, #16]
@@ -81,7 +81,7 @@ awrender_render
         MOV     v1, a1
         MOV     v2, a2
         SWI     XAWRender_RenderAddress
-        LDMVSFD sp!, {v1-v6, pc}
+        POPVS   {v1-v6, pc}
         MOV     lr, ip
         MOV     v6, r0
         MOV     r12, r1
@@ -94,7 +94,7 @@ awrender_render
         MOVVC   a1, #0
         LDR     v1, = apcs_regs
         LDMIA   v1, {sl, fp}
-        LDMFD   sp!, {v1-v6, pc}
+        POP     {v1-v6, pc}
 
         ALIGN
 
@@ -117,7 +117,7 @@ callback_veneer
 not_colour
         CMP     r11,#0
         MOVNE   pc, lr
-        STMFD   sp!, {v1, sl, fp, ip, lr}
+        PUSH    {v1, sl, fp, ip, lr}
         LDR     v1, = callback_handler
         LDMIA   v1, {a2, a3, sl, fp}    ; Get APCS regs
         MOV     a4, a2
@@ -133,23 +133,23 @@ not_colour
         ; New 32-bit return
         BNE     callback_error
         CMP     r0,#0   ; Clear V
-        LDMFD   sp!, {v1, sl, fp, ip, pc}
+        POP     {v1, sl, fp, ip, pc}
 callback_error
         ; Set V
         CMP     r0,#&80000000
         CMNVC   r0,#&80000000
-        LDMFD   sp!, {v1, sl, fp, ip, pc}
+        POP     {v1, sl, fp, ip, pc}
         ; Original 26-bit return
-        ;LDMFD  sp!, {v1, sl, fp, ip, lr}
+        ;POP    {v1, sl, fp, ip, lr}
         ;BICEQS pc, lr, #V_flag ; Reflect above error status in V flag
         ;ORRNES pc, lr, #V_flag
 
 awrender_doc_bounds
-        STMFD   sp!,{a2,v1-v6,lr}
+        PUSH    {a2,v1-v6,lr}
         SWI     XAWRender_DocBounds
         MOVVC   a1,#0
         LDR     a2,[sp],#4
         STMVCIA a2,{r2-r5}
-        LDMFD   sp!,{v1-v6,pc}
+        POP     {v1-v6,pc}
 
         END

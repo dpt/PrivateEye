@@ -10,7 +10,7 @@
 	EXPORT	xresolver_get_host_by_addr
 
 xresolver_get_host_by_addr
-	STMFD	r13!, {r4, r14}
+	PUSH	{r4, r14}
 	MOV	r4, r3	; hostent **host_ent
 	MOV	r3, r2  ; int type
 	MOV	r2, r1	; int length
@@ -19,6 +19,6 @@ xresolver_get_host_by_addr
 	SWI	&66001 ; XResolver_GetHost
 	STRVC	r1, [r4]
 	MOVVC	r0, #0
-	LDMFD	r13!, {r4, pc}
+	POP	{r4, pc}
 
 	END
