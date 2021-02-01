@@ -11,12 +11,15 @@ int strcasecmp(const char *s1, const char *s2)
   u1 = (const unsigned char *) s1;
   u2 = (const unsigned char *) s2;
 
+  if (u1 == u2)
+    return 0;
+
   for (;;)
   {
     unsigned int c1, c2;
 
-    c1 = *s1;
-    c2 = *s2;
+    c1 = *u1;
+    c2 = *u2;
 
     if (c1 == '\0' || c2 == '\0')
       return c1 - c2;
