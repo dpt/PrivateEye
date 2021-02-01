@@ -708,7 +708,7 @@ static error layout_list(tag_cloud *tc, layout_state *state)
   {
     int x;
     int j_end;
-    int totalwidth;
+    int totalwidth = 0;
     int j;
     int last_x_move, last_y_move;
     int lineheight;
@@ -1254,6 +1254,9 @@ error tag_cloud_layout(tag_cloud *tc, int width)
   case tag_cloud_DISPLAY_TYPE_CLOUD:
     layoutfn = layout_cloud;
     break;
+
+  default:
+    return err;
   }
 
   err = layoutfn(tc, &state);
