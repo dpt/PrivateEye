@@ -23,8 +23,15 @@ set(CMAKE_CXX_COMPILER ${crossbin}/${prefix}g++)
 set(CMAKE_C_COMPILER ${crossbin}/${prefix}gcc)
 
 set(CMAKE_ASM_ASASM_FLAGS "" CACHE STRING "" FORCE)
-# TODO Choose mno-poke/mpoke-.. depending on debug mode
-set(CMAKE_C_FLAGS "-mlibscl -mhard-float -mno-poke-function-name" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "-mlibscl -mhard-float" CACHE STRING "" FORCE)
+
+# Don't embed function names in MinSizeRel builds, but do everywhere else.
+if(CMAKE_BUILD_TYPE MATCHES MinSizeRel)
+    add_compile_options($<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-mno-poke-function-name>)
+    add_compile_options($<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-O1>)  # Dodge MinSizeRel -Os compiler crash
+else()
+    add_compile_options($<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-mpoke-function-name>)
+endif()
 
 # I'd like to set CMAKE_EXECUTABLE_SUFFIX to ,ff8 here but
 # CMakeGenericSystem.cmake splats it.

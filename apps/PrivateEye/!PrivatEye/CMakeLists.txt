@@ -192,13 +192,6 @@ target_compile_options(PrivateEye
     $<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-Wall -Wextra -pedantic>
     $<$<COMPILE_LANGUAGE:ASM_ASASM>:-Pedantic>)
 
-# todo: this ought to affect all libraries too
-if(CMAKE_BUILD_TYPE MATCHES Release|MinSizeRel)
-    target_compile_options(PrivateEye
-        PRIVATE
-        $<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-mno-poke-function-name>)
-endif()
-
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(PrivateEye PRIVATE PRIVATEEYE_DEBUG)
 endif()
