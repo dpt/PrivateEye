@@ -967,10 +967,6 @@ static result_t mouse_click_option(const choices        *cs,
 
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_ADJUST))
   {
-    const choices_option *option;
-
-    option = c->data.option;
-
     PVALINT(c->offset) = !PVALINT(c->offset);
 
     err = call_changed_callback(cs, &cs->panes[g->pane_index], NULL);

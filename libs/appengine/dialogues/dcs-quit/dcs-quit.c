@@ -244,11 +244,8 @@ static int dcs_event_mouse_click(wimp_event_no event_no,
 
 static int dcs_message_menus_deleted(wimp_message *message, void *handle)
 {
-  wimp_message_menus_deleted *menus_deleted;
-
+  NOT_USED(message);
   NOT_USED(handle);
-
-  menus_deleted = (wimp_message_menus_deleted *) &message->data;
 
   /* If the menu was closed before the user made a choice, then choose
    * Cancel. */

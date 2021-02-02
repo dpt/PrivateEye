@@ -602,11 +602,8 @@ static int rotate_event_pollword_non_zero(wimp_event_no event_no,
 
 static int rotate_message_menus_deleted(wimp_message *message, void *handle)
 {
-  wimp_message_menus_deleted *deleted;
-
+  NOT_USED(message);
   NOT_USED(handle);
-
-  deleted = (wimp_message_menus_deleted *) &message->data;
 
   thumbnail_destroy(&LOCALS.thumbnail);
 

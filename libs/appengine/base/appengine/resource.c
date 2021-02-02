@@ -17,7 +17,7 @@ const char *resource_locate(const char *var)
 {
   const char *path;
 
-  EC(xappengine_resource_op_locate(var, &path));
+  (void) EC(xappengine_resource_op_locate(var, &path));
   /* path now points to a CR terminated string */
 
   return str_dup(path);

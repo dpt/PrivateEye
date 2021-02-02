@@ -16,7 +16,7 @@ ae_heap *ae_heap_create_dynamic(const char *name)
 
 void ae_heap_delete(ae_heap *heap)
 {
-  EC(xappengine_heap_delete(heap));
+  (void) EC(xappengine_heap_delete(heap));
 }
 
 ae_anchor ae_heap_claim(ae_heap *heap, size_t size)
@@ -40,7 +40,7 @@ void ae_heap_release(ae_heap *heap, ae_anchor *anchor)
   /* MemCheck_UnRegisterFlexBlock(*anchor); */
   /* MemCheck_UnRegisterMiscBlock(*anchor); */
 
-  EC(xappengine_heap_release(heap, anchor));
+  (void) EC(xappengine_heap_release(heap, anchor));
 }
 
 int ae_heap_resize(ae_heap *heap, ae_anchor anchor, size_t change)

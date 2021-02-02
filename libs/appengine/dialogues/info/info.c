@@ -122,17 +122,9 @@ static int info_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
-  wimp_pointer *pointer;
-  info_t       *s;
-
   NOT_USED(event_no);
-
-  pointer = &block->pointer;
-  s       = handle;
-
-  if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_ADJUST))
-  {
-  }
+  NOT_USED(block);
+  NOT_USED(handle);
 
   return event_HANDLED;
 }

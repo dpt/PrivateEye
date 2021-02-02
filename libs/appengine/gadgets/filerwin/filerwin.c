@@ -89,7 +89,7 @@ void filerwin_internal_set_handlers(int reg, filerwin *fw)
 
 /* ---------------------------------------------------------------------- */
 
-static const wimp_window wdef =
+static const wimp_window_base wdef =
 {
   { 0, 0, 1024, 512 }, /* visible */
   0, 0,
@@ -109,7 +109,7 @@ static const wimp_window wdef =
   wimpspriteop_AREA,
   4, 0,
   { .indirected_text = { '\0', '\0', 0 } },
-  0,
+  0
 };
 
 /* ----------------------------------------------------------------------- */
@@ -580,13 +580,9 @@ static int filerwin_event_key_pressed(wimp_event_no event_no,
                                       wimp_block   *block,
                                       void         *handle)
 {
-  wimp_key *key;
-  filerwin *fw;
-
   NOT_USED(event_no);
-
-  key = &block->key;
-  fw  = handle;
+  NOT_USED(block);
+  NOT_USED(handle);
 
   return event_HANDLED;
 }
@@ -600,7 +596,7 @@ filerwin *filerwin_create(void)
   wimp_w       w;
   filerwin    *fw;
 
-  def = wdef;
+  memcpy(&def, &wdef, sizeof(wdef));
 
   title_text = malloc(256);
   if (title_text == NULL)

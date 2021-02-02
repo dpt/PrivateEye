@@ -387,13 +387,12 @@ static int tag_cloud_event_pointer_leaving_window(wimp_event_no event_no,
                                                   wimp_block   *block,
                                                   void         *handle)
 {
-  tag_cloud    *tc;
-  wimp_leaving *leaving;
+  tag_cloud *tc;
 
   NOT_USED(event_no);
+  NOT_USED(block);
 
-  tc      = handle;
-  leaving = &block->leaving;
+  tc = handle;
 
   claim_nulls(0, tc);
 
@@ -406,13 +405,12 @@ static int tag_cloud_event_pointer_entering_window(wimp_event_no event_no,
                                                    wimp_block   *block,
                                                    void         *handle)
 {
-  tag_cloud     *tc;
-  wimp_entering *entering;
+  tag_cloud *tc;
 
   NOT_USED(event_no);
+  NOT_USED(block);
 
-  tc       = handle;
-  entering = &block->entering;
+  tc = handle;
 
   claim_nulls(1, tc);
 
