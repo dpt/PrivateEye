@@ -55,11 +55,11 @@ static void register_event_handlers(int reg)
                                NULL);
 }
 
-error dataxfer_init(void)
+result_t dataxfer_init(void)
 {
   register_event_handlers(1);
 
-  return error_OK;
+  return result_OK;
 }
 
 void dataxfer_fin(void)
@@ -149,7 +149,7 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
 static int message_data_load(wimp_message *message, void *handle)
 {
-  error     err;
+  result_t  err;
   osbool    its_ffg;
   osbool    try_ffg;
   viewer_t *viewer;
@@ -164,7 +164,7 @@ static int message_data_load(wimp_message *message, void *handle)
   if (message->data.data_xfer.file_type == 0x1000)
   {
 #ifdef EYE_THUMBVIEW
-    error      err;
+    result_t   err;
     thumbview *tv;
 
     err = thumbview_create(&tv);
@@ -232,7 +232,7 @@ static int message_data_load(wimp_message *message, void *handle)
   {
     /* a new display */
     err = viewer_create(&viewer);
-    if (err != error_OK)
+    if (err != result_OK)
       return event_HANDLED; /* tried but failed */
   }
   else
@@ -342,10 +342,10 @@ static int message_data_open(wimp_message *message, void *handle)
                                 exec_addr);
   if (viewer == NULL)
   {
-    error err;
+    result_t err;
 
     err = viewer_create(&viewer);
-    if (err != error_OK)
+    if (err != result_OK)
       return event_HANDLED; /* tried but failed */
 
     if (viewer_load(viewer,

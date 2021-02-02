@@ -8,7 +8,7 @@
 
 #include "appengine/base/errors.h"
 
-error eye_icon_bar_init(void);
+result_t eye_icon_bar_init(void);
 void eye_icon_bar_fin(void);
 
 #endif /* EYE_ICONBAR_H */

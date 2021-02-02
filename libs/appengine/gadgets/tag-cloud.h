@@ -20,7 +20,7 @@ typedef struct T T;
 
 /* ----------------------------------------------------------------------- */
 
-error tag_cloud_init(void);
+result_t tag_cloud_init(void);
 
 void tag_cloud_fin(void);
 
@@ -65,8 +65,8 @@ void tag_cloud_destroy(T *doomed);
 
 /* ----------------------------------------------------------------------- */
 
-error tag_cloud_set_config(T                      *tc,
-                           const tag_cloud_config *config);
+result_t tag_cloud_set_config(T                      *tc,
+                              const tag_cloud_config *config);
 
 /* ----------------------------------------------------------------------- */
 
@@ -107,50 +107,50 @@ tag_cloud_event;
 /**
  * Callback to create a new tag.
  */
-typedef error (tag_cloud_newtagfn)(T          *tc,
-                                   const char *name,
-                                   int         length,
-                                   void       *opaque);
-
-/**
- * Callback to delete tag 'index'.
- */
-typedef error (tag_cloud_deletetagfn)(T    *tc,
-                                      int   index,
-                                      void *opaque);
-
-/**
- * Callback to rename tag 'index' to 'name'.
- */
-typedef error (tag_cloud_renametagfn)(T          *tc,
-                                      int         index,
+typedef result_t (tag_cloud_newtagfn)(T          *tc,
                                       const char *name,
                                       int         length,
                                       void       *opaque);
 
 /**
+ * Callback to delete tag 'index'.
+ */
+typedef result_t (tag_cloud_deletetagfn)(T    *tc,
+                                         int   index,
+                                         void *opaque);
+
+/**
+ * Callback to rename tag 'index' to 'name'.
+ */
+typedef result_t (tag_cloud_renametagfn)(T          *tc,
+                                         int         index,
+                                         const char *name,
+                                         int         length,
+                                         void       *opaque);
+
+/**
  * Callback to tag or detag the current file with 'index'.
  * Called when the user clicks on a tag in the the tag cloud.
  */
-typedef error (tag_cloud_tagfn)(T    *tc,
-                                int   index,
-                                void *opaque);
+typedef result_t (tag_cloud_tagfn)(T    *tc,
+                                   int   index,
+                                   void *opaque);
 
 /**
  * Callback to tag or detag the file 'filename' with 'index'.
  * Called when files are dropped in the window.
  */
-typedef error (tag_cloud_tagfilefn)(T          *tc,
-                                    const char *filename,
-                                    int         index,
-                                    void       *opaque);
+typedef result_t (tag_cloud_tagfilefn)(T          *tc,
+                                       const char *filename,
+                                       int         index,
+                                       void       *opaque);
 
 /**
  * Callback for other sorts of event.
  */
-typedef error (tag_cloud_eventfn)(T                *tc,
-                                  tag_cloud_event  event,
-                                  void             *opaque);
+typedef result_t (tag_cloud_eventfn)(T                *tc,
+                                     tag_cloud_event  event,
+                                     void             *opaque);
 
 /**
  * Set event handlers.
@@ -194,9 +194,9 @@ tag_cloud_tag;
  *
  * \return Error indication.
  */
-error tag_cloud_set_tags(T                   *tc,
-                         const tag_cloud_tag *tags,
-                         int                  ntags);
+result_t tag_cloud_set_tags(T                   *tc,
+                            const tag_cloud_tag *tags,
+                            int                  ntags);
 
 /* ----------------------------------------------------------------------- */
 
@@ -209,12 +209,12 @@ error tag_cloud_set_tags(T                   *tc,
  *
  * \return Error indication.
  */
-error tag_cloud_highlight(T *tc, const int *indices, int nindices);
+result_t tag_cloud_highlight(T *tc, const int *indices, int nindices);
 
 /**
  * Add a single highlight.
  */
-error tag_cloud_add_highlight(T *tc, int index);
+result_t tag_cloud_add_highlight(T *tc, int index);
 
 /**
  * Remove a single highlight.

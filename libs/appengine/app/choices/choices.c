@@ -80,9 +80,9 @@ static event_message_handler choices_message_menus_deleted,
 
 static unsigned int choices_refcount = 0;
 
-error choices_init(void)
+result_t choices_init(void)
 {
-  error err;
+  result_t err;
 
   if (choices_refcount == 0)
   {
@@ -95,7 +95,7 @@ error choices_init(void)
 
   choices_refcount++;
 
-  return error_OK;
+  return result_OK;
 }
 
 void choices_fin(void)
@@ -113,22 +113,22 @@ void choices_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (for_every_callback)(const choices        *cs,
-                                   const choices_group  *g,
-                                   const choices_choice *c,
-                                   void                 *opaque);
+typedef result_t (for_every_callback)(const choices        *cs,
+                                      const choices_group  *g,
+                                      const choices_choice *c,
+                                      void                 *opaque);
 
 /* calls back the user-supplied callback function for every choices_choice in
  * the choices */
 
 /* callback function returns an error to terminate early */
 
-static error for_every_choice(const choices      *cs,
-                              for_every_callback *fn,
-                              void               *opaque)
+static result_t for_every_choice(const choices      *cs,
+                                 for_every_callback *fn,
+                                 void               *opaque)
 {
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   for (i = 0; i < cs->ngroups; i++)
   {
@@ -144,39 +144,39 @@ static error for_every_choice(const choices      *cs,
       c = &g->choices[j];
 
       err = fn(cs, g, c, opaque);
-      if (err == error_STOP_WALK)
-        return error_OK;
+      if (err == result_STOP_WALK)
+        return result_OK;
       else if (err)
         return err;
     }
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (for_every_pane_callback)(const choices      *cs,
-                                        const choices_pane *p,
-                                        void               *opaque);
+typedef result_t (for_every_pane_callback)(const choices      *cs,
+                                           const choices_pane *p,
+                                           void               *opaque);
 
-static error for_every_pane(const choices           *cs,
-                            for_every_pane_callback *fn,
-                            void                    *opaque)
+static result_t for_every_pane(const choices           *cs,
+                               for_every_pane_callback *fn,
+                               void                    *opaque)
 {
-  error               err;
+  result_t            err;
   const choices_pane *p;
 
   for (p = &cs->panes[0]; p < &cs->panes[cs->npanes]; p++)
   {
     err = fn(cs, p, opaque);
-    if (err == error_STOP_WALK)
-      return error_OK;
+    if (err == result_STOP_WALK)
+      return result_OK;
     else if (err)
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -196,22 +196,22 @@ static int stringset_index_of_val(const choices_stringset *string_set,
 
 /* ----------------------------------------------------------------------- */
 
-static error init_callback(const choices        *cs,
-                           const choices_group  *g,
-                           const choices_choice *c,
-                           void                 *opaque)
+static result_t init_callback(const choices        *cs,
+                              const choices_group  *g,
+                              const choices_choice *c,
+                              void                 *opaque)
 {
   NOT_USED(g);
   NOT_USED(opaque);
 
   PVALINT(c->offset) = c->defaultval;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error init(const choices *cs)
+static result_t init(const choices *cs)
 {
-  error err;
+  result_t err;
 
   cs->vars->temporary_colour = NULL;
   cs->vars->current_menu     = NULL;
@@ -222,12 +222,12 @@ static error init(const choices *cs)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error choices_load(const choices *cs)
+result_t choices_load(const choices *cs)
 {
   char  buf[256]; /* Careful Now */
   FILE *f;
@@ -307,10 +307,10 @@ struct save_callback_args
   FILE *f;
 };
 
-static error save_callback(const choices        *cs,
-                           const choices_group  *g,
-                           const choices_choice *c,
-                           void                 *opaque)
+static result_t save_callback(const choices        *cs,
+                              const choices_group  *g,
+                              const choices_choice *c,
+                              void                 *opaque)
 {
   struct save_callback_args *args = opaque;
   int                        val;
@@ -319,10 +319,10 @@ static error save_callback(const choices        *cs,
   if (val != c->defaultval) /* save only differences from the defaults */
     fprintf(args->f, "%s.%s:%08x\n", g->name, c->name, val);
 
-  return error_OK;
+  return result_OK;
 }
 
-error choices_save(const choices *cs)
+result_t choices_save(const choices *cs)
 {
   char                      buf[256]; /* Careful Now */
   struct save_callback_args args;
@@ -342,7 +342,7 @@ error choices_save(const choices *cs)
 
   args.f = fopen(buf, "w");
   if (args.f == NULL)
-    return error_FILE_OPEN_FAILED;
+    return result_FILE_OPEN_FAILED;
 
   for_every_choice(cs, save_callback, &args);
 
@@ -350,7 +350,7 @@ error choices_save(const choices *cs)
 
   choices_set(cs); /* choosing 'Save' includes a 'Set' */
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -358,17 +358,17 @@ error choices_save(const choices *cs)
 /* entry points */
 
 /*
-static error update_icons_colour(const choices        *cs,
-                                 const choices_group  *g,
-                                 const choices_choice *c)
+static result_t update_icons_colour(const choices        *cs,
+                                    const choices_group  *g,
+                                    const choices_choice *c)
 {
-  return error_OK;
+  return result_OK;
 }
 */
 
-static error update_icons_numberrange(const choices        *cs,
-                                      const choices_group  *g,
-                                      const choices_choice *c)
+static result_t update_icons_numberrange(const choices        *cs,
+                                         const choices_group  *g,
+                                         const choices_choice *c)
 {
   static const double        precs[] = { 10.0, 100.0, 1000.0 };
 
@@ -378,7 +378,7 @@ static error update_icons_numberrange(const choices        *cs,
   number_range = c->data.number_range;
 
   if (number_range == NULL)
-    return error_OK; /* let ranges exist internally but have no display */
+    return result_OK; /* let ranges exist internally but have no display */
 
   val = PVALINT(c->offset);
 
@@ -398,12 +398,12 @@ static error update_icons_numberrange(const choices        *cs,
                      number_range->prec);
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-static error update_icons_option(const choices        *cs,
-                                 const choices_group  *g,
-                                 const choices_choice *c)
+static result_t update_icons_option(const choices        *cs,
+                                    const choices_group  *g,
+                                    const choices_choice *c)
 {
   const choices_option *option;
   int                   val;
@@ -416,12 +416,12 @@ static error update_icons_option(const choices        *cs,
                      option->icon,
                      val != 0);
 
-  return error_OK;
+  return result_OK;
 }
 
-static error update_icons_stringset(const choices        *cs,
-                                    const choices_group  *g,
-                                    const choices_choice *c)
+static result_t update_icons_stringset(const choices        *cs,
+                                       const choices_group  *g,
+                                       const choices_choice *c)
 {
   const choices_stringset *string_set;
   char                     buf[32]; /* Careful Now */
@@ -446,13 +446,13 @@ static error update_icons_stringset(const choices        *cs,
                  string_set->icon_display,
                  text);
 
-  return error_OK;
+  return result_OK;
 }
 
-static error update_icons_callback(const choices        *cs,
-                                   const choices_group  *g,
-                                   const choices_choice *c,
-                                   void                 *opaque)
+static result_t update_icons_callback(const choices        *cs,
+                                      const choices_group  *g,
+                                      const choices_choice *c,
+                                      void                 *opaque)
 {
   NOT_USED(opaque);
 
@@ -479,11 +479,11 @@ static error update_icons_callback(const choices        *cs,
     break;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* Populate display icons from stores choices */
-error choices_update_icons(const choices *cs)
+result_t choices_update_icons(const choices *cs)
 {
   return for_every_choice(cs, update_icons_callback, NULL);
 }
@@ -508,23 +508,23 @@ static void choices_set_pane_handlers(int                 reg,
                             cs);
 }
 
-static error create_windows_callback(const choices      *cs,
-                                     const choices_pane *p,
-                                     void               *opaque)
+static result_t create_windows_callback(const choices      *cs,
+                                        const choices_pane *p,
+                                        void               *opaque)
 {
-  error err;
-  char  buf[13];
+  result_t err;
+  char     buf[13];
 
   NOT_USED(opaque);
 
   if (p->window == NULL)
-    return error_OK; /* this group has no associated window */
+    return result_OK; /* this group has no associated window */
 
   sprintf(buf, "choices_%s", p->name);
 
   *p->window = window_create(buf);
   if (*p->window == 0)
-    return error_OOM; /* potentially inaccurate */
+    return result_OOM; /* potentially inaccurate */
 
   err = help_add_window(*p->window, buf);
   if (err)
@@ -535,7 +535,7 @@ static error create_windows_callback(const choices      *cs,
   if (p->handlers && p->handlers->initialise_callback)
     p->handlers->initialise_callback(p);
 
-  return error_OK;
+  return result_OK;
 }
 
 static void choices_set_handlers(int reg, const choices *cs)
@@ -569,13 +569,13 @@ static void choices_set_handlers(int reg, const choices *cs)
 }
 
 /* create panes */
-error choices_create_windows(const choices *cs)
+result_t choices_create_windows(const choices *cs)
 {
-  error err;
+  result_t err;
 
   *cs->window = window_create("choices");
   if (*cs->window == 0)
-    return error_OOM; /* potentially inaccurate */
+    return result_OOM; /* potentially inaccurate */
 
   err = help_add_window(*cs->window, "choices");
   if (err)
@@ -589,12 +589,12 @@ error choices_create_windows(const choices *cs)
 
   *cs->current = wimp_TOP;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error destroy_windows_callback(const choices      *cs,
-                                      const choices_pane *p,
-                                      void               *opaque)
+static result_t destroy_windows_callback(const choices      *cs,
+                                         const choices_pane *p,
+                                         void               *opaque)
 {
   NOT_USED(opaque);
 
@@ -602,7 +602,7 @@ static error destroy_windows_callback(const choices      *cs,
     p->handlers->finalise_callback(p);
 
   if (p->window == NULL)
-    return error_OK; /* this group has no associated window */
+    return result_OK; /* this group has no associated window */
 
   help_remove_window(*p->window);
 
@@ -613,7 +613,7 @@ static error destroy_windows_callback(const choices      *cs,
   //
   // window_delete(*p->window);
 
-  return error_OK;
+  return result_OK;
 }
 
 void choices_destroy_windows(const choices *cs)
@@ -627,18 +627,18 @@ void choices_destroy_windows(const choices *cs)
 
 /* ----------------------------------------------------------------------- */
 
-static error redraw_window_callback(const choices      *cs,
-                                    const choices_pane *p,
-                                    void               *opaque)
+static result_t redraw_window_callback(const choices      *cs,
+                                       const choices_pane *p,
+                                       void               *opaque)
 {
-  error      err;
+  result_t   err;
   wimp_draw *redraw = opaque;
   int        more;
 
   NOT_USED(cs);
 
   if (redraw->w != *p->window)
-    return error_OK; /* not our window */
+    return result_OK; /* not our window */
 
   if (p->handlers && p->handlers->redraw_callback)
   {
@@ -656,7 +656,7 @@ static error redraw_window_callback(const choices      *cs,
       ;
   }
 
-  return error_STOP_WALK; /* terminate early */
+  return result_STOP_WALK; /* terminate early */
 }
 
 int choices_event_redraw_window_request(wimp_event_no event_no,
@@ -692,7 +692,7 @@ int choices_event_open_window_request(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static error attach_child(const choices *cs, wimp_w w)
+static result_t attach_child(const choices *cs, wimp_w w)
 {
   wimp_window_state         state;
   wimp_window_nesting_flags linkage;
@@ -719,12 +719,12 @@ static error attach_child(const choices *cs, wimp_w w)
 
   wimp_open_window_nested((wimp_open *) &state, w, linkage);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* Opening a choiceset for the first time. */
 /* i.e. 'Choices...' selected from icon bar menu. */
-error choices_open(const choices *cs)
+result_t choices_open(const choices *cs)
 {
   wimp_w            w;
   wimp_window_state state;
@@ -760,15 +760,15 @@ error choices_open(const choices *cs)
     window_open_at(w, AT_BOTTOMPOINTER);
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error choices_set(const choices *cs)
+result_t choices_set(const choices *cs)
 {
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   for (i = 0; i < cs->ngroups; i++)
   {
@@ -799,16 +799,16 @@ error choices_set(const choices *cs)
     }
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error call_changed_callback(const choices      *cs,
-                                   const choices_pane *p,
-                                   void               *opaque)
+static result_t call_changed_callback(const choices      *cs,
+                                      const choices_pane *p,
+                                      void               *opaque)
 {
-  error err;
+  result_t err;
 
   NOT_USED(cs);
   NOT_USED(opaque);
@@ -820,12 +820,12 @@ static error call_changed_callback(const choices      *cs,
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-error choices_cancel(const choices *cs)
+result_t choices_cancel(const choices *cs)
 {
-  error err;
+  result_t err;
 
   memcpy(cs->proposed_valbuf, cs->valbuf, cs->valbufsz);
 
@@ -840,13 +840,13 @@ error choices_cancel(const choices *cs)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error mouse_click_pane_select(const choices *cs,
-                                     wimp_pointer  *pointer)
+static result_t mouse_click_pane_select(const choices *cs,
+                                        wimp_pointer  *pointer)
 {
   const choices_pane *p;
   wimp_w              mainw;
@@ -858,7 +858,7 @@ static error mouse_click_pane_select(const choices *cs,
       break;
 
   if (p == &cs->panes[cs->npanes])
-    return error_OK; /* not a radio click (e.g. work area) */
+    return result_OK; /* not a radio click (e.g. work area) */
 
   mainw = *cs->window;
 
@@ -878,13 +878,13 @@ static error mouse_click_pane_select(const choices *cs,
     attach_child(cs, mainw);
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-static error mouse_click_colour(const choices        *cs,
-                                const choices_group  *g,
-                                const choices_choice *c,
-                                wimp_pointer         *pointer)
+static result_t mouse_click_colour(const choices        *cs,
+                                   const choices_group  *g,
+                                   const choices_choice *c,
+                                   wimp_pointer         *pointer)
 {
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_MENU))
   {
@@ -904,15 +904,15 @@ static error mouse_click_colour(const choices        *cs,
     /* no callback here */
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-static error mouse_click_numberrange(const choices        *cs,
-                                     const choices_group  *g,
-                                     const choices_choice *c,
-                                     wimp_pointer         *pointer)
+static result_t mouse_click_numberrange(const choices        *cs,
+                                        const choices_group  *g,
+                                        const choices_choice *c,
+                                        wimp_pointer         *pointer)
 {
-  error err;
+  result_t err;
 
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_ADJUST))
   {
@@ -955,15 +955,15 @@ static error mouse_click_numberrange(const choices        *cs,
     }
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-static error mouse_click_option(const choices        *cs,
-                                const choices_group  *g,
-                                const choices_choice *c,
-                                wimp_pointer         *pointer)
+static result_t mouse_click_option(const choices        *cs,
+                                   const choices_group  *g,
+                                   const choices_choice *c,
+                                   wimp_pointer         *pointer)
 {
-  error err;
+  result_t err;
 
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_ADJUST))
   {
@@ -978,17 +978,17 @@ static error mouse_click_option(const choices        *cs,
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-static error mouse_click_stringset(const choices        *cs,
-                                   const choices_group  *g,
-                                   const choices_choice *c,
-                                   wimp_pointer         *pointer)
+static result_t mouse_click_stringset(const choices        *cs,
+                                      const choices_group  *g,
+                                      const choices_choice *c,
+                                      wimp_pointer         *pointer)
 {
   if (pointer->buttons & (wimp_CLICK_SELECT | wimp_CLICK_MENU))
   {
-    error                    err;
+    result_t                 err;
     const choices_stringset *string_set;
     char                     buf[32]; /* Careful Now */
     wimp_menu               *menu;
@@ -1011,7 +1011,7 @@ static error mouse_click_stringset(const choices        *cs,
 
     menu = menu_create_from_desc(message(buf));
     if (menu == NULL)
-      return error_OOM; /* potentially inaccurate */
+      return result_OOM; /* potentially inaccurate */
 
     err = help_add_menu(menu, c->data.string_set->name);
     if (err)
@@ -1034,7 +1034,7 @@ static error mouse_click_stringset(const choices        *cs,
     /* callback here */
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 int choices_event_mouse_click_pane(wimp_event_no  event_no,

@@ -145,13 +145,13 @@ static void viewer_scaledlg_handler(dialogue_t *d,
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_scaledlg_init(void)
+result_t viewer_scaledlg_init(void)
 {
   dialogue_t *scale;
 
   scale = scale_create();
   if (scale == NULL)
-    return error_OOM;
+    return result_OOM;
 
   dialogue_set_fillout_handler(scale, viewer_scaledlg_fillout, NULL);
   scale_set_steppings(scale,
@@ -161,7 +161,7 @@ error viewer_scaledlg_init(void)
 
   viewer_scaledlg = scale;
 
-  return error_OK;
+  return result_OK;
 }
 
 void viewer_scaledlg_fin(void)

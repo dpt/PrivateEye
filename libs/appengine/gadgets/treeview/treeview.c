@@ -51,7 +51,7 @@ typedef unsigned int connector_flags;
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (treeview_callback)(treeview_t      *tr,
+typedef result_t (treeview_callback)(treeview_t      *tr,
                                   int              depth,
                                   int              x,
                                   int              y,
@@ -91,11 +91,11 @@ struct treeview_t
 
 static unsigned int treeview_refcount = 0;
 
-error treeview_init(void)
+result_t treeview_init(void)
 {
   treeview_refcount++;
 
-  return error_OK;
+  return result_OK;
 }
 
 void treeview_fin(void)
@@ -108,42 +108,40 @@ void treeview_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-static error discard_tree_callback(ntree_t *t, void *opaque)
+static result_t discard_tree_callback(ntree_t *t, void *opaque)
 {
   NOT_USED(opaque);
 
   txtfmt_destroy(ntree_get_data(t));
 
-  return error_OK;
+  return result_OK;
 }
 
-static error discard_tree(ntree_t *t)
+static result_t discard_tree(ntree_t *t)
 {
-  error err;
-
   if (!t)
-    return error_OK;
+    return result_OK;
 
-  err = ntree_walk(t,
-                   ntree_WALK_POST_ORDER | ntree_WALK_ALL,
-                   0,
-                   discard_tree_callback,
-                   NULL);
+  (void) ntree_walk(t,
+                    ntree_WALK_POST_ORDER | ntree_WALK_ALL,
+                    0,
+                    discard_tree_callback,
+                    NULL);
 
   ntree_delete(t);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error treeview_create(treeview_t **tr)
+result_t treeview_create(treeview_t **tr)
 {
   treeview_t *newtr;
 
   newtr = calloc(1, sizeof(*newtr));
   if (newtr == NULL)
-    return error_OOM;
+    return result_OOM;
 
   newtr->openable  = bitvec_create(NNODES_ESTIMATE);
   newtr->open      = bitvec_create(NNODES_ESTIMATE);
@@ -159,14 +157,14 @@ error treeview_create(treeview_t **tr)
 
   *tr = newtr;
 
-  return error_OK;
+  return result_OK;
 
 
 OOM:
 
   treeview_destroy(newtr);
 
-  return error_OOM;
+  return result_OOM;
 }
 
 void treeview_destroy(treeview_t *tr)
@@ -182,9 +180,9 @@ void treeview_destroy(treeview_t *tr)
 
 /* ----------------------------------------------------------------------- */
 
-static error treeview_walk_node(ntree_t *t, void *opaque)
+static result_t treeview_walk_node(ntree_t *t, void *opaque)
 {
-  error            err;
+  result_t            err;
   treeview_t      *tr = opaque;
   int              x,y;
   connector_flags  flags;
@@ -214,7 +212,7 @@ static error treeview_walk_node(ntree_t *t, void *opaque)
   if (tr->walk.next)
   {
     if (tr->walk.next != t)
-      return error_OK; /* skip */
+      return result_OK; /* skip */
 
     tr->walk.next = NULL; /* stop skipping */
   }
@@ -265,7 +263,7 @@ static error treeview_walk_node(ntree_t *t, void *opaque)
 
 #if SKIP_ROOT
   if (depth == 0)
-    return error_OK;
+    return result_OK;
 
   depth--;
 #endif
@@ -305,14 +303,14 @@ static error treeview_walk_node(ntree_t *t, void *opaque)
   /* if the walk needs to stop now, then we raise a non-terminal error to
    * make ntree_walk stop */
 
-  return (stop) ? error_TREEVIEW_STOP_WALK : error_OK;
+  return (stop) ? result_TREEVIEW_STOP_WALK : result_OK;
 }
 
-static error treeview_walk(treeview_t        *tr,
+static result_t treeview_walk(treeview_t        *tr,
                            treeview_callback *cb,
                            void              *cbarg)
 {
-  error err;
+  result_t err;
 
   tr->walk.x     = 0;
   tr->walk.y     = 0;
@@ -327,8 +325,8 @@ static error treeview_walk(treeview_t        *tr,
                    treeview_walk_node,
                    tr);
 
-  if (err == error_TREEVIEW_STOP_WALK)
-    err = error_OK;
+  if (err == result_TREEVIEW_STOP_WALK)
+    err = result_OK;
 
   return err;
 }
@@ -377,7 +375,7 @@ static int flags_to_connector(connector_flags flags)
   return -1;
 }
 
-static error plot_connector(int index, int x, int y, int line_height)
+static result_t plot_connector(int index, int x, int y, int line_height)
 {
   wimp_icon icon;
 
@@ -390,7 +388,7 @@ static error plot_connector(int index, int x, int y, int line_height)
 
   wimp_plot_icon(&icon);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -401,7 +399,7 @@ typedef struct treeview_draw_data
 }
 treeview_draw_data;
 
-static error draw_connectors(treeview_t         *tr,
+static result_t draw_connectors(treeview_t         *tr,
                              ntree_t            *t,
                              treeview_draw_data *draw,
                              int                 depth,
@@ -460,10 +458,10 @@ static error draw_connectors(treeview_t         *tr,
   else
     draw->stack &= ~(1u << depth); /* clear it */
 
-  return error_OK;
+  return result_OK;
 }
 
-static error draw_walk(treeview_t     *tr,
+static result_t draw_walk(treeview_t     *tr,
                        int             depth,
                        int             x,
                        int             y,
@@ -474,7 +472,7 @@ static error draw_walk(treeview_t     *tr,
                        int             height,
                        void           *opaque)
 {
-  error               err;
+  result_t               err;
   treeview_draw_data *draw = opaque;
   int                 line_height;
   wimp_colour         bgcolour;
@@ -515,7 +513,7 @@ static error draw_walk(treeview_t     *tr,
   if (err)
     goto Failure;
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -523,9 +521,9 @@ Failure:
   return err;
 }
 
-error treeview_draw(treeview_t *tr)
+result_t treeview_draw(treeview_t *tr)
 {
-  error              err;
+  result_t              err;
   treeview_draw_data data;
 
   data.stack = 0;
@@ -543,7 +541,7 @@ typedef struct treeview_click_data
 }
 treeview_click_data;
 
-static error click_walk(treeview_t    *tr,
+static result_t click_walk(treeview_t    *tr,
                        int             depth,
                        int             x,
                        int             y,
@@ -573,14 +571,14 @@ static error click_walk(treeview_t    *tr,
 
   if (box_contains_point(&box, data->x, data->y))
     /* exiting here means that tr->walk.x and y are valid */
-    return error_TREEVIEW_FOUND;
+    return result_TREEVIEW_FOUND;
   else
-    return error_OK;
+    return result_OK;
 }
 
-error treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
+result_t treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
 {
-  error               err;
+  result_t               err;
   treeview_click_data click;
 
   click.x = x;
@@ -588,7 +586,7 @@ error treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
 
   err = treeview_walk(tr, click_walk, &click);
 
-  if (err == error_TREEVIEW_FOUND) /* found it */
+  if (err == result_TREEVIEW_FOUND) /* found it */
   {
     /* tr->walk.y, tr->walk.index updated */
 
@@ -606,9 +604,9 @@ error treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
       *redraw_y = +1; /* no update */
     }
 
-    err = error_OK;
+    err = result_OK;
   }
-  else if (err == error_OK)
+  else if (err == result_OK)
   {
     *redraw_y = +1; /* no update */
   }
@@ -618,9 +616,9 @@ error treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
 
 /* ----------------------------------------------------------------------- */
 
-static error string_to_txtfmt(void *data, void *opaque, void **newdata)
+static result_t string_to_txtfmt(void *data, void *opaque, void **newdata)
 {
-  error       err;
+  result_t       err;
   treeview_t *tr = opaque;
   txtfmt_t   *tx;
 
@@ -635,9 +633,9 @@ static error string_to_txtfmt(void *data, void *opaque, void **newdata)
   return err;
 }
 
-error treeview_set_tree(treeview_t *tr, ntree_t *tree)
+result_t treeview_set_tree(treeview_t *tr, ntree_t *tree)
 {
-  error err;
+  result_t err;
 
   if (tr->tree)
   {
@@ -651,14 +649,14 @@ error treeview_set_tree(treeview_t *tr, ntree_t *tree)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error make_collapsible_walk(ntree_t *t, void *opaque)
+static result_t make_collapsible_walk(ntree_t *t, void *opaque)
 {
-  error       err;
+  result_t       err;
   treeview_t *tr = opaque;
   int         i;
   txtfmt_t   *tx;
@@ -694,13 +692,13 @@ static error make_collapsible_walk(ntree_t *t, void *opaque)
 
   tr->walk.index = i;
 
-  return error_OK;
+  return result_OK;
 }
 
 // i get the feeling that this might need to be generalised into a 'format the tree' call
-error treeview_make_collapsible(treeview_t *tr)
+result_t treeview_make_collapsible(treeview_t *tr)
 {
-  error err;
+  result_t err;
 
   tr->walk.index = -1;
 
@@ -733,7 +731,7 @@ typedef struct treeview_get_dimensions_data
 }
 treeview_get_dimensions_data;
 
-static error get_dimensions_walk(treeview_t     *tr,
+static result_t get_dimensions_walk(treeview_t     *tr,
                                  int             depth,
                                  int             x,
                                  int             y,
@@ -762,12 +760,12 @@ static error get_dimensions_walk(treeview_t     *tr,
   if (width > data->width)
     data->width = width;
 
-  return error_OK;
+  return result_OK;
 }
 
-error treeview_get_dimensions(treeview_t *tr, int *width, int *height)
+result_t treeview_get_dimensions(treeview_t *tr, int *width, int *height)
 {
-  error                         err;
+  result_t                         err;
   treeview_get_dimensions_data data;
 
   data.width = 0;
@@ -779,7 +777,7 @@ error treeview_get_dimensions(treeview_t *tr, int *width, int *height)
   *width  = data.width;
   *height = tr->walk.y;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */

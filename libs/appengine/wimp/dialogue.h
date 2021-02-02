@@ -81,10 +81,10 @@ struct T
  * 'name' is the name of the template.
  * 'ok' and 'cancel' are the icon handles which should close the dialogue
  * when SELECT-clicked, or -1 if none. */
-error dialogue_construct(T          *d,
-                         const char *name,
-                         wimp_i      ok,
-                         wimp_i      cancel);
+result_t dialogue_construct(T          *d,
+                            const char *name,
+                            wimp_i      ok,
+                            wimp_i      cancel);
 void dialogue_destruct(T *d);
 
 /* The fillout handler gets called before the dialogue is opened, when Cancel

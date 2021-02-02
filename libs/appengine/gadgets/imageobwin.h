@@ -31,15 +31,15 @@ typedef struct imageobwin_t imageobwin_t;
 typedef int (imageobwin_available)(const image_t *image);
 
 /* Asks for a new part-configured derived class of imageobwin_t. */
-typedef error (imageobwin_alloc)(const void    *config,
-                                 imageobwin_t **obwin);
+typedef result_t (imageobwin_alloc)(const void    *config,
+                                    imageobwin_t **obwin);
 
 /* Asks for the derived class of imageobwin_t to be deallocated. */
 typedef void (imageobwin_dealloc)(imageobwin_t *doomed);
 
 /* Asks the derived class to recompute its data when the observed image
  * changes. */
-typedef error (imageobwin_compute)(imageobwin_t *obwin);
+typedef result_t (imageobwin_compute)(imageobwin_t *obwin);
 
 /* Asks the derived class to refresh its display. */
 typedef void (imageobwin_refresh)(imageobwin_t *obwin);
@@ -77,24 +77,24 @@ struct imageobwin_t
 };
 
 /* Constructs a new imageobwin_factory_t. */
-error imageobwin_construct(imageobwin_factory_t  *self,
-                           const char            *name,
-                           window_open_at_flags   open_at,
-                           imageobwin_available  *available,
-                           imageobwin_alloc      *alloc,
-                           imageobwin_dealloc    *dealloc,
-                           imageobwin_compute    *compute,
-                           imageobwin_refresh    *refresh,
-                           event_wimp_handler    *redraw,
-                           event_wimp_handler    *click,
-                           event_wimp_handler    *menu);
+result_t imageobwin_construct(imageobwin_factory_t  *self,
+                              const char            *name,
+                              window_open_at_flags   open_at,
+                              imageobwin_available  *available,
+                              imageobwin_alloc      *alloc,
+                              imageobwin_dealloc    *dealloc,
+                              imageobwin_compute    *compute,
+                              imageobwin_refresh    *refresh,
+                              event_wimp_handler    *redraw,
+                              event_wimp_handler    *click,
+                              event_wimp_handler    *menu);
 
 void imageobwin_destruct(imageobwin_factory_t *doomed);
 
 /* Called to create and open a new image observer window. */
-error imageobwin_open(imageobwin_factory_t *factory,
-                      image_t              *image,
-                      const void           *config);
+result_t imageobwin_open(imageobwin_factory_t *factory,
+                         image_t              *image,
+                         const void           *config);
 
 /* Compute then refresh the window. */
 void imageobwin_kick(imageobwin_t *obwin);

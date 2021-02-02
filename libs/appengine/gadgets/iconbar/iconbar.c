@@ -54,9 +54,9 @@ static void icon_bar_internal_set_handlers(int reg)
                             NULL);
 }
 
-error icon_bar_init(void)
+result_t icon_bar_init(void)
 {
-  error err;
+  result_t err;
 
   /* dependencies */
 
@@ -89,7 +89,7 @@ error icon_bar_init(void)
 
   icon_bar_internal_set_handlers(1);
 
-  return error_OK;
+  return result_OK;
 }
 
 void icon_bar_fin(void)

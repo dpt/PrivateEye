@@ -25,18 +25,18 @@ static void tag_cloud_kick_highlight(tag_cloud *tc)
   tag_cloud_redraw(tc);
 }
 
-static error tag_cloud_add_highlights(tag_cloud *tc,
-                                      const int *indices,
-                                      int        nindices)
+static result_t tag_cloud_add_highlights(tag_cloud *tc,
+                                         const int *indices,
+                                         int        nindices)
 {
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   if (tc->highlight == NULL)
   {
     tc->highlight = bitvec_create(32); /* 32 is a guess */
     if (tc->highlight == NULL)
-      return error_OOM;
+      return result_OOM;
   }
 
   for (i = 0; i < nindices; i++)
@@ -48,12 +48,12 @@ static error tag_cloud_add_highlights(tag_cloud *tc,
 
   tag_cloud_kick_highlight(tc);
 
-  return error_OK;
+  return result_OK;
 }
 
-error tag_cloud_highlight(tag_cloud *tc, const int *indices, int nindices)
+result_t tag_cloud_highlight(tag_cloud *tc, const int *indices, int nindices)
 {
-  error err;
+  result_t err;
 
   if (tc->highlight)
     bitvec_clear_all(tc->highlight);
@@ -62,18 +62,18 @@ error tag_cloud_highlight(tag_cloud *tc, const int *indices, int nindices)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tag_cloud_add_highlight(tag_cloud *tc, int index)
+result_t tag_cloud_add_highlight(tag_cloud *tc, int index)
 {
-  error err;
+  result_t err;
 
   err = tag_cloud_add_highlights(tc, &index, 1);
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 void tag_cloud_remove_highlight(tag_cloud *tc, int index)

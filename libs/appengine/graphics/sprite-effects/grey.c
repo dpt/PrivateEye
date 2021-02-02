@@ -58,9 +58,9 @@ static void grey_888(osspriteop_header *src,
   }
 }
 
-error effects_grey_apply(osspriteop_area   *area,
-                         osspriteop_header *src,
-                         osspriteop_header *dst)
+result_t effects_grey_apply(osspriteop_area   *area,
+                            osspriteop_header *src,
+                            osspriteop_header *dst)
 {
   int                  width, height;
   osspriteop_mode_word mode;
@@ -75,8 +75,8 @@ error effects_grey_apply(osspriteop_area   *area,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_EFFECT;
+    return result_SPRITEFX_UNSUPP_EFFECT;
   }
 
-  return error_OK;
+  return result_OK;
 }

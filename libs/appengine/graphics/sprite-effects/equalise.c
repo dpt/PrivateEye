@@ -12,11 +12,11 @@
 
 #include "appengine/graphics/sprite-effects.h"
 
-error effects_equalise_apply(osspriteop_area   *area,
+result_t effects_equalise_apply(osspriteop_area   *area,
                              osspriteop_header *src,
                              osspriteop_header *dst)
 {
-  error             err;
+  result_t             err;
   sprite_histograms hists;
   int               i;
   sprite_luts       luts;
@@ -50,5 +50,5 @@ error effects_equalise_apply(osspriteop_area   *area,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }

@@ -211,7 +211,7 @@ static void viewer_srcinfodlg_fillout(dialogue_t *d, void *opaque)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_infodlg_init(void)
+result_t viewer_infodlg_init(void)
 {
   // FIXME: Idea for data driving this process.
   //
@@ -233,20 +233,20 @@ error viewer_infodlg_init(void)
   // {
   //   *map[i].w = info_create(map[i].name);
   //   if (*map[i].w == NULL)
-  //     return error_OOM; // will leak when i > 0
+  //     return result_OOM; // will leak when i > 0
   //
   //   dialogue_set_fillout_handler(*map[i].w, map[i].fillout, NULL);
   //
   //   info_set_padding(*map[i].w, GLOBALS.choices.info.padding);
   // }
   //
-  // return error_OK;
+  // return result_OK;
 
   /* Info dialogue */
 
   viewer_infodlg = info_create("image_info");
   if (viewer_infodlg == NULL)
-    return error_OOM;
+    return result_OOM;
 
   dialogue_set_fillout_handler(viewer_infodlg,
                                viewer_infodlg_fillout,
@@ -258,7 +258,7 @@ error viewer_infodlg_init(void)
 
   viewer_srcinfodlg = info_create("source_info");
   if (viewer_srcinfodlg == NULL)
-    return error_OOM;
+    return result_OOM;
 
   dialogue_set_fillout_handler(viewer_srcinfodlg,
                                viewer_srcinfodlg_fillout,
@@ -266,7 +266,7 @@ error viewer_infodlg_init(void)
 
   info_set_padding(viewer_srcinfodlg, GLOBALS.choices.info.padding);
 
-  return error_OK;
+  return result_OK;
 }
 
 void viewer_infodlg_fin(void)

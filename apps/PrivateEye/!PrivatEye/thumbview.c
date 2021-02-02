@@ -87,7 +87,7 @@ enum
 
 /* ---------------------------------------------------------------------- */
 
-static error declare_keymap(void)
+static result_t declare_keymap(void)
 {
   /* Keep these sorted by name */
   static const keymap_name_to_action keys[] =
@@ -108,8 +108,8 @@ static error declare_keymap(void)
                            &LOCALS.keymap_id);
 }
 
-static error thumbview_substrate_callback(const wire_message_t *message,
-                                          void                 *opaque)
+static result_t thumbview_substrate_callback(const wire_message_t *message,
+                                             void                 *opaque)
 {
   NOT_USED(opaque);
 
@@ -122,9 +122,9 @@ static error thumbview_substrate_callback(const wire_message_t *message,
   return error_OK;
 }
 
-error thumbview_substrate_init(void)
+result_t thumbview_substrate_init(void)
 {
-  error err;
+  result_t err;
 
   err = wire_register(0, thumbview_substrate_callback, NULL, NULL);
   if (err)
@@ -171,8 +171,8 @@ enum
   thumbview_display_mode_FULL_INFO_VERTICAL,
 };
 
-static error thumbview_set_display_mode(thumbview             *tv,
-                                        thumbview_display_mode mode);
+static result_t thumbview_set_display_mode(thumbview             *tv,
+                                           thumbview_display_mode mode);
 
 /* ----------------------------------------------------------------------- */
 
@@ -451,9 +451,9 @@ static void thumbview_reg(int reg, thumbview *tv)
                             tv);
 }
 
-static error thumbview_set_handlers(thumbview *tv)
+static result_t thumbview_set_handlers(thumbview *tv)
 {
-  error err;
+  result_t err;
 
   thumbview_reg(1, tv);
 
@@ -503,9 +503,9 @@ static void thumbview_set_single_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-error thumbview_init(void)
+result_t thumbview_init(void)
 {
-  error err;
+  result_t err;
 
   /* dependencies */
 
@@ -565,7 +565,7 @@ static void thumbview_menu_update(void)
 
 static void thumbview_action(thumbview *tv, int op)
 {
-  error     err = error_OK;
+  result_t  err = error_OK;
   filerwin *fw;
 
   fw = tv->fw;
@@ -849,9 +849,9 @@ static int thumbview_message_mode_change(wimp_message *message,
 
 /* ----------------------------------------------------------------------- */
 
-error thumbview_create(thumbview **new_tv)
+result_t thumbview_create(thumbview **new_tv)
 {
-  error       err;
+  result_t    err;
   thumbview  *tv   = NULL;
   atom_set_t *text = NULL;
   filerwin   *fw   = NULL;
@@ -938,9 +938,9 @@ void thumbview_open(thumbview *tv)
 
 #define TEXTH 44
 
-static error layout(thumbview *tv)
+static result_t layout(thumbview *tv)
 {
-  error          err;
+  result_t       err;
 
   os_box         pagedims;
   os_box         margins;
@@ -1153,11 +1153,11 @@ failure:
   return err;
 }
 
-static error load_directory_cb(const char          *obj_name,
-                               osgbpb_info_stamped *info,
-                               void                *opaque)
+static result_t load_directory_cb(const char          *obj_name,
+                                  osgbpb_info_stamped *info,
+                                  void                *opaque)
 {
-  error            err;
+  result_t         err;
   thumbview       *tv = opaque;
   thumbview_entry *entry;
   image_t         *image;
@@ -1301,7 +1301,7 @@ Failure:
 
 void thumbview_load_dir(thumbview *tv, const char *dir_name)
 {
-  error err;
+  result_t err;
 
   tv->thumb_w = GLOBALS.choices.thumbview.thumbnail_w * 2;
   tv->thumb_h = GLOBALS.choices.thumbview.thumbnail_h * 2;
@@ -1332,10 +1332,10 @@ Failure:
 
 /* ----------------------------------------------------------------------- */
 
-static error thumbview_set_display_mode(thumbview             *tv,
-                                        thumbview_display_mode mode)
+static result_t thumbview_set_display_mode(thumbview             *tv,
+                                           thumbview_display_mode mode)
 {
-  error err;
+  result_t err;
 
   tv->mode = mode;
 

@@ -16,22 +16,22 @@
 
 typedef struct T T;
 
-error treeview_init(void);
+result_t treeview_init(void);
 void treeview_fin(void);
 
-error treeview_create(T **tr);
+result_t treeview_create(T **tr);
 void treeview_destroy(T *tr);
 
-error treeview_draw(T *tr);
+result_t treeview_draw(T *tr);
 
-error treeview_set_tree(T *tr, ntree_t *tree);
+result_t treeview_set_tree(T *tr, ntree_t *tree);
 
 /* Make all nodes with children collapsible. */
-error treeview_make_collapsible(T *tr);
+result_t treeview_make_collapsible(T *tr);
 
 /* Sends a click event to the treeview.
  * Returns redraw_y <= 0 (-ve or zero) if the tree needs redrawing. */
-error treeview_click(T *tr, int x, int y, int *redraw_y);
+result_t treeview_click(T *tr, int x, int y, int *redraw_y);
 
 /* Sets the required width of text, in characters. */
 void treeview_set_text_width(T *tr, int width);
@@ -40,7 +40,7 @@ void treeview_set_text_width(T *tr, int width);
 void treeview_set_line_height(T *tr, int line_height);
 
 /* Returns the dimensions of a treeview in OS units. */
-error treeview_get_dimensions(T *tr, int *width, int *height);
+result_t treeview_get_dimensions(T *tr, int *width, int *height);
 
 void treeview_set_highlight_background(T *tr, wimp_colour bgcolour);
 

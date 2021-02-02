@@ -271,7 +271,7 @@ void image_destroy_metadata(ntree_t *metadata);
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_digest(T *image, unsigned char digest[image_DIGESTSZ]);
+result_t image_get_digest(T *image, unsigned char digest[image_DIGESTSZ]);
 
 #undef T
 

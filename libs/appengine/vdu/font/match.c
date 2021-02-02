@@ -184,7 +184,7 @@ static font_attrs splitname(const char *fontname, char *family)
   return attrs;
 }
 
-error font_select(const char *wantname,
+result_t font_select(const char *wantname,
                   font_attrs  wantattrs,
                   char       *selected,
                   int         selected_size)
@@ -245,9 +245,9 @@ error font_select(const char *wantname,
   }
 
   if (winner == INT_MAX)
-    return error_FONT_NO_MATCH;
+    return result_FONT_NO_MATCH;
 
-  return error_OK;
+  return result_OK;
 }
 
 font_attrs font_get_attrs(const char *name)

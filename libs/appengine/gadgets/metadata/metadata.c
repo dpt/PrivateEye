@@ -74,12 +74,12 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-error metadata_init(void)
+result_t metadata_init(void)
 {
-  error err;
+  result_t err;
 
   if (LOCALS.refcount)
-    return error_OK; /* already initialised */
+    return result_OK; /* already initialised */
 
   /* dependencies */
 
@@ -106,7 +106,7 @@ error metadata_init(void)
 
   LOCALS.refcount++;
 
-  return error_OK;
+  return result_OK;
 }
 
 void metadata_fin(void)
@@ -145,8 +145,8 @@ int metadata_available(const image_t *image)
 
 /* ----------------------------------------------------------------------- */
 
-static error metadata_alloc(const void    *opaque_config,
-                            imageobwin_t **obwin)
+static result_t metadata_alloc(const void    *opaque_config,
+                               imageobwin_t **obwin)
 {
   metadata_window       *self;
   const metadata_config *config = opaque_config;
@@ -155,7 +155,7 @@ static error metadata_alloc(const void    *opaque_config,
 
   self = malloc(sizeof(*self));
   if (self == NULL)
-    return error_OOM;
+    return result_OOM;
 
   self->config = *config;
 
@@ -163,7 +163,7 @@ static error metadata_alloc(const void    *opaque_config,
 
   *obwin = &self->base;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void metadata_dealloc(imageobwin_t *doomed)
@@ -175,9 +175,9 @@ static void metadata_dealloc(imageobwin_t *doomed)
   free(self);
 }
 
-static error metadata_compute(imageobwin_t *obwin)
+static result_t metadata_compute(imageobwin_t *obwin)
 {
-  error            err;
+  result_t         err;
   metadata_window *self;
   image_t         *image;
   ntree_t         *tree;
@@ -190,7 +190,7 @@ static error metadata_compute(imageobwin_t *obwin)
   hourglass_on();
 
   if (image->methods.get_meta(image, &tree))
-    return error_PRIVATEEYE_META_UNSUPP_FUNC;
+    return result_PRIVATEEYE_META_UNSUPP_FUNC;
 
   hourglass_off();
 
@@ -218,7 +218,7 @@ static error metadata_compute(imageobwin_t *obwin)
   box.y1 = 0;
   wimp_set_extent(self->base.w, &box);
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:

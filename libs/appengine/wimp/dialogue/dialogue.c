@@ -320,12 +320,12 @@ static void assign_key_actions(dialogue_t *d)
   add_action(d, d->cancel, wimp_KEY_ESCAPE);
 }
 
-error dialogue_construct(dialogue_t *d,
+result_t dialogue_construct(dialogue_t *d,
                          const char *name,
                          wimp_i      ok,
                          wimp_i      cancel)
 {
-  error err;
+  result_t err;
 
   d->flags = 0;
   d->w     = window_create(name);
@@ -349,7 +349,7 @@ error dialogue_construct(dialogue_t *d,
 
   dialogue_register_handlers(1, d);
 
-  return error_OK;
+  return result_OK;
 }
 
 void dialogue_destruct(dialogue_t *d)

@@ -36,7 +36,7 @@ static void selected(const wimp_selection *selection, void *opaque)
     {
       case NEW_CANVAS:
         {
-          error err;
+          result_t  err;
           canvas_t *canvas;
 
           err = canvas_create(&canvas);
@@ -140,9 +140,9 @@ static void update(wimp_menu *menu, void *opaque)
                       wimp_ICON_SHADED);
 }
 
-error eye_icon_bar_init(void)
+result_t eye_icon_bar_init(void)
 {
-  error err;
+  result_t err;
 
   err = icon_bar_init();
   if (err)
@@ -150,7 +150,7 @@ error eye_icon_bar_init(void)
 
   icon_bar_set_handlers(NULL, selected, update, NULL);
 
-  return error_OK;
+  return result_OK;
 }
 
 void eye_icon_bar_fin(void)

@@ -16,12 +16,12 @@
 
 #define BUFFER_SIZE 4096
 
-error dirscan(const char       *dir_name,
+result_t dirscan(const char       *dir_name,
               dirscan_callback *callback,
               dirscan_flags     flags,
               void             *opaque)
 {
-  error                err;
+  result_t                err;
   osgbpb_info_stamped *info     = NULL;
   int                  dir_name_len;
   int                  namebuf_len;
@@ -33,7 +33,7 @@ error dirscan(const char       *dir_name,
   info = malloc(BUFFER_SIZE);
   if (info == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -43,7 +43,7 @@ error dirscan(const char       *dir_name,
   namebuf = malloc(namebuf_len);
   if (namebuf == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -87,7 +87,7 @@ error dirscan(const char       *dir_name,
         new_namebuf = realloc(namebuf, new_size);
         if (new_namebuf == NULL)
         {
-          err = error_OOM;
+          err = result_OOM;
           goto Failure;
         }
 
@@ -143,7 +143,7 @@ error dirscan(const char       *dir_name,
   }
   while (context != -1);
 
-  err = error_OK;
+  err = result_OK;
 
 Failure:
 

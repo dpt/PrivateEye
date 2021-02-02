@@ -59,7 +59,7 @@ static int title_is_indirected;
 
 /* ----------------------------------------------------------------------- */
 
-static error setup_title(wimp_menu *m, const char *text)
+static result_t setup_title(wimp_menu *m, const char *text)
 {
   int text_len;
 
@@ -74,7 +74,7 @@ static error setup_title(wimp_menu *m, const char *text)
     /* indirected */
     m->title_data.indirected_text.text = str_dup(text);
     if (m->title_data.indirected_text.text == NULL)
-      return error_OOM;
+      return result_OOM;
 
     /* title_data.validation and text_size fields are reserved
     * (they don't exist in OSLib) */
@@ -93,10 +93,10 @@ static error setup_title(wimp_menu *m, const char *text)
 
   menu_width = MENUWIDTH(text_len);
 
-  return error_OK;
+  return result_OK;
 }
 
-static error setup_entry(wimp_menu *m, int index, const char *text)
+static result_t setup_entry(wimp_menu *m, int index, const char *text)
 {
   const wimp_icon_flags icon_flags = (wimp_COLOUR_BLACK << wimp_ICON_FG_COLOUR_SHIFT) |
                                       wimp_ICON_FILLED |
@@ -124,7 +124,7 @@ static error setup_entry(wimp_menu *m, int index, const char *text)
     e->icon_flags = icon_flags | wimp_ICON_INDIRECTED;
     e->data.indirected_text.text       = str_dup(text);
     if (e->data.indirected_text.text == NULL)
-      return error_OOM;
+      return result_OOM;
 
     e->data.indirected_text.validation = NULL;
     e->data.indirected_text.size       = text_len + 1;
@@ -135,7 +135,7 @@ static error setup_entry(wimp_menu *m, int index, const char *text)
   if (MENUWIDTH(text_len) > menu_width)
     menu_width = MENUWIDTH(text_len);
 
-  return error_OK;
+  return result_OK;
 }
 
 static void terminate_menu(wimp_menu *m)
@@ -249,7 +249,7 @@ typedef struct MakeMenus MakeMenus;
 
 typedef struct
 {
-  error       (*add)(MakeMenus *maker, const char *text);
+  result_t       (*add)(MakeMenus *maker, const char *text);
   wimp_menu    *base;
   int           cur;  /* current entry */
   int           max;  /* space allocated */
@@ -270,9 +270,9 @@ struct MakeMenus
 
 #define MENUSZ(n) (sizeof(wimp_menu) + sizeof(wimp_menu_entry) * (n - 1))
 
-static error addentry(MakeMenus *maker, const char *text)
+static result_t addentry(MakeMenus *maker, const char *text)
 {
-  error            err;
+  result_t            err;
   GrowableMenu    *g;
   wimp_menu_flags  flags;
 
@@ -289,7 +289,7 @@ static error addentry(MakeMenus *maker, const char *text)
 
     base = realloc(g->base, MENUSZ(max));
     if (base == NULL)
-      return error_OOM;
+      return result_OOM;
 
     g->base = base;
     g->max  = max;
@@ -315,12 +315,12 @@ static error addentry(MakeMenus *maker, const char *text)
 
   g->cur++;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error addtitle(MakeMenus *maker, const char *text)
+static result_t addtitle(MakeMenus *maker, const char *text)
 {
-  error         err;
+  result_t         err;
   GrowableMenu *g;
 
   g = maker->menus + maker->cur;
@@ -331,10 +331,10 @@ static error addtitle(MakeMenus *maker, const char *text)
 
   g->add = addentry;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error newmenu(MakeMenus *maker)
+static result_t newmenu(MakeMenus *maker)
 {
   enum { InitialEntries = 8 };
 
@@ -344,7 +344,7 @@ static error newmenu(MakeMenus *maker)
 
   m = malloc(MENUSZ(InitialEntries));
   if (m == NULL)
-    return error_OOM;
+    return result_OOM;
 
   i = maker->nextfree++;
 
@@ -357,7 +357,7 @@ static error newmenu(MakeMenus *maker)
 
   maker->cur = i;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void setflags(MakeMenus *maker, unsigned int flags)
@@ -380,7 +380,7 @@ static void setsubmenu(MakeMenus *maker, void *submenu)
   menu_set_submenu(g->base, g->cur - 1, submenu);
 }
 
-static error menufinished(MakeMenus *maker)
+static result_t menufinished(MakeMenus *maker)
 {
   GrowableMenu *g;
   wimp_menu     *m;
@@ -394,18 +394,18 @@ static error menufinished(MakeMenus *maker)
   /* realloc to fit exactly */
   m = realloc(g->base, MENUSZ(g->cur));
   if (m == NULL)
-    return error_OOM;
+    return result_OOM;
 
   g->base = m;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ### start/end cases are similar to the push/pop cases -- merge */
 
-static error makemenus(MakeMenus *maker, va_list ap)
+static result_t makemenus(MakeMenus *maker, va_list ap)
 {
-  error err;
+  result_t err;
 
   maker->sp = maker->stack; /* initially empty */
 
@@ -476,7 +476,7 @@ static error makemenus(MakeMenus *maker, va_list ap)
         if (maker->sp >= maker->stack + 8)
         {
           PRINTERROR("out of stack space / menu too deep");
-          return error_OK;
+          return result_OK;
         }
 
         *maker->sp++ = maker->cur;
@@ -494,7 +494,7 @@ static error makemenus(MakeMenus *maker, va_list ap)
           if (maker->sp == maker->stack)
           {
             PRINTERROR("pop without previous push");
-            return error_OK;
+            return result_OK;
           }
 
           err = menufinished(maker);
@@ -517,7 +517,7 @@ static error makemenus(MakeMenus *maker, va_list ap)
 
       case Error:
         PRINTERROR("unhandled error");
-        return error_OK;
+        return result_OK;
 
       default:
         assert(0);
@@ -525,12 +525,12 @@ static error makemenus(MakeMenus *maker, va_list ap)
     }
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 wimp_menu *menu_create_from_desc(const char *desc, ...)
 {
-  error err;
+  result_t err;
   va_list ap;
   MakeMenus maker;
 

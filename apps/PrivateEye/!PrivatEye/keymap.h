@@ -25,13 +25,13 @@ enum
 
 typedef int viewer_keymap_id;
 
-error viewer_keymap_init(void);
+result_t viewer_keymap_init(void);
 void viewer_keymap_fin(void);
 
-error viewer_keymap_add(const char                  *name,
-                        const keymap_name_to_action *mappings,
-                        int                          nmappings,
-                        viewer_keymap_id            *id);
+result_t viewer_keymap_add(const char                  *name,
+                           const keymap_name_to_action *mappings,
+                           int                          nmappings,
+                           viewer_keymap_id            *id);
 
 int viewer_keymap_op(viewer_keymap_id id, wimp_key_no key_no);
 

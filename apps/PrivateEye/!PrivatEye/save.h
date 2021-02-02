@@ -11,7 +11,7 @@
 
 extern dialogue_t *viewer_savedlg;
 
-error viewer_savedlg_init(void);
+result_t viewer_savedlg_init(void);
 void viewer_savedlg_fin(void);
 
 #endif /* VIEWER_SAVEDLG_H */

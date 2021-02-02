@@ -78,9 +78,9 @@
 
 /* ----------------------------------------------------------------------- */
 
-static error initialise_substrate(void)
+static result_t initialise_substrate(void)
 {
-  typedef error (*initfn)(void);
+  typedef result_t (*initfn)(void);
 
   static const initfn initfns[] =
   {
@@ -96,8 +96,8 @@ static error initialise_substrate(void)
 #endif
   };
 
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   for (i = 0; i < NELEMS(initfns); i++)
   {
@@ -106,7 +106,7 @@ static error initialise_substrate(void)
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -138,9 +138,9 @@ static void register_event_handlers(int reg)
                                NULL);
 }
 
-static error initialise_subsystems(void)
+static result_t initialise_subsystems(void)
 {
-  typedef error (*initfn)(void);
+  typedef result_t (*initfn)(void);
 
   static const initfn initfns[] =
   {
@@ -161,8 +161,8 @@ static error initialise_subsystems(void)
     dataxfer_init
   };
 
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   /* initialise dependencies */
 
@@ -173,7 +173,7 @@ static error initialise_subsystems(void)
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 static void finalise_subsystems(void)
@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
     message_QUIT
   }};
 
-  error      err = error_OK;
+  result_t   err = result_OK;
   wimp_block poll;
 
 #ifdef MemCheck_MEMCHECK
@@ -447,7 +447,7 @@ int main(int argc, char *argv[])
       viewer_t *viewer;
 
       err = viewer_create(&viewer); /* reports any failures itself */
-      if (err == error_OK)
+      if (err == result_OK)
       {
         if (viewer_load(viewer, argv[argc], load_addr, exec_addr))
           viewer_destroy(viewer);
@@ -504,7 +504,7 @@ int main(int argc, char *argv[])
 Failure:
 
   if (err)
-    error_report(err);
+    result_report(err);
 
   exit(EXIT_FAILURE);
 }

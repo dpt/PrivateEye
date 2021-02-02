@@ -54,16 +54,16 @@ static void viewer_savedlg_handler(dialogue_t *d, const char *file_name)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_savedlg_init(void)
+result_t viewer_savedlg_init(void)
 {
   viewer_savedlg = save_create();
   if (viewer_savedlg == NULL)
-    return error_OOM;
+    return result_OOM;
 
   dialogue_set_fillout_handler(viewer_savedlg, viewer_savedlg_fillout, NULL);
   save_set_save_handler(viewer_savedlg, viewer_savedlg_handler);
 
-  return error_OK;
+  return result_OK;
 }
 
 void viewer_savedlg_fin(void)

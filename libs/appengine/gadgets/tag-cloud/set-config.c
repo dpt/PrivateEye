@@ -7,7 +7,7 @@
 
 #include "impl.h"
 
-error tag_cloud_set_config(tag_cloud        *tc,
+result_t tag_cloud_set_config(tag_cloud        *tc,
                      const tag_cloud_config *config)
 {
   tc->config = *config;
@@ -18,5 +18,5 @@ error tag_cloud_set_config(tag_cloud        *tc,
 
   tag_cloud_redraw(tc);
 
-  return error_OK;
+  return result_OK;
 }

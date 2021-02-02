@@ -227,13 +227,13 @@ int image_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
-static error destroy_metadata_callback(ntree_t *t, void *opaque)
+static result_t destroy_metadata_callback(ntree_t *t, void *opaque)
 {
   NOT_USED(opaque);
 
   free(ntree_get_data(t));
 
-  return error_OK;
+  return result_OK;
 }
 
 void image_destroy_metadata(ntree_t *metadata)
@@ -249,7 +249,7 @@ void image_destroy_metadata(ntree_t *metadata)
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
+result_t image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
 {
   if ((image->flags & image_FLAG_HAS_DIGEST) == 0)
   {
@@ -260,5 +260,5 @@ error image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
 
   memcpy(digest, image->digest, image_DIGESTSZ);
 
-  return error_OK;
+  return result_OK;
 }

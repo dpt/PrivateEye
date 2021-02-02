@@ -21,7 +21,7 @@ static const int ndata = NELEMS(data);
 
 int txtfmt_test(void)
 {
-  error     err;
+  result_t   err;
   txtfmt_t *tx[ndata];
   int       i;
 

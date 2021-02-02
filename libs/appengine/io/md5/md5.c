@@ -22,10 +22,10 @@
 
 #define BUFSZ 65536
 
-error md5_from_file(const char    *file_name,
+result_t md5_from_file(const char    *file_name,
                     unsigned char  digest[md5_DIGESTSZ])
 {
-  error               err;
+  result_t               err;
   unsigned char      *buffer;
   FILE               *in = NULL;
   long                len;
@@ -37,14 +37,14 @@ error md5_from_file(const char    *file_name,
   buffer = malloc(BUFSZ);
   if (buffer == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto failure;
   }
 
   in = fopen(file_name, "rb");
   if (in == NULL)
   {
-    err = error_FILE_OPEN_FAILED;
+    err = result_FILE_OPEN_FAILED;
     goto failure;
   }
 
@@ -68,7 +68,7 @@ error md5_from_file(const char    *file_name,
 
   hourglass_off();
 
-  return error_OK;
+  return result_OK;
 
 
 failure:

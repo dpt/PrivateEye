@@ -10,7 +10,7 @@
 
 #include "appengine/base/errors.h"
 
-error icon_bar_init(void);
+result_t icon_bar_init(void);
 void icon_bar_fin(void);
 
 typedef void (icon_bar_menu_pointerfn)(const wimp_pointer *pointer,

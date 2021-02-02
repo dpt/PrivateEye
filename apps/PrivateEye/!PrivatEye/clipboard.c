@@ -43,11 +43,11 @@ static void register_event_handlers(int reg)
                                NULL);
 }
 
-error clipboard_init(void)
+result_t clipboard_init(void)
 {
   register_event_handlers(1);
 
-  return error_OK;
+  return result_OK;
 }
 
 void clipboard_fin(void)

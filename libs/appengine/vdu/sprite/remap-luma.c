@@ -8,7 +8,7 @@
 #include "appengine/types.h"
 #include "appengine/vdu/sprite.h"
 
-error sprite_remap_luma(osspriteop_area   *area,
+result_t sprite_remap_luma(osspriteop_area   *area,
                         osspriteop_header *src,
                         osspriteop_header *dst,
                         sprite_lut        *lut)
@@ -33,7 +33,7 @@ error sprite_remap_luma(osspriteop_area   *area,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_FUNC;
+    return result_SPRITEFX_UNSUPP_FUNC;
   }
 
   sp = sprite_data(src);
@@ -79,5 +79,5 @@ error sprite_remap_luma(osspriteop_area   *area,
     *dp++ = (r << 0) | (g << 8) | (b << 16) | (spx & 0xff00000);
   }
 
-  return error_OK;
+  return result_OK;
 }

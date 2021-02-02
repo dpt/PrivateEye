@@ -84,11 +84,11 @@ choices_choice;
 
 typedef struct choices_pane choices_pane;
 
-typedef error (choices_pane_initialise_handler)(const choices_pane *);
+typedef result_t (choices_pane_initialise_handler)(const choices_pane *);
 typedef void (choices_pane_finalise_handler)(const choices_pane *);
-typedef error (choices_pane_changed_handler)(const choices_pane *);
-typedef error (choices_pane_redraw_handler)(const choices_pane *,
-                                            wimp_draw          *);
+typedef result_t (choices_pane_changed_handler)(const choices_pane *);
+typedef result_t (choices_pane_redraw_handler)(const choices_pane *,
+                                               wimp_draw          *);
 
 /* these handlers deal with 'proposed' choices */
 typedef struct choices_pane_handlers
@@ -114,7 +114,7 @@ struct choices_pane
 /* A grouping of choices */
 typedef struct choices_group choices_group;
 
-typedef error (choices_group_changed_handler)(const choices_group *);
+typedef result_t (choices_group_changed_handler)(const choices_group *);
 
 typedef struct choices_group_handlers
 {
@@ -174,15 +174,15 @@ struct choices
 
 /* ----------------------------------------------------------------------- */
 
-error choices_init(void);
+result_t choices_init(void);
 void choices_fin(void);
-error choices_create_windows(const choices *);
+result_t choices_create_windows(const choices *);
 void choices_destroy_windows(const choices *);
-error choices_load(const choices *);
-error choices_save(const choices *);
-error choices_update_icons(const choices *);
-error choices_open(const choices *);
-error choices_set(const choices *);
-error choices_cancel(const choices *);
+result_t choices_load(const choices *);
+result_t choices_save(const choices *);
+result_t choices_update_icons(const choices *);
+result_t choices_open(const choices *);
+result_t choices_set(const choices *);
+result_t choices_cancel(const choices *);
 
 #endif /* APPENGINE_CHOICES_H */

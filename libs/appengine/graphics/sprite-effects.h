@@ -36,7 +36,7 @@ typedef struct blender
 }
 blender;
 
-error blender_create(blender *b, osspriteop_area *area);
+result_t blender_create(blender *b, osspriteop_area *area);
 
 typedef enum effects_blur_method
 {
@@ -45,38 +45,38 @@ typedef enum effects_blur_method
 }
 effects_blur_method;
 
-error effects_blur_apply(osspriteop_area    *area,
-                         osspriteop_header  *src,
-                         osspriteop_header  *dst,
-                         effects_blur_method method,
-                         int                 amount);
+result_t effects_blur_apply(osspriteop_area    *area,
+                            osspriteop_header  *src,
+                            osspriteop_header  *dst,
+                            effects_blur_method method,
+                            int                 amount);
 
-error effects_clear_apply(osspriteop_area   *area,
-                          osspriteop_header *src,
-                          osspriteop_header *dst,
-                          os_colour          colour);
-
-error effects_equalise_apply(osspriteop_area   *area,
+result_t effects_clear_apply(osspriteop_area   *area,
                              osspriteop_header *src,
-                             osspriteop_header *dst);
+                             osspriteop_header *dst,
+                             os_colour          colour);
 
-error effects_expand_apply(osspriteop_area   *area,
-                           osspriteop_header *src,
-                           osspriteop_header *dst,
-                           int                threshold);
+result_t effects_equalise_apply(osspriteop_area   *area,
+                                osspriteop_header *src,
+                                osspriteop_header *dst);
 
-error effects_grey_apply(osspriteop_area   *area,
-                         osspriteop_header *src,
-                         osspriteop_header *dst);
+result_t effects_expand_apply(osspriteop_area   *area,
+                              osspriteop_header *src,
+                              osspriteop_header *dst,
+                              unsigned int       threshold);
 
-error effects_sharpen_apply(osspriteop_area   *area,
+result_t effects_grey_apply(osspriteop_area   *area,
                             osspriteop_header *src,
-                            osspriteop_header *dst,
-                            int                amount);
+                            osspriteop_header *dst);
 
-error effects_tonemap_apply(osspriteop_area   *area,
-                            osspriteop_header *src,
-                            osspriteop_header *dst,
-                            tonemap           *map);
+result_t effects_sharpen_apply(osspriteop_area   *area,
+                               osspriteop_header *src,
+                               osspriteop_header *dst,
+                               int                amount);
+
+result_t effects_tonemap_apply(osspriteop_area   *area,
+                               osspriteop_header *src,
+                               osspriteop_header *dst,
+                               tonemap           *map);
 
 #endif /* APPENGINE_SPRITE_EFFECTS_H */

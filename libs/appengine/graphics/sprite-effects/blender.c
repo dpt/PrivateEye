@@ -231,7 +231,7 @@ static void blend_888(blender *args)
 
 /* ----------------------------------------------------------------------- */
 
-error blender_create(blender *b, osspriteop_area *area)
+result_t blender_create(blender *b, osspriteop_area *area)
 {
   osspriteop_header   *header;
   osspriteop_mode_word mode;
@@ -259,8 +259,8 @@ error blender_create(blender *b, osspriteop_area *area)
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_EFFECT;
+    return result_SPRITEFX_UNSUPP_EFFECT;
   }
 
-  return error_OK;
+  return result_OK;
 }

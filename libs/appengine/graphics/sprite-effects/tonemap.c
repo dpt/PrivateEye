@@ -45,7 +45,7 @@ static void tonemap_888(osspriteop_header         *src,
   }
 }
 
-error effects_tonemap_apply(osspriteop_area   *area,
+result_t effects_tonemap_apply(osspriteop_area   *area,
                             osspriteop_header *src,
                             osspriteop_header *dst,
                             tonemap           *map)
@@ -66,8 +66,8 @@ error effects_tonemap_apply(osspriteop_area   *area,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_EFFECT;
+    return result_SPRITEFX_UNSUPP_EFFECT;
   }
 
-  return error_OK;
+  return result_OK;
 }

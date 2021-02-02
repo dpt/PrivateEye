@@ -26,7 +26,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-error wire_init(void);
+result_t wire_init(void);
 void wire_fin(void);
 
 /* ----------------------------------------------------------------------- */
@@ -44,12 +44,12 @@ typedef unsigned int wire_register_flags;
 // #define wire_register_PRIORITY_MASK (3u << 0) // 0..3 low..high priority
 //#define wire_register_CATEGORIES_MASK (0xff << 2) // call these channels?
 
-typedef error (wire_callback)(const wire_message_t *message, void *opaque);
+typedef result_t (wire_callback)(const wire_message_t *message, void *opaque);
 
-error wire_register(wire_register_flags  flags,
-                    wire_callback       *cb,
-                    void                *opaque,
-                    wire_id             *id);
+result_t wire_register(wire_register_flags  flags,
+                       wire_callback       *cb,
+                       void                *opaque,
+                       wire_id             *id);
 void wire_deregister(wire_id id);
 
 /* ----------------------------------------------------------------------- */
@@ -71,7 +71,7 @@ struct wire_message
   void      *payload;
 };
 
-error wire_dispatch(const wire_message_t *message);
+result_t wire_dispatch(const wire_message_t *message);
 
 /* ----------------------------------------------------------------------- */
 

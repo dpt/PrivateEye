@@ -45,9 +45,9 @@ static const keymap_name_to_action common[] =
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_keymap_init(void)
+result_t viewer_keymap_init(void)
 {
-  error err;
+  result_t err;
 
   if (viewer_keymap_refcount == 0)
   {
@@ -77,7 +77,7 @@ error viewer_keymap_init(void)
 
   viewer_keymap_refcount++;
 
-  return error_OK;
+  return result_OK;
 }
 
 void viewer_keymap_fin(void)
@@ -95,10 +95,10 @@ void viewer_keymap_fin(void)
   viewer_keymap_refcount--;
 }
 
-error viewer_keymap_add(const char                  *name,
-                        const keymap_name_to_action *mappings,
-                        int                          nmappings,
-                        viewer_keymap_id            *id)
+result_t viewer_keymap_add(const char                  *name,
+                           const keymap_name_to_action *mappings,
+                           int                          nmappings,
+                           viewer_keymap_id            *id)
 {
   viewer_keymap_section_array *array = &LOCALS.array;
   keymap_section              *section;
@@ -117,7 +117,7 @@ error viewer_keymap_add(const char                  *name,
 
     newsections = realloc(array->sections, sizeof(*array->sections) * n);
     if (newsections == NULL)
-      return error_OOM;
+      return result_OOM;
 
     array->sections  = newsections;
     array->allocated = n;
@@ -136,7 +136,7 @@ error viewer_keymap_add(const char                  *name,
 
   LOCALS.id++;
 
-  return error_OK;
+  return result_OK;
 }
 
 int viewer_keymap_op(viewer_keymap_id id, wimp_key_no key_no)

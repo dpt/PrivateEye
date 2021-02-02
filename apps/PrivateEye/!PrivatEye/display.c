@@ -121,7 +121,7 @@ enum
 
 /* ---------------------------------------------------------------------- */
 
-static error declare_keymap(void)
+static result_t declare_keymap(void)
 {
   /* Keep these sorted by name */
   static const keymap_name_to_action keys[] =
@@ -166,8 +166,8 @@ static error declare_keymap(void)
                            &LOCALS.keymap_id);
 }
 
-static error display_substrate_callback(const wire_message_t *message,
-                                        void                 *opaque)
+static result_t display_substrate_callback(const wire_message_t *message,
+                                           void                 *opaque)
 {
   NOT_USED(opaque);
 
@@ -177,18 +177,18 @@ static error display_substrate_callback(const wire_message_t *message,
       return declare_keymap();
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-error display_substrate_init(void)
+result_t display_substrate_init(void)
 {
-  error err;
+  result_t err;
 
   err = wire_register(0, display_substrate_callback, NULL, NULL);
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -225,9 +225,9 @@ static void display_reg(int reg, viewer_t *viewer)
                             viewer);
 }
 
-error display_set_handlers(viewer_t *viewer)
+result_t display_set_handlers(viewer_t *viewer)
 {
-  error err;
+  result_t err;
 
   display_reg(1, viewer);
 
@@ -261,9 +261,9 @@ static void display_set_single_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-error display_init(void)
+result_t display_init(void)
 {
-  typedef error (*initfn)(void);
+  typedef result_t (*initfn)(void);
 
   static const initfn initfns[] =
   {
@@ -278,8 +278,8 @@ error display_init(void)
 #endif
   };
 
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   /* initialise dependencies */
 
@@ -323,7 +323,7 @@ error display_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 void display_fin(void)
@@ -1604,7 +1604,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Close:
-    error_report(action_close_window(viewer->main_w));
+    result_report(action_close_window(viewer->main_w));
     break;
 
   case Save:
@@ -1633,7 +1633,7 @@ static void action(viewer_t *viewer, int op)
 
 #ifdef EYE_TAGS
   case Tags:
-    error_report(tags_open(viewer->drawable->image));
+    result_report(tags_open(viewer->drawable->image));
     break;
 #endif
 
@@ -1642,7 +1642,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Help:
-    error_report(action_help());
+    result_report(action_help());
     break;
 
   case Kill:

@@ -58,9 +58,9 @@ typedef struct
 sprite_histograms;
 
 /* Calculates Luma, R, G and B histograms. 256 entries each. */
-error sprite_get_histograms(osspriteop_area   *area,
-                            osspriteop_header *header,
-                            sprite_histograms *hists);
+result_t sprite_get_histograms(osspriteop_area   *area,
+                               osspriteop_header *header,
+                               sprite_histograms *hists);
 
 /* ----------------------------------------------------------------------- */
 
@@ -78,15 +78,15 @@ typedef struct
 }
 sprite_luts;
 
-error sprite_remap(osspriteop_area   *area,
-                   osspriteop_header *src,
-                   osspriteop_header *dst,
-                   sprite_luts       *luts);
+result_t sprite_remap(osspriteop_area   *area,
+                      osspriteop_header *src,
+                      osspriteop_header *dst,
+                      sprite_luts       *luts);
 
-error sprite_remap_luma(osspriteop_area   *area,
-                        osspriteop_header *src,
-                        osspriteop_header *dst,
-                        sprite_lut        *lut);
+result_t sprite_remap_luma(osspriteop_area   *area,
+                           osspriteop_header *src,
+                           osspriteop_header *dst,
+                           sprite_lut        *lut);
 
 /* ----------------------------------------------------------------------- */
 

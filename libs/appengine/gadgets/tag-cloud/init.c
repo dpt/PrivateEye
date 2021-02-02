@@ -33,7 +33,7 @@ LOCALS;
 
 static unsigned int tag_cloud_refcount = 0;
 
-error tag_cloud_init(void)
+result_t tag_cloud_init(void)
 {
   if (tag_cloud_refcount == 0)
   {
@@ -49,7 +49,7 @@ error tag_cloud_init(void)
 
   tag_cloud_refcount++;
 
-  return error_OK;
+  return result_OK;
 }
 
 void tag_cloud_fin(void)

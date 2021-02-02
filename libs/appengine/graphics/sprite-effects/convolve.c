@@ -44,7 +44,7 @@ struct convolve_lut
 
 /* ----------------------------------------------------------------------- */
 
-error convolve_init(const float *kernel, int n, convolve_lut **new_lut)
+result_t convolve_init(const float *kernel, int n, convolve_lut **new_lut)
 {
   convolve_lut *lut;
   int           s;
@@ -52,7 +52,7 @@ error convolve_init(const float *kernel, int n, convolve_lut **new_lut)
 
   lut = malloc(sizeof(*lut));
   if (lut == NULL)
-    return error_OOM;
+    return result_OOM;
 
   lut->bias = 0;
 
@@ -92,7 +92,7 @@ error convolve_init(const float *kernel, int n, convolve_lut **new_lut)
 
   *new_lut = lut;
 
-  return error_OK;
+  return result_OK;
 }
 
 void convolve_destroy(convolve_lut *lut)
@@ -102,7 +102,7 @@ void convolve_destroy(convolve_lut *lut)
 
 /* ----------------------------------------------------------------------- */
 
-static error convolve_8(const convolve_lut *lut,
+static result_t convolve_8(const convolve_lut *lut,
                         const Pixel8       *src,
                         Pixel8             *dst,
                         int                 len,
@@ -171,10 +171,10 @@ static error convolve_8(const convolve_lut *lut,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_EFFECT;
+    return result_SPRITEFX_UNSUPP_EFFECT;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -516,7 +516,7 @@ static void convolve_888_Nstage(const convolve_lut *lut,
   }
 }
 
-static error convolve_888(const convolve_lut *lut,
+static result_t convolve_888(const convolve_lut *lut,
                           const Pixel888     *src,
                           Pixel888           *dst,
                           int                 len,
@@ -578,22 +578,22 @@ static error convolve_888(const convolve_lut *lut,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_EFFECT;
+    return result_SPRITEFX_UNSUPP_EFFECT;
   }
 
   fn(lut, ip, op, len, lut->bias, stride);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error convolve_sprite(const convolve_lut      *lut,
+result_t convolve_sprite(const convolve_lut      *lut,
                       const osspriteop_area   *area,
                       const osspriteop_header *src,
                       osspriteop_header       *dst)
 {
-  error                 err;
+  result_t                 err;
   int                   width, height;
   osspriteop_mode_word  mode;
   int                   log2bpp;
@@ -618,7 +618,7 @@ error convolve_sprite(const convolve_lut      *lut,
     row = malloc(maxdim * sizeof(*row));
     if (row == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto Failure;
     }
 
@@ -655,7 +655,7 @@ error convolve_sprite(const convolve_lut      *lut,
     row = malloc(maxdim * sizeof(*row));
     if (row == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto Failure;
     }
 
@@ -682,11 +682,11 @@ error convolve_sprite(const convolve_lut      *lut,
     break;
 
   default:
-    err = error_SPRITEFX_UNSUPP_EFFECT;
+    err = result_SPRITEFX_UNSUPP_EFFECT;
     goto Failure;
   }
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:

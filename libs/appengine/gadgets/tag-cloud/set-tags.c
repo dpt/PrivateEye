@@ -55,11 +55,11 @@ static void calc_scales(tag_cloud *tc)
   tc->scale.scale = scale;
 }
 
-error tag_cloud_set_tags(tag_cloud           *tc,
+result_t tag_cloud_set_tags(tag_cloud           *tc,
                          const tag_cloud_tag *tags,
                          int                  ntags)
 {
-  error                err;
+  result_t                err;
   atom_set_t          *dict        = NULL;
   tag_cloud_entry     *entries     = NULL;
   int                  totalcount;
@@ -86,12 +86,12 @@ error tag_cloud_set_tags(tag_cloud           *tc,
 
   dict = atom_create(); // could suggest sizes using atom_create_tuned()
   if (dict == NULL)
-    return error_OOM;
+    return result_OOM;
 
   entries = malloc(ntags * sizeof(*tc->entries));
   if (entries == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -125,7 +125,7 @@ error tag_cloud_set_tags(tag_cloud           *tc,
   sorted = malloc(ntags * sizeof(*sorted));
   if (sorted == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -163,7 +163,7 @@ error tag_cloud_set_tags(tag_cloud           *tc,
                 totalcount);
   }
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:

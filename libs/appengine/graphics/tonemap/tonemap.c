@@ -299,7 +299,7 @@ typedef struct
 }
 comp_path_style;
 
-static error prepare_paths(tonemap               *map,
+static result_t prepare_paths(tonemap               *map,
                            int                    npaths,
                            const comp_path_style *indices)
 {
@@ -321,7 +321,7 @@ static error prepare_paths(tonemap               *map,
   /* avoid where possible */
 
   if (map->flags & FLAG_PATHS_UP_TO_DATE)
-    return error_OK;
+    return result_OK;
 
   /* allocate */
 
@@ -334,7 +334,7 @@ static error prepare_paths(tonemap               *map,
 
     map->path = malloc(need);
     if (map->path == NULL)
-      return error_OOM;
+      return result_OOM;
 
     map->pathsz = need;
   }
@@ -377,7 +377,7 @@ static error prepare_paths(tonemap               *map,
 
   map->flags |= FLAG_PATHS_UP_TO_DATE;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -438,9 +438,9 @@ static const style_map_ent *get_style_map(const tonemap *map)
   return &style_map[alpha][sync];
 }
 
-error tonemap_draw(tonemap *map, int x, int y)
+result_t tonemap_draw(tonemap *map, int x, int y)
 {
-  error                  err;
+  result_t                  err;
   int                    npaths;
   const comp_path_style *indices;
   const style_map_ent   *ent;
@@ -493,7 +493,7 @@ error tonemap_draw(tonemap *map, int x, int y)
     }
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 void tonemap_draw_set_stroke_width(tonemap *map, int width)

@@ -15,12 +15,12 @@
 
 /* FIXME: Threshold should use a percentage rather than literal count. */
 
-error effects_expand_apply(osspriteop_area   *area,
-                           osspriteop_header *src,
-                           osspriteop_header *dst,
-                           int                threshold)
+result_t effects_expand_apply(osspriteop_area   *area,
+                              osspriteop_header *src,
+                              osspriteop_header *dst,
+                              unsigned int       threshold)
 {
-  error             err;
+  result_t          err;
   sprite_histograms hists;
   int               min;
   int               max;
@@ -64,7 +64,7 @@ error effects_expand_apply(osspriteop_area   *area,
   /* I'd like at this point to say:
    *
    *   if (min == 0 && max == 255)
-   *     return error_OK; // nothing to expand
+   *     return result_OK; // nothing to expand
    *
    * but reckon that'll stop sprite_remap degenerating into a straight copy
    * in that case, and so might screw up the expected result.
@@ -94,5 +94,5 @@ error effects_expand_apply(osspriteop_area   *area,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }

@@ -76,7 +76,7 @@ static error canvas_substrate_callback(const wire_message_t *message,
       return declare_keymap();
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 error canvas_substrate_init(void)
@@ -87,7 +87,7 @@ error canvas_substrate_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -239,7 +239,7 @@ error canvas_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -547,12 +547,12 @@ error canvas_create(canvas_t **new_canvas)
 
   *new_canvas = canvas;
 
-  return error_OK;
+  return result_OK;
 
 
 NoMem:
 
-  err = error_OOM;
+  err = result_OOM;
 
   goto Failure;
 
@@ -564,7 +564,7 @@ Failure:
 
   free(canvas);
 
-  error_report(err);
+  result_report(err);
 
   return err;
 }

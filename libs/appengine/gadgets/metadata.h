@@ -9,7 +9,7 @@
 #include "appengine/base/errors.h"
 #include "appengine/graphics/image.h"
 
-error metadata_init(void);
+result_t metadata_init(void);
 void metadata_fin(void);
 int metadata_available(const image_t *image);
 void metadata_open(image_t  *image,

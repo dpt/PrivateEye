@@ -15,7 +15,7 @@ enum
   dcs_quit_SAVE
 };
 
-error dcs_quit_init(void);
+result_t dcs_quit_init(void);
 void dcs_quit_fin(void);
 int dcs_quit_dcs_query(const char *message);
 int dcs_quit_quit_query(const char *message, int count);
