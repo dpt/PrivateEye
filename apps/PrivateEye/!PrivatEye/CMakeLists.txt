@@ -11,7 +11,6 @@
 # - Have seen doubling of linker args
 # - Have seen doubling of compiler/assembler args
 # - Installation
-# - Generate stuff, like templheader values
 
 cmake_minimum_required(VERSION 3.18)
 
@@ -26,6 +25,14 @@ include(FetchContent)
 
 project(PrivateEye VERSION 3.1.0 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
 
+# If a host tools build was requested, then build them alone
+set(TEMPLHEADR_DIR $ENV{APPENGINE_ROOT}/utils/templheader)
+if(HOST_TOOLS_ONLY)
+    message(STATUS "PrivateEye: Building host tools only")
+    add_subdirectory(${TEMPLHEADR_DIR} templheader-bin)
+    return()
+endif()
+
 # The values set in the toolchain file aren't available until this point.
 if(NOT DEFINED TARGET_RISCOS)
     message(FATAL_ERROR "PrivateEye builds for RISC OS only")
@@ -39,6 +46,32 @@ endif()
 if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     message(STATUS "PrivateEye: Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
+
+# Build the native 'host' tools (...) in this dir
+set(HOSTTOOLSDIR "${CMAKE_BINARY_DIR}/host")
+
+# Create a directory in which to build the host tools
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${HOSTTOOLSDIR}")
+
+# Generate the host tools build
+#
+# We use -DCMAKE_C_COMPILER to force the use of the system compiler, otherwise
+# the child build may inherit a cross-compiler via the CC environment variable.
+# This is bound to break on Windows.
+execute_process(COMMAND ${CMAKE_COMMAND}
+    -G "${CMAKE_GENERATOR}"
+    -DCMAKE_BUILD_TYPE='Release'
+    -DCMAKE_C_COMPILER='cc'
+    -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+    -DHOST_TOOLS_ONLY=1
+    ${CMAKE_SOURCE_DIR}
+    WORKING_DIRECTORY "${HOSTTOOLSDIR}")
+
+# Build the host tools (by recursing)
+execute_process(COMMAND ${CMAKE_COMMAND} --build . --target templheadr WORKING_DIRECTORY "${HOSTTOOLSDIR}")
+
+# Build PrivateEye itself
+message(STATUS "PrivateEye: Building targets only")
 
 # Libs... (set this before imports)
 #
@@ -134,7 +167,6 @@ set(ALL_HEADERS
     ffg.h
     globals.h
     iconbar.h
-    iconnames.h
     iconnames2.h
     imagecache.h
     info.h
@@ -182,6 +214,29 @@ set(ALL_SOURCES
     zones.c)
 
 target_sources(PrivateEye PRIVATE ${ALL_SOURCES})
+
+
+# Generate iconnames.h
+#
+
+set(TEMPLATES ${CMAKE_SOURCE_DIR}/Resources/UK/Templates,fec)
+set(ICONNAMES_H ${CMAKE_CURRENT_BINARY_DIR}/iconnames.h)
+
+find_program(TEMPLHEADR
+             templheadr
+             PATHS ${HOSTTOOLSDIR}/templheader-bin
+             PATH_SUFFIXES Debug Release RelWithDebInfo MinSizeRel
+             NO_DEFAULT_PATH
+             REQUIRED)
+add_custom_command(OUTPUT ICONNAMES_H
+                   COMMAND ${TEMPLHEADR} ${TEMPLATES} ${ICONNAMES_H}
+                   MAIN_DEPENDENCY ${TEMPLATES})
+add_custom_target(PrivateEyeIconNames ALL DEPENDS ${ICONNAMES_H})
+
+add_dependencies(PrivateEye PrivateEyeIconNames)
+
+target_include_directories(PrivateEye PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
 
 # Build options
 #
