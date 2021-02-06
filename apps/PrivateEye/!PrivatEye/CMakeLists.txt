@@ -228,7 +228,7 @@ find_program(TEMPLHEADR
              PATH_SUFFIXES Debug Release RelWithDebInfo MinSizeRel
              NO_DEFAULT_PATH
              REQUIRED)
-add_custom_command(OUTPUT ICONNAMES_H
+add_custom_command(OUTPUT ${ICONNAMES_H}
                    COMMAND ${TEMPLHEADR} ${TEMPLATES} ${ICONNAMES_H}
                    MAIN_DEPENDENCY ${TEMPLATES})
 add_custom_target(PrivateEyeIconNames ALL DEPENDS ${ICONNAMES_H})
