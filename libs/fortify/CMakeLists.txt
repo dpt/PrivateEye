@@ -15,16 +15,16 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH $ENV{APPENGINE_ROOT}/cmake/Modules)
 
-# Referencing CMAKE_TOOLCHAIN_FILE avoids a warning on rebuilds.
-if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
-    message(STATUS "Fortify: Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
-endif()
-
 project(Fortify VERSION 2.2.0 DESCRIPTION "Malloc debugger" LANGUAGES C)
 
 # The values set in the toolchain file aren't available until this point.
 if(TARGET_RISCOS)
     riscos_set_flags()
+endif()
+
+# Referencing CMAKE_TOOLCHAIN_FILE avoids a warning on rebuilds.
+if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
+    message(STATUS "Fortify: Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
 # Avoid a warning from CMake

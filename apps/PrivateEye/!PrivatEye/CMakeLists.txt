@@ -87,26 +87,32 @@ FetchContent_Declare(DPTLib
 
 FetchContent_MakeAvailable(DPTLib)
 
-# Import libjpeg
-#
-set(JPEG_DIR ${LIBS_DIR}/jpeg)
-set(JPEG_INCLUDE ${JPEG_DIR})
-add_subdirectory(${JPEG_DIR} jpeg-build)
-
 # Import AppEngine
 #
 set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
 add_subdirectory(${APPENGINE_DIR} appengine-build)
 
-# Import non-CMake libs
+# Import libjpeg
+#
+set(JPEG_DIR ${LIBS_DIR}/jpeg)
+set(JPEG_INCLUDE ${JPEG_DIR})
+add_subdirectory(${JPEG_DIR} jpeg-build)
+
+# Import exiftags
 #
 set(EXIFTAGS_DIR ${LIBS_DIR}/exiftags)
 set(EXIFTAGS_INCLUDE ${EXIFTAGS_DIR})
-set(EXIFTAGS_LIB ${EXIFTAGS_DIR}/exiftags.a)
+add_subdirectory(${EXIFTAGS_DIR} exiftags-build)
+
+# Import flex
+#
 set(FLEX_DIR ${LIBS_DIR}/flex)
 set(FLEX_INCLUDE ${FLEX_DIR})
-set(FLEX_LIB ${FLEX_DIR}/libflex.a)
+add_subdirectory(${FLEX_DIR} flex-build)
+
+# Import non-CMake libs
+#
 set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
 set(MD5_LIB ${MD5_DIR}/libmd5.a)
@@ -291,8 +297,9 @@ if(USE_FORTIFY)
     target_link_libraries(PrivateEye PRIVATE Fortify)
 endif()
 
-# libjpeg
-target_link_libraries(PrivateEye PRIVATE jpeg trans)
+# libjpeg, exiftags, flex
+target_link_libraries(PrivateEye PRIVATE jpeg trans exiftags flex)
+
 
 
 # Installation
