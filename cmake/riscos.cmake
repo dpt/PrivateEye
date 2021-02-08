@@ -22,8 +22,8 @@ set(CMAKE_ASM_ASASM_COMPILER ${crossbin}/asasm)
 set(CMAKE_CXX_COMPILER ${crossbin}/${prefix}g++)
 set(CMAKE_C_COMPILER ${crossbin}/${prefix}gcc)
 
-set(CMAKE_ASM_ASASM_FLAGS "" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS "-mlibscl -mhard-float" CACHE STRING "" FORCE)
+set(CMAKE_ASM_ASASM_FLAGS "" CACHE INTERNAL "") # INTERNAL implies FORCE
+set(CMAKE_C_FLAGS "-mlibscl -mhard-float" CACHE INTERNAL "")
 
 # Don't embed function names in MinSizeRel builds, but do everywhere else.
 if(CMAKE_BUILD_TYPE MATCHES MinSizeRel)
