@@ -18,7 +18,9 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH $ENV{APPENGINE_ROOT}/cmake/Modules)
+set(APPENGINE_REPO_ROOT $ENV{APPENGINE_ROOT})
+
+list(APPEND CMAKE_MODULE_PATH ${APPENGINE_REPO_ROOT}/cmake/Modules)
 
 include(FetchContent)
 
@@ -26,7 +28,7 @@ include(FetchContent)
 project(PrivateEye VERSION 3.1.0 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
 
 # If a host tools build was requested, then build them alone
-set(TEMPLHEADR_DIR $ENV{APPENGINE_ROOT}/utils/templheader)
+set(TEMPLHEADR_DIR ${APPENGINE_REPO_ROOT}/utils/templheader)
 if(HOST_TOOLS_ONLY)
     message(STATUS "PrivateEye: Building host tools only")
     add_subdirectory(${TEMPLHEADR_DIR} templheader-bin)
@@ -85,6 +87,12 @@ FetchContent_Declare(DPTLib
 
 FetchContent_MakeAvailable(DPTLib)
 
+# Import libjpeg
+#
+set(JPEG_DIR ${LIBS_DIR}/jpeg)
+set(JPEG_INCLUDE ${JPEG_DIR})
+add_subdirectory(${JPEG_DIR} jpeg-build)
+
 # Import AppEngine
 #
 set(APPENGINE_DIR ${LIBS_DIR}/appengine)
@@ -99,12 +107,6 @@ set(EXIFTAGS_LIB ${EXIFTAGS_DIR}/exiftags.a)
 set(FLEX_DIR ${LIBS_DIR}/flex)
 set(FLEX_INCLUDE ${FLEX_DIR})
 set(FLEX_LIB ${FLEX_DIR}/libflex.a)
-set(JPEGTRAN_DIR ${LIBS_DIR}/jpeg)
-set(JPEGTRAN_INCLUDE ${JPEGTRAN_DIR})
-set(JPEGTRAN_LIB ${JPEGTRAN_DIR}/libtrans.a)
-set(JPEG_DIR ${LIBS_DIR}/jpeg)
-set(JPEG_INCLUDE ${JPEG_DIR})
-set(JPEG_LIB ${JPEG_DIR}/libjpeg.a)
 set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
 set(MD5_LIB ${MD5_DIR}/libmd5.a)
@@ -127,7 +129,6 @@ target_include_directories(PrivateEye
     ${DPTLIB_INCLUDE}
     ${EXIFTAGS_INCLUDE}
     ${FLEX_INCLUDE}
-    ${JPEGTRAN_INCLUDE}
     ${JPEG_INCLUDE}
     ${MD5_INCLUDE}
     ${PNG_INCLUDE}
@@ -281,14 +282,18 @@ endif()
 
 if(TARGET_RISCOS)
     # OSLib (& anything else in GCCSDK)
-    target_include_directories(PrivateEye PUBLIC $ENV{GCCSDK_INSTALL_ENV}/include)
-    target_link_libraries(PrivateEye PUBLIC $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
+    target_include_directories(PrivateEye PRIVATE $ENV{GCCSDK_INSTALL_ENV}/include)
+    target_link_libraries(PrivateEye PRIVATE $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
 endif()
 
 option(USE_FORTIFY "Use Fortify" OFF)
 if(USE_FORTIFY)
     target_link_libraries(PrivateEye PRIVATE Fortify)
 endif()
+
+# libjpeg
+target_link_libraries(PrivateEye PRIVATE jpeg trans)
+
 
 # Installation
 #

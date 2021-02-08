@@ -19,7 +19,9 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH $ENV{APPENGINE_ROOT}/cmake/Modules)
+set(APPENGINE_REPO_ROOT $ENV{APPENGINE_ROOT})
+
+list(APPEND CMAKE_MODULE_PATH ${APPENGINE_REPO_ROOT}/cmake/Modules)
 
 include(FetchContent)
 
@@ -53,7 +55,7 @@ FetchContent_MakeAvailable(DPTLib)
 # Fortify too.
 option(USE_FORTIFY "Use Fortify" OFF)
 if(USE_FORTIFY)
-    add_subdirectory($ENV{APPENGINE_ROOT}/libs/fortify fortify-build)
+    add_subdirectory(${APPENGINE_REPO_ROOT}/libs/fortify fortify-build)
 endif()
 
 add_library(AppEngine)
