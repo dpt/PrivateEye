@@ -111,15 +111,15 @@ set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
 add_subdirectory(${MD5_DIR} md5-build)
 
-# Import PNG
+# Import libpng
 set(PNG_DIR ${LIBS_DIR}/png)
 set(PNG_INCLUDE ${PNG_DIR})
-set(PNG_LIB ${PNG_DIR}/libpng.a)
+add_subdirectory(${PNG_DIR} png-build)
 
 # Import zlib
 set(ZLIB_DIR ${LIBS_DIR}/zlib)
 set(ZLIB_INCLUDE ${ZLIB_DIR})
-set(ZLIB_LIB ${ZLIB_DIR}/zlib.a)
+add_subdirectory(${ZLIB_DIR} zlib-build)
 
 
 # Avoid a warning from CMake
@@ -295,9 +295,8 @@ if(USE_FORTIFY)
     target_link_libraries(PrivateEye PRIVATE Fortify)
 endif()
 
-# libjpeg, exiftags, flex, MD5
 target_link_libraries(PrivateEye PRIVATE
-    jpeg trans exiftags flex MD5)
+    jpeg trans exiftags flex MD5 png zlib)
 
 
 
