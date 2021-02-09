@@ -23,4 +23,4 @@ set_target_properties(templheadr PROPERTIES
 
 target_sources(templheadr PRIVATE templheadr.c)
 
-target_compile_options(templheadr PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(templheadr PRIVATE -Wall -Wextra -pedantic -Wno-sign-compare)

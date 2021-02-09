@@ -62,7 +62,7 @@ set(HEADERS
 
 set(ALL_SOURCES ${HEADERS} ${SOURCES})
 
-target_compile_options(exiftags PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(exiftags PRIVATE -Wall -Wextra -pedantic -Wno-sign-compare -Wno-unused-but-set-parameter -Wno-unused-parameter)
 
 target_sources(exiftags PRIVATE ${ALL_SOURCES})
 

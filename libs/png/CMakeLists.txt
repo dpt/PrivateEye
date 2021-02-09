@@ -57,4 +57,4 @@ if(TARGET_RISCOS)
     target_include_directories(png PRIVATE $ENV{APPENGINE_ROOT}/libs/zlib) # for zlib
 endif()
 target_sources(png PRIVATE ${HEADERS} ${SOURCES})
-target_compile_options(png PRIVATE -Wall -Wextra -pedantic -Wno-unused-parameter)
+target_compile_options(png PRIVATE -Wall -Wextra -Wno-clobbered -Wno-unused-parameter)

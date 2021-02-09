@@ -140,7 +140,7 @@ set_target_properties(trans PROPERTIES
     VERSION 8.0.0
     C_STANDARD 90)
 target_sources(trans PRIVATE ${TRAN_SOURCES})
-target_compile_options(trans PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(trans PRIVATE -Wall -Wextra -pedantic -Wno-unused-parameter)
 
 # Library dependencies
 #

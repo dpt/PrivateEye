@@ -55,8 +55,8 @@ if(TARGET_RISCOS)
 endif()
 
 # Referencing CMAKE_TOOLCHAIN_FILE avoids a warning on rebuilds.
-if(NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
-    message(STATUS "flex: Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
+if(NOT \${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
+    message(STATUS "flex: Using toolchain file: \${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
 add_library(flex)
@@ -67,7 +67,7 @@ set_target_properties(flex PROPERTIES
 
 target_sources(flex PRIVATE flex.h opts.h swiextra.h flex.c)
 
-target_compile_options(flex PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(flex PRIVATE -Wall -Wextra -pedantic -Wno-unused-but-set-variable -Wno-sign-compare -Wno-unknown-pragmas -Wno-format)
 EOF
 
 cd -
