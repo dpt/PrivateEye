@@ -80,7 +80,6 @@ message(STATUS "PrivateEye: Building targets only")
 set(LIBS_DIR ${CMAKE_SOURCE_DIR}/../../../libs)
 
 # Import DPTLib
-#
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
     GIT_TAG HEAD)
@@ -88,37 +87,36 @@ FetchContent_Declare(DPTLib
 FetchContent_MakeAvailable(DPTLib)
 
 # Import AppEngine
-#
 set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
 add_subdirectory(${APPENGINE_DIR} appengine-build)
 
 # Import libjpeg
-#
 set(JPEG_DIR ${LIBS_DIR}/jpeg)
 set(JPEG_INCLUDE ${JPEG_DIR})
 add_subdirectory(${JPEG_DIR} jpeg-build)
 
 # Import exiftags
-#
 set(EXIFTAGS_DIR ${LIBS_DIR}/exiftags)
 set(EXIFTAGS_INCLUDE ${EXIFTAGS_DIR})
 add_subdirectory(${EXIFTAGS_DIR} exiftags-build)
 
 # Import flex
-#
 set(FLEX_DIR ${LIBS_DIR}/flex)
 set(FLEX_INCLUDE ${FLEX_DIR})
 add_subdirectory(${FLEX_DIR} flex-build)
 
-# Import non-CMake libs
-#
+# Import MD5
 set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
-set(MD5_LIB ${MD5_DIR}/libmd5.a)
+add_subdirectory(${MD5_DIR} md5-build)
+
+# Import PNG
 set(PNG_DIR ${LIBS_DIR}/png)
 set(PNG_INCLUDE ${PNG_DIR})
 set(PNG_LIB ${PNG_DIR}/libpng.a)
+
+# Import zlib
 set(ZLIB_DIR ${LIBS_DIR}/zlib)
 set(ZLIB_INCLUDE ${ZLIB_DIR})
 set(ZLIB_LIB ${ZLIB_DIR}/zlib.a)
@@ -297,8 +295,9 @@ if(USE_FORTIFY)
     target_link_libraries(PrivateEye PRIVATE Fortify)
 endif()
 
-# libjpeg, exiftags, flex
-target_link_libraries(PrivateEye PRIVATE jpeg trans exiftags flex)
+# libjpeg, exiftags, flex, MD5
+target_link_libraries(PrivateEye PRIVATE
+    jpeg trans exiftags flex MD5)
 
 
 

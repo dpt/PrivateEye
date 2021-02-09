@@ -132,7 +132,7 @@ if(TARGET_RISCOS)
     target_include_directories(jpeg PRIVATE $ENV{APPENGINE_ROOT}/libs) # unpleasant - to get at appengine's headers for jmemro.c
 endif()
 target_sources(jpeg PRIVATE ${LIBSOURCES})
-target_compile_options(jpeg PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(jpeg PRIVATE -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-main)
 target_compile_definitions(jpeg PRIVATE NO_GETENV) # for jmemmgr
 
 add_library(trans)
