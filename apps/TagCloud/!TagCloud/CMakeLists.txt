@@ -1,6 +1,6 @@
 # CMakeLists.txt
 #
-# PrivateEye
+# TagCloud
 #
 # Copyright (c) David Thomas, 2021
 #
@@ -8,8 +8,6 @@
 
 # TODO
 #
-# - Have seen doubling of linker args
-# - Have seen doubling of compiler/assembler args
 # - Installation
 
 cmake_minimum_required(VERSION 3.18)
@@ -25,7 +23,7 @@ list(APPEND CMAKE_MODULE_PATH ${APPENGINE_REPO_ROOT}/cmake/Modules)
 include(FetchContent)
 
 
-project(PrivateEye VERSION 3.1.0 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
+project(TagCloud VERSION 0.0.1 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
 
 # If a host tools build was requested, then build them alone
 set(TEMPLHEADR_DIR ${APPENGINE_REPO_ROOT}/utils/templheader)
@@ -72,7 +70,7 @@ execute_process(COMMAND ${CMAKE_COMMAND}
 # Build the host tools (by recursing)
 execute_process(COMMAND ${CMAKE_COMMAND} --build . --target templheadr WORKING_DIRECTORY "${HOSTTOOLSDIR}")
 
-# Build PrivateEye itself
+# Build TagCloud itself
 message(STATUS "${PROJECT_NAME}: Building targets only")
 
 # Libs... (set this before imports)
@@ -91,124 +89,49 @@ set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
 add_subdirectory(${APPENGINE_DIR} appengine-build)
 
-# Import libjpeg
-set(JPEG_DIR ${LIBS_DIR}/jpeg)
-set(JPEG_INCLUDE ${JPEG_DIR})
-add_subdirectory(${JPEG_DIR} jpeg-build)
-
-# Import exiftags
-set(EXIFTAGS_DIR ${LIBS_DIR}/exiftags)
-set(EXIFTAGS_INCLUDE ${EXIFTAGS_DIR})
-add_subdirectory(${EXIFTAGS_DIR} exiftags-build)
-
 # Import flex
 set(FLEX_DIR ${LIBS_DIR}/flex)
 set(FLEX_INCLUDE ${FLEX_DIR})
 add_subdirectory(${FLEX_DIR} flex-build)
 
-# Import MD5
-set(MD5_DIR ${LIBS_DIR}/md5)
-set(MD5_INCLUDE ${MD5_DIR})
-add_subdirectory(${MD5_DIR} md5-build)
-
-# Import libpng
-set(PNG_DIR ${LIBS_DIR}/png)
-set(PNG_INCLUDE ${PNG_DIR})
-add_subdirectory(${PNG_DIR} png-build)
-
-# Import zlib
-set(ZLIB_DIR ${LIBS_DIR}/zlib)
-set(ZLIB_INCLUDE ${ZLIB_DIR})
-add_subdirectory(${ZLIB_DIR} zlib-build)
-
 
 # Avoid a warning from CMake
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
-add_executable(PrivateEye)
+add_executable(TagCloud)
 
-target_include_directories(PrivateEye
+target_include_directories(TagCloud
     PRIVATE
     ${APPENGINE_INCLUDE}
     ${DPTLIB_INCLUDE}
-    ${EXIFTAGS_INCLUDE}
     ${FLEX_INCLUDE}
-    ${JPEG_INCLUDE}
-    ${MD5_INCLUDE}
-    ${PNG_INCLUDE}
-    ${ZLIB_INCLUDE}
     ${CMAKE_SOURCE_DIR})
 
-target_link_libraries(PrivateEye PRIVATE AppEngine DPTLib exiftags flex jpeg trans MD5 png zlib)
+target_link_libraries(TagCloud PRIVATE AppEngine DPTLib flex)
 
-set_target_properties(PrivateEye PROPERTIES
+set_target_properties(TagCloud PROPERTIES
     VERSION 3.1.0
-    DESCRIPTION "Image viewer"
+    DESCRIPTION "Tag Cloud demo"
     C_STANDARD 99
-    OUTPUT_NAME_DEBUG PrivateEye-debug
-    OUTPUT_NAME_RELEASE PrivateEye
-    OUTPUT_NAME_RELWITHDEBINFO PrivateEye-relwithdebinfo
-    OUTPUT_NAME_MINSIZEREL PrivateEye-minsizerel)
+    OUTPUT_NAME_DEBUG TagCloud-debug
+    OUTPUT_NAME_RELEASE TagCloud
+    OUTPUT_NAME_RELWITHDEBINFO TagCloud-relwithdebinfo
+    OUTPUT_NAME_MINSIZEREL TagCloud-minsizerel)
 
 set(ALL_HEADERS
-    actions.h
-    canvas.h
-    choices-colour.h
-    choicesdat.h
-    clipboard.h
-    dataxfer.h
-    display.h
-    effects.h
-    ffg.h
+    app.h
     globals.h
     iconbar.h
-    iconnames2.h
-    imagecache.h
-    info.h
-    keymap.h
     menunames.h
-    privateeye.h
-    quit.h
-    rotate.h
-    save.h
-    scale.h
-    tags-common.h
-    tags-search.h
-    tags.h
-    thumbview.h
-    to-spr.h
-    viewer.h
-    zones.h)
+    makecloud.h)
 
 set(ALL_SOURCES
-    actions.c
-    canvas.c
-    choices-colour.c
-    choicesdat.c
-    clipboard.c
-    dataxfer.c
-    display.c
-    effects.c
-    eye.c
-    ffg.c
     globals.c
     iconbar.c
-    imagecache.c
-    info.c
-    keymap.c
-    quit.c
-    rotate.c
-    save.c
-    scale.c
-    tags-common.c
-    tags-search.c
-    tags.c
-    thumbview.c
-    to-spr.c
-    viewer.c
-    zones.c)
+    makecloud.c
+    tags.c)
 
-target_sources(PrivateEye PRIVATE ${ALL_SOURCES})
+target_sources(TagCloud PRIVATE ${ALL_SOURCES})
 
 
 # Generate iconnames.h
@@ -226,49 +149,24 @@ find_program(TEMPLHEADR
 add_custom_command(OUTPUT ${ICONNAMES_H}
     COMMAND ${TEMPLHEADR} ${TEMPLATES} ${ICONNAMES_H}
     MAIN_DEPENDENCY ${TEMPLATES})
-add_custom_target(PrivateEyeIconNames ALL DEPENDS ${ICONNAMES_H})
+add_custom_target(TagCloudIconNames ALL DEPENDS ${ICONNAMES_H})
 
-add_dependencies(PrivateEye PrivateEyeIconNames)
+add_dependencies(TagCloud TagCloudIconNames)
 
-target_include_directories(PrivateEye PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(TagCloud PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 
 # Build options
 #
 
 # Ensure that compilers and assemblers don't receive each other's options.
-target_compile_options(PrivateEye
+target_compile_options(TagCloud
     PRIVATE
     $<$<NOT:$<COMPILE_LANGUAGE:ASM_ASASM>>:-Wall -Wextra -pedantic>
     $<$<COMPILE_LANGUAGE:ASM_ASASM>:-Pedantic>)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_definitions(PrivateEye PRIVATE PRIVATEEYE_DEBUG)
-endif()
-
-# Feature options
-#
-
-option(FEATURE_CANVAS "Enable canvas feature" OFF)
-option(FEATURE_METADATA "Enable metadata feature" ON)
-option(FEATURE_TAGGING "Enable tagging feature" OFF)
-option(FEATURE_THUMBVIEW "Enable thumbview feature" OFF)
-option(FEATURE_ZONES "Enable zones feature" OFF)
-
-if(FEATURE_CANVAS)
-    target_compile_definitions(PrivateEye PRIVATE EYE_CANVAS)
-endif()
-if(FEATURE_METADATA)
-    target_compile_definitions(PrivateEye PRIVATE EYE_META)
-endif()
-if(FEATURE_TAGGING)
-    target_compile_definitions(PrivateEye PRIVATE EYE_TAGS)
-endif()
-if(FEATURE_THUMBVIEW)
-    target_compile_definitions(PrivateEye PRIVATE EYE_THUMBVIEW)
-endif()
-if(FEATURE_ZONES)
-    target_compile_definitions(PrivateEye PRIVATE EYE_ZONES)
+    target_compile_definitions(TagCloud PRIVATE PRIVATEEYE_DEBUG)
 endif()
 
 # Library dependencies
@@ -276,13 +174,13 @@ endif()
 
 if(TARGET_RISCOS)
     # OSLib (& anything else in GCCSDK)
-    target_include_directories(PrivateEye PRIVATE $ENV{GCCSDK_INSTALL_ENV}/include)
-    target_link_libraries(PrivateEye PRIVATE $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
+    target_include_directories(TagCloud PRIVATE $ENV{GCCSDK_INSTALL_ENV}/include)
+    target_link_libraries(TagCloud PRIVATE $ENV{GCCSDK_INSTALL_ENV}/lib/libOSLib32.a)
 endif()
 
 option(USE_FORTIFY "Use Fortify" OFF)
 if(USE_FORTIFY)
-    target_link_libraries(PrivateEye PRIVATE Fortify)
+    target_link_libraries(TagCloud PRIVATE Fortify)
 endif()
 
 
@@ -303,7 +201,7 @@ endif()
 ## Install headers and library
 ## - We have to use EXCLUDE_FROM_ALL to stop the PUBLIC_HEADERs getting
 ##   installed by install(TARGETS ...).
-#install(TARGETS PrivateEye ARCHIVE
+#install(TARGETS TagCloud ARCHIVE
 #    PUBLIC_HEADER EXCLUDE_FROM_ALL)
 ## - We can't use install(TARGETS ... PUBLIC_HEADER) to install headers, as
 ##   expected, since that flattens the include directory's hierarchy. Use

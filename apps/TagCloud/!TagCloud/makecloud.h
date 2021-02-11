@@ -8,9 +8,9 @@
 
 #include "appengine/base/errors.h"
 
-error makecloud_init(void);
+result_t makecloud_init(void);
 void makecloud_fin(void);
 
-error make_cloud(void);
+result_t make_cloud(void);
 
 #endif /* MAKECLOUD_H */

@@ -23,7 +23,7 @@ static void clicked(const wimp_pointer *pointer, void *opaque)
 
   if (pointer->buttons & wimp_CLICK_SELECT)
   {
-    error_report(make_cloud());
+    result_report(make_cloud());
   }
 }
 
@@ -39,9 +39,9 @@ static void selected(const wimp_selection *selection, void *opaque)
   }
 }
 
-error tag_icon_bar_init(void)
+result_t tag_icon_bar_init(void)
 {
-  error err;
+  result_t err;
 
   err = icon_bar_init();
   if (err)
@@ -49,7 +49,7 @@ error tag_icon_bar_init(void)
 
   icon_bar_set_handlers(clicked, selected, NULL, NULL);
 
-  return error_OK;
+  return result_OK;
 }
 
 void tag_icon_bar_fin(void)

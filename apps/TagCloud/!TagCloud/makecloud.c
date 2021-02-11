@@ -134,7 +134,7 @@ static tag_cloud_tag tags[NTAGS];
 static unsigned int highlights[(NTAGS + 31) / 32];
 static int indices[NTAGS];
 
-static error make_tags(void)
+static result_t make_tags(void)
 {
   int i;
 
@@ -150,7 +150,7 @@ static error make_tags(void)
 
     newname = malloc(length);
     if (newname == NULL)
-      return error_OOM;
+      return result_OOM;
 
     memcpy(newname, name, length);
 
@@ -163,12 +163,12 @@ static error make_tags(void)
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
-static error set_tags(void)
+static result_t set_tags(void)
 {
-  error err;
+  result_t err;
 
   err = tag_cloud_set_tags(LOCALS.tc, tags, ntags);
   if (err)
@@ -178,12 +178,12 @@ static error set_tags(void)
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
-static error set_highlights(void)
+static result_t set_highlights(void)
 {
-  error err;
+  result_t err;
   int  *p;
   int   i;
 
@@ -200,17 +200,17 @@ static error set_highlights(void)
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error add_tag(tag_cloud  *tc,
-                     const char *name,
-                     int         length,
-                     void       *opaque)
+static result_t add_tag(tag_cloud  *tc,
+                        const char *name,
+                        int         length,
+                        void       *opaque)
 {
-  error err;
+  result_t err;
   char *newname;
   int   i;
 
@@ -218,13 +218,13 @@ static error add_tag(tag_cloud  *tc,
 
   for (i = 0; i < ntags; i++)
     if (tags[i].length == length && memcmp(tags[i].name, name, length) == 0)
-      return error_OK; /* yes - ignore the request */
+      return result_OK; /* yes - ignore the request */
 
   /* add the new tag */
 
   newname = malloc(length);
   if (newname == NULL)
-    return error_OOM;
+    return result_OOM;
 
   memcpy(newname, name, length);
 
@@ -243,14 +243,14 @@ static error add_tag(tag_cloud  *tc,
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
-static error delete_tag(tag_cloud *tc,
-                        int        index,
-                        void      *opaque)
+static result_t delete_tag(tag_cloud *tc,
+                           int        index,
+                           void      *opaque)
 {
-  error err;
+  result_t err;
 
   /* delete the tag */
 
@@ -269,16 +269,16 @@ static error delete_tag(tag_cloud *tc,
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
-static error rename_tag(tag_cloud  *tc,
-                        int         index,
-                        const char *name,
-                        int         length,
-                        void       *opaque)
+static result_t rename_tag(tag_cloud  *tc,
+                           int         index,
+                           const char *name,
+                           int         length,
+                           void       *opaque)
 {
-  error err;
+  result_t err;
   char *newname;
 
   /* rename the tag */
@@ -289,7 +289,7 @@ static error rename_tag(tag_cloud  *tc,
 
     newname = malloc(length);
     if (newname == NULL)
-      return error_OOM;
+      return result_OOM;
 
     tags[index].length = length;
   }
@@ -312,14 +312,14 @@ static error rename_tag(tag_cloud  *tc,
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
-static error tag(tag_cloud *tc,
-                 int        index,
-                 void      *opaque)
+static result_t tag(tag_cloud *tc,
+                    int        index,
+                    void      *opaque)
 {
-  error err;
+  result_t err;
 
   err = tag_cloud_add_highlight(LOCALS.tc, index);
   if (err)
@@ -331,12 +331,12 @@ static error tag(tag_cloud *tc,
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
-static error detag(tag_cloud *tc,
-                   int        index,
-                   void      *opaque)
+static result_t detag(tag_cloud *tc,
+                      int        index,
+                      void      *opaque)
 {
   tag_cloud_remove_highlight(LOCALS.tc, index);
 
@@ -346,28 +346,28 @@ static error detag(tag_cloud *tc,
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 }
 
-static error tag_file(tag_cloud  *tc,
-                      const char *file_name,
-                      int         index,
-                      void       *opaque)
+static result_t tag_file(tag_cloud  *tc,
+                         const char *file_name,
+                         int         index,
+                         void       *opaque)
 {
-  return error_OK;
+  return result_OK;
 }
 
-static error detag_file(tag_cloud  *tc,
-                        const char *file_name,
-                        int         index,
-                        void       *opaque)
+static result_t detag_file(tag_cloud  *tc,
+                           const char *file_name,
+                           int         index,
+                           void       *opaque)
 {
-  return error_OK;
+  return result_OK;
 }
 
-static error event(tag_cloud       *tc,
-                   tag_cloud_event  event,
-                   void            *opaque)
+static result_t event(tag_cloud       *tc,
+                      tag_cloud_event  event,
+                      void            *opaque)
 {
   NOT_USED(tc);
   NOT_USED(opaque);
@@ -378,7 +378,7 @@ static error event(tag_cloud       *tc,
     break;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -425,9 +425,9 @@ static tag_cloud_event keyhandler(wimp_key_no  key_no,
 
 static unsigned int makecloud_refcount = 0;
 
-error makecloud_init(void)
+result_t makecloud_init(void)
 {
-  error err;
+  result_t err;
 
   if (makecloud_refcount == 0)
   {
@@ -442,7 +442,7 @@ error makecloud_init(void)
     tc = tag_cloud_create(0 /* flags */, &conf);
     if (tc == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto Failure;
     }
 
@@ -468,7 +468,7 @@ error makecloud_init(void)
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -493,9 +493,9 @@ void makecloud_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-error make_cloud(void)
+result_t make_cloud(void)
 {
-  error             err;
+  result_t          err;
   wimp_window_state state;
 
   state.w = tag_cloud_get_window_handle(LOCALS.tc);
@@ -532,7 +532,7 @@ error make_cloud(void)
   Fortify_CheckAllMemory();
 #endif
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
