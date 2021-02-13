@@ -34,6 +34,13 @@ libs/appengine/Makefile,fe1
 utils/templheader/Makefile,fe1
 
 # Ignore scratch files
+*.orig
+*.swp
 stderr
 stdout
 x
+
+# Ignore build dirs
+build/
+build-release/
+build-debug/

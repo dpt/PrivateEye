@@ -83,43 +83,47 @@ set(LIBS_DIR ${CMAKE_SOURCE_DIR}/../../../libs)
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
     GIT_TAG HEAD)
-
-FetchContent_MakeAvailable(DPTLib)
+# Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
+FetchContent_GetProperties(DPTLib)
+if(NOT DPTLib_POPULATED)
+    FetchContent_Populate(DPTLib)
+    add_subdirectory(${dptlib_SOURCE_DIR} ${dptlib_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 # Import AppEngine
 set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
-add_subdirectory(${APPENGINE_DIR} appengine-build)
+add_subdirectory(${APPENGINE_DIR} appengine-build EXCLUDE_FROM_ALL)
 
 # Import libjpeg
 set(JPEG_DIR ${LIBS_DIR}/jpeg)
 set(JPEG_INCLUDE ${JPEG_DIR})
-add_subdirectory(${JPEG_DIR} jpeg-build)
+add_subdirectory(${JPEG_DIR} jpeg-build EXCLUDE_FROM_ALL)
 
 # Import exiftags
 set(EXIFTAGS_DIR ${LIBS_DIR}/exiftags)
 set(EXIFTAGS_INCLUDE ${EXIFTAGS_DIR})
-add_subdirectory(${EXIFTAGS_DIR} exiftags-build)
+add_subdirectory(${EXIFTAGS_DIR} exiftags-build EXCLUDE_FROM_ALL)
 
 # Import flex
 set(FLEX_DIR ${LIBS_DIR}/flex)
 set(FLEX_INCLUDE ${FLEX_DIR})
-add_subdirectory(${FLEX_DIR} flex-build)
+add_subdirectory(${FLEX_DIR} flex-build EXCLUDE_FROM_ALL)
 
 # Import MD5
 set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
-add_subdirectory(${MD5_DIR} md5-build)
+add_subdirectory(${MD5_DIR} md5-build EXCLUDE_FROM_ALL)
 
 # Import libpng
 set(PNG_DIR ${LIBS_DIR}/png)
 set(PNG_INCLUDE ${PNG_DIR})
-add_subdirectory(${PNG_DIR} png-build)
+add_subdirectory(${PNG_DIR} png-build EXCLUDE_FROM_ALL)
 
 # Import zlib
 set(ZLIB_DIR ${LIBS_DIR}/zlib)
 set(ZLIB_INCLUDE ${ZLIB_DIR})
-add_subdirectory(${ZLIB_DIR} zlib-build)
+add_subdirectory(${ZLIB_DIR} zlib-build EXCLUDE_FROM_ALL)
 
 
 # Avoid a warning from CMake
@@ -142,13 +146,9 @@ target_include_directories(PrivateEye
 target_link_libraries(PrivateEye PRIVATE AppEngine DPTLib exiftags flex jpeg trans MD5 png zlib)
 
 set_target_properties(PrivateEye PROPERTIES
-    VERSION 3.1.0
     DESCRIPTION "Image viewer"
     C_STANDARD 99
-    OUTPUT_NAME_DEBUG PrivateEye-debug
-    OUTPUT_NAME_RELEASE PrivateEye
-    OUTPUT_NAME_RELWITHDEBINFO PrivateEye-relwithdebinfo
-    OUTPUT_NAME_MINSIZEREL PrivateEye-minsizerel)
+    RUNTIME_OUTPUT_NAME !RunImage)
 
 set(ALL_HEADERS
     actions.h
@@ -208,7 +208,7 @@ set(ALL_SOURCES
     viewer.c
     zones.c)
 
-target_sources(PrivateEye PRIVATE ${ALL_SOURCES})
+target_sources(PrivateEye PRIVATE ${ALL_HEADERS} ${ALL_SOURCES})
 
 
 # Generate iconnames.h
@@ -290,24 +290,12 @@ endif()
 # Installation
 #
 
-## Set install location
-## - We can't use set(...) with FORCE because that will override any passed-in
-##   configuration values.
-## - We can't use set(...) without FORCE because that won't override the default
-##   value...
-## - So, just check for the default value and override it if set.
-#if(${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local")
-#    set(CMAKE_INSTALL_PREFIX "install" CACHE PATH "CMake install prefix" FORCE)
-#endif()
-#
-## Install headers and library
-## - We have to use EXCLUDE_FROM_ALL to stop the PUBLIC_HEADERs getting
-##   installed by install(TARGETS ...).
-#install(TARGETS PrivateEye ARCHIVE
-#    PUBLIC_HEADER EXCLUDE_FROM_ALL)
-## - We can't use install(TARGETS ... PUBLIC_HEADER) to install headers, as
-##   expected, since that flattens the include directory's hierarchy. Use
-##   install(DIRECTORY ...) instead.
-#install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
-#    DESTINATION ${CMAKE_INSTALL_PREFIX}
-#    FILES_MATCHING PATTERN "*.h")
+# (force this for now)
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/!PrivatEye" CACHE PATH "CMake install prefix" FORCE)
+
+install(TARGETS PrivateEye RUNTIME
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES !Boot,feb !Help !Run,feb !Sprites,ff9 !Sprites11,ff9 AppEngine,ffa
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY Resources
+    DESTINATION ${CMAKE_INSTALL_PREFIX})

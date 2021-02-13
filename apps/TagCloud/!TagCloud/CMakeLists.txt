@@ -81,18 +81,22 @@ set(LIBS_DIR ${CMAKE_SOURCE_DIR}/../../../libs)
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
     GIT_TAG HEAD)
-
-FetchContent_MakeAvailable(DPTLib)
+# Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
+FetchContent_GetProperties(DPTLib)
+if(NOT DPTLib_POPULATED)
+    FetchContent_Populate(DPTLib)
+    add_subdirectory(${dptlib_SOURCE_DIR} ${dptlib_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 # Import AppEngine
 set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
-add_subdirectory(${APPENGINE_DIR} appengine-build)
+add_subdirectory(${APPENGINE_DIR} appengine-build EXCLUDE_FROM_ALL)
 
 # Import flex
 set(FLEX_DIR ${LIBS_DIR}/flex)
 set(FLEX_INCLUDE ${FLEX_DIR})
-add_subdirectory(${FLEX_DIR} flex-build)
+add_subdirectory(${FLEX_DIR} flex-build EXCLUDE_FROM_ALL)
 
 
 # Avoid a warning from CMake
@@ -110,13 +114,9 @@ target_include_directories(TagCloud
 target_link_libraries(TagCloud PRIVATE AppEngine DPTLib flex)
 
 set_target_properties(TagCloud PROPERTIES
-    VERSION 3.1.0
     DESCRIPTION "Tag Cloud demo"
     C_STANDARD 99
-    OUTPUT_NAME_DEBUG TagCloud-debug
-    OUTPUT_NAME_RELEASE TagCloud
-    OUTPUT_NAME_RELWITHDEBINFO TagCloud-relwithdebinfo
-    OUTPUT_NAME_MINSIZEREL TagCloud-minsizerel)
+    RUNTIME_OUTPUT_NAME !RunImage)
 
 set(ALL_HEADERS
     app.h
@@ -131,7 +131,7 @@ set(ALL_SOURCES
     makecloud.c
     tags.c)
 
-target_sources(TagCloud PRIVATE ${ALL_SOURCES})
+target_sources(TagCloud PRIVATE ${ALL_HEADERS} ${ALL_SOURCES})
 
 
 # Generate iconnames.h
@@ -188,24 +188,12 @@ endif()
 # Installation
 #
 
-## Set install location
-## - We can't use set(...) with FORCE because that will override any passed-in
-##   configuration values.
-## - We can't use set(...) without FORCE because that won't override the default
-##   value...
-## - So, just check for the default value and override it if set.
-#if(${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local")
-#    set(CMAKE_INSTALL_PREFIX "install" CACHE PATH "CMake install prefix" FORCE)
-#endif()
-#
-## Install headers and library
-## - We have to use EXCLUDE_FROM_ALL to stop the PUBLIC_HEADERs getting
-##   installed by install(TARGETS ...).
-#install(TARGETS TagCloud ARCHIVE
-#    PUBLIC_HEADER EXCLUDE_FROM_ALL)
-## - We can't use install(TARGETS ... PUBLIC_HEADER) to install headers, as
-##   expected, since that flattens the include directory's hierarchy. Use
-##   install(DIRECTORY ...) instead.
-#install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
-#    DESTINATION ${CMAKE_INSTALL_PREFIX}
-#    FILES_MATCHING PATTERN "*.h")
+# (force this for now)
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/!TagCloud" CACHE PATH "CMake install prefix" FORCE)
+
+install(TARGETS TagCloud RUNTIME
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES !Boot,feb !Help !Run,feb !Sprites,ff9 AppEngine,ffa
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY Resources
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
