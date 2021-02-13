@@ -23,8 +23,8 @@ int strnncasecmp(const char *s1, size_t n1, const char *s2, size_t n2)
     if (c1 != c2)
       return c1 - c2;
 
-    s1++;
-    s2++;
+    u1++;
+    u2++;
   }
 
   return n1 - n2;

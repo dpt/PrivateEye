@@ -29,7 +29,7 @@ int strcasecmp(const char *s1, const char *s2)
     if (c1 != c2)
       return c1 - c2;
 
-    s1++;
-    s2++;
+    u1++;
+    u2++;
   }
 }
