@@ -77,7 +77,7 @@ message(STATUS "${PROJECT_NAME}: Building targets only")
 
 # Libs... (set this before imports)
 #
-set(LIBS_DIR ${CMAKE_SOURCE_DIR}/../../../libs)
+set(LIBS_DIR ${APPENGINE_REPO_ROOT}/libs)
 
 # Import DPTLib
 FetchContent_Declare(DPTLib
