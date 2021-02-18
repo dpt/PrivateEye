@@ -6,10 +6,6 @@
 #
 # vim: sw=4 ts=8 et
 
-# TODO
-#
-# - Installation
-
 cmake_minimum_required(VERSION 3.18)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -23,7 +19,7 @@ list(APPEND CMAKE_MODULE_PATH ${APPENGINE_REPO_ROOT}/cmake/Modules)
 include(FetchContent)
 
 
-project(TagCloud VERSION 0.0.1 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
+project(TagCloud VERSION 0.6.0 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
 
 # If a host tools build was requested, then build them alone
 set(TEMPLHEADR_DIR ${APPENGINE_REPO_ROOT}/utils/templheader)
@@ -75,12 +71,12 @@ message(STATUS "${PROJECT_NAME}: Building targets only")
 
 # Libs... (set this before imports)
 #
-set(LIBS_DIR ${CMAKE_SOURCE_DIR}/../../../libs)
+set(LIBS_DIR ${APPENGINE_REPO_ROOT}/libs)
 
 # Import DPTLib
 FetchContent_Declare(DPTLib
-    GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
-    GIT_TAG HEAD)
+    GIT_REPOSITORY https://github.com/dpt/DPTLib
+    GIT_TAG 0.3.0)
 # Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
 FetchContent_GetProperties(DPTLib)
 if(NOT DPTLib_POPULATED)

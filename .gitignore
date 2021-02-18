@@ -44,3 +44,4 @@ x
 build/
 build-release/
 build-debug/
+*.DS_Store
