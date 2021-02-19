@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef FORTIFY
 #include "fortify/fortify.h"
+#endif
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
@@ -20,28 +22,28 @@ client_t;
 
 /* ----------------------------------------------------------------------- */
 
-static error client_callback(const wire_message_t *message, void *opaque)
+static result_t client_callback(const wire_message_t *message, void *opaque)
 {
   client_t *client = opaque;
 
   printf("client %p/\"%s\" informed of event\n", opaque, client->name);
   printf("event was %x, payload was %p\n", message->event, message->payload);
 
-  return error_OK;
+  return result_OK;
 }
 
-static error create_wire_client(const char           *name,
-                                wire_register_flags   flags,
-                                client_t            **new_client)
+static result_t create_wire_client(const char           *name,
+                                   wire_register_flags   flags,
+                                   client_t            **new_client)
 {
-  error     err;
+  result_t  err;
   client_t *client;
 
   *new_client = NULL;
 
   client = malloc(sizeof(*client));
   if (client == NULL)
-    return error_OOM;
+    return result_OOM;
 
   client->name = name;
 
@@ -58,7 +60,7 @@ static error create_wire_client(const char           *name,
 
   *new_client = client;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void destroy_wire_client(client_t *doomed)
@@ -75,7 +77,7 @@ static void destroy_wire_client(client_t *doomed)
 
 int wire_test(void)
 {
-  error           err;
+  result_t        err;
   client_t       *clientA, *clientB, *clientC;
   wire_message_t  message;
 

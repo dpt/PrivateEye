@@ -10,7 +10,7 @@
 
 #include "actions.h"
 
-error action_help(void)
+result_t action_help(void)
 {
   help_full_message_enable m;
   wimp_t                   t;
@@ -25,10 +25,10 @@ error action_help(void)
   m.flags    = 0;
   wimp_send_message(wimp_USER_MESSAGE, (wimp_message *) &m, wimp_BROADCAST);
 
-  return error_OK;
+  return result_OK;
 }
 
-error action_close_window(wimp_w w)
+result_t action_close_window(wimp_w w)
 {
   wimp_close close;
 
@@ -39,5 +39,5 @@ error action_close_window(wimp_w w)
                               close.w,
                               wimp_ICON_WINDOW);
 
-  return error_OK;
+  return result_OK;
 }

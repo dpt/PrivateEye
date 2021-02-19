@@ -54,13 +54,13 @@ static void set_methods(drawable_t *d)
     assert(0);
 }
 
-error drawable_create(image_t *image, drawable_t **new_drawable)
+result_t drawable_create(image_t *image, drawable_t **new_drawable)
 {
   drawable_t *d;
 
   d = malloc(sizeof(*d));
   if (d == NULL)
-    return error_OOM;
+    return result_OOM;
 
   d->flags = 0;
   d->image = image;
@@ -69,10 +69,10 @@ error drawable_create(image_t *image, drawable_t **new_drawable)
 
   *new_drawable = d;
 
-  return error_OK;
+  return result_OK;
 }
 
-error drawable_clone(drawable_t *original, drawable_t **new_drawable)
+result_t drawable_clone(drawable_t *original, drawable_t **new_drawable)
 {
   return drawable_create(original->image, new_drawable);
 }

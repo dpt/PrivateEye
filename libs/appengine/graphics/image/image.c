@@ -12,7 +12,8 @@
 #include "oslib/types.h"
 #include "oslib/osfile.h"
 
-#include "appengine/datastruct/list.h"
+#include "datastruct/list.h"
+
 #include "appengine/graphics/image-observer.h"
 #include "appengine/io/md5.h"
 
@@ -201,7 +202,7 @@ void image_map(image_map_callback *fn, void *opaque)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list_walk(&list_anchor, (list_walk_callback *) fn, opaque);
+  list_walk(&list_anchor, (list_walk_callback_t *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -226,31 +227,29 @@ int image_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
-static error destroy_metadata_callback(ntree_t *t, void *opaque)
+static result_t destroy_metadata_callback(ntree_t *t, void *opaque)
 {
   NOT_USED(opaque);
 
   free(ntree_get_data(t));
 
-  return error_OK;
+  return result_OK;
 }
 
 void image_destroy_metadata(ntree_t *metadata)
 {
-  error err;
-
-  err = ntree_walk(metadata,
-                   ntree_WALK_POST_ORDER | ntree_WALK_ALL,
-                   0,
-                   destroy_metadata_callback,
-                   NULL);
+  (void) ntree_walk(metadata,
+                    ntree_WALK_POST_ORDER | ntree_WALK_ALL,
+                    0,
+                    destroy_metadata_callback,
+                    NULL);
 
   ntree_delete(metadata);
 }
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
+result_t image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
 {
   if ((image->flags & image_FLAG_HAS_DIGEST) == 0)
   {
@@ -261,5 +260,5 @@ error image_get_digest(image_t *image, unsigned char digest[image_DIGESTSZ])
 
   memcpy(digest, image->digest, image_DIGESTSZ);
 
-  return error_OK;
+  return result_OK;
 }

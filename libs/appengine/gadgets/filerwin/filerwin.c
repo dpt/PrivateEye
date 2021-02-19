@@ -13,14 +13,15 @@
 #include "oslib/wimpreadsysinfo.h"
 #include "oslib/wimpspriteop.h"
 
-#include "appengine/types.h"
-#include "appengine/geom/box.h"
+#include "datastruct/bitvec.h"
+#include "geom/box.h"
+
 #include "appengine/base/errors.h"
-#include "appengine/wimp/event.h"
 #include "appengine/base/os.h"
+#include "appengine/types.h"
 #include "appengine/vdu/screen.h"
+#include "appengine/wimp/event.h"
 #include "appengine/wimp/window.h"
-#include "appengine/datastruct/bitvec.h"
 
 #include "appengine/gadgets/filerwin.h"
 
@@ -88,7 +89,7 @@ void filerwin_internal_set_handlers(int reg, filerwin *fw)
 
 /* ---------------------------------------------------------------------- */
 
-static const wimp_window wdef =
+static const wimp_window_base wdef =
 {
   { 0, 0, 1024, 512 }, /* visible */
   0, 0,
@@ -108,29 +109,29 @@ static const wimp_window wdef =
   wimpspriteop_AREA,
   4, 0,
   { .indirected_text = { '\0', '\0', 0 } },
-  0,
+  0
 };
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (mapfn)(filerwin     *fw,
-                      int           x,
-                      int           y,
-                      int           c,
-                      unsigned int  flags,
-                      void         *opaque);
+typedef result_t (mapfn)(filerwin     *fw,
+                         int           x,
+                         int           y,
+                         int           c,
+                         unsigned int  flags,
+                         void         *opaque);
 
-static error map(filerwin     *fw,
-                 mapfn        *fn,
-                 int           x,
-                 int           y,
-                 const os_box *test,
-                 void         *opaque)
+static result_t map(filerwin     *fw,
+                    mapfn        *fn,
+                    int           x,
+                    int           y,
+                    const os_box *test,
+                    void         *opaque)
 {
-  error err;
-  int   c;
-  int   yr;
-  int   yy;
+  result_t err;
+  int      c;
+  int      yr;
+  int      yy;
 
   c = 0;
 
@@ -169,17 +170,17 @@ static error map(filerwin     *fw,
     }
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error redraw_bobs(filerwin    *fw,
-                         int          x,
-                         int          y,
-                         int          c,
-                         unsigned int flags,
-                         void        *opaque)
+static result_t redraw_bobs(filerwin    *fw,
+                            int          x,
+                            int          y,
+                            int          c,
+                            unsigned int flags,
+                            void        *opaque)
 {
   wimp_draw *redraw;
 
@@ -187,14 +188,14 @@ static error redraw_bobs(filerwin    *fw,
 
   fw->redraw(redraw, x, y, c, flags & 1 /* flags -> selection */, fw->opaque);
 
-  return error_OK;
+  return result_OK;
 }
 
 static int filerwin_event_redraw_window_request(wimp_event_no event_no,
                                                 wimp_block   *block,
                                                 void         *handle)
 {
-  error      err;
+  result_t   err;
   wimp_draw *redraw;
   filerwin  *fw;
   osbool     more;
@@ -460,12 +461,12 @@ static void index_to_area(filerwin *fw, int index, os_box *box)
   box->y1 = y;
 }
 
-static error select_bobs(filerwin    *fw,
-                         int          x,
-                         int          y,
-                         int          c,
-                         unsigned int flags,
-                         void        *opaque)
+static result_t select_bobs(filerwin    *fw,
+                            int          x,
+                            int          y,
+                            int          c,
+                            unsigned int flags,
+                            void        *opaque)
 {
   os_box b;
 
@@ -479,15 +480,15 @@ static error select_bobs(filerwin    *fw,
   index_to_area(fw, c, &b);
   wimp_force_redraw(fw->w, b.x0, b.y0, b.x1, b.y1);
 
-  return error_OK;
+  return result_OK;
 }
 
-static error adjust_bobs(filerwin    *fw,
-                         int          x,
-                         int          y,
-                         int          c,
-                         unsigned int flags,
-                         void        *opaque)
+static result_t adjust_bobs(filerwin    *fw,
+                            int          x,
+                            int          y,
+                            int          c,
+                            unsigned int flags,
+                            void        *opaque)
 {
   os_box b;
 
@@ -501,7 +502,7 @@ static error adjust_bobs(filerwin    *fw,
   index_to_area(fw, c, &b);
   wimp_force_redraw(fw->w, b.x0, b.y0, b.x1, b.y1);
 
-  return error_OK;
+  return result_OK;
 }
 
 // hoist out to vdu lib
@@ -579,13 +580,9 @@ static int filerwin_event_key_pressed(wimp_event_no event_no,
                                       wimp_block   *block,
                                       void         *handle)
 {
-  wimp_key *key;
-  filerwin *fw;
-
   NOT_USED(event_no);
-
-  key = &block->key;
-  fw  = handle;
+  NOT_USED(block);
+  NOT_USED(handle);
 
   return event_HANDLED;
 }
@@ -599,7 +596,7 @@ filerwin *filerwin_create(void)
   wimp_w       w;
   filerwin    *fw;
 
-  def = wdef;
+  memcpy(&def, &wdef, sizeof(wdef));
 
   title_text = malloc(256);
   if (title_text == NULL)

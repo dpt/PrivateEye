@@ -14,21 +14,21 @@
 
 typedef struct T T;
 
-error txtfmt_create(const char *s, T **tx);
+result_t txtfmt_create(const char *s, T **tx);
 void txtfmt_destroy(T *tx);
 
 /* Wrap the string to the specified character width. */
-error txtfmt_wrap(T *tx, int width);
+result_t txtfmt_wrap(T *tx, int width);
 
 /* Paints the text using the desktop font atop the specified background
  * colour. */
-error txtfmt_paint(const T *tx, int x, int y, wimp_colour bgcolour);
+result_t txtfmt_paint(const T *tx, int x, int y, wimp_colour bgcolour);
 
 /* Sets the OS unit height of text use when painting. */
 void txtfmt_set_line_height(T *tx, int line_height);
 
 /* Prints the text via printf including line numbers (for testing). */
-error txtfmt_print(const T *tx);
+result_t txtfmt_print(const T *tx);
 
 int txtfmt_get_height(const T *tx);
 

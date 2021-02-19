@@ -10,10 +10,11 @@
 #include "oslib/os.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/app/choices.h"
 #include "appengine/graphics/drawable.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/wimp/window.h"
 
 #include "zones.h"
@@ -71,7 +72,7 @@ struct viewer_t
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_create(viewer_t **viewer);
+result_t viewer_create(viewer_t **viewer);
 void viewer_destroy(viewer_t *viewer);
 viewer_t *viewer_find(wimp_w window_handle);
 viewer_t *viewer_find_by_attrs(const char *file_name, bits load, bits exec);
@@ -118,12 +119,12 @@ int viewer_query_unload(viewer_t *viewer);
 osbool viewer_save(viewer_t *viewer, const char *file_name);
 
 void viewer_clone(viewer_t *viewer);
-error viewer_clone_from_window(wimp_w w, viewer_t **new_viewer);
+result_t viewer_clone_from_window(wimp_w w, viewer_t **new_viewer);
 
 void viewer_close_all(void);
 
 int viewer_count_edited(void);
 
-error viewer_choices_updated(const choices_group *g);
+result_t viewer_choices_updated(const choices_group *g);
 
 #endif /* VIEWER_H */

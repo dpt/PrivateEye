@@ -10,12 +10,12 @@
 
 typedef struct thumbview thumbview;
 
-error thumbview_substrate_init(void);
+result_t thumbview_substrate_init(void);
 
-error thumbview_init(void);
+result_t thumbview_init(void);
 void thumbview_fin(void);
 
-error thumbview_create(thumbview **new_tv);
+result_t thumbview_create(thumbview **new_tv);
 void thumbview_destroy(thumbview *doomed);
 
 void thumbview_load_dir(thumbview *tv, const char *dir_name);

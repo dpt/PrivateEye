@@ -19,19 +19,19 @@
 
 #include "appengine/graphics/sprite-effects.h"
 
-error effects_sharpen_apply(osspriteop_area   *area,
-                            osspriteop_header *src,
-                            osspriteop_header *dst,
-                            int                amount)
+result_t effects_sharpen_apply(osspriteop_area   *area,
+                               osspriteop_header *src,
+                               osspriteop_header *dst,
+                               int                amount)
 {
   static const float kernel[] = { 1.5f, -0.25f };
 
-  error         err;
+  result_t      err;
   convolve_lut *lut;
 
   NOT_USED(amount);
 
-  err = error_OK;
+  err = result_OK;
   lut = NULL;
 
   err = convolve_init(kernel, NELEMS(kernel), &lut);

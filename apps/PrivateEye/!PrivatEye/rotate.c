@@ -134,9 +134,9 @@ static void rotate_set_handlers(int reg)
                                NULL);
 }
 
-error rotate_init(void)
+result_t rotate_init(void)
 {
-  error err;
+  result_t err;
 
   /* dependencies */
 
@@ -152,7 +152,7 @@ error rotate_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 void rotate_fin(void)
@@ -208,9 +208,9 @@ static void shift_buttons(const os_box *box)
               y + offsets[i].y);
 }
 
-static error make_trans_tab(const osspriteop_area *area,
-                            osspriteop_id          source_id,
-                            osspriteop_trans_tab **new_trans_tab)
+static result_t make_trans_tab(const osspriteop_area *area,
+                               osspriteop_id          source_id,
+                               osspriteop_trans_tab **new_trans_tab)
 {
   int                   size;
   osspriteop_trans_tab *trans_tab;
@@ -226,11 +226,11 @@ static error make_trans_tab(const osspriteop_area *area,
                                                NULL,
                                                NULL);
   if (size == 0)
-    return error_OK;
+    return result_OK;
 
   trans_tab = malloc(size);
   if (trans_tab == NULL)
-    return error_OOM;
+    return result_OOM;
 
   size = colourtrans_generate_table_for_sprite(area,
                                                source_id,
@@ -243,7 +243,7 @@ static error make_trans_tab(const osspriteop_area *area,
 
   *new_trans_tab = trans_tab;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void rotate_close_dialogue(void)
@@ -257,16 +257,16 @@ static void rotate_close_dialogue(void)
 /* build stuff necessary for rotate dialogue */
 static void rotate_update_dialogue(void)
 {
-  error   err;
-  int     w,h;
-  int     d;
-  int     extent;
-  osbool  mask;
-  os_mode mode;
-  int     xeig,yeig;
-  os_box  box;
-  int     cx,cy;
-  int     r;
+  result_t err;
+  int      w,h;
+  int      d;
+  int      extent;
+  osbool   mask;
+  os_mode  mode;
+  int      xeig,yeig;
+  os_box   box;
+  int      cx,cy;
+  int      r;
 
   /* ensure we have a thumbnail ready */
 
@@ -602,11 +602,8 @@ static int rotate_event_pollword_non_zero(wimp_event_no event_no,
 
 static int rotate_message_menus_deleted(wimp_message *message, void *handle)
 {
-  wimp_message_menus_deleted *deleted;
-
+  NOT_USED(message);
   NOT_USED(handle);
-
-  deleted = (wimp_message_menus_deleted *) &message->data;
 
   thumbnail_destroy(&LOCALS.thumbnail);
 

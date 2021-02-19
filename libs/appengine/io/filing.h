@@ -31,14 +31,14 @@ enum
   dirscan_DIRECTORIES = 4, /* return directories */
 };
 
-typedef error (dirscan_callback)(const char          *obj_name,
-                                 osgbpb_info_stamped *info,
-                                 void                *context);
+typedef result_t (dirscan_callback)(const char          *obj_name,
+                                    osgbpb_info_stamped *info,
+                                    void                *context);
 
-error dirscan(const char       *dir_name,
-              dirscan_callback *callback,
-              dirscan_flags     flags,
-              void             *context);
+result_t dirscan(const char       *dir_name,
+                 dirscan_callback *callback,
+                 dirscan_flags     flags,
+                 void             *context);
 
 /* filetype.c ------------------------------------------------------------ */
 

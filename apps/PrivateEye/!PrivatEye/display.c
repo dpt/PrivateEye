@@ -121,7 +121,7 @@ enum
 
 /* ---------------------------------------------------------------------- */
 
-static error declare_keymap(void)
+static result_t declare_keymap(void)
 {
   /* Keep these sorted by name */
   static const keymap_name_to_action keys[] =
@@ -166,8 +166,8 @@ static error declare_keymap(void)
                            &LOCALS.keymap_id);
 }
 
-static error display_substrate_callback(const wire_message_t *message,
-                                        void                 *opaque)
+static result_t display_substrate_callback(const wire_message_t *message,
+                                           void                 *opaque)
 {
   NOT_USED(opaque);
 
@@ -177,18 +177,18 @@ static error display_substrate_callback(const wire_message_t *message,
       return declare_keymap();
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-error display_substrate_init(void)
+result_t display_substrate_init(void)
 {
-  error err;
+  result_t err;
 
   err = wire_register(0, display_substrate_callback, NULL, NULL);
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -225,9 +225,9 @@ static void display_reg(int reg, viewer_t *viewer)
                             viewer);
 }
 
-error display_set_handlers(viewer_t *viewer)
+result_t display_set_handlers(viewer_t *viewer)
 {
-  error err;
+  result_t err;
 
   display_reg(1, viewer);
 
@@ -261,9 +261,9 @@ static void display_set_single_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-error display_init(void)
+result_t display_init(void)
 {
-  typedef error (*initfn)(void);
+  typedef result_t (*initfn)(void);
 
   static const initfn initfns[] =
   {
@@ -278,8 +278,8 @@ error display_init(void)
 #endif
   };
 
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   /* initialise dependencies */
 
@@ -323,7 +323,7 @@ error display_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 void display_fin(void)
@@ -867,13 +867,12 @@ static int display_event_close_window_request(wimp_event_no event_no,
                                               wimp_block   *block,
                                               void         *handle)
 {
-  wimp_close  *close;
   viewer_t    *viewer;
   wimp_pointer pointer;
 
   NOT_USED(event_no);
+  NOT_USED(block);
 
-  close  = &block->close;
   viewer = handle;
 
   wimp_get_pointer_info(&pointer);
@@ -918,7 +917,6 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
 {
   wimp_window_info info;
   int              wax, way; /* work area x,y */
-  int              visible_w, visible_h;
   int              old_scale, new_scale;
 
   info.w = GLOBALS.current_viewer->main_w;
@@ -927,29 +925,17 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
   wax = pointer->pos.x + (info.xscroll - info.visible.x0);
   way = pointer->pos.y + (info.yscroll - info.visible.y1);
 
-  visible_w = info.visible.x1 - info.visible.x0;
-  visible_h = info.visible.y1 - info.visible.y0;
-
   old_scale = viewer->scale.cur;
   if (pointer->buttons & wimp_CLICK_SELECT)
     new_scale = old_scale * 2;
   else
     new_scale = old_scale / 2;
-#if 0
-  viewer_scaledlg_set(GLOBALS.current_viewer->main_w, new_scale, 0);
-
-  info.xscroll = (wax * new_scale / old_scale) - visible_w / 2;
-  info.yscroll = (way * new_scale / old_scale) + visible_h / 2;
-  wimp_open_window((wimp_open *) &info);
-
-  window_redraw((int) GLOBALS.current_viewer->main_w);
-#else
-  wax = (wax * new_scale / old_scale);
-  way = (way * new_scale / old_scale);
+  
+  wax = wax * new_scale / old_scale;
+  way = way * new_scale / old_scale;
 
   scrolling_start(viewer, wax, way, new_scale, 0,
                   GLOBALS.choices.viewer.steps);
-#endif
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1604,7 +1590,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Close:
-    error_report(action_close_window(viewer->main_w));
+    result_report(action_close_window(viewer->main_w));
     break;
 
   case Save:
@@ -1633,7 +1619,7 @@ static void action(viewer_t *viewer, int op)
 
 #ifdef EYE_TAGS
   case Tags:
-    error_report(tags_open(viewer->drawable->image));
+    result_report(tags_open(viewer->drawable->image));
     break;
 #endif
 
@@ -1642,7 +1628,7 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Help:
-    error_report(action_help());
+    result_report(action_help());
     break;
 
   case Kill:
@@ -1796,13 +1782,12 @@ static int display_event_scroll_request(wimp_event_no event_no,
                                         void         *handle)
 {
   wimp_scroll *scroll;
-  viewer_t    *viewer;
   int          d;
 
   NOT_USED(event_no);
+  NOT_USED(handle);
 
   scroll = &block->scroll;
-  viewer = handle;
 
   switch (scroll->xmin)
   {

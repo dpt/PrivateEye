@@ -37,12 +37,12 @@ void oserror_report(int errnum, const char *format_token, ...)
   strncpy(icon, message("icon"), sizeof(icon));
   icon[12] = '\0'; /* ensure termination (safety) */
 
-  EC(_swix(Wimp_ReportError,
-          _INR(0,5),
-          &e,
-           0x501,
-           message("task"),
-           icon,
-           NULL /* no sprite area */,
-           NULL /* no extra buttons */));
+  (void) EC(_swix(Wimp_ReportError,
+                 _INR(0,5),
+                 &e,
+                  0x501,
+                  message("task"),
+                  icon,
+                  NULL /* no sprite area */,
+                  NULL /* no extra buttons */));
 }

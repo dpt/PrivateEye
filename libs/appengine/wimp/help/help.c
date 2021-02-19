@@ -12,9 +12,10 @@
 #include "oslib/help.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/atom.h"
+
 #include "appengine/types.h"
 #include "appengine/base/bitwise.h"
-#include "appengine/datastruct/atom.h"
 #include "appengine/base/errors.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/menu.h"
@@ -70,9 +71,9 @@ static void register_event_handlers(int reg)
 
 static unsigned int help_refcount = 0;
 
-error help_init(void)
+result_t help_init(void)
 {
-  error err;
+  result_t err;
 
   if (help_refcount == 0)
   {
@@ -83,21 +84,21 @@ error help_init(void)
     windows.atoms = atom_create();
     if (windows.atoms == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto failure;
     }
 
     menus.atoms = atom_create();
     if (menus.atoms == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto failure;
     }
   }
 
   help_refcount++;
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
@@ -134,9 +135,9 @@ void help_fin(void)
 /* ----------------------------------------------------------------------- */
 
 // todo: cope with already-added window
-static error add_element(help_array *arr, unsigned int obj, const char *name)
+static result_t add_element(help_array *arr, unsigned int obj, const char *name)
 {
-  error         err;
+  result_t         err;
   help_element *e;
 
   if (arr->nentries + 1 > arr->allocated)
@@ -150,7 +151,7 @@ static error add_element(help_array *arr, unsigned int obj, const char *name)
 
     newentries = realloc(arr->entries, n * sizeof(*arr->entries));
     if (newentries == NULL)
-      return error_OOM; /* failure: out of memory */
+      return result_OOM; /* failure: out of memory */
 
     arr->entries   = newentries;
     arr->allocated = n;
@@ -162,12 +163,12 @@ static error add_element(help_array *arr, unsigned int obj, const char *name)
 
   err = atom_new(arr->atoms, (const unsigned char *) name, strlen(name) + 1,
                  &e->atom);
-  if (err != error_ATOM_NAME_EXISTS && err)
+  if (err != result_ATOM_NAME_EXISTS && err)
     return err;
 
   arr->nentries++;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void remove_element(help_array *arr, unsigned int obj)
@@ -204,7 +205,7 @@ static const char *get(help_array *arr, unsigned int obj)
 
 /* ----------------------------------------------------------------------- */
 
-error help_add_window(wimp_w w, const char *name)
+result_t help_add_window(wimp_w w, const char *name)
 {
   return add_element(&windows, (unsigned int) w, name);
 }
@@ -216,7 +217,7 @@ void help_remove_window(wimp_w w)
 
 /* ----------------------------------------------------------------------- */
 
-error help_add_menu(wimp_menu *m, const char *name)
+result_t help_add_menu(wimp_menu *m, const char *name)
 {
   return add_element(&menus, (unsigned int) m, name);
 }

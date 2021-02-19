@@ -92,7 +92,7 @@ void heap_delete(char *base)
     return; /* unknown heap */
 
   /* Delete the dynamic area */
-  EC(_swix(OS_DynamicArea, _INR(0,1), 1, cb->area));
+  (void) EC(_swix(OS_DynamicArea, _INR(0,1), 1, cb->area));
 
   /* remove its heapcb from the chain */
   if (cb == first_cb)

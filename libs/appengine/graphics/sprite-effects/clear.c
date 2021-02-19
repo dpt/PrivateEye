@@ -70,7 +70,7 @@ static void clear_888(osspriteop_header *src,
     *dp++ = colour | (*sp++ & 0xff000000);
 }
 
-error effects_clear_apply(osspriteop_area   *area,
+result_t effects_clear_apply(osspriteop_area   *area,
                           osspriteop_header *src,
                           osspriteop_header *dst,
                           os_colour          colour)
@@ -92,8 +92,8 @@ error effects_clear_apply(osspriteop_area   *area,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_EFFECT;
+    return result_SPRITEFX_UNSUPP_EFFECT;
   }
 
-  return error_OK;
+  return result_OK;
 }

@@ -66,9 +66,11 @@ int image_recognise(wimp_message *message)
     const size_t stride = sizeof(map[0]);
     const size_t nelems = sizeof(map) / stride;
 
-    int i;
+    int          i;
+    unsigned int magic;
 
-    i = bsearch_uint(&map[0].magic, nelems, stride, *((unsigned int *) buf));
+    magic = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+    i = bsearch_uint(&map[0].magic, nelems, stride, magic);
     if (i >= 0)
       file_type = map[i].file_type;
   }

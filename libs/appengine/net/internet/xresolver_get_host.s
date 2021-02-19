@@ -10,11 +10,11 @@
 	EXPORT	xresolver_get_host
 
 xresolver_get_host
-	STMFD	r13!, {r2, r14}
+	PUSH	{r2, r14}
 	MOV	r2, r1	; hostent **host_ent
 	SWI	&66001 ; XResolver_GetHost
 	STRVC	r1, [r2]
 	MOVVC	r0, #0
-	LDMFD	r13!, {r2, pc}
+	POP	{r2, pc}
 
 	END

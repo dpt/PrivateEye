@@ -37,9 +37,9 @@ int font_test(void)
                                 font_STRETCH_NORMAL },
   };
 
-  error err;
-  char  buf[128];
-  int   i;
+  result_t err;
+  char     buf[128];
+  int      i;
 
   printf("test: select\n");
 
@@ -50,7 +50,7 @@ int font_test(void)
     err = font_select(data[i].name, data[i].attrs, buf, sizeof(buf));
     if (!err)
       printf("font_select says: Use '%s'.\n", buf);
-    else if (err == error_FONT_NO_MATCH)
+    else if (err == result_FONT_NO_MATCH)
       printf("font_select says: No good match.\n");
     else
       printf("error: %lx\n", err);

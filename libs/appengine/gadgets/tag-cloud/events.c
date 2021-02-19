@@ -16,6 +16,8 @@
 #include "oslib/wimp.h"
 #include "oslib/wimpreadsysinfo.h"
 
+#include "datastruct/atom.h"
+
 #include "appengine/types.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/help.h"
@@ -25,7 +27,6 @@
 #include "appengine/base/messages.h"
 #include "appengine/base/numstr.h"
 #include "appengine/base/os.h"
-#include "appengine/datastruct/atom.h"
 #include "appengine/dialogues/info.h"
 #include "appengine/dialogues/name.h"
 
@@ -141,7 +142,7 @@ static void add_new_tag(dialogue_t *d,
                         const char *tag_name,
                         void       *opaque)
 {
-  error      err;
+  result_t   err;
   tag_cloud *tc = opaque;
 
   NOT_USED(d);
@@ -150,7 +151,7 @@ static void add_new_tag(dialogue_t *d,
     return;
 
   err = tc->newtag(tc, tag_name, strlen(tag_name), tc->opaque);
-  error_report(err); /* warn user */
+  result_report(err); /* warn user */
 
   // FIXME: if ADJUST is clicked to add then the menu stays open, should
   // update it and re-open it
@@ -160,7 +161,7 @@ static void rename_tag(dialogue_t *d,
                        const char *tag_name,
                        void       *opaque)
 {
-  error      err;
+  result_t   err;
   tag_cloud *tc = opaque;
 
   NOT_USED(d);
@@ -176,7 +177,7 @@ static void rename_tag(dialogue_t *d,
                       tag_name,
                       strlen(tag_name),
                       tc->opaque);
-  error_report(err); /* warn user */
+  result_report(err); /* warn user */
 
   // if (tc->menued_tag_index == -1)
   //   close menu?
@@ -187,13 +188,13 @@ static void rename_tag(dialogue_t *d,
 
 static void delete_tag(tag_cloud *tc, int index)
 {
-  error err;
+  result_t err;
 
   if (tc->deletetag == NULL)
     return;
 
   err = tc->deletetag(tc, index, tc->opaque);
-  error_report(err); /* warn user */
+  result_report(err); /* warn user */
 }
 
 static void rename_fillout(dialogue_t *d, void *opaque)
@@ -386,13 +387,12 @@ static int tag_cloud_event_pointer_leaving_window(wimp_event_no event_no,
                                                   wimp_block   *block,
                                                   void         *handle)
 {
-  tag_cloud    *tc;
-  wimp_leaving *leaving;
+  tag_cloud *tc;
 
   NOT_USED(event_no);
+  NOT_USED(block);
 
-  tc      = handle;
-  leaving = &block->leaving;
+  tc = handle;
 
   claim_nulls(0, tc);
 
@@ -405,13 +405,12 @@ static int tag_cloud_event_pointer_entering_window(wimp_event_no event_no,
                                                    wimp_block   *block,
                                                    void         *handle)
 {
-  tag_cloud     *tc;
-  wimp_entering *entering;
+  tag_cloud *tc;
 
   NOT_USED(event_no);
+  NOT_USED(block);
 
-  tc       = handle;
-  entering = &block->entering;
+  tc = handle;
 
   claim_nulls(1, tc);
 
@@ -497,7 +496,7 @@ static int tag_cloud_event_mouse_click(wimp_event_no event_no,
                                        wimp_block   *block,
                                        void         *handle)
 {
-  error         err;
+  result_t      err;
   tag_cloud    *tc;
   wimp_pointer *pointer;
   int           i;
@@ -525,7 +524,7 @@ static int tag_cloud_event_mouse_click(wimp_event_no event_no,
         err = tagfn(tc, i, tc->opaque);
         if (err)
         {
-          error_report(err); /* warn user */
+          result_report(err); /* warn user */
           return event_NOT_HANDLED;
         }
 
@@ -560,7 +559,7 @@ static int tag_cloud_event_mouse_click(wimp_event_no event_no,
     err = help_add_menu(tc->main_m, "tagcloud");
     if (err)
     {
-      error_report(err); /* warn user */
+      result_report(err); /* warn user */
       return event_NOT_HANDLED;
     }
 
@@ -908,7 +907,7 @@ static int tag_cloud_event_menu_selection(wimp_event_no event_no,
 
 static int tag_cloud_message_data_load(wimp_message *message, void *handle)
 {
-  error                   err;
+  result_t                err;
   wimp_message_data_xfer *xfer;
   tag_cloud              *tc;
   int                     i;
@@ -938,7 +937,7 @@ static int tag_cloud_message_data_load(wimp_message *message, void *handle)
       err = tagfilefn(tc, xfer->file_name, i, tc->opaque);
       if (err)
       {
-        error_report(err); /* warn user */
+        result_report(err); /* warn user */
         return event_NOT_HANDLED;
       }
 

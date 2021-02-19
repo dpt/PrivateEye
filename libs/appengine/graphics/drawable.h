@@ -161,11 +161,11 @@ struct T
 
 /* ----------------------------------------------------------------------- */
 
-error drawable_create(image_t *image,
-                      T      **newdrawable);
+result_t drawable_create(image_t *image,
+                         T      **newdrawable);
 
-error drawable_clone(T  *original,
-                     T **newdrawable);
+result_t drawable_clone(T  *original,
+                        T **newdrawable);
 
 void drawable_destroy(T *d);
 

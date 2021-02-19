@@ -12,9 +12,10 @@
 #include "oslib/os.h"
 #include "oslib/wimp.h"
 
-#include "appengine/datastruct/list.h"
+#include "datastruct/list.h"
+#include "datastruct/ntree.h"
+
 #include "appengine/vdu/sprite.h"
-#include "appengine/datastruct/ntree.h"
 
 #define T image_t
 
@@ -270,7 +271,7 @@ void image_destroy_metadata(ntree_t *metadata);
 
 /* ----------------------------------------------------------------------- */
 
-error image_get_digest(T *image, unsigned char digest[image_DIGESTSZ]);
+result_t image_get_digest(T *image, unsigned char digest[image_DIGESTSZ]);
 
 #undef T
 

@@ -92,7 +92,7 @@ static void histogram_32(osspriteop_header *header,
   }
 }
 
-error sprite_get_histograms(osspriteop_area   *area,
+result_t sprite_get_histograms(osspriteop_area   *area,
                             osspriteop_header *header,
                             sprite_histograms *hists)
 {
@@ -119,10 +119,10 @@ error sprite_get_histograms(osspriteop_area   *area,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_FUNC;
+    return result_SPRITEFX_UNSUPP_FUNC;
   }
 
   fn(header, width, height, hists);
 
-  return error_OK;
+  return result_OK;
 }

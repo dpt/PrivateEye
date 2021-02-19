@@ -37,14 +37,14 @@ void oserror_report_block(os_error *error)
   strncpy(icon, message("icon"), sizeof(icon));
   icon[12] = '\0'; /* ensure termination (safety) */
 
-  EC(_swix(Wimp_ReportError,
-          _INR(0,5),
-          &e,
-           0x501,
-           message("task"),
-           icon,
-           NULL /* no sprite area */,
-           NULL /* no extra buttons */));
+  (void) EC(_swix(Wimp_ReportError,
+                 _INR(0,5),
+                 &e,
+                  0x501,
+                  message("task"),
+                  icon,
+                  NULL /* no sprite area */,
+                  NULL /* no extra buttons */));
 
   /* MemCheck_UnRegisterMiscBlock(error); */
 }

@@ -108,12 +108,12 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-error hist_init(void)
+result_t hist_init(void)
 {
-  error err;
+  result_t err;
 
   if (LOCALS.refcount)
-    return error_OK; /* already initialised */
+    return result_OK; /* already initialised */
 
   /* dependencies */
 
@@ -133,7 +133,7 @@ error hist_init(void)
 
   LOCALS.refcount++;
 
-  return error_OK;
+  return result_OK;
 }
 
 void hist_fin(void)
@@ -165,8 +165,8 @@ int hist_available(const image_t *image)
 
 /* ----------------------------------------------------------------------- */
 
-static error hist_alloc(const void    *opaque_config,
-                        imageobwin_t **obwin)
+static result_t hist_alloc(const void    *opaque_config,
+                           imageobwin_t **obwin)
 {
   hist_window       *self;
   const hist_config *config = opaque_config;
@@ -175,7 +175,7 @@ static error hist_alloc(const void    *opaque_config,
 
   self = malloc(sizeof(*self));
   if (self == NULL)
-    return error_OOM;
+    return result_OOM;
 
   self->config       = *config;
 
@@ -185,7 +185,7 @@ static error hist_alloc(const void    *opaque_config,
 
   *obwin = &self->base;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void hist_dealloc(imageobwin_t *doomed)
@@ -197,7 +197,7 @@ static void hist_dealloc(imageobwin_t *doomed)
   free(self);
 }
 
-static error hist_compute(imageobwin_t *obwin)
+static result_t hist_compute(imageobwin_t *obwin)
 {
   hist_window       *self;
   image_t           *image;
@@ -214,7 +214,7 @@ static error hist_compute(imageobwin_t *obwin)
   {
     newhists = malloc(sizeof(sprite_histograms));
     if (newhists == NULL)
-      return error_OOM;
+      return result_OOM;
 
     image->hists = newhists;
 
@@ -224,7 +224,7 @@ static error hist_compute(imageobwin_t *obwin)
     {
       free(image->hists);
       image->hists = NULL;
-      return error_PRIVATEEYE_HIST_UNSUPP_FUNC;
+      return result_PRIVATEEYE_HIST_UNSUPP_FUNC;
     }
 
     hourglass_off();
@@ -234,7 +234,7 @@ static error hist_compute(imageobwin_t *obwin)
   {
     self->display_hist = malloc(256 * sizeof(*self->display_hist));
     if (self->display_hist == NULL)
-      return error_OOM;
+      return result_OOM;
   }
 
   hists = image->hists;
@@ -310,7 +310,7 @@ static error hist_compute(imageobwin_t *obwin)
     self->scale.gap = 256 * 256 / self->scale.nbars;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 static void hist_refresh(imageobwin_t *obwin)

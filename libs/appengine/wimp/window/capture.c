@@ -18,7 +18,7 @@ static osbool window_is_maximised(wimp_w win, osbool covericonbar)
   wimp_window_info info;
   wimp_outline outline;
   int sw,sh;
-  int w,h;
+  int h;
 
   info.w = win;
   wimp_get_window_info_header_only(&info);
@@ -36,7 +36,6 @@ static osbool window_is_maximised(wimp_w win, osbool covericonbar)
   outline.w = win;
   wimp_get_window_outline(&outline);
 
-  w = outline.outline.x1 - outline.outline.x0;
   h = outline.outline.y1 - outline.outline.y0;
 
   read_screen_dimensions(&sw, &sh);

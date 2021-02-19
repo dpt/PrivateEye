@@ -16,10 +16,11 @@
 #include "oslib/wimpreadsysinfo.h"
 #include "oslib/osfile.h"
 
+#include "datastruct/atom.h"
+#include "geom/box.h"
+
 #include "appengine/types.h"
 #include "appengine/base/bitwise.h"
-#include "appengine/datastruct/atom.h"
-#include "appengine/geom/box.h"
 #include "appengine/wimp/event.h"
 #include "appengine/vdu/font.h"
 
@@ -161,7 +162,7 @@ static char *set_transform(char *s, int a, int b, int c, int d)
 
 /* ----------------------------------------------------------------------- */
 
-static error scales_calc(tag_cloud *tc)
+static result_t scales_calc(tag_cloud *tc)
 {
   if (tc->scaling_type == tag_cloud_SCALING_ON)
   {
@@ -186,12 +187,12 @@ static error scales_calc(tag_cloud *tc)
       *ps++ = (1 << 8);
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error paintstring_new(tag_cloud *tc)
+static result_t paintstring_new(tag_cloud *tc)
 {
   if (tc->layout.paintstring.string == NULL)
   {
@@ -201,7 +202,7 @@ static error paintstring_new(tag_cloud *tc)
     n = tc->ntags * 64; /* initial estimate */
     string = malloc(sizeof(*tc->layout.paintstring.string) * n);
     if (string == NULL)
-      return error_OOM;
+      return result_OOM;
 
     tc->layout.paintstring.string    = string;
     tc->layout.paintstring.allocated = n;
@@ -209,10 +210,10 @@ static error paintstring_new(tag_cloud *tc)
 
   tc->layout.paintstring.used = 0;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error paintstring_ensure(tag_cloud *tc, int need, char **ptr)
+static result_t paintstring_ensure(tag_cloud *tc, int need, char **ptr)
 {
   int   allocated;
   int   used;
@@ -222,14 +223,14 @@ static error paintstring_ensure(tag_cloud *tc, int need, char **ptr)
   used      = tc->layout.paintstring.used;
 
   if (allocated - used >= need)
-    return error_OK;
+    return result_OK;
 
   allocated = power2gt(used + need);
 
   string = realloc(tc->layout.paintstring.string,
                    sizeof(*tc->layout.paintstring.string) * allocated);
   if (string == NULL)
-    return error_OOM;
+    return result_OOM;
 
   if (ptr)
     *ptr += string - tc->layout.paintstring.string;
@@ -237,7 +238,7 @@ static error paintstring_ensure(tag_cloud *tc, int need, char **ptr)
   tc->layout.paintstring.string    = string;
   tc->layout.paintstring.allocated = allocated;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void paintstring_del(tag_cloud *tc)
@@ -253,7 +254,7 @@ static void paintstring_del(tag_cloud *tc)
 
 /* ----------------------------------------------------------------------- */
 
-static error metrics_new(tag_cloud *tc)
+static result_t metrics_new(tag_cloud *tc)
 {
   int N;
 
@@ -265,13 +266,13 @@ static error metrics_new(tag_cloud *tc)
 
     dims = realloc(tc->layout.dims.dims, N * sizeof(*dims));
     if (dims == NULL)
-      return error_OOM;
+      return result_OOM;
 
     tc->layout.dims.dims      = dims;
     tc->layout.dims.allocated = N;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 static void metrics_del(tag_cloud *tc)
@@ -289,9 +290,9 @@ enum
   LargeWidth = font_INCH * 10,
 };
 
-static error metrics_calc(tag_cloud *tc)
+static result_t metrics_calc(tag_cloud *tc)
 {
-  error            err;
+  result_t            err;
   tag_cloud_dims *dims;
   int              i;
 
@@ -381,12 +382,12 @@ static error metrics_calc(tag_cloud *tc)
                   &dims->bulletspacerlength, NULL,
                    NULL);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error lengths_new(tag_cloud *tc)
+static result_t lengths_new(tag_cloud *tc)
 {
   int N;
 
@@ -399,13 +400,13 @@ static error lengths_new(tag_cloud *tc)
 
     length = realloc(tc->layout.lengths.length, N * sizeof(*length));
     if (length == NULL)
-      return error_OOM;
+      return result_OOM;
 
     tc->layout.lengths.length    = length;
     tc->layout.lengths.allocated = N;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 static void lengths_del(tag_cloud *tc)
@@ -421,9 +422,9 @@ static void lengths_del(tag_cloud *tc)
 /* Build a table of lengths dependent on highlight status. This saves
  * complicating the inner loop.
  */
-static error lengths_calc(tag_cloud *tc)
+static result_t lengths_calc(tag_cloud *tc)
 {
-  error err;
+  result_t err;
   int   N;
   int   widest;
   int   i;
@@ -453,12 +454,12 @@ static error lengths_calc(tag_cloud *tc)
 
   tc->layout.lengths.widest = widest;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error boxes_new(tag_cloud *tc)
+static result_t boxes_new(tag_cloud *tc)
 {
   int N;
 
@@ -471,13 +472,13 @@ static error boxes_new(tag_cloud *tc)
 
     boxes = realloc(tc->layout.boxes.boxes, N * sizeof(*boxes));
     if (boxes == NULL)
-      return error_OOM;
+      return result_OOM;
 
     tc->layout.boxes.boxes     = boxes;
     tc->layout.boxes.allocated = N;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 static void boxes_del(tag_cloud *tc)
@@ -492,13 +493,13 @@ static void boxes_del(tag_cloud *tc)
 
 /* ----------------------------------------------------------------------- */
 
-error tag_cloud_layout_prepare(tag_cloud *tc)
+result_t tag_cloud_layout_prepare(tag_cloud *tc)
 {
   static const char default_font[]      = "Homerton.Medium";
   static const char default_bold_font[] = "Homerton.Bold";
 
   os_error               *err;
-  error                   err2;
+  result_t                err2;
   const char             *font_p;
   const char             *bold_font_p;
   int                     font_size;
@@ -509,7 +510,7 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
   int                     misc_info_size;
 
   if (tc->flags & tag_cloud_FLAG_LAYOUT_PREPED)
-    return error_OK;
+    return result_OK;
 
   /* defaults */
 
@@ -582,7 +583,7 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
                         NULL,
                         NULL);
   if (err)
-    return error_OS;
+    return result_OS;
 
   err = xfont_find_font(bold_font_p,
                         font_size,
@@ -593,7 +594,7 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
                         NULL,
                         NULL);
   if (err)
-    return error_OS;
+    return result_OS;
 
   /* work out the font size and leading in OS units */
 
@@ -644,7 +645,7 @@ error tag_cloud_layout_prepare(tag_cloud *tc)
 
   tc->flags |= tag_cloud_FLAG_LAYOUT_PREPED;
 
-  return error_OK;
+  return result_OK;
 }
 
 void tag_cloud_layout_discard(tag_cloud *tc)
@@ -678,9 +679,9 @@ typedef struct layout_state
 }
 layout_state;
 
-static error layout_list(tag_cloud *tc, layout_state *state)
+static result_t layout_list(tag_cloud *tc, layout_state *state)
 {
-  error err;
+  result_t err;
   int   width;
   char *p;
   int   scaledw;
@@ -707,7 +708,7 @@ static error layout_list(tag_cloud *tc, layout_state *state)
   {
     int x;
     int j_end;
-    int totalwidth;
+    int totalwidth = 0;
     int j;
     int last_x_move, last_y_move;
     int lineheight;
@@ -897,12 +898,12 @@ static error layout_list(tag_cloud *tc, layout_state *state)
 
   tc->layout.height = -y + 2 * tc->layout.padding; /* OS units */
 
-  return error_OK;
+  return result_OK;
 }
 
-static error layout_cloud(tag_cloud *tc, layout_state *state)
+static result_t layout_cloud(tag_cloud *tc, layout_state *state)
 {
-  error  err;
+  result_t  err;
   int    width;
   char  *p;
   int    scaledw;
@@ -1132,16 +1133,16 @@ static error layout_cloud(tag_cloud *tc, layout_state *state)
 
   tc->layout.height = -y + 2 * tc->layout.padding; /* OS units */
 
-  return error_OK;
+  return result_OK;
 }
 
-error tag_cloud_layout(tag_cloud *tc, int width)
+result_t tag_cloud_layout(tag_cloud *tc, int width)
 {
-  error         err = error_OK;
+  result_t         err = result_OK;
   layout_state  state;
   os_colour     colours[3];
   char         *p;
-  error       (*layoutfn)(tag_cloud *, layout_state *);
+  result_t       (*layoutfn)(tag_cloud *, layout_state *);
 
   if (FORCE_FULL_LAYOUT)
     tc->flags |= tag_cloud_FLAG_NEW_ALL;
@@ -1149,7 +1150,7 @@ error tag_cloud_layout(tag_cloud *tc, int width)
   if ((tc->flags & tag_cloud_FLAG_NEW_ALL) == 0 &&
        tc->layout.width == width)
   {
-    return error_OK; /* nothing has changed */
+    return result_OK; /* nothing has changed */
   }
 
   err = tag_cloud_layout_prepare(tc);
@@ -1253,6 +1254,9 @@ error tag_cloud_layout(tag_cloud *tc, int width)
   case tag_cloud_DISPLAY_TYPE_CLOUD:
     layoutfn = layout_cloud;
     break;
+
+  default:
+    return err;
   }
 
   err = layoutfn(tc, &state);

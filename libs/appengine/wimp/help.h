@@ -8,13 +8,13 @@
 
 #include "appengine/base/errors.h"
 
-error help_init(void);
+result_t help_init(void);
 void help_fin(void);
 
-error help_add_window(wimp_w w, const char *name);
+result_t help_add_window(wimp_w w, const char *name);
 void help_remove_window(wimp_w w);
 
-error help_add_menu(wimp_menu *m, const char *name);
+result_t help_add_menu(wimp_menu *m, const char *name);
 void help_remove_menu(wimp_menu *m);
 
 #endif /* APPENGINE_HELP_H */

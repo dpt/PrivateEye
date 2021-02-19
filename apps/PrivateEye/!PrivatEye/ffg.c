@@ -28,8 +28,9 @@
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/types.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/wimp/event.h"
 
 #include "globals.h"

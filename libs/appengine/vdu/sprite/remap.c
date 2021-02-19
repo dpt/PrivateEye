@@ -9,7 +9,7 @@
 
 #include "appengine/vdu/sprite.h"
 
-error sprite_remap(osspriteop_area   *area,
+result_t sprite_remap(osspriteop_area   *area,
                    osspriteop_header *src,
                    osspriteop_header *dst,
                    sprite_luts       *luts)
@@ -34,7 +34,7 @@ error sprite_remap(osspriteop_area   *area,
     break;
 
   default:
-    return error_SPRITEFX_UNSUPP_FUNC;
+    return result_SPRITEFX_UNSUPP_FUNC;
   }
 
   sp = sprite_data(src);
@@ -54,5 +54,5 @@ error sprite_remap(osspriteop_area   *area,
             (p & 0xff000000);
   }
 
-  return error_OK;
+  return result_OK;
 }

@@ -11,7 +11,7 @@
 extern dialogue_t *viewer_infodlg;
 extern dialogue_t *viewer_srcinfodlg;
 
-error viewer_infodlg_init(void);
+result_t viewer_infodlg_init(void);
 void viewer_infodlg_fin(void);
 
 #endif /* VIEWER_INFODLG_H */

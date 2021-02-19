@@ -9,9 +9,10 @@
 #include "oslib/font.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/bitvec.h"
+#include "datastruct/atom.h"
+
 #include "appengine/wimp/dialogue.h"
-#include "appengine/datastruct/bitvec.h"
-#include "appengine/datastruct/atom.h"
 #include "appengine/base/errors.h"
 
 #include "appengine/gadgets/tag-cloud.h"
@@ -182,8 +183,8 @@ struct tag_cloud
 void tag_cloud_internal_set_handlers(int reg, tag_cloud *tc);
 
 /* layout.c */
-error tag_cloud_layout_prepare(tag_cloud *tc);
-error tag_cloud_layout(tag_cloud *tc, int width);
+result_t tag_cloud_layout_prepare(tag_cloud *tc);
+result_t tag_cloud_layout(tag_cloud *tc, int width);
 void tag_cloud_layout_reset(tag_cloud *tc);
 /* Discard cached metrics. */
 void tag_cloud_layout_discard(tag_cloud *tc);

@@ -16,11 +16,12 @@
 #include "oslib/osfile.h"
 #include "oslib/osfscontrol.h"
 
+#include "databases/digest-db.h"
+#include "databases/filename-db.h"
+#include "databases/tag-db.h"
+
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/databases/digest-db.h"
-#include "appengine/databases/filename-db.h"
-#include "appengine/databases/tag-db.h"
 #include "appengine/datastruct/array.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image.h"
@@ -43,7 +44,7 @@
 
 static struct
 {
-  tagdb        *db;        /* maps digests to tags */
+  tagdb_t      *db;        /* maps digests to tags */
   filenamedb_t *fdb;       /* maps digests to filenames */
   int           backed_up; /* have we backed up during this session? */
 }
@@ -51,7 +52,7 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-tagdb *tags_common_get_db(void)
+tagdb_t *tags_common_get_db(void)
 {
   return LOCALS.db;
 }
@@ -319,7 +320,7 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
   int            ntags;
   tag_cloud_tag *t;
   int            ittallocated;
-  tagdb_tag     *indextotag;
+  tagdb_tag_t   *indextotag;
 
   tagsallocated = 0; /* allocated */
   tags          = NULL;
@@ -340,9 +341,9 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
   ntags = 0;
   for (;;)
   {
-    tagdb_tag tag;
-    int       count;
-    size_t    length;
+    tagdb_tag_t tag;
+    int         count;
+    size_t      length;
 
     err = tagdb_enumerate_tags(common->db, &cont, &tag, &count);
     if (err)
@@ -458,7 +459,7 @@ error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *com
   int           nindices;
   int           allocated;
   int           cont;
-  tagdb_tag     tag;
+  tagdb_tag_t   tag;
 
   if (image == NULL)
     return error_OK;
@@ -591,7 +592,7 @@ error tags_common_lazyinit(void)
   if (tags_common_lazyrefcount == 0)
   {
     os_error     *oserr;
-    tagdb        *db  = NULL;
+    tagdb_t      *db  = NULL;
     filenamedb_t *fdb = NULL;
 
     /* initialise */

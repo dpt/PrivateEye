@@ -3,7 +3,8 @@
 # Fetch the source to the flex memory manager from the riscosopen.org site and
 # compile it up with GCCSDK.
 #
-# by dpt
+# Copyright (c) David Thomas, 2021
+#
 
 if [ -d flex ]; then
 	echo "flex is downloaded."
@@ -23,41 +24,50 @@ mv ./ToolboxLib/flexlib/h/swiextra swiextra.h
 mv ./ToolboxLib/flexlib/c/flex flex.c
 rm -rf ./ToolboxLib
 
-# Write out a Makefile
+# Write out a CMakeLists.txt
 
-cat > GNUmakefile <<EOF
-# GNU makefile for flex
+cat > CMakeLists.txt <<EOF
+# CMakeLists.txt
+#
+# flex
+#
+# Copyright (c) David Thomas, 2021
+#
+# vim: sw=4 ts=8 et
+#
 
-include $(APPENGINE_ROOT)/common.mk
+cmake_minimum_required(VERSION 3.18)
 
-lib	= libflex.a
-libdbg	= libflexdbg.a
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif()
 
-objs	= flex.o
-objsdbg	= $(objs:.o=.odf)
+project(flex DESCRIPTION "Sliding heap allocator" LANGUAGES C)
 
-.PHONY:	normal debug all clean
+# The values set in the toolchain file aren't available until this point.
 
-$(lib):	$(objs)
-	$(libfile) $@ $(objs)
+if(NOT DEFINED TARGET_RISCOS)
+    message(FATAL_ERROR "flex builds for RISC OS only")
+endif()
 
-$(libdbg):	$(objsdbg)
-	$(libfile) $@ $(objsdbg)
+if(TARGET_RISCOS)
+    riscos_set_flags()
+endif()
 
-normal: $(lib)
-	@echo 'normal' built
+# Referencing CMAKE_TOOLCHAIN_FILE avoids a warning on rebuilds.
+if(NOT \${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
+    message(STATUS "flex: Using toolchain file: \${CMAKE_TOOLCHAIN_FILE}")
+endif()
 
-debug:	$(libdbg)
-	@echo 'debug' built
+add_library(flex)
 
-all:	normal debug
-	@echo 'all' built
+set_target_properties(flex PROPERTIES
+    DESCRIPTION "Sliding heap allocator"
+    C_STANDARD 90)
 
-clean:
-	-rm -rf $(objs) $(objsdbg) $(lib) $(libdbg)
-	@echo Cleaned
+target_sources(flex PRIVATE flex.h opts.h swiextra.h flex.c)
 
--include $(objs:.o=.d)
+target_compile_options(flex PRIVATE -Wall -Wextra -pedantic -Wno-unused-but-set-variable -Wno-sign-compare -Wno-unknown-pragmas -Wno-format)
 EOF
 
 cd -

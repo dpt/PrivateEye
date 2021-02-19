@@ -39,15 +39,15 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-error colour_choicepane_initialise(const choices_pane *p)
+result_t colour_choicepane_initialise(const choices_pane *p)
 {
   NOT_USED(p);
 
   LOCALS.map = tonemap_create();
   if (LOCALS.map == NULL)
-    return error_OOM;
+    return result_OOM;
 
-  return error_OK;
+  return result_OK;
 }
 
 void colour_choicepane_finalise(const choices_pane *p)
@@ -58,7 +58,7 @@ void colour_choicepane_finalise(const choices_pane *p)
   LOCALS.map = NULL;
 }
 
-error colour_choicepane_changed(const choices_pane *p)
+result_t colour_choicepane_changed(const choices_pane *p)
 {
   tonemap      *temp_map;
   tonemap      *screen_map;
@@ -94,7 +94,7 @@ error colour_choicepane_changed(const choices_pane *p)
 
       temp_map = tonemap_create();
       if (temp_map == NULL)
-        return error_OOM;
+        return result_OOM;
 
       tonemap_set(temp_map, tonemap_CHANNEL_RGB, &spec);
 
@@ -120,12 +120,12 @@ error colour_choicepane_changed(const choices_pane *p)
 
   LOCALS.on = GLOBALS.proposed_choices.colour.on;
 
-  return error_OK;
+  return result_OK;
 }
 
-error colour_choicepane_redraw(const choices_pane *p, wimp_draw *redraw)
+result_t colour_choicepane_redraw(const choices_pane *p, wimp_draw *redraw)
 {
   tonemapgadget_redraw(LOCALS.map, *p->window, CHOICES_COL_D_CURVE, redraw);
 
-  return error_OK;
+  return result_OK;
 }

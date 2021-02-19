@@ -5,7 +5,7 @@
 
 xappengine_heap_resize
 	MOV	r12, r14
-	STMFD	r13!, {r4}
+	PUSH	{r4}
 	MOV	r4, r3 		; pointer to success flag
 	MOV	r3, r2 		; bytes to be added or removed from the block
 	MOV	r2, r1 		; pointer to anchor
@@ -17,7 +17,7 @@ xappengine_heap_resize
 	STRNE	r1, [r4] 	; success flag
 	MOV	r0, #0
 xappengine_heap_resize_exit
-	LDMFD	r13!, {r4}
+	POP	{r4}
 	MOVS	pc, r12
 
 	END

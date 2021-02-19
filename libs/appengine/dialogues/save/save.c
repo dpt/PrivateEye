@@ -218,7 +218,7 @@ static int save_event_user_drag_box(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-error save_set_file_name(dialogue_t *d, const char *file_name)
+result_t save_set_file_name(dialogue_t *d, const char *file_name)
 {
   save_t *s = (save_t *) d;
   wimp_w  win;
@@ -230,13 +230,13 @@ error save_set_file_name(dialogue_t *d, const char *file_name)
 
   s->file_name = str_dup(file_name);
   if (s->file_name == NULL)
-    return error_OOM;
+    return result_OOM;
 
   win = dialogue_get_window(d);
 
   icon_set_text(win, SAVE_W_FILENAME, s->file_name);
 
-  return error_OK;
+  return result_OK;
 }
 
 void save_set_file_type(dialogue_t *d, bits file_type)

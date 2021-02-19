@@ -15,13 +15,14 @@
 #include "oslib/osfile.h"
 #include "oslib/osfscontrol.h"
 
+#include "databases/digest-db.h"
+#include "databases/tag-db.h"
+
 #include "appengine/types.h"
 #include "appengine/app/wire.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/strings.h"
-#include "appengine/databases/digest-db.h"
-#include "appengine/databases/tag-db.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"

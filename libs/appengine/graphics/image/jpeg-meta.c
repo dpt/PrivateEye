@@ -26,6 +26,9 @@
 #include "exiftags/exif.h"
 #include "exiftags/jpeg.h"
 
+#include "datastruct/list.h"
+#include "datastruct/ntree.h"
+
 #include "appengine/types.h"
 #include "appengine/base/bsearch.h"
 #include "appengine/base/bytesex.h"
@@ -33,24 +36,22 @@
 #include "appengine/base/oserror.h"
 #include "appengine/base/pack.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/list.h"
-#include "appengine/datastruct/ntree.h"
 
 #include "jpeg.h"
 
 /* ----------------------------------------------------------------------- */
 
-typedef error (*segment_interpreter)(const unsigned char *buf,
+typedef result_t (*segment_interpreter)(const unsigned char *buf,
                                      int                  len,
                                      ntree_t             *root);
 
 /* ----------------------------------------------------------------------- */
 
-static error jpeg_meta_jfif(const unsigned char *buf,
+static result_t jpeg_meta_jfif(const unsigned char *buf,
                             int                  len,
                             ntree_t             *root)
 {
-  error          err;
+  result_t          err;
   ntree_t       *tree;
   unsigned char *com;
 
@@ -75,7 +76,7 @@ static error jpeg_meta_jfif(const unsigned char *buf,
   if (err)
     goto Failure;
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -87,9 +88,9 @@ Failure:
 
 /* Builds a node containing the specified string, but does not link it in
  * anywhere. */
-static error str_to_node(const char *str, size_t length, ntree_t **newnode)
+static result_t str_to_node(const char *str, size_t length, ntree_t **newnode)
 {
-  error    err;
+  result_t    err;
   ntree_t *node;
   char    *s;
 
@@ -100,7 +101,7 @@ static error str_to_node(const char *str, size_t length, ntree_t **newnode)
   s = malloc(length + 1); /* add space for terminator */
   if (s == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -111,7 +112,7 @@ static error str_to_node(const char *str, size_t length, ntree_t **newnode)
 
   *newnode = node;
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -119,14 +120,14 @@ Failure:
   return err;
 }
 
-static error jpeg_meta_exif_prop(struct exifprop *list,
+static result_t jpeg_meta_exif_prop(struct exifprop *list,
                                  int              lvl,
                                  ntree_t         *root)
 {
-  error err;
+  result_t err;
 
   if (list == NULL)
-    return error_IMAGE_JPEG_NO_METADATA;
+    return result_IMAGE_JPEG_NO_METADATA;
 
   for (; list; list = list->next)
   {
@@ -186,7 +187,7 @@ static error jpeg_meta_exif_prop(struct exifprop *list,
       goto Failure;
   }
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -194,7 +195,7 @@ Failure:
   return err;
 }
 
-static error jpeg_meta_exif(const unsigned char *buf,
+static result_t jpeg_meta_exif(const unsigned char *buf,
                             int                  len,
                             ntree_t             *root)
 {
@@ -211,7 +212,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
     { "exif.uns", ED_UNK },
   };
 
-  error            err;
+  result_t            err;
   struct exiftags *tags;
   int              i;
   int              emitted = 0;
@@ -220,7 +221,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
 
   tags = exifparse((unsigned char *) buf, len);
   if (tags == NULL)
-    return error_IMAGE_JPEG_NO_METADATA;
+    return result_IMAGE_JPEG_NO_METADATA;
 
   /* insert the tag data into the tree */
 
@@ -238,7 +239,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
     if (err)
       goto Failure;
 
-    if (err == error_OK)
+    if (err == result_OK)
     {
       char *s;
 
@@ -251,7 +252,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
       s = str_dup(message0(map[i].name));
       if (s == NULL)
       {
-        err = error_OOM;
+        err = result_OOM;
         goto Failure;
       }
 
@@ -259,7 +260,7 @@ static error jpeg_meta_exif(const unsigned char *buf,
 
       emitted = 1;
     }
-    else if (err == error_IMAGE_JPEG_NO_METADATA)
+    else if (err == result_IMAGE_JPEG_NO_METADATA)
     {
       /* discard on failure */
 
@@ -274,9 +275,9 @@ static error jpeg_meta_exif(const unsigned char *buf,
   exiffree(tags);
 
   if (!emitted)
-    return error_IMAGE_JPEG_NO_METADATA;
+    return result_IMAGE_JPEG_NO_METADATA;
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -353,15 +354,15 @@ static const iptc_record application_record[] =
 
 // 183, 240 seen but not understood
 
-typedef error (*adobe_handler)(const unsigned char *buf,
+typedef result_t (*adobe_handler)(const unsigned char *buf,
                                size_t               length,
                                ntree_t             *root);
 
-static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf,
+static result_t jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf,
                                              size_t               length,
                                              ntree_t             *root)
 {
-  error                err;
+  result_t                err;
   const unsigned char *p;
   unsigned short       size;
 
@@ -417,7 +418,7 @@ static error jpeg_meta_adobe_iptc_naa_record(const unsigned char *buf,
       goto Failure;
   }
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -425,7 +426,7 @@ Failure:
   return err;
 }
 
-static error jpeg_meta_adobe_default_handler(const unsigned char *buf,
+static result_t jpeg_meta_adobe_default_handler(const unsigned char *buf,
                                              size_t               length,
                                              ntree_t             *root)
 {
@@ -435,7 +436,7 @@ static error jpeg_meta_adobe_default_handler(const unsigned char *buf,
 
   /* This returns OK so that the parent entry will remain. */
 
-  return error_OK;
+  return result_OK;
 }
 
 static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf,
@@ -467,7 +468,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf,
     { 0xFFFFFFFF,                                 "adobe.unknown", jpeg_meta_adobe_default_handler },
   };
 
-  error                err;
+  result_t                err;
   int                  idlen;
   ntree_t             *root;
   char                *s;
@@ -488,7 +489,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf,
   s = malloc(idlen);
   if (s == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -540,7 +541,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf,
 
     err = map[i].fn(p + 4 + 2 + namefieldlen + 4, blklen, subtree);
 
-    if (err == error_OK)
+    if (err == result_OK)
     {
       char fmt[32];
       char desc[256];
@@ -575,7 +576,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf,
       s = malloc(used + 1);
       if (s == NULL)
       {
-        err = error_OOM;
+        err = result_OOM;
         goto Failure;
       }
 
@@ -583,7 +584,7 @@ static ntree_t *jpeg_meta_adobe_parse(const unsigned char *buf,
 
       ntree_set_data(subtree, s);
     }
-    else if (err == error_IMAGE_JPEG_NO_METADATA)
+    else if (err == result_IMAGE_JPEG_NO_METADATA)
     {
       /* discard on failure */
 
@@ -603,18 +604,18 @@ Failure:
   return NULL;
 }
 
-static error jpeg_meta_adobe(const unsigned char *buf,
+static result_t jpeg_meta_adobe(const unsigned char *buf,
                              int                  len,
                              ntree_t             *root)
 {
-  error    err;
+  result_t    err;
   ntree_t *subtree;
 
   /* parse the APP13 segment */
 
   subtree = jpeg_meta_adobe_parse(buf, len);
   if (subtree == NULL)
-    return error_IMAGE_JPEG_NO_METADATA;
+    return result_IMAGE_JPEG_NO_METADATA;
 
   /* insert the tag data into the tree */
 
@@ -624,7 +625,7 @@ static error jpeg_meta_adobe(const unsigned char *buf,
   if (err)
     goto Failure;
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -649,7 +650,7 @@ jpeg_marker_map[] =
 
 int jpeg_get_meta(image_t *image, ntree_t **newtree)
 {
-  error    err;
+  result_t    err;
   ntree_t *tree;
   char    *s;
   int      i;
@@ -665,7 +666,7 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
   s = str_dup(message0("metadata"));
   if (s == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -703,7 +704,7 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
 
       err = jpeg_marker_map[i].fn(buf, len, subtree);
 
-      if (err == error_OK)
+      if (err == result_OK)
       {
         /* insert on success */
 
@@ -714,13 +715,13 @@ int jpeg_get_meta(image_t *image, ntree_t **newtree)
         s = str_dup(message0(jpeg_marker_map[i].name));
         if (s == NULL)
         {
-          err = error_OOM;
+          err = result_OOM;
           goto Failure;
         }
 
         ntree_set_data(subtree, s);
       }
-      else if (err == error_IMAGE_JPEG_NO_METADATA)
+      else if (err == result_IMAGE_JPEG_NO_METADATA)
       {
         /* discard on failure */
 

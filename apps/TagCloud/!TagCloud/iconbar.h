@@ -8,7 +8,7 @@
 
 #include "appengine/base/errors.h"
 
-error tag_icon_bar_init(void);
+result_t tag_icon_bar_init(void);
 void tag_icon_bar_fin(void);
 
 #endif /* TAG_ICONBAR_H */

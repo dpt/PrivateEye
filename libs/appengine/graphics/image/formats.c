@@ -34,9 +34,8 @@
 
 static const struct
 {
-  bits    file_type;
-  void  (*export_methods)(image_choices *, image_t *);
-  osbool *load;
+  bits   file_type;
+  void (*export_methods)(image_choices *, image_t *);
 }
 TypesData_map[] =
 {

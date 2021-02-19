@@ -176,9 +176,9 @@ struct keymap_t
   keymap_section2       sections[UNKNOWN];
 };
 
-static error parse_line(const keymap_section *section,
-                        char                 *buf,
-                        keymap_key_to_action *mapping)
+static result_t parse_line(const keymap_section *section,
+                           char                 *buf,
+                           keymap_key_to_action *mapping)
 {
   char         *delimiter;
   char         *key;
@@ -249,27 +249,27 @@ static error parse_line(const keymap_section *section,
   mapping->key    = key_no;
   mapping->action = action;
 
-  return error_OK;
+  return result_OK;
 
 
 SyntaxError:
 
-  return error_KEYMAP_SYNTAX_ERROR;
+  return result_KEYMAP_SYNTAX_ERROR;
 
 
 UnknownModifier:
 
-  return error_KEYMAP_UNKNOWN_MODIFIER;
+  return result_KEYMAP_UNKNOWN_MODIFIER;
 
 
 UnknownAction:
 
-  return error_KEYMAP_UNKNOWN_ACTION;
+  return result_KEYMAP_UNKNOWN_ACTION;
 
 
 BadKeySpec:
 
-  return error_KEYMAP_BAD_KEY;
+  return result_KEYMAP_BAD_KEY;
 }
 
 static int key_to_action_compare(const void *a, const void *b)
@@ -283,12 +283,12 @@ static int key_to_action_compare(const void *a, const void *b)
   return 0;
 }
 
-error keymap_create(const char           *filename,
-                    const keymap_section *sections,
-                    int                   nsections,
-                    keymap_t            **keymap_out)
+result_t keymap_create(const char           *filename,
+                       const keymap_section *sections,
+                       int                   nsections,
+                       keymap_t            **keymap_out)
 {
-  error                 err;
+  result_t              err;
   FILE                 *f;
   keymap_t             *keymap;
   int                   i;
@@ -299,13 +299,13 @@ error keymap_create(const char           *filename,
 
   f = fopen(filename, "r");
   if (f == NULL)
-    return error_KEYMAP_NOT_FOUND;
+    return result_KEYMAP_NOT_FOUND;
 
   keymap = malloc(offsetof(keymap_t, sections) +
                   sizeof(keymap_section2) * nsections);
   if (keymap == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -369,7 +369,7 @@ error keymap_create(const char           *filename,
       }
       else
       {
-        return error_KEYMAP_UNKNOWN_SECTION; // cleanup
+        return result_KEYMAP_UNKNOWN_SECTION; // cleanup
       }
 
       continue;
@@ -392,7 +392,7 @@ error keymap_create(const char           *filename,
       newmap = realloc(output_section->map,
                        sizeof(*newmap) * newallocated);
       if (newmap == NULL)
-        return error_OOM;
+        return result_OOM;
 
       output_section->map       = newmap;
       output_section->allocated = newallocated;
@@ -419,7 +419,7 @@ error keymap_create(const char           *filename,
 
   *keymap_out = keymap;
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:

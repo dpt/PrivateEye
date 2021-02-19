@@ -58,17 +58,17 @@ static void make_kernel(effects_blur_method method, int width, float *kernel)
     kernel[i] = (float) (k[i] / sum);
 }
 
-error effects_blur_apply(osspriteop_area    *area,
-                         osspriteop_header  *src,
-                         osspriteop_header  *dst,
-                         effects_blur_method method,
-                         int                 amount)
+result_t effects_blur_apply(osspriteop_area    *area,
+                            osspriteop_header  *src,
+                            osspriteop_header  *dst,
+                            effects_blur_method method,
+                            int                 amount)
 {
   float         kernel[MAXAMT];
-  error         err;
+  result_t         err;
   convolve_lut *lut;
 
-  err = error_OK;
+  err = result_OK;
   lut = NULL;
 
   amount = CLAMP(amount, MINAMT, MAXAMT);

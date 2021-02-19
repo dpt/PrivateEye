@@ -15,7 +15,7 @@
 dialogue_t *save_create(void);
 void save_destroy(dialogue_t *d);
 
-error save_set_file_name(dialogue_t *d, const char *file_name);
+result_t save_set_file_name(dialogue_t *d, const char *file_name);
 void save_set_file_type(dialogue_t *d, bits file_type);
 
 typedef void (save_save_handler)(dialogue_t *d, const char *file_name);

@@ -62,9 +62,9 @@ void tonemap_set(T               *map,
                  tonemap_channels channels,
            const tonemap_spec    *spec);
 
-error tonemap_draw(T   *map,
-                   int  x,
-                   int  y);
+result_t tonemap_draw(T   *map,
+                      int  x,
+                      int  y);
 
 void tonemap_draw_set_stroke_width(T  *map,
                                    int width);

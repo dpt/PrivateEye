@@ -59,16 +59,16 @@ static event_message_handler dcs_message_menus_deleted;
 
 /* ----------------------------------------------------------------------- */
 
-static error dcs_create(const char *name, dialogue_t **new_d)
+static result_t dcs_create(const char *name, dialogue_t **new_d)
 {
-  error  err;
-  dcs_t *s;
+  result_t err;
+  dcs_t   *s;
 
   *new_d = NULL;
 
   s = calloc(1, sizeof(*s));
   if (s == NULL)
-    return error_OOM;
+    return result_OOM;
 
   err = dialogue_construct(&s->dialogue, name, -1, -1);
   if (err)
@@ -79,7 +79,7 @@ static error dcs_create(const char *name, dialogue_t **new_d)
 
   *new_d = &s->dialogue;
 
-  return error_OK;
+  return result_OK;
 
 failure:
 
@@ -106,9 +106,9 @@ static void dcs_destroy(dialogue_t *d)
 
 static unsigned int dcs_quit_refcount = 0;
 
-error dcs_quit_init(void)
+result_t dcs_quit_init(void)
 {
-  error err;
+  result_t err;
 
   if (dcs_quit_refcount == 0)
   {
@@ -131,7 +131,7 @@ error dcs_quit_init(void)
 
   dcs_quit_refcount++;
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
@@ -244,11 +244,8 @@ static int dcs_event_mouse_click(wimp_event_no event_no,
 
 static int dcs_message_menus_deleted(wimp_message *message, void *handle)
 {
-  wimp_message_menus_deleted *menus_deleted;
-
+  NOT_USED(message);
   NOT_USED(handle);
-
-  menus_deleted = (wimp_message_menus_deleted *) &message->data;
 
   /* If the menu was closed before the user made a choice, then choose
    * Cancel. */

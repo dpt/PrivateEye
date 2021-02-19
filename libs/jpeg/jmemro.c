@@ -3,9 +3,6 @@
  *
  */
 
-#include "kernel.h"
-#include "swis.h"
-
 #include "oslib/types.h"
 #include "oslib/os.h"
 #include "oslib/wimp.h"

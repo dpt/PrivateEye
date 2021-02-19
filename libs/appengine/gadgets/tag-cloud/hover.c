@@ -10,8 +10,9 @@
 
 #include "oslib/wimp.h"
 
+#include "datastruct/atom.h"
+
 #include "appengine/wimp/pointer.h"
-#include "appengine/datastruct/atom.h"
 #include "appengine/gadgets/tag-cloud.h"
 
 #include "impl.h"

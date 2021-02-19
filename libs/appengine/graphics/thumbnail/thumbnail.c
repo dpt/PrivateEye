@@ -18,12 +18,12 @@
 
 #include "appengine/graphics/thumbnail.h"
 
-error thumbnail_create(image_t          *image,
+result_t thumbnail_create(image_t          *image,
                  const drawable_choices *choices,
                        int               max,
                        osspriteop_area **anchor)
 {
-  error            err;
+  result_t            err;
   osspriteop_area *area;
   int              w,h;
   int              log2bpp;
@@ -38,7 +38,7 @@ error thumbnail_create(image_t          *image,
 
   if (image->flags & image_FLAG_VECTOR)
   {
-    err = error_THUMBNAIL_UNSUPP_FUNC;
+    err = result_THUMBNAIL_UNSUPP_FUNC;
     goto Failure;
   }
 
@@ -68,7 +68,7 @@ error thumbnail_create(image_t          *image,
 
   if (flex_alloc((flex_ptr) &area, sprimgbytes) == 0)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -153,7 +153,7 @@ error thumbnail_create(image_t          *image,
 
   flex_reanchor((flex_ptr) anchor, (flex_ptr) &area);
 
-  return error_OK;
+  return result_OK;
 
 Failure:
 

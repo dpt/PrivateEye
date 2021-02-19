@@ -11,7 +11,7 @@
 
 #include "appengine/base/errors.h"
 
-error clipboard_init(void);
+result_t clipboard_init(void);
 void clipboard_fin(void);
 
 void clipboard_claim(wimp_w w);

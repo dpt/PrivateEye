@@ -11,9 +11,10 @@
 #include "oslib/os.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/types.h"
 #include "appengine/app/wire.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
 #include "appengine/wimp/event.h"
@@ -75,7 +76,7 @@ static error canvas_substrate_callback(const wire_message_t *message,
       return declare_keymap();
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 error canvas_substrate_init(void)
@@ -86,7 +87,7 @@ error canvas_substrate_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -238,7 +239,7 @@ error canvas_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -546,12 +547,12 @@ error canvas_create(canvas_t **new_canvas)
 
   *new_canvas = canvas;
 
-  return error_OK;
+  return result_OK;
 
 
 NoMem:
 
-  err = error_OOM;
+  err = result_OOM;
 
   goto Failure;
 
@@ -563,7 +564,7 @@ Failure:
 
   free(canvas);
 
-  error_report(err);
+  result_report(err);
 
   return err;
 }
@@ -601,7 +602,7 @@ typedef int (canvas__map_callback)(canvas_t *canvas, void *opaque);
 /* Call the specified function for every canvas window. */
 static void canvas_map(canvas__map_callback *fn, void *opaque)
 {
-  list_walk(&LOCALS.list_anchor, (list_walk_callback *) fn, opaque);
+  list_walk(&LOCALS.list_anchor, (list_walk_callback_t *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */

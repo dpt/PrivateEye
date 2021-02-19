@@ -9,8 +9,9 @@
 #include "oslib/os.h"
 #include "oslib/wimp.h"
 
+#include "databases/tag-db.h"
+
 #include "appengine/wimp/dialogue.h"
-#include "appengine/databases/tag-db.h"
 
 #include "privateeye.h"
 #include "viewer.h"

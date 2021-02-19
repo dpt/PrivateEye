@@ -22,6 +22,12 @@
 #include "oslib/osgbpb.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/atom.h"
+#include "datastruct/list.h"
+#include "geom/box.h"
+#include "geom/layout.h"
+#include "geom/packer.h"
+
 #include "appengine/types.h"
 #include "appengine/app/keymap.h"
 #include "appengine/app/wire.h"
@@ -31,14 +37,9 @@
 #include "appengine/base/numstr.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/atom.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/gadgets/card.h"
 #include "appengine/gadgets/filerwin.h"
 #include "appengine/gadgets/tag-cloud.h"
-#include "appengine/geom/box.h"
-#include "appengine/geom/layout.h"
-#include "appengine/geom/packer.h"
 #include "appengine/graphics/drawable.h"
 #include "appengine/io/filing.h"
 #include "appengine/vdu/screen.h"
@@ -86,7 +87,7 @@ enum
 
 /* ---------------------------------------------------------------------- */
 
-static error declare_keymap(void)
+static result_t declare_keymap(void)
 {
   /* Keep these sorted by name */
   static const keymap_name_to_action keys[] =
@@ -107,8 +108,8 @@ static error declare_keymap(void)
                            &LOCALS.keymap_id);
 }
 
-static error thumbview_substrate_callback(const wire_message_t *message,
-                                          void                 *opaque)
+static result_t thumbview_substrate_callback(const wire_message_t *message,
+                                             void                 *opaque)
 {
   NOT_USED(opaque);
 
@@ -121,9 +122,9 @@ static error thumbview_substrate_callback(const wire_message_t *message,
   return error_OK;
 }
 
-error thumbview_substrate_init(void)
+result_t thumbview_substrate_init(void)
 {
-  error err;
+  result_t err;
 
   err = wire_register(0, thumbview_substrate_callback, NULL, NULL);
   if (err)
@@ -170,8 +171,8 @@ enum
   thumbview_display_mode_FULL_INFO_VERTICAL,
 };
 
-static error thumbview_set_display_mode(thumbview             *tv,
-                                        thumbview_display_mode mode);
+static result_t thumbview_set_display_mode(thumbview             *tv,
+                                           thumbview_display_mode mode);
 
 /* ----------------------------------------------------------------------- */
 
@@ -226,7 +227,7 @@ typedef int (thumbview_map_callback)(thumbview *tv, void *opaque);
 /* Call the specified function for every thumbview window. */
 static void thumbview_map(thumbview_map_callback *fn, void *opaque)
 {
-  list_walk(&LOCALS.list_anchor, (list_walk_callback *) fn, opaque);
+  list_walk(&LOCALS.list_anchor, (list_walk_callback_t *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -450,9 +451,9 @@ static void thumbview_reg(int reg, thumbview *tv)
                             tv);
 }
 
-static error thumbview_set_handlers(thumbview *tv)
+static result_t thumbview_set_handlers(thumbview *tv)
 {
-  error err;
+  result_t err;
 
   thumbview_reg(1, tv);
 
@@ -502,9 +503,9 @@ static void thumbview_set_single_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-error thumbview_init(void)
+result_t thumbview_init(void)
 {
-  error err;
+  result_t err;
 
   /* dependencies */
 
@@ -564,7 +565,7 @@ static void thumbview_menu_update(void)
 
 static void thumbview_action(thumbview *tv, int op)
 {
-  error     err = error_OK;
+  result_t  err = error_OK;
   filerwin *fw;
 
   fw = tv->fw;
@@ -848,9 +849,9 @@ static int thumbview_message_mode_change(wimp_message *message,
 
 /* ----------------------------------------------------------------------- */
 
-error thumbview_create(thumbview **new_tv)
+result_t thumbview_create(thumbview **new_tv)
 {
-  error       err;
+  result_t    err;
   thumbview  *tv   = NULL;
   atom_set_t *text = NULL;
   filerwin   *fw   = NULL;
@@ -937,9 +938,9 @@ void thumbview_open(thumbview *tv)
 
 #define TEXTH 44
 
-static error layout(thumbview *tv)
+static result_t layout(thumbview *tv)
 {
-  error          err;
+  result_t       err;
 
   os_box         pagedims;
   os_box         margins;
@@ -951,9 +952,9 @@ static error layout(thumbview *tv)
 
   unsigned int   flags;
   packer_t      *packer;
-  layout_spec    spec;
+  layout_spec_t  spec;
   int            i;
-  layout_element els[8];
+  layout_element_t els[8];
   os_box         boxes[8];
   os_box         used;
   int            y;
@@ -1099,7 +1100,7 @@ static error layout(thumbview *tv)
   if (flags & FILEN)
     tv->layout.elements[ElementIndex_Filename]  = boxes[i++];
 
-  used = *packer_get_consumed_area(packer);
+  used = * (os_box*) packer_get_consumed_area(packer);  // DPT FIX CONVERSION
 
   /* Re-add the margins, which get_consumed_area does not account for. */
 
@@ -1152,11 +1153,11 @@ failure:
   return err;
 }
 
-static error load_directory_cb(const char          *obj_name,
-                               osgbpb_info_stamped *info,
-                               void                *opaque)
+static result_t load_directory_cb(const char          *obj_name,
+                                  osgbpb_info_stamped *info,
+                                  void                *opaque)
 {
-  error            err;
+  result_t         err;
   thumbview       *tv = opaque;
   thumbview_entry *entry;
   image_t         *image;
@@ -1300,7 +1301,7 @@ Failure:
 
 void thumbview_load_dir(thumbview *tv, const char *dir_name)
 {
-  error err;
+  result_t err;
 
   tv->thumb_w = GLOBALS.choices.thumbview.thumbnail_w * 2;
   tv->thumb_h = GLOBALS.choices.thumbview.thumbnail_h * 2;
@@ -1331,10 +1332,10 @@ Failure:
 
 /* ----------------------------------------------------------------------- */
 
-static error thumbview_set_display_mode(thumbview             *tv,
-                                        thumbview_display_mode mode)
+static result_t thumbview_set_display_mode(thumbview             *tv,
+                                           thumbview_display_mode mode)
 {
-  error err;
+  result_t err;
 
   tv->mode = mode;
 

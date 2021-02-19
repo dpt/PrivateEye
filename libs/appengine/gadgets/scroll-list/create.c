@@ -14,7 +14,7 @@
 
 #include "impl.h"
 
-static const wimp_window wdef =
+static const wimp_window_base wdef =
 {
   { 0, 0, 0, 0 }, /* visible */
   0, 0,
@@ -34,7 +34,7 @@ static const wimp_window wdef =
   wimpspriteop_AREA,
   0, 0,
   { .indirected_text = { "", "", 1 } },
-  0,
+  0
 };
 
 /* ----------------------------------------------------------------------- */
@@ -62,7 +62,7 @@ scroll_list *scroll_list_create(wimp_w main_w, wimp_i main_i)
   w = istate.icon.extent.x1 - istate.icon.extent.x0;
   h = istate.icon.extent.y1 - istate.icon.extent.y0;
 
-  def = wdef;
+  memcpy(&def, &wdef, sizeof(wdef));
 
   def.extent.x0 = 0;
   def.extent.y0 = -h;

@@ -16,7 +16,7 @@ int viewer_scale_for_box(drawable_t *d, int sw, int sh);
 
 extern dialogue_t *viewer_scaledlg;
 
-error viewer_scaledlg_init(void);
+result_t viewer_scaledlg_init(void);
 void viewer_scaledlg_fin(void);
 
 void viewer_scaledlg_set(viewer_t *viewer, int scale, int redraw);

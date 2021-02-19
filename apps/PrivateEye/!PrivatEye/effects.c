@@ -175,33 +175,33 @@ static void effects_cancel(void);
 
 // FIXME: Inconsistent naming. Should be effects_editor etc.
 typedef int (*Editor)(effect_element *e, int x, int y);
-typedef error (*SetDefaults)(effect_element *e);
-typedef error (*Apply)(osspriteop_area   *area,
-                       osspriteop_header *src,
-                       osspriteop_header *dst,
-                       effect_element    *e);
+typedef result_t (*SetDefaults)(effect_element *e);
+typedef result_t (*Apply)(osspriteop_area   *area,
+                          osspriteop_header *src,
+                          osspriteop_header *dst,
+                          effect_element    *e);
 
 /* ---------------------------------------------------------------------- */
 
-static error clear_apply(osspriteop_area   *area,
-                         osspriteop_header *src,
-                         osspriteop_header *dst,
-                         effect_element    *e)
+static result_t clear_apply(osspriteop_area   *area,
+                            osspriteop_header *src,
+                            osspriteop_header *dst,
+                            effect_element    *e)
 {
   return effects_clear_apply(area, src, dst, e->args.clear.colour);
 }
 
-static error clear_defaults(effect_element *e)
+static result_t clear_defaults(effect_element *e)
 {
   e->args.clear.colour = 0x80808000;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error tone_apply(osspriteop_area   *area,
-                        osspriteop_header *src,
-                        osspriteop_header *dst,
-                        effect_element    *e)
+static result_t tone_apply(osspriteop_area   *area,
+                           osspriteop_header *src,
+                           osspriteop_header *dst,
+                           effect_element    *e)
 {
   return effects_tonemap_apply(area, src, dst, e->args.tone.map);
 }
@@ -222,7 +222,7 @@ static void effect_tone_reset(effect_tone *t)
   t->spec.gain       = 50;
 }
 
-static error tone_defaults(effect_element *e)
+static result_t tone_defaults(effect_element *e)
 {
   effect_tone *t;
 
@@ -230,37 +230,37 @@ static error tone_defaults(effect_element *e)
 
   t->map = tonemap_create();
   if (t->map == NULL)
-    return error_OOM;
+    return result_OOM;
 
   tonemap_draw_set_stroke_width(t->map, GLOBALS.choices.effects.curve_width);
 
   effect_tone_reset(t);
 
-  return error_OK;
+  return result_OK;
 }
 
-static error grey_apply(osspriteop_area   *area,
-                        osspriteop_header *src,
-                        osspriteop_header *dst,
-                        effect_element    *e)
+static result_t grey_apply(osspriteop_area   *area,
+                           osspriteop_header *src,
+                           osspriteop_header *dst,
+                           effect_element    *e)
 {
   NOT_USED(e);
 
   return effects_grey_apply(area, src, dst);
 }
 
-static error blur_defaults(effect_element *e)
+static result_t blur_defaults(effect_element *e)
 {
   e->args.blur.method = effects_blur_GAUSSIAN;
   e->args.blur.level  = 2;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error blur_apply(osspriteop_area   *area,
-                        osspriteop_header *src,
-                        osspriteop_header *dst,
-                        effect_element    *e)
+static result_t blur_apply(osspriteop_area   *area,
+                           osspriteop_header *src,
+                           osspriteop_header *dst,
+                           effect_element    *e)
 {
   NOT_USED(e);
 
@@ -271,47 +271,47 @@ static error blur_apply(osspriteop_area   *area,
                             e->args.blur.level);
 }
 
-static error sharpen_apply(osspriteop_area   *area,
-                           osspriteop_header *src,
-                           osspriteop_header *dst,
-                           effect_element    *e)
+static result_t sharpen_apply(osspriteop_area   *area,
+                              osspriteop_header *src,
+                              osspriteop_header *dst,
+                              effect_element    *e)
 {
   NOT_USED(e);
 
   return effects_sharpen_apply(area, src, dst, 0 /* unused */);
 }
 
-static error expand_apply(osspriteop_area   *area,
-                          osspriteop_header *src,
-                          osspriteop_header *dst,
-                          effect_element    *e)
+static result_t expand_apply(osspriteop_area   *area,
+                             osspriteop_header *src,
+                             osspriteop_header *dst,
+                             effect_element    *e)
 {
   NOT_USED(e);
 
   return effects_expand_apply(area, src, dst, 0 /* threshold */);
 }
 
-static error equalise_apply(osspriteop_area   *area,
-                            osspriteop_header *src,
-                            osspriteop_header *dst,
-                            effect_element    *e)
+static result_t equalise_apply(osspriteop_area   *area,
+                               osspriteop_header *src,
+                               osspriteop_header *dst,
+                               effect_element    *e)
 {
   NOT_USED(e);
 
   return effects_equalise_apply(area, src, dst);
 }
 
-static error emboss_apply(osspriteop_area   *area,
-                          osspriteop_header *src,
-                          osspriteop_header *dst,
-                          effect_element    *e)
+static result_t emboss_apply(osspriteop_area   *area,
+                             osspriteop_header *src,
+                             osspriteop_header *dst,
+                             effect_element    *e)
 {
   NOT_USED(area);
   NOT_USED(src);
   NOT_USED(dst);
   NOT_USED(e);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -401,14 +401,14 @@ static void copy_sprite_data(osspriteop_area *area,
   cpy(dst_data, src_data, src->size - sizeof(osspriteop_header));
 }
 
-static error apply_effects(void)
+static result_t apply_effects(void)
 {
-  error            err;
+  result_t         err;
   effect_array    *v;
   image_t         *image;
   osspriteop_area *area;
 
-  err = error_OK;
+  err = result_OK;
 
   hourglass_on();
 
@@ -734,14 +734,14 @@ static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel);
 static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel);
 static void scroll_list_event_callback(scroll_list_event *event);
 
-static error init_main(void)
+static result_t init_main(void)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
     { wimp_MOUSE_CLICK, main_event_mouse_click },
   };
 
-  error err;
+  result_t err;
 
   GLOBALS.effects_w = window_create("effects");
 
@@ -758,7 +758,7 @@ static error init_main(void)
 
   sl = scroll_list_create(GLOBALS.effects_w, EFFECTS_I_PANE_PLACEHOLDER);
   if (sl == NULL)
-    return error_OOM; // potentially inaccurate
+    return result_OOM; // potentially inaccurate
 
   scroll_list_set_row_height(sl, HEIGHT, 4);
   scroll_list_set_handlers(sl,
@@ -770,7 +770,7 @@ static error init_main(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 static void fin_main(void)
@@ -782,14 +782,14 @@ static void fin_main(void)
   help_remove_window(GLOBALS.effects_w);
 }
 
-static error init_add(void)
+static result_t init_add(void)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
     { wimp_MOUSE_CLICK, add_event_mouse_click },
   };
 
-  error err;
+  result_t err;
 
   GLOBALS.effects_add_w = window_create("effects_add");
 
@@ -804,7 +804,7 @@ static error init_add(void)
                             event_ANY_ICON,
                             NULL);
 
-  return error_OK;
+  return result_OK;
 }
 
 static void fin_add(void)
@@ -814,18 +814,18 @@ static void fin_add(void)
 
 #define MAGIC_PICKER ((wimp_w) 0x1)
 
-static error init_clear(void)
+static result_t init_clear(void)
 {
-  return error_OK;
+  return result_OK;
 }
 
 static void fin_clear(void)
 {
 }
 
-static error init_blur(void)
+static result_t init_blur(void)
 {
-  error err;
+  result_t err;
 
   err = dialogue_construct(&GLOBALS.effects_blr_d,
                             "effects_blr",
@@ -837,7 +837,7 @@ static error init_blur(void)
   dialogue_set_mouse_click_handler(&GLOBALS.effects_blr_d,
                                     blur_event_mouse_click);
 
-  return error_OK;
+  return result_OK;
 }
 
 static void fin_blur(void)
@@ -845,7 +845,7 @@ static void fin_blur(void)
   dialogue_destruct(&GLOBALS.effects_blr_d);
 }
 
-static error init_tone(void)
+static result_t init_tone(void)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -853,7 +853,7 @@ static error init_tone(void)
     { wimp_MOUSE_CLICK,           tone_event_mouse_click           },
   };
 
-  error err;
+  result_t err;
 
   GLOBALS.effects_crv_w = window_create("effects_crv");
 
@@ -868,7 +868,7 @@ static error init_tone(void)
                             event_ANY_ICON,
                             NULL);
 
-  return error_OK;
+  return result_OK;
 }
 
 static void fin_tone(void)
@@ -876,9 +876,9 @@ static void fin_tone(void)
   help_remove_window(GLOBALS.effects_crv_w);
 }
 
-error effects_init(void)
+result_t effects_init(void)
 {
-  error err;
+  result_t err;
 
   /* dependencies */
 
@@ -894,7 +894,7 @@ error effects_init(void)
   init_blur();
   init_tone();
 
-  return error_OK;
+  return result_OK;
 }
 
 void effects_fin(void)
@@ -1898,7 +1898,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static error create_images(void)
+static result_t create_images(void)
 {
   image_t           *image;
   osspriteop_area   *area;
@@ -1918,7 +1918,7 @@ static error create_images(void)
 
   r = flex_extend((flex_ptr) &image->image, areasize * 3);
   if (r == 0)
-    return error_OOM;
+    return result_OOM;
 
   area    = (osspriteop_area *) image->image;
   header1 = sprite_select(area, 0);
@@ -1945,7 +1945,7 @@ static error create_images(void)
   LOCALS.blender.deg = sprite_data(header2);
   LOCALS.blender.dst = sprite_data(header3);
 
-  return error_OK;
+  return result_OK;
 }
 
 static int delete_images(void)
@@ -1998,7 +1998,7 @@ static void image_changed_callback(image_t             *image,
 
 void effects_open(image_t *image)
 {
-  error err;
+  result_t err;
 
   if (LOCALS.open && LOCALS.image == image)
   {
@@ -2028,7 +2028,7 @@ void effects_open(image_t *image)
   err = create_images();
   if (err)
   {
-    error_report(err);
+    result_report(err);
     return;
   }
 

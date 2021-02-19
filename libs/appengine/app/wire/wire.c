@@ -6,9 +6,10 @@
 
 #include "oslib/types.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/list.h"
 
 #include "appengine/app/wire.h"
 
@@ -33,11 +34,11 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-error wire_init(void)
+result_t wire_init(void)
 {
   list_init(&LOCALS.anchor);
 
-  return error_OK;
+  return result_OK;
 }
 
 static int fin_cb(wire_client_t *doomed, void *opaque)
@@ -55,39 +56,39 @@ void wire_fin(void)
 {
   /* inefficient: we walk list twice */
 
-  list_walk(&LOCALS.anchor, (list_walk_callback *) fin_cb, NULL);
+  list_walk(&LOCALS.anchor, (list_walk_callback_t *) fin_cb, NULL);
 }
 
 /* ----------------------------------------------------------------------- */
 
-error wire_dispatch(const wire_message_t *message)
+result_t wire_dispatch(const wire_message_t *message)
 {
-  error          err;
+  result_t          err;
   wire_client_t *e;
   wire_client_t *next;
 
   for (e = (wire_client_t *) LOCALS.anchor.next; e != NULL; e = next)
   {
     next = (wire_client_t *) e->list.next;
-    if ((err = e->cb(message, e->opaque)) != error_OK)
+    if ((err = e->cb(message, e->opaque)) != result_OK)
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-error wire_register(wire_register_flags  flags,
-                    wire_callback       *cb,
-                    void                *opaque,
-                    wire_id             *id)
+result_t wire_register(wire_register_flags  flags,
+                       wire_callback       *cb,
+                       void                *opaque,
+                       wire_id             *id)
 {
   wire_client_t *client;
 
   client = malloc(sizeof(*client));
   if (client == NULL)
-    return error_OOM;
+    return result_OOM;
 
   client->flags  = flags;
   client->cb     = cb;
@@ -98,7 +99,7 @@ error wire_register(wire_register_flags  flags,
   if (id)
     *id = (unsigned int) client;
 
-  return error_OK;
+  return result_OK;
 }
 
 void wire_deregister(wire_id id)

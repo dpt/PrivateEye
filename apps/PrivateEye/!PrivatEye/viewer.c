@@ -19,6 +19,8 @@
 #include "oslib/os.h"
 #include "oslib/osfile.h"
 
+#include "geom/box.h"
+
 #include "appengine/app/choices.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
@@ -26,7 +28,6 @@
 #include "appengine/base/strings.h"
 #include "appengine/datastruct/array.h"
 #include "appengine/dialogues/dcs-quit.h"
-#include "appengine/geom/box.h"
 #include "appengine/graphics/drawable.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
@@ -94,9 +95,9 @@ static void refresh_all_titles(void)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_create(viewer_t **new_viewer)
+result_t viewer_create(viewer_t **new_viewer)
 {
-  error     err;
+  result_t  err;
   viewer_t *v;
   wimp_w    w = wimp_ICON_BAR;
 
@@ -136,12 +137,12 @@ error viewer_create(viewer_t **new_viewer)
 
   *new_viewer = v;
 
-  return error_OK;
+  return result_OK;
 
 
 NoMem:
 
-  err = error_OOM;
+  err = result_OOM;
 
   goto Failure;
 
@@ -153,7 +154,7 @@ Failure:
 
   free(v);
 
-  error_report(err);
+  result_report(err);
 
   return err;
 }
@@ -285,7 +286,7 @@ void viewer_map(viewer_map_callback *fn, void *opaque)
 {
   /* Note that the callback signatures are identical, so we can cast. */
 
-  list_walk(&list_anchor, (list_walk_callback *) fn, opaque);
+  list_walk(&list_anchor, (list_walk_callback_t *) fn, opaque);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -719,7 +720,7 @@ static void image_changed_callback(image_t             *image,
 
 void viewer_clone(viewer_t *source)
 {
-  error             err;
+  result_t          err;
   viewer_t         *v;
   wimp_window_state state;
 
@@ -745,21 +746,21 @@ void viewer_clone(viewer_t *source)
 
 Failure:
   /* This is the highest level so tell the user of the failure and return. */
-  error_report(err);
+  result_report(err);
 
   return;
 }
 
-error viewer_clone_from_window(wimp_w w, viewer_t **pviewer)
+result_t viewer_clone_from_window(wimp_w w, viewer_t **pviewer)
 {
-  error     err;
+  result_t  err;
   viewer_t *v;
   viewer_t *newv;
 
   v = viewer_find(w);
   if (v == NULL)
   {
-    err = error_PRIVATEEYE_VIEWER_NOT_FOUND;
+    err = result_PRIVATEEYE_VIEWER_NOT_FOUND;
     goto Failure;
   }
 
@@ -789,7 +790,7 @@ error viewer_clone_from_window(wimp_w w, viewer_t **pviewer)
 
   *pviewer = newv;
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -815,7 +816,7 @@ osbool viewer_load(viewer_t   *viewer,
                    bits        load,
                    bits        exec)
 {
-  error       err;
+  result_t    err;
   image_t    *image = NULL;
   drawable_t *drawable;
   osbool      r;
@@ -846,7 +847,7 @@ osbool viewer_load(viewer_t   *viewer,
                                     (load >> 8) & 0xfff);
     if (image == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto Failure;
     }
   }
@@ -999,11 +1000,11 @@ int viewer_count_edited(void)
 
 /* ----------------------------------------------------------------------- */
 
-error viewer_choices_updated(const choices_group *group)
+result_t viewer_choices_updated(const choices_group *group)
 {
   NOT_USED(group);
 
   viewer_update_all(viewer_UPDATE_ALL);
 
-  return error_OK;
+  return result_OK;
 }

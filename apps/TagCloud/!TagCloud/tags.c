@@ -66,9 +66,9 @@ static void register_event_handlers(int reg)
                                NULL);
 }
 
-static error initialise_subsystems(void)
+static result_t initialise_subsystems(void)
 {
-  typedef error (*initfn)(void);
+  typedef result_t (*initfn)(void);
 
   static const initfn initfns[] =
   {
@@ -77,8 +77,8 @@ static error initialise_subsystems(void)
     makecloud_init
   };
 
-  error err;
-  int   i;
+  result_t err;
+  int      i;
 
   for (i = 0; i < NELEMS(initfns); i++)
   {
@@ -87,7 +87,7 @@ static error initialise_subsystems(void)
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 static void finalise_subsystems(void)
@@ -119,7 +119,7 @@ int main(void)
     message_QUIT
   }};
 
-  error      err = error_OK;
+  result_t   err = result_OK;
   wimp_block poll;
 
 #ifdef MemCheck_MEMCHECK
@@ -239,7 +239,7 @@ int main(void)
 Failure:
 
   if (err)
-    error_report(err);
+    result_report(err);
 
   exit(EXIT_FAILURE);
 }

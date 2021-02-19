@@ -72,9 +72,9 @@ enum
 
 /* ----------------------------------------------------------------------- */
 
-error txtfmt_create(const char *s, txtfmt_t **tx)
+result_t txtfmt_create(const char *s, txtfmt_t **tx)
 {
-  error     err;
+  result_t     err;
   txtfmt_t *newtx;
   size_t    length;
 
@@ -111,12 +111,12 @@ error txtfmt_create(const char *s, txtfmt_t **tx)
 
   *tx = newtx;
 
-  return error_OK;
+  return result_OK;
 
 
 OOM:
 
-  err = error_OOM;
+  err = result_OOM;
 
   txtfmt_destroy(newtx);
 
@@ -135,7 +135,7 @@ void txtfmt_destroy(txtfmt_t *tx)
 
 /* ----------------------------------------------------------------------- */
 
-static error emit_line(txtfmt_t *tx, int start, int length)
+static result_t emit_line(txtfmt_t *tx, int start, int length)
 {
   int i;
 
@@ -154,7 +154,7 @@ static error emit_line(txtfmt_t *tx, int start, int length)
 
     newspans = realloc(tx->spans, sizeof(*tx->spans) * n);
     if (newspans == NULL)
-      return error_OOM;
+      return result_OOM;
 
     tx->spans     = newspans;
     tx->allocated = n;
@@ -168,19 +168,19 @@ static error emit_line(txtfmt_t *tx, int start, int length)
 
   tx->nspans = ++i;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* wrap to a character width */
-error txtfmt_wrap(txtfmt_t *tx, int width)
+result_t txtfmt_wrap(txtfmt_t *tx, int width)
 {
-  error       err;
+  result_t       err;
   const char *startofline;
   int         curlen;
   const char *p;
 
   if (tx->width == width)
-    return error_OK; /* already the required size */
+    return result_OK; /* already the required size */
 
   /* reset the spans */
 
@@ -266,12 +266,12 @@ error txtfmt_wrap(txtfmt_t *tx, int width)
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
 
-static error txtfmt_plot_text(const txtfmt_t *tx,
+static result_t txtfmt_plot_text(const txtfmt_t *tx,
                               const char     *s,
                               int             length,
                               int             x0,
@@ -307,12 +307,12 @@ static error txtfmt_plot_text(const txtfmt_t *tx,
 
   wimp_plot_icon(&icon);
 
-  return error_OK;
+  return result_OK;
 }
 
-error txtfmt_paint(const txtfmt_t *tx, int x, int y, wimp_colour bgcolour)
+result_t txtfmt_paint(const txtfmt_t *tx, int x, int y, wimp_colour bgcolour)
 {
-  error       err;
+  result_t       err;
   int         i;
 
   assert(tx);
@@ -338,7 +338,7 @@ error txtfmt_paint(const txtfmt_t *tx, int x, int y, wimp_colour bgcolour)
     y -= tx->line_height;
   }
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -353,7 +353,7 @@ void txtfmt_set_line_height(txtfmt_t *tx, int line_height)
 
 /* ----------------------------------------------------------------------- */
 
-error txtfmt_print(const txtfmt_t *tx)
+result_t txtfmt_print(const txtfmt_t *tx)
 {
   int i;
 
@@ -376,7 +376,7 @@ error txtfmt_print(const txtfmt_t *tx)
       printf("%3d: %.*s (%d,%d)\n", i, length, s, start, length);
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */

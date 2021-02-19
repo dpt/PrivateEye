@@ -42,10 +42,10 @@ static struct
 }
 cache;
 
-error imagecache_get(const char *file_name,
-                     bits        load,
-                     bits        exec,
-                     image_t   **image)
+result_t imagecache_get(const char *file_name,
+                        bits        load,
+                        bits        exec,
+                        image_t   **image)
 {
   int      i;
   image_t *ci = NULL;
@@ -87,7 +87,7 @@ error imagecache_get(const char *file_name,
     *image = ci;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 static int evict_one_image(void)

@@ -13,11 +13,12 @@
 #include "oslib/osbyte.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/types.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/list.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
 #include "appengine/wimp/event.h"
@@ -102,21 +103,21 @@ static void imageobwin_image_changed_callback(image_t              *image,
 
 /* ----------------------------------------------------------------------- */
 
-error imageobwin_construct(imageobwin_factory_t *factory,
-                           const char           *name,
-                           window_open_at_flags  open_at,
-                           imageobwin_available *available,
-                           imageobwin_alloc     *alloc,
-                           imageobwin_dealloc   *dealloc,
-                           imageobwin_compute   *compute,
-                           imageobwin_refresh   *refresh,
-                           event_wimp_handler   *redraw,
-                           event_wimp_handler   *click,
-                           event_wimp_handler   *menu)
+result_t imageobwin_construct(imageobwin_factory_t *factory,
+                              const char           *name,
+                              window_open_at_flags  open_at,
+                              imageobwin_available *available,
+                              imageobwin_alloc     *alloc,
+                              imageobwin_dealloc   *dealloc,
+                              imageobwin_compute   *compute,
+                              imageobwin_refresh   *refresh,
+                              event_wimp_handler   *redraw,
+                              event_wimp_handler   *click,
+                              event_wimp_handler   *menu)
 {
-  error  err;
-  char   scratch[32]; /* Careful Now */
-  size_t len;
+  result_t err;
+  char     scratch[32]; /* Careful Now */
+  size_t   len;
 
   /* initialise member(s) used in error cleanup */
 
@@ -136,7 +137,7 @@ error imageobwin_construct(imageobwin_factory_t *factory,
   factory->menu = menu_create_from_desc(message0(scratch));
   if (factory->menu == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -167,7 +168,7 @@ error imageobwin_construct(imageobwin_factory_t *factory,
   factory->event_mouse_click_request   = click;
   factory->event_menu_selection        = menu;
 
-  return error_OK;
+  return result_OK;
 
 Failure:
 
@@ -205,12 +206,12 @@ static int imageobwin_event_close_window_request(wimp_event_no  event_no,
   return event_HANDLED;
 }
 
-static error imageobwin_new(imageobwin_factory_t *factory,
-                            image_t              *image,
-                            const void           *config,
-                            imageobwin_t        **new_obwin)
+static result_t imageobwin_new(imageobwin_factory_t *factory,
+                               image_t              *image,
+                               const void           *config,
+                               imageobwin_t        **new_obwin)
 {
-  error         err;
+  result_t      err;
   imageobwin_t *obwin;
   char          scratch[32];
   const char   *leaf;
@@ -229,7 +230,7 @@ static error imageobwin_new(imageobwin_factory_t *factory,
   obwin->w = window_clone(factory->w);
   if (obwin->w == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto Failure;
   }
 
@@ -261,7 +262,7 @@ static error imageobwin_new(imageobwin_factory_t *factory,
 
   *new_obwin = obwin;
 
-  return error_OK;
+  return result_OK;
 
 Failure:
 
@@ -272,20 +273,20 @@ Failure:
     factory->dealloc(obwin);
   }
 
-  return error_OOM;
+  return result_OOM;
 }
 
-error imageobwin_open(imageobwin_factory_t *factory,
-                      image_t              *image,
-                      const void           *config)
+result_t imageobwin_open(imageobwin_factory_t *factory,
+                         image_t              *image,
+                         const void           *config)
 {
-  error         err;
+  result_t      err;
   imageobwin_t *obwin;
 
   if (!factory->available(image))
   {
     beep();
-    return error_OK;
+    return result_OK;
   }
 
   obwin = imageobwin_image_to_obwin(factory, image);
@@ -300,7 +301,7 @@ error imageobwin_open(imageobwin_factory_t *factory,
 
   window_open_at(obwin->w, factory->open_at);
 
-  return error_OK;
+  return result_OK;
 }
 
 static void imageobwin_close(imageobwin_t *obwin)
@@ -323,7 +324,7 @@ static void imageobwin_close(imageobwin_t *obwin)
 
 void imageobwin_kick(imageobwin_t *obwin)
 {
-  error err;
+  result_t err;
 
   if (obwin == NULL)
     return;
@@ -334,7 +335,7 @@ void imageobwin_kick(imageobwin_t *obwin)
   err = obwin->factory->compute(obwin);
   if (err)
   {
-    error_report(err);
+    result_report(err);
     return;
   }
 

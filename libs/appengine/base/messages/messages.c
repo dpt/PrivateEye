@@ -148,8 +148,8 @@ const char *messages_lookup(const char *token,
                             const char *parameter3,
                             const char *parameter4)
 {
-  int length;
-  int buftoosmall;
+  size_t length;
+  int    buftoosmall;
 
   do
   {
@@ -185,21 +185,21 @@ const char *messages_lookup(const char *token,
 
 const char *messages_enumerate(const char *wildcarded_token, int *index)
 {
-  int more;
-  int length;
-  int buftoosmall;
+  int    more;
+  size_t length;
+  int    buftoosmall;
 
   do
   {
-    EC(_swix(MessageTrans_EnumerateTokens, _INR(0,4)|_OUTR(2,4),
-             messages.fd,
-             wildcarded_token,
-             messages.buf,
-             messages.bufsz,
-            *index,
-            &more,
-            &length,
-             index));
+    (void) EC(_swix(MessageTrans_EnumerateTokens, _INR(0,4)|_OUTR(2,4),
+                    messages.fd,
+                    wildcarded_token,
+                    messages.buf,
+                    messages.bufsz,
+                   *index,
+                   &more,
+                   &length,
+                    index));
 
     if (more == 0)
       return NULL; /* no more */
