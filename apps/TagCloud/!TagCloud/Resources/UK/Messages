@@ -1,8 +1,8 @@
 # Messages for TagCloud
-# © David Thomas, 2011-2020
+# © David Thomas, 2011-2021
 #
 
-version:0.50 (07 June 2020)
+version:0.60 (19 Feb 2021)
 
 task:TagCloud
 icon:!tagcloud
