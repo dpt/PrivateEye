@@ -151,13 +151,13 @@ effect_array;
 
 /* ----------------------------------------------------------------------- */
 
-typedef struct effectwin effectwin_t;
-struct effectwin
+typedef struct
 {
   effect_array    effects;
   effect_element *editing_element;
   scroll_list    *sl;
-};
+}
+effectwin_t;
 
 static struct
 {
@@ -177,13 +177,12 @@ static void effects_cancel(void);
 
 /* ---------------------------------------------------------------------- */
 
-// FIXME: Inconsistent naming. Should be effects_editor etc.
-typedef int (*Editor)(effect_element *e, int x, int y);
-typedef result_t (*SetDefaults)(effect_element *e);
-typedef result_t (*Apply)(osspriteop_area   *area,
-                          osspriteop_header *src,
-                          osspriteop_header *dst,
-                          effect_element    *e);
+typedef int (effect_editor)(effect_element *e, int x, int y);
+typedef result_t (effect_initialiser)(effect_element *e);
+typedef result_t (effect_applier)(osspriteop_area   *area,
+                                  osspriteop_header *src,
+                                  osspriteop_header *dst,
+                                  effect_element    *e);
 
 /* ---------------------------------------------------------------------- */
 
@@ -318,17 +317,14 @@ static result_t emboss_apply(osspriteop_area   *area,
 
 /* ---------------------------------------------------------------------- */
 
-/* editors */
-// FIXME: Do  static Editor clear_edit, blur_edit, tone_edit;  instead.
-static int clear_edit(effect_element *effect, int x, int y);
-static int blur_edit(effect_element *effect, int x, int y);
-static int tone_edit(effect_element *effect, int x, int y);
+/* declare editors */
+static effect_editor clear_edit, blur_edit, tone_edit;
 
 static const struct
 {
-  Editor      editor;
-  SetDefaults set_defaults;
-  Apply       apply;
+  effect_editor      *editor;
+  effect_initialiser *initialiser;
+  effect_applier     *apply;
 }
 editors[] =
 {
@@ -509,8 +505,8 @@ static int insert_effect(effect_effect effect, int where)
   e = &v->entries[where];
 
   e->effect = effect;
-  if (editors[e->effect].set_defaults)
-    editors[e->effect].set_defaults(e);
+  if (editors[e->effect].initialiser)
+    editors[e->effect].initialiser(e);
 
   v->nentries++;
 
@@ -646,7 +642,7 @@ static void edit_effect(int index)
   effect_array   *v;
   effect_element *e;
   wimp_pointer    pointer;
-  Editor          editor;
+  effect_editor  *editor;
 
   v = &LOCALS.single.effects;
 
