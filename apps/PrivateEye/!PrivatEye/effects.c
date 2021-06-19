@@ -151,17 +151,21 @@ effect_array;
 
 /* ----------------------------------------------------------------------- */
 
-// FIXME: These need wrapping up in a struct, possibly embedded in LOCAL.
-static effect_array    effects;
-static effect_element *editing_element;
-static scroll_list    *sl;
+typedef struct effectwin effectwin_t;
+struct effectwin
+{
+  effect_array    effects;
+  effect_element *editing_element;
+  scroll_list    *sl;
+};
 
 static struct
 {
-  image_t *image;
-  blender  blender;
-  int      blendval;
-  int      open;
+  image_t    *image;
+  blender     blender;
+  int         blendval;
+  int         open;
+  effectwin_t single; // single effect window
 }
 LOCALS;
 
@@ -262,8 +266,6 @@ static result_t blur_apply(osspriteop_area   *area,
                            osspriteop_header *dst,
                            effect_element    *e)
 {
-  NOT_USED(e);
-
   return effects_blur_apply(area,
                             src,
                             dst,
@@ -415,7 +417,7 @@ static result_t apply_effects(void)
   image = LOCALS.image;
   area  = (osspriteop_area *) image->image;
 
-  v = &effects;
+  v = &LOCALS.single.effects;
 
   if (v->nentries)
   {
@@ -476,7 +478,7 @@ static int insert_effect(effect_effect effect, int where)
   effect_element *e;
   size_t          shiftamt;
 
-  v = &effects;
+  v = &LOCALS.single.effects;
 
   if (v->nentries == v->allocated)
   {
@@ -512,7 +514,7 @@ static int insert_effect(effect_effect effect, int where)
 
   v->nentries++;
 
-  scroll_list_add_row(sl);
+  scroll_list_add_row(LOCALS.single.sl);
 
   apply_effects();
 
@@ -532,7 +534,7 @@ static int move_effect(int from, int to)
   if (to == from)
     return 0; /* nothing to do */
 
-  v = &effects;
+  v = &LOCALS.single.effects;
 
   down = to > from; /* the direction we need to move elements */
 
@@ -576,7 +578,7 @@ static int move_effect(int from, int to)
     }
 
     for (i = min; i <= max; i++)
-      scroll_list_refresh_row(sl, i);
+      scroll_list_refresh_row(LOCALS.single.sl, i);
   }
 
   apply_effects();
@@ -599,14 +601,14 @@ static void new_selection(void)
   edit = wimp_ICON_SHADED;
   del  = wimp_ICON_SHADED;
 
-  sel = scroll_list_get_selection(sl);
+  sel = scroll_list_get_selection(LOCALS.single.sl);
 
   if (sel >= 0)
   {
     effect_array   *v;
     effect_element *e;
 
-    v = &effects;
+    v = &LOCALS.single.effects;
     e = &v->entries[sel];
 
     if (is_editable(e))
@@ -633,7 +635,7 @@ static void new_effects(void)
 
   wimp_icon_flags eor, clear;
 
-  eor   = (effects.nentries > 0) ? 0 : wimp_ICON_SHADED;
+  eor   = (LOCALS.single.effects.nentries > 0) ? 0 : wimp_ICON_SHADED;
   clear = wimp_ICON_SHADED;
 
   icon_group_set_flags(GLOBALS.effects_w, icons, NELEMS(icons), eor, clear);
@@ -646,13 +648,13 @@ static void edit_effect(int index)
   wimp_pointer    pointer;
   Editor          editor;
 
-  v = &effects;
+  v = &LOCALS.single.effects;
 
   e = &v->entries[index];
 
   wimp_get_pointer_info(&pointer);
 
-  editing_element = e;
+  LOCALS.single.editing_element = e;
 
   editor = editors[e->effect].editor;
   if (editor)
@@ -664,11 +666,11 @@ static void effect_edited(effect_element *e)
   effect_array *v;
   int           i;
 
-  v = &effects;
+  v = &LOCALS.single.effects;
 
   i = e - v->entries;
 
-  scroll_list_refresh_row(sl, i);
+  scroll_list_refresh_row(LOCALS.single.sl, i);
 
   apply_effects();
 }
@@ -681,7 +683,7 @@ static void remove_effect(int index)
   if (index == -1)
     return;
 
-  v = &effects;
+  v = &LOCALS.single.effects;
 
   s = (v->nentries - index - 1) * sizeof(v->entries[0]);
   if (s)
@@ -689,7 +691,7 @@ static void remove_effect(int index)
 
   v->nentries--;
 
-  scroll_list_delete_rows(sl, index, index);
+  scroll_list_delete_rows(LOCALS.single.sl, index, index);
 
   new_selection();
   new_effects();
@@ -701,13 +703,13 @@ static void remove_all_effects(void)
 {
   effect_array *v;
 
-  v = &effects;
+  v = &LOCALS.single.effects;
 
   /* Retain the block, but empty it. */
 
   v->nentries = 0;
 
-  scroll_list_delete_rows(sl, 0, INT_MAX); /* all */
+  scroll_list_delete_rows(LOCALS.single.sl, 0, INT_MAX); /* all */
 
   // call new_selection()?
 
@@ -756,17 +758,17 @@ static result_t init_main(void)
                             event_ANY_ICON,
                             NULL);
 
-  sl = scroll_list_create(GLOBALS.effects_w, EFFECTS_I_PANE_PLACEHOLDER);
-  if (sl == NULL)
+  LOCALS.single.sl = scroll_list_create(GLOBALS.effects_w, EFFECTS_I_PANE_PLACEHOLDER);
+  if (LOCALS.single.sl == NULL)
     return result_OOM; // potentially inaccurate
 
-  scroll_list_set_row_height(sl, HEIGHT, 4);
-  scroll_list_set_handlers(sl,
+  scroll_list_set_row_height(LOCALS.single.sl, HEIGHT, 4);
+  scroll_list_set_handlers(LOCALS.single.sl,
                            redraw_element,
                            redraw_leader,
                            scroll_list_event_callback);
 
-  err = help_add_window(scroll_list_get_window_handle(sl), "effects_list");
+  err = help_add_window(scroll_list_get_window_handle(LOCALS.single.sl), "effects_list");
   if (err)
     return err;
 
@@ -775,9 +777,9 @@ static result_t init_main(void)
 
 static void fin_main(void)
 {
-  help_remove_window(scroll_list_get_window_handle(sl));
+  help_remove_window(scroll_list_get_window_handle(LOCALS.single.sl));
 
-  scroll_list_destroy(sl);
+  scroll_list_destroy(LOCALS.single.sl);
 
   help_remove_window(GLOBALS.effects_w);
 }
@@ -970,7 +972,7 @@ static int main_event_mouse_click(wimp_event_no event_no,
         wimp_window_state state;
         int               x,y;
 
-        state.w = scroll_list_get_window_handle(sl);
+        state.w = scroll_list_get_window_handle(LOCALS.single.sl);
         wimp_get_window_state(&state);
 
         x = state.visible.x0;
@@ -984,11 +986,11 @@ static int main_event_mouse_click(wimp_event_no event_no,
       break;
 
     case EFFECTS_B_EDIT:
-      edit_effect(scroll_list_get_selection(sl));
+      edit_effect(scroll_list_get_selection(LOCALS.single.sl));
       break;
 
     case EFFECTS_B_DELETE:
-      remove_effect(scroll_list_get_selection(sl));
+      remove_effect(scroll_list_get_selection(LOCALS.single.sl));
       break;
 
     case EFFECTS_S_BLEND_FOREGROUND:
@@ -1110,7 +1112,7 @@ static void drageffect_set_handlers(int reg)
                             event_ANY_ICON,
                             NULL);
 
-  scroll_list_autoscroll(sl, reg);
+  scroll_list_autoscroll(LOCALS.single.sl, reg);
 }
 
 static void drageffect_renderer(void *opaque)
@@ -1137,13 +1139,13 @@ static int drageffect_event_null_reason_code(wimp_event_no event_no,
 
   wimp_get_pointer_info(&pointer);
 
-  if (pointer.w != scroll_list_get_window_handle(sl))
+  if (pointer.w != scroll_list_get_window_handle(LOCALS.single.sl))
     return event_HANDLED;
 
   if (pointer.pos.x == lastx && pointer.pos.y == lasty)
     return event_HANDLED;
 
-  index = scroll_list_where_to_insert(sl, &pointer);
+  index = scroll_list_where_to_insert(LOCALS.single.sl, &pointer);
 
   /* If you try to move an effect next to itself, that has no effect, so
    * if we're moving (not adding) then don't draw the marker if we're either
@@ -1153,13 +1155,13 @@ static int drageffect_event_null_reason_code(wimp_event_no event_no,
   {
     if (index == drageffect_state.effect ||
         index == drageffect_state.effect + 1)
-      scroll_list_clear_marker(sl);
+      scroll_list_clear_marker(LOCALS.single.sl);
     else
-      scroll_list_set_marker(sl, index);
+      scroll_list_set_marker(LOCALS.single.sl, index);
   }
   else
   {
-    scroll_list_set_marker(sl, index);
+    scroll_list_set_marker(LOCALS.single.sl, index);
   }
 
   lastx = pointer.pos.x;
@@ -1183,18 +1185,18 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
 
   drageffect_set_handlers(0);
 
-  scroll_list_clear_marker(sl);
+  scroll_list_clear_marker(LOCALS.single.sl);
 
   wimp_get_pointer_info(&pointer);
 
-  if (pointer.w != scroll_list_get_window_handle(sl))
+  if (pointer.w != scroll_list_get_window_handle(LOCALS.single.sl))
     return event_HANDLED;
 
   /* We need to work this out from scratch in case the drag was too quick
    * to actually get a null event or never went near the pane window. */
 
   /* convert work area to insertion point */
-  index = scroll_list_where_to_insert(sl, &pointer);
+  index = scroll_list_where_to_insert(LOCALS.single.sl, &pointer);
 
   if (drageffect_state.moving)
   {
@@ -1239,7 +1241,7 @@ static void drageffect_box(wimp_pointer *pointer,
 
   if (moving)
     /* turn this index into an effect number */
-    effect = effects.entries[effect].effect;
+    effect = LOCALS.single.effects.entries[effect].effect;
 
   drag_object_box(pointer->w, box,
                   pointer->pos.x,
@@ -1282,7 +1284,7 @@ static void redraw_element(wimp_draw *redraw,
 
   NOT_USED(redraw);
 
-  e = effects.entries + i;
+  e = LOCALS.single.effects.entries + i;
 
   draw_element(e, wax, way, sel);
 }
@@ -1408,9 +1410,9 @@ static int clear_message_colour_picker_colour_choice(wimp_message *message,
 
   choice = (colourpicker_message_colour_choice *) &message->data;
 
-  editing_element->args.clear.colour = choice->colour;
+  LOCALS.single.editing_element->args.clear.colour = choice->colour;
 
-  effect_edited(editing_element);
+  effect_edited(LOCALS.single.editing_element);
 
   /* I don't think this is going to unregister in the case when 'Cancel' is
    * clicked. */
@@ -1539,7 +1541,7 @@ static void tone_start_editing(void)
 
   /* copy everything across */
 
-  tone = editing_element->args.tone;
+  tone = LOCALS.single.editing_element->args.tone;
 
   /* clone the tonemap so we have a transient one to play with */
 
@@ -1605,17 +1607,17 @@ static int tone_event_mouse_click(wimp_event_no event_no,
       {
         /* throw away the previous tonemap */
 
-        tonemap_destroy(editing_element->args.tone.map);
+        tonemap_destroy(LOCALS.single.editing_element->args.tone.map);
 
         /* copy everything across */
 
-        editing_element->args.tone = tone;
+        LOCALS.single.editing_element->args.tone = tone;
 
         /* clone a new tonemap, because we need to keep ours in case we're
          * _not_ closing the dialogue */
-        editing_element->args.tone.map = tonemap_copy(tone.map);
+        LOCALS.single.editing_element->args.tone.map = tonemap_copy(tone.map);
 
-        effect_edited(editing_element);
+        effect_edited(LOCALS.single.editing_element);
       }
       break;
 
@@ -1805,7 +1807,7 @@ static void blur_start_editing(void)
 {
   /* copy everything across */
 
-  blur = editing_element->args.blur;
+  blur = LOCALS.single.editing_element->args.blur;
 
   blur_reset_dialogue();
 
@@ -1852,9 +1854,9 @@ static int blur_event_mouse_click(wimp_event_no event_no,
                            EFFECTS_BLR_W_VAL);
         blur.level = CLAMP(val, BLURMIN, BLURMAX);
 
-        editing_element->args.blur = blur;
+        LOCALS.single.editing_element->args.blur = blur;
 
-        effect_edited(editing_element);
+        effect_edited(LOCALS.single.editing_element);
         break;
 
       case EFFECTS_BLR_B_CANCEL:
