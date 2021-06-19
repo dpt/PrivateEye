@@ -814,8 +814,6 @@ static void fin_add(void)
   help_remove_window(GLOBALS.effects_add_w);
 }
 
-#define MAGIC_PICKER ((wimp_w) 0x1)
-
 static result_t init_clear(void)
 {
   return result_OK;
