@@ -910,12 +910,14 @@ void effects_fin(void)
 #define blendslider_MAX     131071
 #define blendslider_DEFAULT 65535
 
-static void main_slider_update(wimp_i i, int val)
+static void main_slider_update(wimp_i i, int val, void *opaque)
 {
+  effectwin_t *ew = opaque;
+
   NOT_USED(i);
 
-  LOCALS.single.blendval = val;
-  apply_blend(&LOCALS.single, LOCALS.single.blendval);
+  ew->blendval = val;
+  apply_blend(ew, ew->blendval);
 }
 
 static void main_update_dialogue(void)
@@ -988,9 +990,10 @@ static int main_event_mouse_click(wimp_event_no event_no,
     case EFFECTS_S_BLEND_FOREGROUND:
     case EFFECTS_S_BLEND_BACKGROUND:
       slider_start(pointer,
-                   main_slider_update,
                    blendslider_MIN,
-                   blendslider_MAX);
+                   blendslider_MAX,
+                   main_slider_update,
+                   &LOCALS.single);
       break;
     }
   }
@@ -1445,11 +1448,13 @@ static const slider_rec tone_sliders[] =
   { EFFECTS_CRV_S_GAIN_PIT,   0, 100,  50, &tone.spec.gain       },
 };
 
-static void tone_slider_update(wimp_i i, int val)
+static void tone_slider_update(wimp_i i, int val, void *opaque)
 {
   int  j;
   int  min,max;
   int *pval;
+
+  NOT_USED(opaque);
 
   j = bsearch_int(&tone_sliders[0].icon,
                    NELEMS(tone_sliders),
@@ -1692,7 +1697,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
         if (r->icon + 1 != pointer->i && r->icon + 2 != pointer->i)
           continue;
 
-        slider_start(pointer, tone_slider_update, r->min, r->max);
+        slider_start(pointer, r->min, r->max, tone_slider_update, &LOCALS.single);
       }
     }
       break;
@@ -1732,13 +1737,14 @@ static const slider_rec blur_sliders[] =
 //}
 
 // callback from slider code
-static void blur_slider_update(wimp_i i, int val)
+static void blur_slider_update(wimp_i i, int val, void *opaque)
 {
   const slider_rec *r;
   int               min, max;
   int              *pval;
 
   NOT_USED(i);
+  NOT_USED(opaque);
 
   r = &blur_sliders[0];
 
@@ -1835,7 +1841,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
     if (EFFECTS_BLR_S_EFFECT_BACKGROUND == pointer->i ||
         EFFECTS_BLR_S_EFFECT_FOREGROUND == pointer->i)
     {
-      slider_start(pointer, blur_slider_update, BLURMIN, BLURMAX);
+      slider_start(pointer, BLURMIN, BLURMAX, blur_slider_update, &LOCALS.single);
     }
     else
     {
