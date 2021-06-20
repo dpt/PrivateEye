@@ -157,13 +157,6 @@ typedef struct
 }
 effectwin_t;
 
-static struct
-{
-  int         open;
-  effectwin_t single; // single effect window, for now
-}
-LOCALS;
-
 /* ----------------------------------------------------------------------- */
 
 static void effects_close(void);
@@ -463,13 +456,13 @@ Exit:
   return err;
 }
 
-static int insert_effect(effect_effect effect, int where)
+static int insert_effect(effectwin_t *ew, effect_effect effect, int where)
 {
   effect_array   *v;
   effect_element *e;
   size_t          shiftamt;
 
-  v = &LOCALS.single.effects;
+  v = &ew->effects;
 
   if (v->nentries == v->allocated)
   {
@@ -505,14 +498,14 @@ static int insert_effect(effect_effect effect, int where)
 
   v->nentries++;
 
-  scroll_list_add_row(LOCALS.single.sl);
+  scroll_list_add_row(ew->sl);
 
-  apply_effects(&LOCALS.single);
+  apply_effects(ew);
 
   return 0; /* success */
 }
 
-static int move_effect(int from, int to)
+static int move_effect(effectwin_t *ew, int from, int to)
 {
   effect_array   *v;
   effect_element  t; /* temporary element */
@@ -525,7 +518,7 @@ static int move_effect(int from, int to)
   if (to == from)
     return 0; /* nothing to do */
 
-  v = &LOCALS.single.effects;
+  v = &ew->effects;
 
   down = to > from; /* the direction we need to move elements */
 
@@ -569,13 +562,21 @@ static int move_effect(int from, int to)
     }
 
     for (i = min; i <= max; i++)
-      scroll_list_refresh_row(LOCALS.single.sl, i);
+      scroll_list_refresh_row(ew->sl, i);
   }
 
-  apply_effects(&LOCALS.single);
+  apply_effects(ew);
 
   return 0; /* success */
 }
+
+// moved here during rework
+static struct
+{
+  int         open;
+  effectwin_t single; // single effect window, for now
+}
+LOCALS;
 
 static int is_editable(effect_element *e)
 {
@@ -1201,12 +1202,12 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
       if (index > drageffect_state.effect)
         index--;
 
-      move_effect(drageffect_state.effect, index);
+      move_effect(&LOCALS.single, drageffect_state.effect, index);
     }
   }
   else
   {
-    insert_effect(drageffect_state.effect, index);
+    insert_effect(&LOCALS.single, drageffect_state.effect, index);
     new_effects();
   }
 
