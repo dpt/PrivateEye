@@ -47,14 +47,17 @@ typedef void (scroll_list_redrawfn)(wimp_draw *redraw,
                                     int        x,
                                     int        y,
                                     int        i,
-                                    int        sel);
+                                    int        sel,
+                                    void      *opaque);
 
-typedef void (scroll_list_eventfn)(scroll_list_event *event);
+typedef void (scroll_list_eventfn)(scroll_list_event *event,
+                                   void              *opaque);
 
 void scroll_list_set_handlers(T                    *sl,
                               scroll_list_redrawfn *redraw_elem,
                               scroll_list_redrawfn *redraw_lead,
-                              scroll_list_eventfn  *event);
+                              scroll_list_eventfn  *event,
+                              void                 *opaque);
 
 wimp_w scroll_list_get_window_handle(T *sl);
 

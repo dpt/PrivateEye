@@ -52,16 +52,16 @@ static int event_redraw_window_request(wimp_event_no event_no,
     {
       sel = i == sl->marker;
       y -= sl->leading;
-      sl->redraw_lead(redraw, x, y, i, sel);
+      sl->redraw_lead(redraw, x, y, i, sel, sl->opaque);
 
       sel = i == sl->selection;
       y -= sl->height;
-      sl->redraw_elem(redraw, x, y, i, sel);
+      sl->redraw_elem(redraw, x, y, i, sel, sl->opaque);
     }
 
     sel = i == sl->marker;
     y -= sl->leading;
-    sl->redraw_lead(redraw, x, y, i, sel);
+    sl->redraw_lead(redraw, x, y, i, sel, sl->opaque);
   }
 
   return event_HANDLED;
@@ -118,7 +118,7 @@ static int event_mouse_click(wimp_event_no event_no,
       event.data.drag.pointer = pointer;
       scroll_list_get_bbox(sl, i, &event.data.drag.box);
 
-      sl->event(&event);
+      sl->event(&event, sl->opaque);
     }
 
     break;
