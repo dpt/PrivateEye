@@ -1891,7 +1891,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static result_t create_images(void)
+static result_t create_images(effectwin_t *ew)
 {
   image_t           *image;
   osspriteop_area   *area;
@@ -1901,7 +1901,7 @@ static result_t create_images(void)
   osspriteop_header *header3;
   int                r;
 
-  image = LOCALS.single.image;
+  image = ew->image;
   area  = (osspriteop_area *) image->image;
 
   areasize = area->size;
@@ -1931,24 +1931,24 @@ static result_t create_images(void)
   header2 = sprite_select(area, 1);
   header3 = sprite_select(area, 2);
 
-  blender_create(&LOCALS.single.blender, area);
+  blender_create(&ew->blender, area);
 
   /* point the blender at the image data */
-  LOCALS.single.blender.src = sprite_data(header1);
-  LOCALS.single.blender.deg = sprite_data(header2);
-  LOCALS.single.blender.dst = sprite_data(header3);
+  ew->blender.src = sprite_data(header1);
+  ew->blender.deg = sprite_data(header2);
+  ew->blender.dst = sprite_data(header3);
 
   return result_OK;
 }
 
-static int delete_images(void)
+static int delete_images(effectwin_t *ew)
 {
   osspriteop_area   *area;
   int                areasize;
   osspriteop_header *header;
   int                r;
 
-  area     = (osspriteop_area *) LOCALS.single.image->image;
+  area     = (osspriteop_area *) ew->image->image;
   areasize = area->size;
 
   /* Delete the last two sprites. The first is our result. */
@@ -1959,14 +1959,14 @@ static int delete_images(void)
   header = sprite_select(area, 1);
   osspriteop_delete_sprite(osspriteop_PTR, area, (osspriteop_id) header);
 
-  r = flex_extend((flex_ptr) &LOCALS.single.image->image, areasize / 3);
+  r = flex_extend((flex_ptr) &ew->image->image, areasize / 3);
   if (r == 0)
   {
     oserror_report(0, "error.no.mem");
     return 1;
   }
 
-  area->size = flex_size((flex_ptr) &LOCALS.single.image->image);
+  area->size = flex_size((flex_ptr) &ew->image->image);
 
   return 0;
 }
@@ -2018,7 +2018,7 @@ void effects_open(image_t *image)
 
   LOCALS.single.image = image;
 
-  err = create_images();
+  err = create_images(&LOCALS.single);
   if (err)
   {
     result_report(err);
@@ -2048,7 +2048,7 @@ static void effects_close(void)
   image_select(LOCALS.single.image, 0);
   image_preview(LOCALS.single.image); /* force an update */
 
-  delete_images();
+  delete_images(&LOCALS.single);
 
   image_stop_editing(LOCALS.single.image);
 
