@@ -1373,7 +1373,7 @@ static int add_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static void clear_set_handlers(int reg)
+static void clear_set_handlers(effectwin_t *ew, int reg)
 {
   static const event_message_handler_spec message_handlers[] =
   {
@@ -1385,7 +1385,7 @@ static void clear_set_handlers(int reg)
                                NELEMS(message_handlers),
                                event_ANY_WINDOW,
                                event_ANY_ICON,
-                               NULL);
+                               ew);
 }
 
 static int clear_edit(effect_element *e, int x, int y)
@@ -1408,7 +1408,7 @@ static int clear_edit(effect_element *e, int x, int y)
                             &dialogue,
                             &picker_w);
 
-  clear_set_handlers(1);
+  clear_set_handlers(&LOCALS.single, 1);
 
   return 0;
 }
@@ -1416,19 +1416,18 @@ static int clear_edit(effect_element *e, int x, int y)
 static int clear_message_colour_picker_colour_choice(wimp_message *message,
                                                      void         *opaque)
 {
+  effectwin_t                        *ew = opaque;
   colourpicker_message_colour_choice *choice;
-
-  NOT_USED(opaque);
 
   choice = (colourpicker_message_colour_choice *) &message->data;
 
-  LOCALS.single.editing_element->args.clear.colour = choice->colour;
+  ew->editing_element->args.clear.colour = choice->colour;
 
-  effect_edited(&LOCALS.single, LOCALS.single.editing_element);
+  effect_edited(ew, ew->editing_element);
 
   /* I don't think this is going to unregister in the case when 'Cancel' is
    * clicked. */
-  clear_set_handlers(0);
+  clear_set_handlers(ew, 0);
 
   return event_HANDLED;
 }
