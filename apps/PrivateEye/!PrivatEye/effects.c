@@ -394,7 +394,7 @@ static void copy_sprite_data(osspriteop_area *area,
   cpy(dst_data, src_data, src->size - sizeof(osspriteop_header));
 }
 
-static result_t apply_effects(void)
+static result_t apply_effects(effectwin_t *ew)
 {
   result_t         err;
   effect_array    *v;
@@ -405,10 +405,10 @@ static result_t apply_effects(void)
 
   hourglass_on();
 
-  image = LOCALS.single.image;
+  image = ew->image;
   area  = (osspriteop_area *) image->image;
 
-  v = &LOCALS.single.effects;
+  v = &ew->effects;
 
   if (v->nentries)
   {
@@ -452,7 +452,7 @@ static result_t apply_effects(void)
 
   /* kick the blender */
 
-  apply_blend(&LOCALS.single, LOCALS.single.blendval);
+  apply_blend(ew, ew->blendval);
 
   /* FALLTHROUGH */
 
@@ -507,7 +507,7 @@ static int insert_effect(effect_effect effect, int where)
 
   scroll_list_add_row(LOCALS.single.sl);
 
-  apply_effects();
+  apply_effects(&LOCALS.single);
 
   return 0; /* success */
 }
@@ -572,7 +572,7 @@ static int move_effect(int from, int to)
       scroll_list_refresh_row(LOCALS.single.sl, i);
   }
 
-  apply_effects();
+  apply_effects(&LOCALS.single);
 
   return 0; /* success */
 }
@@ -663,7 +663,7 @@ static void effect_edited(effect_element *e)
 
   scroll_list_refresh_row(LOCALS.single.sl, i);
 
-  apply_effects();
+  apply_effects(&LOCALS.single);
 }
 
 static void remove_effect(int index)
@@ -687,7 +687,7 @@ static void remove_effect(int index)
   new_selection();
   new_effects();
 
-  apply_effects(); /* kick the effects + blender */
+  apply_effects(&LOCALS.single); /* kick the effects + blender */
 }
 
 static void remove_all_effects(void)
@@ -704,7 +704,7 @@ static void remove_all_effects(void)
 
   // call new_selection()?
 
-  apply_effects(); /* kick the effects + blender */
+  apply_effects(&LOCALS.single); /* kick the effects + blender */
 }
 
 /* ---------------------------------------------------------------------- */
