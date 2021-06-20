@@ -3,11 +3,6 @@
  * Purpose: Effects dialogue
  * ----------------------------------------------------------------------- */
 
-// TODO
-// Presently this is coded as a singleton - if you open up an effects windows
-// for another image then the first effects instance vanishes.
-// Should refactor it to allow multiple effects windows to be open.
-
 #include "swis.h"
 
 #include <limits.h>
@@ -153,6 +148,9 @@ effect_array;
 
 typedef struct
 {
+  image_t        *image;
+  blender         blender;
+  int             blendval;
   effect_array    effects;
   effect_element *editing_element;
   scroll_list    *sl;
@@ -161,11 +159,8 @@ effectwin_t;
 
 static struct
 {
-  image_t    *image;
-  blender     blender;
-  int         blendval;
   int         open;
-  effectwin_t single; // single effect window
+  effectwin_t single; // single effect window, for now
 }
 LOCALS;
 
@@ -177,7 +172,7 @@ static void effects_cancel(void);
 
 /* ---------------------------------------------------------------------- */
 
-typedef int (effect_editor)(effect_element *e, int x, int y);
+typedef int effect_editor(effect_element *e, int x, int y);
 typedef result_t (effect_initialiser)(effect_element *e);
 typedef result_t (effect_applier)(osspriteop_area   *area,
                                   osspriteop_header *src,
@@ -368,12 +363,12 @@ static memcpyfn *choose_memcpy(void)
 
 /* ---------------------------------------------------------------------- */
 
-static void apply_blend(int val)
+static void apply_blend(effectwin_t *ew, int val)
 {
-  LOCALS.blender.make_lut(val, 0, &LOCALS.blender);
-  LOCALS.blender.blend(&LOCALS.blender);
+  ew->blender.make_lut(val, 0, &ew->blender);
+  ew->blender.blend(&ew->blender);
 
-  image_preview(LOCALS.image);
+  image_preview(ew->image);
 }
 
 static void copy_sprite_data(osspriteop_area *area,
@@ -410,7 +405,7 @@ static result_t apply_effects(void)
 
   hourglass_on();
 
-  image = LOCALS.image;
+  image = LOCALS.single.image;
   area  = (osspriteop_area *) image->image;
 
   v = &LOCALS.single.effects;
@@ -446,7 +441,7 @@ static result_t apply_effects(void)
   }
   else
   {
-    /* There are no effects. without anything to apply the degenerate image
+    /* There are no effects. Without anything to apply the degenerate image
      * won't get filled in, so just do a straight copy. */
 
     /* FIXME: This is all wasted work which could be avoided by not creating
@@ -457,7 +452,7 @@ static result_t apply_effects(void)
 
   /* kick the blender */
 
-  apply_blend(LOCALS.blendval);
+  apply_blend(&LOCALS.single, LOCALS.single.blendval);
 
   /* FALLTHROUGH */
 
@@ -918,24 +913,26 @@ static void main_slider_update(wimp_i i, int val)
 {
   NOT_USED(i);
 
-  LOCALS.blendval = val;
-  apply_blend(LOCALS.blendval);
+  LOCALS.single.blendval = val;
+  apply_blend(&LOCALS.single, LOCALS.single.blendval);
 }
 
 static void main_update_dialogue(void)
 {
+  int blendval;
+
   new_selection();
   new_effects();
 
-  LOCALS.blendval = blendslider_DEFAULT;
+  blendval = LOCALS.single.blendval = blendslider_DEFAULT;
 
   slider_set(GLOBALS.effects_w,
              EFFECTS_S_BLEND_PIT,
-             LOCALS.blendval,
+             blendval,
              blendslider_MIN,
              blendslider_MAX);
 
-  apply_blend(LOCALS.blendval);
+  apply_blend(&LOCALS.single, blendval);
 }
 
 static int main_event_mouse_click(wimp_event_no event_no,
@@ -1506,7 +1503,7 @@ static void tone_reset_dialogue(void)
 
   icon_set_flags(GLOBALS.effects_crv_w,
                  EFFECTS_CRV_R_ALPHA,
-                 (LOCALS.image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
+                 (LOCALS.single.image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
                  wimp_ICON_SHADED);
 
   /* set slider values */
@@ -1904,7 +1901,7 @@ static result_t create_images(void)
   osspriteop_header *header3;
   int                r;
 
-  image = LOCALS.image;
+  image = LOCALS.single.image;
   area  = (osspriteop_area *) image->image;
 
   areasize = area->size;
@@ -1934,12 +1931,12 @@ static result_t create_images(void)
   header2 = sprite_select(area, 1);
   header3 = sprite_select(area, 2);
 
-  blender_create(&LOCALS.blender, area);
+  blender_create(&LOCALS.single.blender, area);
 
   /* point the blender at the image data */
-  LOCALS.blender.src = sprite_data(header1);
-  LOCALS.blender.deg = sprite_data(header2);
-  LOCALS.blender.dst = sprite_data(header3);
+  LOCALS.single.blender.src = sprite_data(header1);
+  LOCALS.single.blender.deg = sprite_data(header2);
+  LOCALS.single.blender.dst = sprite_data(header3);
 
   return result_OK;
 }
@@ -1951,7 +1948,7 @@ static int delete_images(void)
   osspriteop_header *header;
   int                r;
 
-  area     = (osspriteop_area *) LOCALS.image->image;
+  area     = (osspriteop_area *) LOCALS.single.image->image;
   areasize = area->size;
 
   /* Delete the last two sprites. The first is our result. */
@@ -1962,14 +1959,14 @@ static int delete_images(void)
   header = sprite_select(area, 1);
   osspriteop_delete_sprite(osspriteop_PTR, area, (osspriteop_id) header);
 
-  r = flex_extend((flex_ptr) &LOCALS.image->image, areasize / 3);
+  r = flex_extend((flex_ptr) &LOCALS.single.image->image, areasize / 3);
   if (r == 0)
   {
     oserror_report(0, "error.no.mem");
     return 1;
   }
 
-  area->size = flex_size((flex_ptr) &LOCALS.image->image);
+  area->size = flex_size((flex_ptr) &LOCALS.single.image->image);
 
   return 0;
 }
@@ -1996,30 +1993,30 @@ void effects_open(image_t *image)
 {
   result_t err;
 
-  if (LOCALS.open && LOCALS.image == image)
-  {
-    window_open_at(GLOBALS.effects_w, AT_BOTTOMPOINTER);
-    return;
-  }
-
   if (!effects_available(image))
   {
     beep();
     return;
   }
 
-  if (LOCALS.open && LOCALS.image != image)
-  {
-    /* opened for a different image */
-    effects_close();
-  }
-
   if (LOCALS.open)
-    return; /* already open */
+  {
+      if (LOCALS.single.image == image)
+      {
+          /* opened for the current image */
+          window_open_at(GLOBALS.effects_w, AT_BOTTOMPOINTER);
+          return;
+      }
+      else
+      {
+          /* opened for a different image */
+          effects_close();
+      }
+  }
 
   image_start_editing(image);
 
-  LOCALS.image = image;
+  LOCALS.single.image = image;
 
   err = create_images();
   if (err)
@@ -2046,19 +2043,19 @@ static void effects_close(void)
   /* this kicks apply_effects, so is doing more work than necessary */
   remove_all_effects();
 
-  imageobserver_deregister(LOCALS.image, image_changed_callback, NULL);
+  imageobserver_deregister(LOCALS.single.image, image_changed_callback, NULL);
 
-  image_select(LOCALS.image, 0);
-  image_preview(LOCALS.image); /* force an update */
+  image_select(LOCALS.single.image, 0);
+  image_preview(LOCALS.single.image); /* force an update */
 
   delete_images();
 
-  image_stop_editing(LOCALS.image);
+  image_stop_editing(LOCALS.single.image);
 
   window_close(GLOBALS.effects_w);
 
   LOCALS.open  = 0;
-  LOCALS.image = NULL;
+  LOCALS.single.image = NULL;
 }
 
 /* Make the effects permanent, overwriting source. */
@@ -2067,16 +2064,16 @@ static void effects_apply(void)
   image_t         *image;
   osspriteop_area *area;
 
-  image = LOCALS.image;
+  image = LOCALS.single.image;
   area  = (osspriteop_area *) image->image;
 
-  image_about_to_modify(LOCALS.image);
+  image_about_to_modify(LOCALS.single.image);
 
   /* copy result to source */
 
   copy_sprite_data(area, 2, 0);
 
-  image_modified(LOCALS.image, image_MODIFIED_DATA);
+  image_modified(LOCALS.single.image, image_MODIFIED_DATA);
 
   remove_all_effects();
 }
