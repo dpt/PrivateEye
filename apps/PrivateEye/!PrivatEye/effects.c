@@ -787,7 +787,8 @@ static result_t init_add(void)
     { wimp_MOUSE_CLICK, add_event_mouse_click },
   };
 
-  result_t err;
+  result_t     err;
+  effectwin_t *ew = &LOCALS.single;
 
   GLOBALS.effects_add_w = window_create("effects_add");
 
@@ -800,7 +801,7 @@ static result_t init_add(void)
                             NELEMS(wimp_handlers),
                             GLOBALS.effects_add_w,
                             event_ANY_ICON,
-                            NULL);
+                            ew);
 
   return result_OK;
 }
@@ -1096,15 +1097,13 @@ static struct
 }
 drageffect_state;
 
-static void drageffect_set_handlers(int reg)
+static void drageffect_set_handlers(effectwin_t *ew, int reg)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
     { wimp_NULL_REASON_CODE, drageffect_event_null_reason_code },
     { wimp_USER_DRAG_BOX,    drageffect_event_user_drag_box    },
   };
-
-  effectwin_t *ew = &LOCALS.single;
 
   event_register_wimp_group(reg,
                             wimp_handlers,
@@ -1184,7 +1183,7 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
 
   drag_object_stop();
 
-  drageffect_set_handlers(0);
+  drageffect_set_handlers(ew, 0);
 
   scroll_list_clear_marker(ew->sl);
 
@@ -1239,7 +1238,7 @@ static void drageffect_box(effectwin_t  *ew,
   drageffect_state.effect  = effect;
   drageffect_state.moving  = moving;
 
-  drageffect_set_handlers(1);
+  drageffect_set_handlers(ew, 1);
 
   if (moving)
     /* turn this index into an effect number */
@@ -1254,13 +1253,16 @@ static void drageffect_box(effectwin_t  *ew,
 
 /* if not moving: effect is the number? of the new effect
  * if moving: effect is the index of the existing effect */
-static void drageffect_icon(wimp_pointer *pointer, int effect, int moving)
+static void drageffect_icon(effectwin_t  *ew,
+                            wimp_pointer *pointer,
+                            int           effect,
+                            int           moving)
 {
   drageffect_state.buttons = pointer->buttons;
   drageffect_state.effect  = effect;
   drageffect_state.moving  = moving;
 
-  drageffect_set_handlers(1);
+  drageffect_set_handlers(ew, 1);
 
   // FIXME: This needs if (moving) code from above; but it's not used atm
 
@@ -1346,9 +1348,9 @@ static int add_event_mouse_click(wimp_event_no event_no,
                                  void         *handle)
 {
   wimp_pointer *pointer;
+  effectwin_t  *ew = handle;
 
   NOT_USED(event_no);
-  NOT_USED(handle);
 
   pointer = &block->pointer;
 
@@ -1361,7 +1363,7 @@ static int add_event_mouse_click(wimp_event_no event_no,
       break;
 
     default:
-      drageffect_icon(pointer, pointer->i - 3, 0);
+      drageffect_icon(ew, pointer, pointer->i - 3, 0);
       break;
     }
   }
