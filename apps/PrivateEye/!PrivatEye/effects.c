@@ -165,7 +165,7 @@ static void effects_cancel(void);
 
 /* ---------------------------------------------------------------------- */
 
-typedef int effect_editor(effect_element *e, int x, int y);
+typedef int effect_editor(effectwin_t *ew, effect_element *e, int x, int y);
 typedef result_t (effect_initialiser)(effect_element *e);
 typedef result_t (effect_applier)(osspriteop_area   *area,
                                   osspriteop_header *src,
@@ -642,7 +642,7 @@ static void edit_effect(effectwin_t *ew, int index)
 
   editor = editors[e->effect].editor;
   if (editor)
-    editor(e, pointer.pos.x, pointer.pos.y);
+    editor(ew, e, pointer.pos.x, pointer.pos.y);
 }
 
 static void effect_edited(effectwin_t *ew, effect_element *e)
@@ -833,6 +833,7 @@ static result_t init_blur(void)
 
   dialogue_set_mouse_click_handler(&GLOBALS.effects_blr_d,
                                     blur_event_mouse_click);
+  // DPT what gets set for the opaque handle by the above?
 
   return result_OK;
 }
@@ -850,7 +851,8 @@ static result_t init_tone(void)
     { wimp_MOUSE_CLICK,           tone_event_mouse_click           },
   };
 
-  result_t err;
+  result_t     err;
+  effectwin_t *ew = &LOCALS.single;
 
   GLOBALS.effects_crv_w = window_create("effects_crv");
 
@@ -863,7 +865,7 @@ static result_t init_tone(void)
                             NELEMS(wimp_handlers),
                             GLOBALS.effects_crv_w,
                             event_ANY_ICON,
-                            NULL);
+                            ew);
 
   return result_OK;
 }
@@ -1388,7 +1390,7 @@ static void clear_set_handlers(effectwin_t *ew, int reg)
                                ew);
 }
 
-static int clear_edit(effect_element *e, int x, int y)
+static int clear_edit(effectwin_t *ew, effect_element *e, int x, int y)
 {
   colourpicker_dialogue dialogue;
   wimp_w                picker_w;
@@ -1408,7 +1410,7 @@ static int clear_edit(effect_element *e, int x, int y)
                             &dialogue,
                             &picker_w);
 
-  clear_set_handlers(&LOCALS.single, 1);
+  clear_set_handlers(ew, 1);
 
   return 0;
 }
@@ -1490,7 +1492,7 @@ static void tone_slider_update(wimp_i i, int val, void *opaque)
   tone_set_values_and_redraw();
 }
 
-static void tone_reset_dialogue(void)
+static void tone_reset_dialogue(effectwin_t *ew)
 {
   static const struct
   {
@@ -1525,7 +1527,7 @@ static void tone_reset_dialogue(void)
 
   icon_set_flags(GLOBALS.effects_crv_w,
                  EFFECTS_CRV_R_ALPHA,
-                 (LOCALS.single.image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
+                 (ew->image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
                  wimp_ICON_SHADED);
 
   /* set slider values */
@@ -1548,30 +1550,31 @@ static void tone_reset_dialogue(void)
                     tone.spec.flags & tonemap_FLAG_REFLECT);
 }
 
-static void tone_start_editing(void)
+static void tone_start_editing(effectwin_t *ew)
 {
   tonemap_destroy(tone.map);
 
   /* copy everything across */
 
-  tone = LOCALS.single.editing_element->args.tone;
+  tone = ew->editing_element->args.tone;
 
   /* clone the tonemap so we have a transient one to play with */
 
   tone.map = tonemap_copy(tone.map);
 
-  tone_reset_dialogue();
+  tone_reset_dialogue(ew);
 
   /* recalculate tonemap, refresh gadget */
 
   tone_set_values_and_redraw();
 }
 
-static int tone_edit(effect_element *e, int x, int y)
+static int tone_edit(effectwin_t *ew, effect_element *e, int x, int y)
 {
+  NOT_USED(ew);
   NOT_USED(e);
 
-  tone_start_editing();
+  tone_start_editing(ew);
 
   window_open_as_menu_here(GLOBALS.effects_crv_w, x, y);
 
@@ -1601,10 +1604,10 @@ static int tone_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
+  effectwin_t  *ew = handle;
   wimp_pointer *pointer;
 
   NOT_USED(event_no);
-  NOT_USED(handle);
 
   pointer = &block->pointer;
 
@@ -1620,17 +1623,17 @@ static int tone_event_mouse_click(wimp_event_no event_no,
       {
         /* throw away the previous tonemap */
 
-        tonemap_destroy(LOCALS.single.editing_element->args.tone.map);
+        tonemap_destroy(ew->editing_element->args.tone.map);
 
         /* copy everything across */
 
-        LOCALS.single.editing_element->args.tone = tone;
+        ew->editing_element->args.tone = tone;
 
         /* clone a new tonemap, because we need to keep ours in case we're
          * _not_ closing the dialogue */
-        LOCALS.single.editing_element->args.tone.map = tonemap_copy(tone.map);
+        ew->editing_element->args.tone.map = tonemap_copy(tone.map);
 
-        effect_edited(&LOCALS.single, LOCALS.single.editing_element);
+        effect_edited(ew, ew->editing_element);
       }
       break;
 
@@ -1685,7 +1688,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
 
         tonemap_get_values(tone.map, tone.channels, &tone.spec);
 
-        tone_reset_dialogue();
+        tone_reset_dialogue(ew);
         kick = 1;
       }
 
@@ -1696,7 +1699,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
 
     case EFFECTS_CRV_B_RESET:
       effect_tone_reset(&tone);
-      tone_reset_dialogue();
+      tone_reset_dialogue(ew);
       kick = 1;
       break;
 
@@ -1713,7 +1716,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
         if (r->icon + 1 != pointer->i && r->icon + 2 != pointer->i)
           continue;
 
-        slider_start(pointer, r->min, r->max, tone_slider_update, &LOCALS.single);
+        slider_start(pointer, r->min, r->max, tone_slider_update, ew);
       }
     }
       break;
@@ -1729,7 +1732,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
         // need to throw away any remaining tonemap from tone.map
         wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
       else
-        tone_start_editing();
+        tone_start_editing(ew);
     }
   }
 
@@ -1817,22 +1820,23 @@ static void blur_reset_dialogue(void)
               *r->pval);
 }
 
-static void blur_start_editing(void)
+static void blur_start_editing(effectwin_t *ew)
 {
   /* copy everything across */
 
-  blur = LOCALS.single.editing_element->args.blur;
+  blur = ew->editing_element->args.blur;
 
   blur_reset_dialogue();
 
   //blur_set_values_and_redraw();
 }
 
-static int blur_edit(effect_element *e, int x, int y)
+static int blur_edit(effectwin_t *ew, effect_element *e, int x, int y)
 {
+  NOT_USED(ew);
   NOT_USED(e);
 
-  blur_start_editing();
+  blur_start_editing(ew);
 
   dialogue_show_here(&GLOBALS.effects_blr_d, x, y);
 
@@ -1843,11 +1847,11 @@ static int blur_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
+  effectwin_t  *ew = handle;
   wimp_pointer *pointer;
   int           val;
 
   NOT_USED(event_no);
-  NOT_USED(handle);
 
   pointer = &block->pointer;
 
@@ -1857,7 +1861,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
     if (EFFECTS_BLR_S_EFFECT_BACKGROUND == pointer->i ||
         EFFECTS_BLR_S_EFFECT_FOREGROUND == pointer->i)
     {
-      slider_start(pointer, BLURMIN, BLURMAX, blur_slider_update, &LOCALS.single);
+      slider_start(pointer, BLURMIN, BLURMAX, blur_slider_update, ew);
     }
     else
     {
@@ -1868,9 +1872,9 @@ static int blur_event_mouse_click(wimp_event_no event_no,
                            EFFECTS_BLR_W_VAL);
         blur.level = CLAMP(val, BLURMIN, BLURMAX);
 
-        LOCALS.single.editing_element->args.blur = blur;
+        ew->editing_element->args.blur = blur;
 
-        effect_edited(&LOCALS.single, LOCALS.single.editing_element);
+        effect_edited(ew, ew->editing_element);
         break;
 
       case EFFECTS_BLR_B_CANCEL:
@@ -1905,7 +1909,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
       if (pointer->buttons & wimp_CLICK_SELECT)
         wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
       else
-        blur_start_editing();
+        blur_start_editing(ew);
     }
   }
 
