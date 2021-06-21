@@ -159,9 +159,9 @@ effectwin_t;
 
 /* ----------------------------------------------------------------------- */
 
-static void effects_close(void);
-static void effects_apply(void);
-static void effects_cancel(void);
+static void effects_close(effectwin_t *ew);
+static void effects_apply(effectwin_t *ew);
+static void effects_cancel(effectwin_t *ew);
 
 /* ---------------------------------------------------------------------- */
 
@@ -961,11 +961,11 @@ static int main_event_mouse_click(wimp_event_no event_no,
     switch (pointer->i)
     {
     case EFFECTS_B_APPLY:
-      effects_apply();
+      effects_apply(ew);
       break;
 
     case EFFECTS_B_CANCEL:
-      effects_cancel();
+      effects_cancel(ew);
       break;
 
     case EFFECTS_B_ADD:
@@ -1008,7 +1008,7 @@ static int main_event_mouse_click(wimp_event_no event_no,
   if (pointer->i == EFFECTS_B_APPLY || pointer->i == EFFECTS_B_CANCEL)
   {
     if (pointer->buttons & wimp_CLICK_SELECT)
-      effects_close();
+      effects_close(ew);
     else
       main_update_dialogue(ew);
   }
@@ -1847,7 +1847,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
-  effectwin_t  *ew = handle;
+  effectwin_t  *ew = handle; // DPT THIS WON'T WORK WITH CURRENT DIALOGUE CODE WHICH RETURNS HANDLE==dialogue_t
   wimp_pointer *pointer;
   int           val;
 
@@ -2003,22 +2003,24 @@ static void image_changed_callback(image_t             *image,
                                    imageobserver_data  *data,
                                    void                *opaque)
 {
+  effectwin_t *ew = opaque;
+ 
   NOT_USED(image);
   NOT_USED(data);
-  NOT_USED(opaque);
 
   switch (change)
   {
   case imageobserver_CHANGE_HIDDEN:
   case imageobserver_CHANGE_ABOUT_TO_DESTROY:
-    effects_close();
+    effects_close(ew);
     break;
   }
 }
 
 void effects_open(image_t *image)
 {
-  result_t err;
+  result_t     err;
+  effectwin_t *ew = &LOCALS.single;
 
   if (!effects_available(image))
   {
@@ -2028,7 +2030,7 @@ void effects_open(image_t *image)
 
   if (LOCALS.open)
   {
-      if (LOCALS.single.image == image)
+      if (ew->image == image)
       {
           /* opened for the current image */
           window_open_at(GLOBALS.effects_w, AT_BOTTOMPOINTER);
@@ -2037,15 +2039,15 @@ void effects_open(image_t *image)
       else
       {
           /* opened for a different image */
-          effects_close();
+          effects_close(ew);
       }
   }
 
   image_start_editing(image);
 
-  LOCALS.single.image = image;
+  ew->image = image;
 
-  err = create_images(&LOCALS.single);
+  err = create_images(ew);
   if (err)
   {
     result_report(err);
@@ -2055,59 +2057,60 @@ void effects_open(image_t *image)
   image_select(image, 2);
 
   /* watch for changes */
-  imageobserver_register(image, image_changed_callback, NULL);
+  imageobserver_register(image, image_changed_callback, ew);
 
   /* open as a proper window */
   window_open_at(GLOBALS.effects_w, AT_BOTTOMPOINTER);
 
   LOCALS.open = 1;
 
-  main_update_dialogue(&LOCALS.single);
+  main_update_dialogue(ew);
 }
 
-static void effects_close(void)
+static void effects_close(effectwin_t *ew)
 {
   /* this kicks apply_effects, so is doing more work than necessary */
-  remove_all_effects(&LOCALS.single);
+  remove_all_effects(ew);
 
-  imageobserver_deregister(LOCALS.single.image, image_changed_callback, NULL);
+  imageobserver_deregister(ew->image, image_changed_callback, NULL);
 
-  image_select(LOCALS.single.image, 0);
-  image_preview(LOCALS.single.image); /* force an update */
+  image_select(ew->image, 0);
+  image_preview(ew->image); /* force an update */
 
-  delete_images(&LOCALS.single);
+  delete_images(ew);
 
-  image_stop_editing(LOCALS.single.image);
+  image_stop_editing(ew->image);
+
+  ew->image = NULL;
 
   window_close(GLOBALS.effects_w);
 
-  LOCALS.open  = 0;
-  LOCALS.single.image = NULL;
+  LOCALS.open = 0;
 }
 
 /* Make the effects permanent, overwriting source. */
-static void effects_apply(void)
+static void effects_apply(effectwin_t *ew)
 {
   image_t         *image;
   osspriteop_area *area;
 
-  image = LOCALS.single.image;
+  image = ew->image;
   area  = (osspriteop_area *) image->image;
 
-  image_about_to_modify(LOCALS.single.image);
+  image_about_to_modify(ew->image);
 
   /* copy result to source */
 
   copy_sprite_data(area, 2, 0);
 
-  image_modified(LOCALS.single.image, image_MODIFIED_DATA);
+  image_modified(ew->image, image_MODIFIED_DATA);
 
-  remove_all_effects(&LOCALS.single);
+  remove_all_effects(ew);
 }
 
-static void effects_cancel(void)
+static void effects_cancel(effectwin_t *ew)
 {
-  remove_all_effects(&LOCALS.single);
+  remove_all_effects(ew);
 }
 
 int effects_available(const image_t *image)
