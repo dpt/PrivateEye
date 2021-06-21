@@ -19,6 +19,8 @@
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
+#include "datastruct/list.h"
+
 #include "appengine/types.h"
 #include "appengine/base/bsearch.h"
 #include "appengine/base/errors.h"
@@ -148,6 +150,9 @@ effect_array;
 
 typedef struct
 {
+  list_t          list; /* an effectwin is a linked list node */
+  wimp_w          window;
+
   image_t        *image;
   blender         blender;
   int             blendval;
@@ -171,6 +176,18 @@ typedef result_t (effect_applier)(osspriteop_area   *area,
                                   osspriteop_header *src,
                                   osspriteop_header *dst,
                                   effect_element    *e);
+
+/* ---------------------------------------------------------------------- */
+
+static struct
+{
+  list_t list_anchor; /* linked list of effectwins */
+
+  // to get removed later
+ // int         open;
+  effectwin_t single;
+}
+LOCALS;
 
 /* ---------------------------------------------------------------------- */
 
@@ -601,8 +618,8 @@ static void new_selection(effectwin_t *ew)
     del = 0;
   }
 
-  icon_set_flags(GLOBALS.effects_w, EFFECTS_B_EDIT,  edit, wimp_ICON_SHADED);
-  icon_set_flags(GLOBALS.effects_w, EFFECTS_B_DELETE, del, wimp_ICON_SHADED);
+  icon_set_flags(ew->window, EFFECTS_B_EDIT,  edit, wimp_ICON_SHADED);
+  icon_set_flags(ew->window, EFFECTS_B_DELETE, del, wimp_ICON_SHADED);
 }
 
 static void new_effects(effectwin_t *ew)
@@ -622,7 +639,7 @@ static void new_effects(effectwin_t *ew)
   eor   = (ew->effects.nentries > 0) ? 0 : wimp_ICON_SHADED;
   clear = wimp_ICON_SHADED;
 
-  icon_group_set_flags(GLOBALS.effects_w, icons, NELEMS(icons), eor, clear);
+  icon_group_set_flags(ew->window, icons, NELEMS(icons), eor, clear);
 }
 
 static void edit_effect(effectwin_t *ew, int index)
@@ -715,54 +732,13 @@ static event_message_handler clear_message_colour_picker_colour_choice;
 
 /* ----------------------------------------------------------------------- */
 
-// FIXME: Introduce a typedef for this form of function?
-static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
-static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
-static void scroll_list_event_callback(scroll_list_event *event, void *opaque);
-
-// moved here during rework
-static struct
-{
-  int         open;
-  effectwin_t single; // single effect window, for now
-}
-LOCALS;
-
 static result_t init_main(void)
 {
-  static const event_wimp_handler_spec wimp_handlers[] =
-  {
-    { wimp_MOUSE_CLICK, main_event_mouse_click },
-  };
-
-  result_t     err;
-  effectwin_t *ew = &LOCALS.single;
+  result_t err;
 
   GLOBALS.effects_w = window_create("effects");
 
   err = help_add_window(GLOBALS.effects_w, "effects");
-  if (err)
-    return err;
-
-  event_register_wimp_group(1,
-                            wimp_handlers,
-                            NELEMS(wimp_handlers),
-                            GLOBALS.effects_w,
-                            event_ANY_ICON,
-                            ew);
-
-  ew->sl = scroll_list_create(GLOBALS.effects_w, EFFECTS_I_PANE_PLACEHOLDER);
-  if (ew->sl == NULL)
-    return result_OOM; // potentially inaccurate
-
-  scroll_list_set_row_height(ew->sl, HEIGHT, 4);
-  scroll_list_set_handlers(ew->sl,
-                           redraw_element,
-                           redraw_leader,
-                           scroll_list_event_callback,
-                           ew);
-
-  err = help_add_window(scroll_list_get_window_handle(ew->sl), "effects_list");
   if (err)
     return err;
 
@@ -771,24 +747,12 @@ static result_t init_main(void)
 
 static void fin_main(void)
 {
-  effectwin_t *ew = &LOCALS.single;
-  
-  help_remove_window(scroll_list_get_window_handle(ew->sl));
-
-  scroll_list_destroy(ew->sl);
-
   help_remove_window(GLOBALS.effects_w);
 }
 
 static result_t init_add(void)
 {
-  static const event_wimp_handler_spec wimp_handlers[] =
-  {
-    { wimp_MOUSE_CLICK, add_event_mouse_click },
-  };
-
-  result_t     err;
-  effectwin_t *ew = &LOCALS.single;
+  result_t err;
 
   GLOBALS.effects_add_w = window_create("effects_add");
 
@@ -796,28 +760,12 @@ static result_t init_add(void)
   if (err)
     return err;
 
-  event_register_wimp_group(1,
-                            wimp_handlers,
-                            NELEMS(wimp_handlers),
-                            GLOBALS.effects_add_w,
-                            event_ANY_ICON,
-                            ew);
-
   return result_OK;
 }
 
 static void fin_add(void)
 {
   help_remove_window(GLOBALS.effects_add_w);
-}
-
-static result_t init_clear(void)
-{
-  return result_OK;
-}
-
-static void fin_clear(void)
-{
 }
 
 static result_t init_blur(void)
@@ -833,7 +781,7 @@ static result_t init_blur(void)
 
   dialogue_set_mouse_click_handler(&GLOBALS.effects_blr_d,
                                     blur_event_mouse_click);
-  // DPT what gets set for the opaque handle by the above?
+  // DPT THIS IS BROKEN .. what gets set for the opaque handle by the above?
 
   return result_OK;
 }
@@ -843,22 +791,87 @@ static void fin_blur(void)
   dialogue_destruct(&GLOBALS.effects_blr_d);
 }
 
-static result_t init_tone(void)
+
+
+/* ----------------------------------------------------------------------- */
+
+// FIXME: Introduce a typedef for this form of function? e.g. scroll_list_drawfn
+static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
+static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
+static void scroll_list_event_callback(scroll_list_event *event, void *opaque);
+
+/* ----------------------------------------------------------------------- */
+
+static result_t register_main(effectwin_t *ew)
+{
+  static const event_wimp_handler_spec wimp_handlers[] =
+  {
+    { wimp_MOUSE_CLICK, main_event_mouse_click },
+  };
+
+  result_t err;
+
+  event_register_wimp_group(1,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            ew->window,
+                            event_ANY_ICON,
+                            ew);
+
+  ew->sl = scroll_list_create(ew->window, EFFECTS_I_PANE_PLACEHOLDER);
+  if (ew->sl == NULL)
+    return result_OOM; // FIXME potentially inaccurate
+
+  scroll_list_set_row_height(ew->sl, HEIGHT, 4);
+  scroll_list_set_handlers(ew->sl,
+                           redraw_element,
+                           redraw_leader,
+                           scroll_list_event_callback,
+                           ew);
+
+  err = help_add_window(scroll_list_get_window_handle(ew->sl), "effects_list");
+  if (err)
+    return err;
+
+  return result_OK;
+}
+
+static void deregister_main(effectwin_t *ew)
+{
+  help_remove_window(scroll_list_get_window_handle(ew->sl));
+
+  scroll_list_destroy(ew->sl);
+}
+
+static result_t register_add(effectwin_t *ew)
+{
+  static const event_wimp_handler_spec wimp_handlers[] =
+  {
+    { wimp_MOUSE_CLICK, add_event_mouse_click },
+  };
+
+  event_register_wimp_group(1,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            ew->window,
+                            event_ANY_ICON,
+                            ew);
+  return result_OK;
+}
+
+static void deregister_add(effectwin_t *ew)
+{
+}
+
+// blur would go here
+
+static result_t register_tone(effectwin_t *ew)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
     { wimp_REDRAW_WINDOW_REQUEST, tone_event_redraw_window_request },
     { wimp_MOUSE_CLICK,           tone_event_mouse_click           },
   };
-
-  result_t     err;
-  effectwin_t *ew = &LOCALS.single;
-
-  GLOBALS.effects_crv_w = window_create("effects_crv");
-
-  err = help_add_window(GLOBALS.effects_crv_w, "effects_crv");
-  if (err)
-    return err;
 
   event_register_wimp_group(1,
                             wimp_handlers,
@@ -870,10 +883,36 @@ static result_t init_tone(void)
   return result_OK;
 }
 
+static void deregister_tone(effectwin_t *ew)
+{
+}
+
+
+
+
+static result_t init_tone(void)
+{
+  result_t     err;
+  effectwin_t *ew = &LOCALS.single;
+
+  GLOBALS.effects_crv_w = window_create("effects_crv");
+
+  err = help_add_window(GLOBALS.effects_crv_w, "effects_crv");
+  if (err)
+    return err;
+
+  return result_OK;
+}
+
 static void fin_tone(void)
 {
   help_remove_window(GLOBALS.effects_crv_w);
 }
+
+// todo
+// divide resources into persistent (e.g. effects window) and transient (dialogues)
+// any persistent resources need to be allocated per-image
+// any transient resources need to be allocated once, and registered when used (and deregistered afterwards)
 
 result_t effects_init(void)
 {
@@ -889,7 +928,6 @@ result_t effects_init(void)
 
   init_main();
   init_add();
-  init_clear();
   init_blur();
   init_tone();
 
@@ -902,7 +940,6 @@ void effects_fin(void)
 
   fin_tone();
   fin_blur();
-  fin_clear();
   fin_add();
   fin_main();
 
@@ -1847,7 +1884,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
-  effectwin_t  *ew = handle; // DPT THIS WON'T WORK WITH CURRENT DIALOGUE CODE WHICH RETURNS HANDLE==dialogue_t
+  effectwin_t  *ew = handle; // DPT THIS WON'T WORK WITH CURRENT DIALOGUE CODE WHICH RETURNS handlew pointing to the relevant dialogue_t
   wimp_pointer *pointer;
   int           val;
 
@@ -2017,42 +2054,90 @@ static void image_changed_callback(image_t             *image,
   }
 }
 
-void effects_open(image_t *image)
+/* ----------------------------------------------------------------------- */
+
+/* set handlers for per-window events */
+static void effectwin_register_window_handlers(int reg, effectwin_t *ew)
+{
+//  static const event_wimp_handler_spec wimp_handlers[] =
+//  {
+//    { wimp_REDRAW_WINDOW_REQUEST, effectwin__event_redraw_window_request },
+//    { wimp_CLOSE_WINDOW_REQUEST,  effectwin__event_close_window_request  },
+//    { wimp_MOUSE_CLICK,           effectwin__event_mouse_click           },
+//    { wimp_KEY_PRESSED,           effectwin__event_key_pressed           },
+//    { wimp_SCROLL_REQUEST,        effectwin__event_scroll_request        },
+//    { wimp_LOSE_CARET,            effectwin__event_lose_caret            },
+//    { wimp_GAIN_CARET,            effectwin__event_gain_caret            },
+//  };
+//
+//  event_register_wimp_group(reg,
+//                            wimp_handlers,
+//                            NELEMS(wimp_handlers),
+//                            ew->window,
+//                            event_ANY_ICON,
+//                            ew);
+}
+
+static result_t effectwin_set_window_handlers(effectwin_t *ew)
+{
+  result_t err;
+
+  effectwin_register_window_handlers(1, ew);
+
+  err = help_add_window(ew->window, "effectwin");
+
+  return err;
+}
+
+static void effectwin_unset_window_handlers(effectwin_t *ew)
+{
+  help_remove_window(ew->window);
+
+  effectwin_register_window_handlers(0, ew);
+}
+
+/* ----------------------------------------------------------------------- */
+
+static result_t effectwin_create(effectwin_t **new_ew, image_t *image)
 {
   result_t     err;
-  effectwin_t *ew = &LOCALS.single;
+  effectwin_t *ew = NULL;
+  wimp_w       w  = wimp_ICON_BAR;
 
-  if (!effects_available(image))
-  {
-    beep();
-    return;
-  }
+  *new_ew = NULL;
 
-  if (LOCALS.open)
-  {
-      if (ew->image == image)
-      {
-          /* opened for the current image */
-          window_open_at(GLOBALS.effects_w, AT_BOTTOMPOINTER);
-          return;
-      }
-      else
-      {
-          /* opened for a different image */
-          effects_close(ew);
-      }
-  }
+  ew = malloc(sizeof(*ew));
+  if (ew == NULL)
+    goto NoMem;
 
-  image_start_editing(image);
+  /* Clone ourselves a window */
+  w = window_clone(GLOBALS.effects_w);
+  if (w == NULL)
+    goto NoMem;
+
+  // TODO: build the scrollist too
+
+  ew->window = w;
+  
+  /* fill out */
 
   ew->image = image;
 
+  err = effectwin_set_window_handlers(ew);
+  if (err)
+    goto Failure;
+
+  // add to list
+  list_add_to_head(&LOCALS.list_anchor, &ew->list);
+
+
+  /// CHECK THIS LOT OVER
+
+  image_start_editing(image);
+
   err = create_images(ew);
   if (err)
-  {
-    result_report(err);
-    return;
-  }
+    goto Failure;
 
   image_select(image, 2);
 
@@ -2060,11 +2145,76 @@ void effects_open(image_t *image)
   imageobserver_register(image, image_changed_callback, ew);
 
   /* open as a proper window */
-  window_open_at(GLOBALS.effects_w, AT_BOTTOMPOINTER);
-
-  LOCALS.open = 1;
+  window_open_at(ew->window, AT_BOTTOMPOINTER);
 
   main_update_dialogue(ew);
+
+
+  *new_ew = ew;
+
+  return result_OK;
+
+
+NoMem:
+  err = result_OOM;
+  goto Failure;
+
+
+Failure:
+  if (w != wimp_ICON_BAR)
+    window_delete_cloned(w);
+
+  free(ew);
+
+  return err;
+}
+
+static void effectwin_destroy(effectwin_t *ew)
+{
+  if (ew == NULL)
+    return;
+
+  list_remove(&LOCALS.list_anchor, &ew->list);
+
+  effectwin_unset_window_handlers(ew);
+
+  wimp_delete_window(ew->window);
+  // todo: destroy scrollist too
+
+  free(ew);
+}
+
+/* ----------------------------------------------------------------------- */
+
+void effects_open(image_t *image)
+{
+  result_t     err;
+  effectwin_t *ew;
+
+  if (!effects_available(image))
+  {
+    beep();
+    return;
+  }
+
+  // search list for an effectwin on that image
+  ew = (effectwin_t *) list_find(&LOCALS.list_anchor, offsetof(effectwin_t, image), (int) image);
+  if (ew)
+  {
+    /* pop it to the front */
+    window_open_at(ew->window, AT_BOTTOMPOINTER);
+    return;
+  }
+
+  err = effectwin_create(&ew, image);
+  if (err)
+    goto Failure;
+  
+  return;
+
+
+Failure:
+  result_report(err);
 }
 
 static void effects_close(effectwin_t *ew)
@@ -2084,9 +2234,9 @@ static void effects_close(effectwin_t *ew)
   ew->image = NULL;
 
   window_close(GLOBALS.effects_w);
-
-  LOCALS.open = 0;
 }
+
+/* ----------------------------------------------------------------------- */
 
 /* Make the effects permanent, overwriting source. */
 static void effects_apply(effectwin_t *ew)
@@ -2112,6 +2262,8 @@ static void effects_cancel(effectwin_t *ew)
 {
   remove_all_effects(ew);
 }
+
+/* ----------------------------------------------------------------------- */
 
 int effects_available(const image_t *image)
 {
