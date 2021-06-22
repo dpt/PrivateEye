@@ -182,10 +182,6 @@ typedef result_t (effect_applier)(osspriteop_area   *area,
 static struct
 {
   list_t list_anchor; /* linked list of effectwins */
-
-  // to get removed later
- // int         open;
-  effectwin_t single;
 }
 LOCALS;
 
@@ -732,69 +728,6 @@ static event_message_handler clear_message_colour_picker_colour_choice;
 
 /* ----------------------------------------------------------------------- */
 
-static result_t init_main(void)
-{
-  result_t err;
-
-  GLOBALS.effects_w = window_create("effects");
-
-  err = help_add_window(GLOBALS.effects_w, "effects");
-  if (err)
-    return err;
-
-  return result_OK;
-}
-
-static void fin_main(void)
-{
-  help_remove_window(GLOBALS.effects_w);
-}
-
-static result_t init_add(void)
-{
-  result_t err;
-
-  GLOBALS.effects_add_w = window_create("effects_add");
-
-  err = help_add_window(GLOBALS.effects_add_w, "effects_add");
-  if (err)
-    return err;
-
-  return result_OK;
-}
-
-static void fin_add(void)
-{
-  help_remove_window(GLOBALS.effects_add_w);
-}
-
-static result_t init_blur(void)
-{
-  result_t err;
-
-  err = dialogue_construct(&GLOBALS.effects_blr_d,
-                            "effects_blr",
-                            EFFECTS_BLR_B_APPLY,
-                            EFFECTS_BLR_B_CANCEL);
-  if (err)
-    return err;
-
-  dialogue_set_mouse_click_handler(&GLOBALS.effects_blr_d,
-                                    blur_event_mouse_click);
-  // DPT THIS IS BROKEN .. what gets set for the opaque handle by the above?
-
-  return result_OK;
-}
-
-static void fin_blur(void)
-{
-  dialogue_destruct(&GLOBALS.effects_blr_d);
-}
-
-
-
-/* ----------------------------------------------------------------------- */
-
 // FIXME: Introduce a typedef for this form of function? e.g. scroll_list_drawfn
 static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
 static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
@@ -853,7 +786,7 @@ static result_t register_add(effectwin_t *ew)
   event_register_wimp_group(1,
                             wimp_handlers,
                             NELEMS(wimp_handlers),
-                            ew->window,
+                            GLOBALS.effects_add_w,
                             event_ANY_ICON,
                             ew);
   return result_OK;
@@ -887,13 +820,71 @@ static void deregister_tone(effectwin_t *ew)
 {
 }
 
+/* ----------------------------------------------------------------------- */
 
+static result_t init_main(void)
+{
+  result_t err;
 
+  GLOBALS.effects_w = window_create("effects");
+
+  // this won't work will it? it's attaching help to the base window
+  err = help_add_window(GLOBALS.effects_w, "effects");
+  if (err)
+    return err;
+
+  return result_OK;
+}
+
+static void fin_main(void)
+{
+  help_remove_window(GLOBALS.effects_w);
+}
+
+static result_t init_add(void)
+{
+  result_t err;
+
+  GLOBALS.effects_add_w = window_create("effects_add");
+
+  err = help_add_window(GLOBALS.effects_add_w, "effects_add");
+  if (err)
+    return err;
+
+  return result_OK;
+}
+
+static void fin_add(void)
+{
+  help_remove_window(GLOBALS.effects_add_w);
+}
+
+static result_t init_blur(void)
+{
+  result_t err;
+
+  err = dialogue_construct(&GLOBALS.effects_blr_d,
+                            "effects_blr",
+                            EFFECTS_BLR_B_APPLY,
+                            EFFECTS_BLR_B_CANCEL);
+  if (err)
+    return err;
+
+  dialogue_set_mouse_click_handler(&GLOBALS.effects_blr_d,
+                                    blur_event_mouse_click);
+  // DPT THIS IS BROKEN .. what gets set for the opaque handle by the above?
+
+  return result_OK;
+}
+
+static void fin_blur(void)
+{
+  dialogue_destruct(&GLOBALS.effects_blr_d);
+}
 
 static result_t init_tone(void)
 {
-  result_t     err;
-  effectwin_t *ew = &LOCALS.single;
+  result_t err;
 
   GLOBALS.effects_crv_w = window_create("effects_crv");
 
@@ -908,6 +899,8 @@ static void fin_tone(void)
 {
   help_remove_window(GLOBALS.effects_crv_w);
 }
+
+/* ----------------------------------------------------------------------- */
 
 // todo
 // divide resources into persistent (e.g. effects window) and transient (dialogues)
@@ -926,10 +919,10 @@ result_t effects_init(void)
 
   /* modules */
 
-  init_main();
-  init_add();
-  init_blur();
-  init_tone();
+  err = init_main(); // TODO handle
+  err = init_add();
+  err = init_blur();
+  err = init_tone();
 
   return result_OK;
 }
@@ -973,7 +966,7 @@ static void main_update_dialogue(effectwin_t *ew)
 
   blendval = ew->blendval = blendslider_DEFAULT;
 
-  slider_set(GLOBALS.effects_w,
+  slider_set(ew->window,
              EFFECTS_S_BLEND_PIT,
              blendval,
              blendslider_MIN,
@@ -2086,14 +2079,49 @@ static result_t effectwin_set_window_handlers(effectwin_t *ew)
 
   err = help_add_window(ew->window, "effectwin");
 
+  err = register_main(ew);
+  err = register_add(ew);
+  err = register_tone(ew);
+
   return err;
 }
 
 static void effectwin_unset_window_handlers(effectwin_t *ew)
 {
+  deregister_tone(ew);
+  deregister_add(ew);
+  deregister_main(ew);
+
   help_remove_window(ew->window);
 
   effectwin_register_window_handlers(0, ew);
+}
+
+/* ----------------------------------------------------------------------- */
+
+/* Make the effects permanent, overwriting source. */
+static void effects_apply(effectwin_t *ew)
+{
+  image_t         *image;
+  osspriteop_area *area;
+
+  image = ew->image;
+  area  = (osspriteop_area *) image->image;
+
+  image_about_to_modify(ew->image);
+
+  /* copy result to source */
+
+  copy_sprite_data(area, 2, 0);
+
+  image_modified(ew->image, image_MODIFIED_DATA);
+
+  remove_all_effects(ew);
+}
+
+static void effects_cancel(effectwin_t *ew)
+{
+  remove_all_effects(ew);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -2174,6 +2202,26 @@ static void effectwin_destroy(effectwin_t *ew)
   if (ew == NULL)
     return;
 
+
+  /* this kicks apply_effects, so is doing more work than necessary */
+  remove_all_effects(ew);
+
+  imageobserver_deregister(ew->image, image_changed_callback, NULL);
+
+  image_select(ew->image, 0);
+  image_preview(ew->image); /* force an update */
+
+  delete_images(ew);
+
+  image_stop_editing(ew->image);
+
+  ew->image = NULL;
+
+  window_close(ew->window);
+
+
+  // standard stuff
+
   list_remove(&LOCALS.list_anchor, &ew->list);
 
   effectwin_unset_window_handlers(ew);
@@ -2198,7 +2246,9 @@ void effects_open(image_t *image)
   }
 
   // search list for an effectwin on that image
-  ew = (effectwin_t *) list_find(&LOCALS.list_anchor, offsetof(effectwin_t, image), (int) image);
+  ew = (effectwin_t *) list_find(&LOCALS.list_anchor,
+                                  offsetof(effectwin_t, image),
+                            (int) image);
   if (ew)
   {
     /* pop it to the front */
@@ -2217,50 +2267,10 @@ Failure:
   result_report(err);
 }
 
+// is this needed?
 static void effects_close(effectwin_t *ew)
 {
-  /* this kicks apply_effects, so is doing more work than necessary */
-  remove_all_effects(ew);
-
-  imageobserver_deregister(ew->image, image_changed_callback, NULL);
-
-  image_select(ew->image, 0);
-  image_preview(ew->image); /* force an update */
-
-  delete_images(ew);
-
-  image_stop_editing(ew->image);
-
-  ew->image = NULL;
-
-  window_close(GLOBALS.effects_w);
-}
-
-/* ----------------------------------------------------------------------- */
-
-/* Make the effects permanent, overwriting source. */
-static void effects_apply(effectwin_t *ew)
-{
-  image_t         *image;
-  osspriteop_area *area;
-
-  image = ew->image;
-  area  = (osspriteop_area *) image->image;
-
-  image_about_to_modify(ew->image);
-
-  /* copy result to source */
-
-  copy_sprite_data(area, 2, 0);
-
-  image_modified(ew->image, image_MODIFIED_DATA);
-
-  remove_all_effects(ew);
-}
-
-static void effects_cancel(effectwin_t *ew)
-{
-  remove_all_effects(ew);
+  effectwin_destroy(ew);
 }
 
 /* ----------------------------------------------------------------------- */
