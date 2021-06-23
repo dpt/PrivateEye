@@ -379,10 +379,14 @@ static memcpyfn *choose_memcpy(void)
 
 static void apply_blend(effectswin_t *ew, int val)
 {
+  xhourglass_on();
+
   ew->blender.make_lut(val, 0, &ew->blender);
   ew->blender.blend(&ew->blender);
 
   image_preview(ew->image);
+
+  xhourglass_off();
 }
 
 static void copy_sprite_data(osspriteop_area *area,
@@ -417,7 +421,7 @@ static result_t apply_effects(effectswin_t *ew)
 
   err = result_OK;
 
-  hourglass_on();
+  xhourglass_on();
 
   image = ew->image;
   area  = (osspriteop_area *) image->image;
@@ -450,7 +454,7 @@ static result_t apply_effects(effectswin_t *ew)
 
       src = dst; /* use degenerate from now on */
 
-      hourglass_percentage((i + 1) * 100 / ea->nentries);
+      xhourglass_percentage((i + 1) * 100 / ea->nentries);
     }
   }
   else
@@ -472,7 +476,7 @@ static result_t apply_effects(effectswin_t *ew)
 
 Exit:
 
-  hourglass_off();
+  xhourglass_off();
 
   return err;
 }
@@ -1896,6 +1900,8 @@ static result_t create_images(effectswin_t *ew)
   osspriteop_header *header3;
   int                r;
 
+  xhourglass_on();
+
   image = ew->image;
   area  = (osspriteop_area *) image->image;
 
@@ -1933,6 +1939,8 @@ static result_t create_images(effectswin_t *ew)
   ew->blender.deg = sprite_data(header2);
   ew->blender.dst = sprite_data(header3);
 
+  xhourglass_off();
+
   return result_OK;
 }
 
@@ -1942,6 +1950,8 @@ static int delete_images(effectswin_t *ew)
   int                areasize;
   osspriteop_header *header;
   int                r;
+
+  xhourglass_on();
 
   area     = (osspriteop_area *) ew->image->image;
   areasize = area->size;
@@ -1962,6 +1972,8 @@ static int delete_images(effectswin_t *ew)
   }
 
   area->size = flex_size((flex_ptr) &ew->image->image);
+
+  xhourglass_off();
 
   return 0;
 }
