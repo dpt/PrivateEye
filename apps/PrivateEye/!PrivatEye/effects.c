@@ -723,45 +723,6 @@ static scroll_list_eventfn effect_list_event;
 
 /* ----------------------------------------------------------------------- */
 
-static result_t register_add(int reg, effectswin_t *ew)
-{
-  static const event_wimp_handler_spec wimp_handlers[] =
-  {
-    { wimp_MOUSE_CLICK, add_event_mouse_click },
-  };
-
-  event_register_wimp_group(reg,
-                            wimp_handlers,
-                            NELEMS(wimp_handlers),
-                            GLOBALS.effects_add_w,
-                            event_ANY_ICON,
-                            ew);
-
-  // TODO: watch for the transient windows disappearing and deregister their handlers
-
-  return result_OK;
-}
-
-static result_t register_tone(int reg, effectswin_t *ew)
-{
-  static const event_wimp_handler_spec wimp_handlers[] =
-  {
-    { wimp_REDRAW_WINDOW_REQUEST, tone_event_redraw_window_request },
-    { wimp_MOUSE_CLICK,           tone_event_mouse_click           },
-  };
-
-  event_register_wimp_group(reg,
-                            wimp_handlers,
-                            NELEMS(wimp_handlers),
-                            GLOBALS.effects_crv_w,
-                            event_ANY_ICON,
-                            ew);
-
-  return result_OK;
-}
-
-/* ----------------------------------------------------------------------- */
-
 static result_t init_main(void)
 {
   result_t err;
@@ -781,11 +742,28 @@ static void fin_main(void)
   help_remove_window(GLOBALS.effects_w);
 }
 
+static void register_add(int reg)
+{
+  static const event_wimp_handler_spec wimp_handlers[] =
+  {
+    { wimp_MOUSE_CLICK, add_event_mouse_click },
+  };
+
+  event_register_wimp_group(reg,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            GLOBALS.effects_add_w,
+                            event_ANY_ICON,
+                            NULL); // will use LOCALS.etc.
+}
+
 static result_t init_add(void)
 {
   result_t err;
 
   GLOBALS.effects_add_w = window_create("effects_add");
+
+  register_add(1);
 
   err = help_add_window(GLOBALS.effects_add_w, "effects_add");
   if (err)
@@ -797,6 +775,7 @@ static result_t init_add(void)
 static void fin_add(void)
 {
   help_remove_window(GLOBALS.effects_add_w);
+  register_add(0);
 }
 
 static result_t init_blur(void)
@@ -821,11 +800,29 @@ static void fin_blur(void)
   dialogue_destruct(&GLOBALS.effects_blr_d);
 }
 
+static void register_tone(int reg)
+{
+  static const event_wimp_handler_spec wimp_handlers[] =
+  {
+    { wimp_REDRAW_WINDOW_REQUEST, tone_event_redraw_window_request },
+    { wimp_MOUSE_CLICK,           tone_event_mouse_click           },
+  };
+
+  event_register_wimp_group(reg,
+                            wimp_handlers,
+                            NELEMS(wimp_handlers),
+                            GLOBALS.effects_crv_w,
+                            event_ANY_ICON,
+                            NULL);
+}
+
 static result_t init_tone(void)
 {
   result_t err;
 
   GLOBALS.effects_crv_w = window_create("effects_crv");
+
+  register_tone(1);
 
   err = help_add_window(GLOBALS.effects_crv_w, "effects_crv");
   if (err)
@@ -837,14 +834,10 @@ static result_t init_tone(void)
 static void fin_tone(void)
 {
   help_remove_window(GLOBALS.effects_crv_w);
+  register_tone(0);
 }
 
 /* ----------------------------------------------------------------------- */
-
-// todo
-// divide resources into persistent (e.g. effects window) and transient (dialogues)
-// any persistent resources need to be allocated per-image
-// any transient resources need to be allocated once, and registered when used (and deregistered afterwards)
 
 result_t effects_init(void)
 {
@@ -858,7 +851,7 @@ result_t effects_init(void)
 
   /* modules */
 
-  err = init_main(); // TODO handle
+  err = init_main(); // TODO handle errs
   err = init_add();
   err = init_blur();
   err = init_tone();
@@ -883,11 +876,10 @@ void effects_fin(void)
 /* ---------------------------------------------------------------------- */
 
 // push lower, ideally
-// 
 static struct
 {
-  list_t        list_anchor; /* linked list of effectwins */
-  effectswin_t *recent; /* most recent effectwin */
+  list_t        list_anchor;	/* linked list of effectswins */
+  effectswin_t *recent;		/* most recent effectswin */
 }
 LOCALS;
 
@@ -962,7 +954,6 @@ static int main_event_mouse_click(wimp_event_no event_no,
         // FIXME: Want to open the palette win so it avoids covering the
         // pane.
 
-        register_add(1, ew);
         LOCALS.recent = ew;
         window_open_as_menu_here(GLOBALS.effects_add_w, x, y);
       }
@@ -1330,10 +1321,11 @@ static int add_event_mouse_click(wimp_event_no event_no,
                                  wimp_block   *block,
                                  void         *handle)
 {
+  effectswin_t *ew = LOCALS.recent;
   wimp_pointer *pointer;
-  effectswin_t  *ew = handle;
 
   NOT_USED(event_no);
+  NOT_USED(handle);
 
   pointer = &block->pointer;
 
@@ -1371,7 +1363,7 @@ static void clear_set_handlers(effectswin_t *ew, int reg)
                                ew);
 }
 
-static int clear_edit(effectswin_t *ew, effects_element *e, int x, int y)
+static int clear_edit(effectswin_t *ew, effects_element *el, int x, int y)
 {
   colourpicker_dialogue dialogue;
   wimp_w                picker_w;
@@ -1384,7 +1376,7 @@ static int clear_edit(effectswin_t *ew, effects_element *e, int x, int y)
   dialogue.visible.y1 = y;
   dialogue.xscroll    = 0;
   dialogue.yscroll    = 0;
-  dialogue.colour     = e->args.clear.colour;
+  dialogue.colour     = el->args.clear.colour;
   dialogue.size       = 0;
 
   colourpicker_open_dialogue(colourpicker_OPEN_TRANSIENT,
@@ -1557,7 +1549,6 @@ static int tone_edit(effectswin_t *ew, effects_element *el, int x, int y)
 
   tone_start_editing(ew);
 
-  register_tone(1, ew);
   LOCALS.recent = ew;
   window_open_as_menu_here(GLOBALS.effects_crv_w, x, y);
 
@@ -1587,10 +1578,11 @@ static int tone_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
-  effectswin_t  *ew = handle;
+  effectswin_t *ew = LOCALS.recent;
   wimp_pointer *pointer;
 
   NOT_USED(event_no);
+  NOT_USED(handle);
 
   pointer = &block->pointer;
 
