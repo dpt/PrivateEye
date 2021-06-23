@@ -349,7 +349,7 @@ editors[] =
 
 /* ---------------------------------------------------------------------- */
 
-// FIXME: Hoist this out to a utility library.
+/* FIXME: Hoist this out to a utility library. */
 
 #define AppAcc_Status 0x58982
 #define AppAcc_Copy   0x58985
@@ -646,12 +646,10 @@ static void new_effects(effectswin_t *ew)
 
 static void edit_effect(effectswin_t *ew, int index)
 {
-  effects_array   *ea;
   effects_element *el;
   effect_editor   *editor;
 
-  ea = &ew->effects;
-  el = &ea->entries[index];
+  el = &ew->effects.entries[index];
   ew->editing_element = el;
 
   editor = editors[el->effect].editor;
@@ -718,8 +716,8 @@ static event_message_handler clear_message_colour_picker_colour_choice;
 
 /* ----------------------------------------------------------------------- */
 
-static scroll_list_redrawfn effect_list_draw_row, effect_list_draw_leader;
-static scroll_list_eventfn effect_list_event;
+static scroll_list_redrawfn effects_list_draw_row, effects_list_draw_leader;
+static scroll_list_eventfn effects_list_event;
 
 /* ----------------------------------------------------------------------- */
 
@@ -951,8 +949,8 @@ static int main_event_mouse_click(wimp_event_no event_no,
         x = state.visible.x0;
         y = state.visible.y0 - 2; // fix 2-> (1<<yeig)
 
-        // FIXME: Want to open the palette win so it avoids covering the
-        // pane.
+	/* FIXME: Want to open the palette win so it avoids covering the pane.
+	 */
 
         LOCALS.recent = ew;
         window_open_as_menu_here(GLOBALS.effects_add_w, x, y);
@@ -991,12 +989,12 @@ static int main_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static void draw_element(effects_element *e, int x, int y, int highlight)
+static void draw_row(effects_element *e, int x, int y, int highlight)
 {
   wimp_icon   icon;
   const char *name;
 
-  /* sprite */
+  /* draw sprite */
 
   icon.extent.x0 = x;
   icon.extent.y0 = y;
@@ -1019,10 +1017,10 @@ static void draw_element(effects_element *e, int x, int y, int highlight)
   icon.data.indirected_sprite.area = window_get_sprite_area();
   icon.data.indirected_sprite.size = strlen(name);
 
-  // FIXME: Not using OSLib here because...
+  /* OSLib's wimp_plot_icon didn't work, so... */
   _swi(Wimp_PlotIcon, _INR(1,5), &icon, 0, 0, 0, 0);
 
-  /* text */
+  /* draw text */
 
   icon.extent.x0 = icon.extent.x1;
   icon.extent.x1 += TEXTWIDTH;
@@ -1045,7 +1043,7 @@ static void draw_element(effects_element *e, int x, int y, int highlight)
   _swi(Wimp_PlotIcon, _INR(1,5), &icon, 0, 0, 0, 0);
 }
 
-static void draw_marker(int x, int y)
+static void draw_insert_marker(int x, int y)
 {
   os_colour_number c;
 
@@ -1094,7 +1092,7 @@ static void drageffect_renderer(void *opaque)
 
   e.effect = (effects_type) opaque;
 
-  draw_element(&e, 0, 0, 0);
+  draw_row(&e, 0, 0, 0);
 }
 
 // this looks like it belongs in scroll-list.c
@@ -1252,12 +1250,12 @@ static void drageffect_icon(effectswin_t  *ew,
 
 /* scroll list stuff */
 
-static void effect_list_draw_row(wimp_draw *redraw,
-                                 int        wax,
-                                 int        way,
-                                 int        i,
-                                 int        sel,
-                                 void      *opaque)
+static void effects_list_draw_row(wimp_draw *redraw,
+                                  int        wax,
+                                  int        way,
+                                  int        i,
+                                  int        sel,
+                                  void      *opaque)
 {
   effectswin_t   *ew = opaque;
   effects_element *e;
@@ -1266,15 +1264,15 @@ static void effect_list_draw_row(wimp_draw *redraw,
 
   e = ew->effects.entries + i;
 
-  draw_element(e, wax, way, sel);
+  draw_row(e, wax, way, sel);
 }
 
-static void effect_list_draw_leader(wimp_draw *redraw,
-                                    int        wax,
-                                    int        way,
-                                    int        i,
-                                    int        sel,
-                                    void      *opaque)
+static void effects_list_draw_leader(wimp_draw *redraw,
+                                     int        wax,
+                                     int        way,
+                                     int        i,
+                                     int        sel,
+                                     void      *opaque)
 {
   int x,y;
 
@@ -1287,11 +1285,11 @@ static void effect_list_draw_leader(wimp_draw *redraw,
   x = (redraw->box.x0 - redraw->xscroll) + wax;
   y = (redraw->box.y1 - redraw->yscroll) + way;
 
-  draw_marker(x, y);
+  draw_insert_marker(x, y);
 }
 
-static void effect_list_event(scroll_list_event *event,
-                                       void              *opaque)
+static void effects_list_event(scroll_list_event *event,
+                              void               *opaque)
 {
   effectswin_t *ew = opaque;
 
@@ -1704,7 +1702,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
         pointer->i == EFFECTS_CRV_B_CANCEL)
     {
       if (pointer->buttons & wimp_CLICK_SELECT)
-        // need to throw away any remaining tonemap from tone.map
+        // FIXME: Need to throw away any remaining tonemap from tone.map
         wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
       else
         tone_start_editing(ew);
@@ -1725,10 +1723,6 @@ static const slider_rec blur_sliders[] =
 {
   { EFFECTS_BLR_S_EFFECT_PIT, BLURMIN, BLURMAX, 2, &blur.level },
 };
-
-//static void blur_set_values_and_redraw(void)
-//{
-//}
 
 // callback from slider code
 static void blur_slider_update(wimp_i i, int val, void *opaque)
@@ -1753,8 +1747,6 @@ static void blur_slider_update(wimp_i i, int val, void *opaque)
   icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d),
                EFFECTS_BLR_W_VAL,
                val);
-
-  //blur_set_values_and_redraw();
 }
 
 static void blur_reset_dialogue(void)
@@ -1802,8 +1794,6 @@ static void blur_start_editing(effectswin_t *ew)
   blur = ew->editing_element->args.blur;
 
   blur_reset_dialogue();
-
-  //blur_set_values_and_redraw();
 }
 
 static int blur_edit(effectswin_t *ew, effects_element *el, int x, int y)
@@ -1879,9 +1869,6 @@ static int blur_event_mouse_click(wimp_event_no event_no,
         break;
       }
     }
-
-//    if (kick)
-//      blur_set_values_and_redraw();
 
     if (pointer->i == EFFECTS_BLR_B_APPLY ||
         pointer->i == EFFECTS_BLR_B_CANCEL)
@@ -2026,9 +2013,9 @@ static result_t setup_effects_list(effectswin_t *ew)
 
   scroll_list_set_row_height(ew->sl, HEIGHT, 4);
   scroll_list_set_handlers(ew->sl,
-                           effect_list_draw_row,
-                           effect_list_draw_leader,
-                           effect_list_event,
+                           effects_list_draw_row,
+                           effects_list_draw_leader,
+                           effects_list_event,
                            ew);
 
   err = help_add_window(scroll_list_get_window_handle(ew->sl), "effects_list");
@@ -2057,19 +2044,12 @@ static result_t effectswin_set_window_handlers(effectswin_t *ew)
   err = setup_effects_list(ew);
   if (err)
     return err; // fix cleanup
-  
-  // calling these here is wrong - they need to happen before we pop up the respective window
-//  err = register_add(ew);
-//  err = register_tone(ew);
-
+ 
   return err;
 }
 
 static void effectswin_unset_window_handlers(effectswin_t *ew)
 {
-//  deregister_tone(ew);
-//  deregister_add(ew);
-
   teardown_effects_list(ew);
   help_remove_window(ew->window);
   effectswin_register_window_handlers(0, ew);
@@ -2104,6 +2084,7 @@ static void effects_cancel(effectswin_t *ew)
 
 /* ----------------------------------------------------------------------- */
 
+// todo: check cleanup paths
 static result_t effectswin_create(effectswin_t **new_ew, image_t *image)
 {
   result_t     err;
@@ -2133,7 +2114,6 @@ static result_t effectswin_create(effectswin_t **new_ew, image_t *image)
   if (err)
     goto Failure;
 
-
   image_start_editing(image);
 
   err = create_images(ew);
@@ -2145,15 +2125,13 @@ static result_t effectswin_create(effectswin_t **new_ew, image_t *image)
   /* watch for changes */
   imageobserver_register(image, image_changed_callback, ew);
 
-  /* open as a proper window */
-  window_open_at(ew->window, AT_BOTTOMPOINTER);
-
   reset_main_dialogue(ew);
 
-
-  // add to list
+  /* add to list */
   list_add_to_head(&LOCALS.list_anchor, &ew->list);
 
+  /* open as a proper window */
+  window_open_at(ew->window, AT_BOTTOMPOINTER);
 
   *new_ew = ew;
 
@@ -2166,10 +2144,13 @@ NoMem:
 
 
 Failure:
-  if (w != wimp_ICON_BAR)
-    window_delete_cloned(w);
+  if (ew)
+  {
+    if (w != wimp_ICON_BAR)
+      window_delete_cloned(w);
 
-  free(ew);
+    free(ew);
+  }
 
   return err;
 }
@@ -2184,7 +2165,7 @@ static void effectswin_destroy(effectswin_t *ew)
   /* this kicks apply_effects, so is doing more work than necessary */
   remove_all_effects(ew);
 
-  imageobserver_deregister(ew->image, image_changed_callback, NULL);
+  imageobserver_deregister(ew->image, image_changed_callback, ew);
 
   image_select(ew->image, 0);
   image_preview(ew->image); /* force an update */
