@@ -3,8 +3,11 @@
  * Purpose: Effects dialogue
  * ----------------------------------------------------------------------- */
 
+// TODO: Use imageobwin?
+
 #include "swis.h"
 
+#include <assert.h>
 #include <limits.h>
 
 #include "fortify/fortify.h"
@@ -53,7 +56,7 @@
 
 /* ---------------------------------------------------------------------- */
 
-typedef int effect_effect;
+typedef int effects_type;
 enum
 {
   effect_CLEAR,
@@ -64,11 +67,12 @@ enum
   effect_EXPAND,
   effect_EQUALISE,
   effect_EMBOSS,
+  effect__LIMIT
 };
 
-static const char *effect_to_name(effect_effect e)
+static const char *effectname(effects_type e)
 {
-  static const char *names[] =
+  static const char *names[effect__LIMIT] =
   {
     "effect.clear",
     "effect.tone",
@@ -83,9 +87,9 @@ static const char *effect_to_name(effect_effect e)
   return names[e];
 }
 
-static const char *effect_to_sprite(effect_effect e)
+static const char *spritename(effects_type e)
 {
-  static const char *names[] =
+  static const char *names[effect__LIMIT] =
   {
     "fx-clear",
     "fx-tone",
@@ -129,75 +133,81 @@ typedef union
   effect_blur  blur;
   effect_tone  tone;
 }
-effect_args;
+effects_args;
 
 typedef struct
 {
-  effect_effect effect;
-  effect_args   args;
+  effects_type effect;
+  effects_args args;
 }
-effect_element;
+effects_element;
 
 typedef struct
 {
-  effect_element *entries;
+  effects_element *entries;
   int             nentries;
   int             allocated;
 }
-effect_array;
+effects_array;
 
-/* ----------------------------------------------------------------------- */
-
-typedef struct
+static void effectarray_init(effects_array *ea)
 {
-  list_t          list; /* an effectwin is a linked list node */
-  wimp_w          window;
-
-  image_t        *image;
-  blender         blender;
-  int             blendval;
-  effect_array    effects;
-  effect_element *editing_element;
-  scroll_list    *sl;
+  ea->entries   = NULL;
+  ea->nentries  = 0;
+  ea->allocated = 0;
 }
-effectwin_t;
-
-/* ----------------------------------------------------------------------- */
-
-static void effects_close(effectwin_t *ew);
-static void effects_apply(effectwin_t *ew);
-static void effects_cancel(effectwin_t *ew);
 
 /* ---------------------------------------------------------------------- */
 
-typedef int effect_editor(effectwin_t *ew, effect_element *e, int x, int y);
-typedef result_t (effect_initialiser)(effect_element *e);
-typedef result_t (effect_applier)(osspriteop_area   *area,
-                                  osspriteop_header *src,
-                                  osspriteop_header *dst,
-                                  effect_element    *e);
+typedef struct effectswin effectswin_t;
 
 /* ---------------------------------------------------------------------- */
 
-static struct
+typedef int effect_editor(effectswin_t    *ew,
+                          effects_element *el,
+                          int              x,
+                          int              y);
+
+typedef result_t effect_initialiser(effects_element *el);
+
+typedef result_t effect_applier(osspriteop_area   *area,
+                                osspriteop_header *src,
+                                osspriteop_header *dst,
+                                effects_element   *el);
+
+/* ----------------------------------------------------------------------- */
+
+static void effects_close(effectswin_t *ew);
+static void effects_apply(effectswin_t *ew);
+static void effects_cancel(effectswin_t *ew);
+
+/* ----------------------------------------------------------------------- */
+
+struct effectswin
 {
-  list_t list_anchor; /* linked list of effectwins */
-}
-LOCALS;
+  list_t           list; /* an effectwin is a linked list node */
+  wimp_w           window;
+  scroll_list     *sl;
+  image_t         *image;
+  blender          blender;
+  int              blendval;
+  effects_array    effects;
+  effects_element *editing_element;
+};
 
 /* ---------------------------------------------------------------------- */
 
 static result_t clear_apply(osspriteop_area   *area,
                             osspriteop_header *src,
                             osspriteop_header *dst,
-                            effect_element    *e)
+                            effects_element   *el)
 {
-  return effects_clear_apply(area, src, dst, e->args.clear.colour);
+  return effects_clear_apply(area, src, dst, el->args.clear.colour);
 }
 
-static result_t clear_defaults(effect_element *e)
+static result_t clear_defaults(effects_element *el)
 {
-  e->args.clear.colour = 0x80808000;
+  el->args.clear.colour = 0x80808000;
 
   return result_OK;
 }
@@ -205,9 +215,9 @@ static result_t clear_defaults(effect_element *e)
 static result_t tone_apply(osspriteop_area   *area,
                            osspriteop_header *src,
                            osspriteop_header *dst,
-                           effect_element    *e)
+                           effects_element   *el)
 {
-  return effects_tonemap_apply(area, src, dst, e->args.tone.map);
+  return effects_tonemap_apply(area, src, dst, el->args.tone.map);
 }
 
 static void effect_tone_reset(effect_tone *t)
@@ -226,11 +236,11 @@ static void effect_tone_reset(effect_tone *t)
   t->spec.gain       = 50;
 }
 
-static result_t tone_defaults(effect_element *e)
+static result_t tone_defaults(effects_element *el)
 {
   effect_tone *t;
 
-  t = &e->args.tone;
+  t = &el->args.tone;
 
   t->map = tonemap_create();
   if (t->map == NULL)
@@ -246,17 +256,17 @@ static result_t tone_defaults(effect_element *e)
 static result_t grey_apply(osspriteop_area   *area,
                            osspriteop_header *src,
                            osspriteop_header *dst,
-                           effect_element    *e)
+                           effects_element   *el)
 {
-  NOT_USED(e);
+  NOT_USED(el);
 
   return effects_grey_apply(area, src, dst);
 }
 
-static result_t blur_defaults(effect_element *e)
+static result_t blur_defaults(effects_element *el)
 {
-  e->args.blur.method = effects_blur_GAUSSIAN;
-  e->args.blur.level  = 2;
+  el->args.blur.method = effects_blur_GAUSSIAN;
+  el->args.blur.level  = 2;
 
   return result_OK;
 }
@@ -264,21 +274,21 @@ static result_t blur_defaults(effect_element *e)
 static result_t blur_apply(osspriteop_area   *area,
                            osspriteop_header *src,
                            osspriteop_header *dst,
-                           effect_element    *e)
+                           effects_element   *el)
 {
   return effects_blur_apply(area,
                             src,
                             dst,
-                            e->args.blur.method,
-                            e->args.blur.level);
+                            el->args.blur.method,
+                            el->args.blur.level);
 }
 
 static result_t sharpen_apply(osspriteop_area   *area,
                               osspriteop_header *src,
                               osspriteop_header *dst,
-                              effect_element    *e)
+                              effects_element   *el)
 {
-  NOT_USED(e);
+  NOT_USED(el);
 
   return effects_sharpen_apply(area, src, dst, 0 /* unused */);
 }
@@ -286,9 +296,9 @@ static result_t sharpen_apply(osspriteop_area   *area,
 static result_t expand_apply(osspriteop_area   *area,
                              osspriteop_header *src,
                              osspriteop_header *dst,
-                             effect_element    *e)
+                             effects_element   *el)
 {
-  NOT_USED(e);
+  NOT_USED(el);
 
   return effects_expand_apply(area, src, dst, 0 /* threshold */);
 }
@@ -296,9 +306,9 @@ static result_t expand_apply(osspriteop_area   *area,
 static result_t equalise_apply(osspriteop_area   *area,
                                osspriteop_header *src,
                                osspriteop_header *dst,
-                               effect_element    *e)
+                               effects_element   *el)
 {
-  NOT_USED(e);
+  NOT_USED(el);
 
   return effects_equalise_apply(area, src, dst);
 }
@@ -306,12 +316,12 @@ static result_t equalise_apply(osspriteop_area   *area,
 static result_t emboss_apply(osspriteop_area   *area,
                              osspriteop_header *src,
                              osspriteop_header *dst,
-                             effect_element    *e)
+                             effects_element   *el)
 {
   NOT_USED(area);
   NOT_USED(src);
   NOT_USED(dst);
-  NOT_USED(e);
+  NOT_USED(el);
 
   return result_OK;
 }
@@ -369,7 +379,7 @@ static memcpyfn *choose_memcpy(void)
 
 /* ---------------------------------------------------------------------- */
 
-static void apply_blend(effectwin_t *ew, int val)
+static void apply_blend(effectswin_t *ew, int val)
 {
   ew->blender.make_lut(val, 0, &ew->blender);
   ew->blender.blend(&ew->blender);
@@ -400,10 +410,10 @@ static void copy_sprite_data(osspriteop_area *area,
   cpy(dst_data, src_data, src->size - sizeof(osspriteop_header));
 }
 
-static result_t apply_effects(effectwin_t *ew)
+static result_t apply_effects(effectswin_t *ew)
 {
   result_t         err;
-  effect_array    *v;
+  effects_array    *v;
   image_t         *image;
   osspriteop_area *area;
 
@@ -432,7 +442,7 @@ static result_t apply_effects(effectwin_t *ew)
 
     for (i = 0; i < v->nentries; i++)
     {
-      effect_element *e;
+      effects_element *e;
 
       e = v->entries + i;
 
@@ -469,10 +479,10 @@ Exit:
   return err;
 }
 
-static int insert_effect(effectwin_t *ew, effect_effect effect, int where)
+static int insert_effect(effectswin_t *ew, effects_type effect, int where)
 {
-  effect_array   *v;
-  effect_element *e;
+  effects_array   *v;
+  effects_element *e;
   size_t          shiftamt;
 
   v = &ew->effects;
@@ -518,10 +528,10 @@ static int insert_effect(effectwin_t *ew, effect_effect effect, int where)
   return 0; /* success */
 }
 
-static int move_effect(effectwin_t *ew, int from, int to)
+static int move_effect(effectswin_t *ew, int from, int to)
 {
-  effect_array   *v;
-  effect_element  t; /* temporary element */
+  effects_array   *v;
+  effects_element  t; /* temporary element */
   int             down;
   void           *dst;
   void           *src;
@@ -583,13 +593,13 @@ static int move_effect(effectwin_t *ew, int from, int to)
   return 0; /* success */
 }
 
-static int is_editable(effect_element *e)
+static int is_editable(effects_element *e)
 {
   return editors[e->effect].editor != NULL;
 }
 
 /* Shade the "Edit..." and "Delete" buttons. */
-static void new_selection(effectwin_t *ew)
+static void new_selection(effectswin_t *ew)
 {
   int             sel;
   wimp_icon_flags edit;
@@ -602,8 +612,8 @@ static void new_selection(effectwin_t *ew)
 
   if (sel >= 0)
   {
-    effect_array   *v;
-    effect_element *e;
+    effects_array   *v;
+    effects_element *e;
 
     v = &ew->effects;
     e = &v->entries[sel];
@@ -618,7 +628,7 @@ static void new_selection(effectwin_t *ew)
   icon_set_flags(ew->window, EFFECTS_B_DELETE, del, wimp_ICON_SHADED);
 }
 
-static void new_effects(effectwin_t *ew)
+static void new_effects(effectswin_t *ew)
 {
   static const wimp_i icons[] =
   {
@@ -638,12 +648,12 @@ static void new_effects(effectwin_t *ew)
   icon_group_set_flags(ew->window, icons, NELEMS(icons), eor, clear);
 }
 
-static void edit_effect(effectwin_t *ew, int index)
+static void edit_effect(effectswin_t *ew, int index)
 {
-  effect_array   *v;
-  effect_element *e;
-  wimp_pointer    pointer;
-  effect_editor  *editor;
+  effects_array   *v;
+  effects_element *e;
+  wimp_pointer     pointer;
+  effect_editor   *editor;
 
   v = &ew->effects;
 
@@ -658,9 +668,9 @@ static void edit_effect(effectwin_t *ew, int index)
     editor(ew, e, pointer.pos.x, pointer.pos.y);
 }
 
-static void effect_edited(effectwin_t *ew, effect_element *e)
+static void effect_edited(effectswin_t *ew, effects_element *e)
 {
-  effect_array *v;
+  effects_array *v;
   int           i;
 
   v = &ew->effects;
@@ -672,9 +682,9 @@ static void effect_edited(effectwin_t *ew, effect_element *e)
   apply_effects(ew);
 }
 
-static void remove_effect(effectwin_t *ew, int index)
+static void remove_effect(effectswin_t *ew, int index)
 {
-  effect_array *v;
+  effects_array *v;
   size_t        s;
 
   if (index == -1)
@@ -696,9 +706,9 @@ static void remove_effect(effectwin_t *ew, int index)
   apply_effects(ew); /* kick the effects + blender */
 }
 
-static void remove_all_effects(effectwin_t *ew)
+static void remove_all_effects(effectswin_t *ew)
 {
-  effect_array *v;
+  effects_array *v;
 
   v = &ew->effects;
 
@@ -729,13 +739,13 @@ static event_message_handler clear_message_colour_picker_colour_choice;
 /* ----------------------------------------------------------------------- */
 
 // FIXME: Introduce a typedef for this form of function? e.g. scroll_list_drawfn
-static void redraw_element(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
-static void redraw_leader(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
+static void scroll_list_draw_row(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
+static void scroll_list_draw_leader(wimp_draw *redraw, int wax, int way, int i, int sel, void *opaque);
 static void scroll_list_event_callback(scroll_list_event *event, void *opaque);
 
 /* ----------------------------------------------------------------------- */
 
-static result_t register_main(effectwin_t *ew)
+static result_t register_main(effectswin_t *ew)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -757,8 +767,8 @@ static result_t register_main(effectwin_t *ew)
 
   scroll_list_set_row_height(ew->sl, HEIGHT, 4);
   scroll_list_set_handlers(ew->sl,
-                           redraw_element,
-                           redraw_leader,
+                           scroll_list_draw_row,
+                           scroll_list_draw_leader,
                            scroll_list_event_callback,
                            ew);
 
@@ -769,14 +779,16 @@ static result_t register_main(effectwin_t *ew)
   return result_OK;
 }
 
-static void deregister_main(effectwin_t *ew)
+static void deregister_main(effectswin_t *ew)
 {
+    // todo: deregister events (elsewhere too)
+
   help_remove_window(scroll_list_get_window_handle(ew->sl));
 
   scroll_list_destroy(ew->sl);
 }
 
-static result_t register_add(effectwin_t *ew)
+static result_t register_add(effectswin_t *ew)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -792,13 +804,13 @@ static result_t register_add(effectwin_t *ew)
   return result_OK;
 }
 
-static void deregister_add(effectwin_t *ew)
+static void deregister_add(effectswin_t *ew)
 {
 }
 
 // blur would go here
 
-static result_t register_tone(effectwin_t *ew)
+static result_t register_tone(effectswin_t *ew)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -816,7 +828,7 @@ static result_t register_tone(effectwin_t *ew)
   return result_OK;
 }
 
-static void deregister_tone(effectwin_t *ew)
+static void deregister_tone(effectswin_t *ew)
 {
 }
 
@@ -949,7 +961,7 @@ void effects_fin(void)
 
 static void main_slider_update(wimp_i i, int val, void *opaque)
 {
-  effectwin_t *ew = opaque;
+  effectswin_t *ew = opaque;
 
   NOT_USED(i);
 
@@ -957,7 +969,7 @@ static void main_slider_update(wimp_i i, int val, void *opaque)
   apply_blend(ew, ew->blendval);
 }
 
-static void main_update_dialogue(effectwin_t *ew)
+static void reset_main_dialogue(effectswin_t *ew)
 {
   int blendval;
 
@@ -980,7 +992,7 @@ static int main_event_mouse_click(wimp_event_no event_no,
                                   void         *handle)
 {
   wimp_pointer *pointer;
-  effectwin_t  *ew = handle;
+  effectswin_t  *ew = handle;
 
   NOT_USED(event_no);
 
@@ -1040,7 +1052,7 @@ static int main_event_mouse_click(wimp_event_no event_no,
     if (pointer->buttons & wimp_CLICK_SELECT)
       effects_close(ew);
     else
-      main_update_dialogue(ew);
+      reset_main_dialogue(ew);
   }
 
   return event_HANDLED;
@@ -1048,7 +1060,7 @@ static int main_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static void draw_element(effect_element *e, int x, int y, int highlight)
+static void draw_element(effects_element *e, int x, int y, int highlight)
 {
   wimp_icon   icon;
   const char *name;
@@ -1071,8 +1083,7 @@ static void draw_element(effect_element *e, int x, int y, int highlight)
   if (highlight)
     icon.flags |= wimp_ICON_SELECTED;
 
-  name = effect_to_sprite(e->effect);
-
+  name = spritename(e->effect);
   icon.data.indirected_sprite.id   = (osspriteop_id) name;
   icon.data.indirected_sprite.area = window_get_sprite_area();
   icon.data.indirected_sprite.size = strlen(name);
@@ -1095,8 +1106,7 @@ static void draw_element(effect_element *e, int x, int y, int highlight)
   if (highlight)
     icon.flags |= wimp_ICON_SELECTED;
 
-  name = message0(effect_to_name(e->effect));
-
+  name = message0(effectname(e->effect));
   icon.data.indirected_text_and_sprite.text       = (char *) name;
   icon.data.indirected_text_and_sprite.validation = "";
   icon.data.indirected_text_and_sprite.size       = strlen(name);
@@ -1129,7 +1139,7 @@ static struct
 }
 drageffect_state;
 
-static void drageffect_set_handlers(effectwin_t *ew, int reg)
+static void drageffect_set_handlers(effectswin_t *ew, int reg)
 {
   static const event_wimp_handler_spec wimp_handlers[] =
   {
@@ -1149,9 +1159,9 @@ static void drageffect_set_handlers(effectwin_t *ew, int reg)
 
 static void drageffect_renderer(void *opaque)
 {
-  effect_element e;
+  effects_element e;
 
-  e.effect = (effect_effect) opaque;
+  e.effect = (effects_type) opaque;
 
   draw_element(&e, 0, 0, 0);
 }
@@ -1163,7 +1173,7 @@ static int drageffect_event_null_reason_code(wimp_event_no event_no,
 {
   static int   lastx = -1, lasty = -1;
   wimp_pointer pointer;
-  effectwin_t *ew = handle;
+  effectswin_t *ew = handle;
   int          index;
 
   NOT_USED(event_no);
@@ -1208,7 +1218,7 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
 {
   wimp_pointer pointer;
   int          index;
-  effectwin_t *ew = handle;
+  effectswin_t *ew = handle;
 
   NOT_USED(event_no);
   NOT_USED(block);
@@ -1247,6 +1257,7 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
   }
   else
   {
+    assert(index < 10);
     insert_effect(ew, drageffect_state.effect, index);
     new_effects(ew);
   }
@@ -1260,7 +1271,7 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
 }
 
 /* called to drag virtual icons, those without actual icons */
-static void drageffect_box(effectwin_t  *ew,
+static void drageffect_box(effectswin_t  *ew,
                            wimp_pointer *pointer,
                            int           effect,
                            int           moving,
@@ -1285,7 +1296,7 @@ static void drageffect_box(effectwin_t  *ew,
 
 /* if not moving: effect is the number? of the new effect
  * if moving: effect is the index of the existing effect */
-static void drageffect_icon(effectwin_t  *ew,
+static void drageffect_icon(effectswin_t  *ew,
                             wimp_pointer *pointer,
                             int           effect,
                             int           moving)
@@ -1310,15 +1321,15 @@ static void drageffect_icon(effectwin_t  *ew,
 
 /* scroll list stuff */
 
-static void redraw_element(wimp_draw *redraw,
-                           int        wax,
-                           int        way,
-                           int        i,
-                           int        sel,
-                           void      *opaque)
+static void scroll_list_draw_row(wimp_draw *redraw,
+                                 int        wax,
+                                 int        way,
+                                 int        i,
+                                 int        sel,
+                                 void      *opaque)
 {
-  effectwin_t    *ew = opaque;
-  effect_element *e;
+  effectswin_t   *ew = opaque;
+  effects_element *e;
 
   NOT_USED(redraw);
 
@@ -1327,12 +1338,12 @@ static void redraw_element(wimp_draw *redraw,
   draw_element(e, wax, way, sel);
 }
 
-static void redraw_leader(wimp_draw *redraw,
-                          int        wax,
-                          int        way,
-                          int        i,
-                          int        sel,
-                          void      *opaque)
+static void scroll_list_draw_leader(wimp_draw *redraw,
+                                    int        wax,
+                                    int        way,
+                                    int        i,
+                                    int        sel,
+                                    void      *opaque)
 {
   int x,y;
 
@@ -1351,7 +1362,7 @@ static void redraw_leader(wimp_draw *redraw,
 static void scroll_list_event_callback(scroll_list_event *event,
                                        void              *opaque)
 {
-  effectwin_t *ew = opaque;
+  effectswin_t *ew = opaque;
 
   switch (event->type)
   {
@@ -1380,7 +1391,7 @@ static int add_event_mouse_click(wimp_event_no event_no,
                                  void         *handle)
 {
   wimp_pointer *pointer;
-  effectwin_t  *ew = handle;
+  effectswin_t  *ew = handle;
 
   NOT_USED(event_no);
 
@@ -1405,7 +1416,7 @@ static int add_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static void clear_set_handlers(effectwin_t *ew, int reg)
+static void clear_set_handlers(effectswin_t *ew, int reg)
 {
   static const event_message_handler_spec message_handlers[] =
   {
@@ -1420,7 +1431,7 @@ static void clear_set_handlers(effectwin_t *ew, int reg)
                                ew);
 }
 
-static int clear_edit(effectwin_t *ew, effect_element *e, int x, int y)
+static int clear_edit(effectswin_t *ew, effects_element *e, int x, int y)
 {
   colourpicker_dialogue dialogue;
   wimp_w                picker_w;
@@ -1448,7 +1459,7 @@ static int clear_edit(effectwin_t *ew, effect_element *e, int x, int y)
 static int clear_message_colour_picker_colour_choice(wimp_message *message,
                                                      void         *opaque)
 {
-  effectwin_t                        *ew = opaque;
+  effectswin_t                        *ew = opaque;
   colourpicker_message_colour_choice *choice;
 
   choice = (colourpicker_message_colour_choice *) &message->data;
@@ -1522,7 +1533,7 @@ static void tone_slider_update(wimp_i i, int val, void *opaque)
   tone_set_values_and_redraw();
 }
 
-static void tone_reset_dialogue(effectwin_t *ew)
+static void tone_reset_dialogue(effectswin_t *ew)
 {
   static const struct
   {
@@ -1580,7 +1591,7 @@ static void tone_reset_dialogue(effectwin_t *ew)
                     tone.spec.flags & tonemap_FLAG_REFLECT);
 }
 
-static void tone_start_editing(effectwin_t *ew)
+static void tone_start_editing(effectswin_t *ew)
 {
   tonemap_destroy(tone.map);
 
@@ -1599,10 +1610,10 @@ static void tone_start_editing(effectwin_t *ew)
   tone_set_values_and_redraw();
 }
 
-static int tone_edit(effectwin_t *ew, effect_element *e, int x, int y)
+static int tone_edit(effectswin_t *ew, effects_element *el, int x, int y)
 {
   NOT_USED(ew);
-  NOT_USED(e);
+  NOT_USED(el);
 
   tone_start_editing(ew);
 
@@ -1634,7 +1645,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
-  effectwin_t  *ew = handle;
+  effectswin_t  *ew = handle;
   wimp_pointer *pointer;
 
   NOT_USED(event_no);
@@ -1850,7 +1861,7 @@ static void blur_reset_dialogue(void)
               *r->pval);
 }
 
-static void blur_start_editing(effectwin_t *ew)
+static void blur_start_editing(effectswin_t *ew)
 {
   /* copy everything across */
 
@@ -1861,7 +1872,7 @@ static void blur_start_editing(effectwin_t *ew)
   //blur_set_values_and_redraw();
 }
 
-static int blur_edit(effectwin_t *ew, effect_element *e, int x, int y)
+static int blur_edit(effectswin_t *ew, effects_element *e, int x, int y)
 {
   NOT_USED(ew);
   NOT_USED(e);
@@ -1877,7 +1888,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
                                   wimp_block   *block,
                                   void         *handle)
 {
-  effectwin_t  *ew = handle; // DPT THIS WON'T WORK WITH CURRENT DIALOGUE CODE WHICH RETURNS handlew pointing to the relevant dialogue_t
+  effectswin_t  *ew = handle; // DPT THIS WON'T WORK WITH CURRENT DIALOGUE CODE WHICH RETURNS handlew pointing to the relevant dialogue_t
   wimp_pointer *pointer;
   int           val;
 
@@ -1948,7 +1959,8 @@ static int blur_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-static result_t create_images(effectwin_t *ew)
+/* Allocates and clones images for editing, then sets up the blender. */
+static result_t create_images(effectswin_t *ew)
 {
   image_t           *image;
   osspriteop_area   *area;
@@ -1998,7 +2010,7 @@ static result_t create_images(effectwin_t *ew)
   return result_OK;
 }
 
-static int delete_images(effectwin_t *ew)
+static int delete_images(effectswin_t *ew)
 {
   osspriteop_area   *area;
   int                areasize;
@@ -2033,7 +2045,7 @@ static void image_changed_callback(image_t             *image,
                                    imageobserver_data  *data,
                                    void                *opaque)
 {
-  effectwin_t *ew = opaque;
+  effectswin_t *ew = opaque;
  
   NOT_USED(image);
   NOT_USED(data);
@@ -2050,17 +2062,17 @@ static void image_changed_callback(image_t             *image,
 /* ----------------------------------------------------------------------- */
 
 /* set handlers for per-window events */
-static void effectwin_register_window_handlers(int reg, effectwin_t *ew)
+static void effectswin_register_window_handlers(int reg, effectswin_t *ew)
 {
 //  static const event_wimp_handler_spec wimp_handlers[] =
 //  {
-//    { wimp_REDRAW_WINDOW_REQUEST, effectwin__event_redraw_window_request },
-//    { wimp_CLOSE_WINDOW_REQUEST,  effectwin__event_close_window_request  },
-//    { wimp_MOUSE_CLICK,           effectwin__event_mouse_click           },
-//    { wimp_KEY_PRESSED,           effectwin__event_key_pressed           },
-//    { wimp_SCROLL_REQUEST,        effectwin__event_scroll_request        },
-//    { wimp_LOSE_CARET,            effectwin__event_lose_caret            },
-//    { wimp_GAIN_CARET,            effectwin__event_gain_caret            },
+//    { wimp_REDRAW_WINDOW_REQUEST, effectswin__event_redraw_window_request },
+//    { wimp_CLOSE_WINDOW_REQUEST,  effectswin__event_close_window_request  },
+//    { wimp_MOUSE_CLICK,           effectswin__event_mouse_click           },
+//    { wimp_KEY_PRESSED,           effectswin__event_key_pressed           },
+//    { wimp_SCROLL_REQUEST,        effectswin__event_scroll_request        },
+//    { wimp_LOSE_CARET,            effectswin__event_lose_caret            },
+//    { wimp_GAIN_CARET,            effectswin__event_gain_caret            },
 //  };
 //
 //  event_register_wimp_group(reg,
@@ -2071,22 +2083,22 @@ static void effectwin_register_window_handlers(int reg, effectwin_t *ew)
 //                            ew);
 }
 
-static result_t effectwin_set_window_handlers(effectwin_t *ew)
+static result_t effectswin_set_window_handlers(effectswin_t *ew)
 {
   result_t err;
 
-  effectwin_register_window_handlers(1, ew);
+  effectswin_register_window_handlers(1, ew);
 
   err = help_add_window(ew->window, "effectwin");
 
-  err = register_main(ew);
+  err = register_main(ew); // sets up scroll list
   err = register_add(ew);
   err = register_tone(ew);
 
   return err;
 }
 
-static void effectwin_unset_window_handlers(effectwin_t *ew)
+static void effectswin_unset_window_handlers(effectswin_t *ew)
 {
   deregister_tone(ew);
   deregister_add(ew);
@@ -2094,13 +2106,13 @@ static void effectwin_unset_window_handlers(effectwin_t *ew)
 
   help_remove_window(ew->window);
 
-  effectwin_register_window_handlers(0, ew);
+  effectswin_register_window_handlers(0, ew);
 }
 
 /* ----------------------------------------------------------------------- */
 
 /* Make the effects permanent, overwriting source. */
-static void effects_apply(effectwin_t *ew)
+static void effects_apply(effectswin_t *ew)
 {
   image_t         *image;
   osspriteop_area *area;
@@ -2119,17 +2131,25 @@ static void effects_apply(effectwin_t *ew)
   remove_all_effects(ew);
 }
 
-static void effects_cancel(effectwin_t *ew)
+static void effects_cancel(effectswin_t *ew)
 {
   remove_all_effects(ew);
 }
 
+/* ---------------------------------------------------------------------- */
+
+static struct
+{
+  list_t list_anchor; /* linked list of effectwins */
+}
+LOCALS;
+
 /* ----------------------------------------------------------------------- */
 
-static result_t effectwin_create(effectwin_t **new_ew, image_t *image)
+static result_t effectswin_create(effectswin_t **new_ew, image_t *image)
 {
   result_t     err;
-  effectwin_t *ew = NULL;
+  effectswin_t *ew = NULL;
   wimp_w       w  = wimp_ICON_BAR;
 
   *new_ew = NULL;
@@ -2143,23 +2163,18 @@ static result_t effectwin_create(effectwin_t **new_ew, image_t *image)
   if (w == NULL)
     goto NoMem;
 
-  // TODO: build the scrollist too
-
   ew->window = w;
   
   /* fill out */
 
   ew->image = image;
+  effectarray_init(&ew->effects);
+  ew->editing_element = NULL;
 
-  err = effectwin_set_window_handlers(ew);
+  err = effectswin_set_window_handlers(ew);
   if (err)
     goto Failure;
 
-  // add to list
-  list_add_to_head(&LOCALS.list_anchor, &ew->list);
-
-
-  /// CHECK THIS LOT OVER
 
   image_start_editing(image);
 
@@ -2175,7 +2190,11 @@ static result_t effectwin_create(effectwin_t **new_ew, image_t *image)
   /* open as a proper window */
   window_open_at(ew->window, AT_BOTTOMPOINTER);
 
-  main_update_dialogue(ew);
+  reset_main_dialogue(ew);
+
+
+  // add to list
+  list_add_to_head(&LOCALS.list_anchor, &ew->list);
 
 
   *new_ew = ew;
@@ -2197,11 +2216,12 @@ Failure:
   return err;
 }
 
-static void effectwin_destroy(effectwin_t *ew)
+static void effectswin_destroy(effectswin_t *ew)
 {
   if (ew == NULL)
     return;
 
+  list_remove(&LOCALS.list_anchor, &ew->list);
 
   /* this kicks apply_effects, so is doing more work than necessary */
   remove_all_effects(ew);
@@ -2222,12 +2242,10 @@ static void effectwin_destroy(effectwin_t *ew)
 
   // standard stuff
 
-  list_remove(&LOCALS.list_anchor, &ew->list);
-
-  effectwin_unset_window_handlers(ew);
+  effectswin_unset_window_handlers(ew);
 
   wimp_delete_window(ew->window);
-  // todo: destroy scrollist too
+  // todo: destroy scrollist too here??
 
   free(ew);
 }
@@ -2237,7 +2255,7 @@ static void effectwin_destroy(effectwin_t *ew)
 void effects_open(image_t *image)
 {
   result_t     err;
-  effectwin_t *ew;
+  effectswin_t *ew;
 
   if (!effects_available(image))
   {
@@ -2246,9 +2264,9 @@ void effects_open(image_t *image)
   }
 
   // search list for an effectwin on that image
-  ew = (effectwin_t *) list_find(&LOCALS.list_anchor,
-                                  offsetof(effectwin_t, image),
-                            (int) image);
+  ew = (effectswin_t *) list_find(&LOCALS.list_anchor,
+                                   offsetof(effectswin_t, image),
+                             (int) image);
   if (ew)
   {
     /* pop it to the front */
@@ -2256,7 +2274,7 @@ void effects_open(image_t *image)
     return;
   }
 
-  err = effectwin_create(&ew, image);
+  err = effectswin_create(&ew, image);
   if (err)
     goto Failure;
   
@@ -2268,9 +2286,9 @@ Failure:
 }
 
 // is this needed?
-static void effects_close(effectwin_t *ew)
+static void effects_close(effectswin_t *ew)
 {
-  effectwin_destroy(ew);
+  effectswin_destroy(ew);
 }
 
 /* ----------------------------------------------------------------------- */
