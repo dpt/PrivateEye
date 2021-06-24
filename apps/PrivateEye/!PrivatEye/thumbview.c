@@ -119,7 +119,7 @@ static result_t thumbview_substrate_callback(const wire_message_t *message,
       return declare_keymap();
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 result_t thumbview_substrate_init(void)
@@ -130,7 +130,7 @@ result_t thumbview_substrate_init(void)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -537,7 +537,7 @@ result_t thumbview_init(void)
 
   list_init(&LOCALS.list_anchor);
 
-  return error_OK;
+  return result_OK;
 }
 
 void thumbview_fin(void)
@@ -565,7 +565,7 @@ static void thumbview_menu_update(void)
 
 static void thumbview_action(thumbview *tv, int op)
 {
-  result_t  err = error_OK;
+  result_t  err = result_OK;
   filerwin *fw;
 
   fw = tv->fw;
@@ -612,7 +612,7 @@ static void thumbview_action(thumbview *tv, int op)
     break;
   }
 
-  error_report(err);
+  result_report(err);
 }
 
 static int thumbview_event_key_pressed(wimp_event_no event_no,
@@ -885,7 +885,7 @@ result_t thumbview_create(thumbview **new_tv)
 
   *new_tv = tv;
 
-  return error_OK;
+  return result_OK;
 
 
 NoMem:
@@ -894,9 +894,9 @@ NoMem:
 
   free(tv);
 
-  err = error_OOM;
+  err = result_OOM;
 
-  error_report(err);
+  result_report(err);
 
   return err;
 }
@@ -1020,7 +1020,7 @@ static result_t layout(thumbview *tv)
   packer = packer_create(&pagedims);
   if (packer == NULL)
   {
-    err = error_OOM;
+    err = result_OOM;
     goto failure;
   }
 
@@ -1145,7 +1145,7 @@ static result_t layout(thumbview *tv)
 
   filerwin_set_dimensions(tv->fw, tv->item_w, tv->item_h);
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
@@ -1164,7 +1164,7 @@ static result_t load_directory_cb(const char          *obj_name,
   drawable_t      *drawable;
 
   if (!image_is_loadable(info->file_type))
-    return error_OK;
+    return result_OK;
 
   if (tv->nentries == tv->maxentries)
   {
@@ -1177,7 +1177,7 @@ static result_t load_directory_cb(const char          *obj_name,
 
     newentries = realloc(tv->entries, newmaxentries * sizeof(*tv->entries));
     if (newentries == NULL)
-      return error_OOM;
+      return result_OOM;
 
     tv->entries    = newentries;
     tv->maxentries = newmaxentries;
@@ -1203,7 +1203,7 @@ static result_t load_directory_cb(const char          *obj_name,
                                     info->file_type);
     if (image == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto Failure;
     }
   }
@@ -1237,7 +1237,7 @@ static result_t load_directory_cb(const char          *obj_name,
                    (const unsigned char *) leaf,
                    strlen(leaf) + 1,
                   &entry->text[0]);
-    if (err && err != error_ATOM_NAME_EXISTS)
+    if (err && err != result_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* file type */
@@ -1248,7 +1248,7 @@ static result_t load_directory_cb(const char          *obj_name,
                    (const unsigned char *) buf,
                    strlen(buf) + 1,
                   &entry->text[1]);
-    if (err && err != error_ATOM_NAME_EXISTS)
+    if (err && err != result_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* resolution */
@@ -1265,7 +1265,7 @@ static result_t load_directory_cb(const char          *obj_name,
                    (const unsigned char *) (buf + 24),
                    strlen(buf + 24) + 1,
                   &entry->text[2]);
-    if (err && err != error_ATOM_NAME_EXISTS)
+    if (err && err != result_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* depth */
@@ -1276,7 +1276,7 @@ static result_t load_directory_cb(const char          *obj_name,
                    (const unsigned char *) buf,
                    strlen(buf) + 1,
                   &entry->text[3]);
-    if (err && err != error_ATOM_NAME_EXISTS)
+    if (err && err != result_ATOM_NAME_EXISTS)
       goto Failure;
 
     /* size */
@@ -1287,11 +1287,11 @@ static result_t load_directory_cb(const char          *obj_name,
                    (const unsigned char *) buf,
                    strlen(buf) + 1,
                   &entry->text[4]);
-    if (err && err != error_ATOM_NAME_EXISTS)
+    if (err && err != result_ATOM_NAME_EXISTS)
       goto Failure;
   }
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:

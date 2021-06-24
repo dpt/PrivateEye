@@ -44,12 +44,11 @@
 #include "appengine/wimp/icon.h"
 #include "appengine/wimp/window.h"
 
-//#include "globals.h"
-#include "iconnames.h"          /* generated */
-//#include "iconnames2.h"         /* not generated */
-//#include "menunames.h"
+#include "iconnames.h" /* (formerly) generated */
 
 #include "appengine/gadgets/effects.h"
+
+/* ---------------------------------------------------------------------- */
 
 #define HEIGHT    44
 #define ICONWIDTH 44
@@ -166,13 +165,13 @@ typedef struct effectswin effectswin_t;
 
 static struct
 {
-  wimp_w        effects_w;
-  wimp_w        effects_add_w;
-  wimp_w        effects_crv_w;
-  dialogue_t    effects_blr_d;
-
-  list_t        list_anchor;	/* linked list of effectswins */
-  effectswin_t *recent;		/* most recent effectswin */
+  wimp_w         effects_w;
+  wimp_w         effects_add_w;
+  wimp_w         effects_crv_w;
+  dialogue_t     effects_blr_d;
+                
+  list_t         list_anchor;   /* linked list of effectswins */
+  effectswin_t  *recent;        /* most recent effectswin */
 }
 LOCALS;
 
@@ -186,7 +185,7 @@ static void effects_cancel(effectswin_t *ew);
 
 struct effectswin
 {
-  list_t           list; /* an effectwin is a linked list node */
+  list_t           list;        /* an effectswin is a linked list node */
   wimp_w           window;
   scroll_list     *sl;
   image_t         *image;
@@ -394,12 +393,23 @@ static memcpyfn *choose_memcpy(void)
 
 static void apply_blend(effectswin_t *ew, int val)
 {
+  image_t         *image;
+  osspriteop_area *area;
+
   xhourglass_on();
 
-  ew->blender.make_lut(val, 0, &ew->blender);
+  image = ew->image;
+  area  = (osspriteop_area *) image->image;
+
+  /* point the blender at the image data */
+  ew->blender.src = sprite_data(sprite_select(area, 0));
+  ew->blender.deg = sprite_data(sprite_select(area, 1));
+  ew->blender.dst = sprite_data(sprite_select(area, 2));
+
+  ew->blender.make_lut(val, 0 /* offset */, &ew->blender);
   ew->blender.blend(&ew->blender);
 
-  image_preview(ew->image);
+  image_preview(image);
 
   xhourglass_off();
 }
@@ -958,8 +968,8 @@ static int main_event_mouse_click(wimp_event_no event_no,
         x = state.visible.x0;
         y = state.visible.y0 - 2; // fix 2-> (1<<yeig)
 
-	/* FIXME: Want to open the palette win so it avoids covering the pane.
-	 */
+        /* FIXME: Want to open the palette win so it avoids covering the pane.
+         */
 
         LOCALS.recent = ew;
         window_open_as_menu_here(LOCALS.effects_add_w, x, y);
@@ -1900,9 +1910,7 @@ static result_t create_images(effectswin_t *ew)
   image_t           *image;
   osspriteop_area   *area;
   int                areasize;
-  osspriteop_header *header1;
-  osspriteop_header *header2;
-  osspriteop_header *header3;
+  osspriteop_header *header;
   int                r;
 
   xhourglass_on();
@@ -1910,39 +1918,30 @@ static result_t create_images(effectswin_t *ew)
   image = ew->image;
   area  = (osspriteop_area *) image->image;
 
-  areasize = area->size;
-
   /* stretch the image's heap block to three times its existing size and
    * add to it two duplicates of the existing image */
 
+  areasize = area->size;
   r = flex_extend((flex_ptr) &image->image, areasize * 3);
   if (r == 0)
     return result_OOM;
-
-  area    = (osspriteop_area *) image->image;
-  header1 = sprite_select(area, 0);
-
   area->size = areasize * 3;
 
+  area   = (osspriteop_area *) image->image;
+  header = sprite_select(area, 0);
+
   osspriteop_copy_sprite(osspriteop_PTR,
                          area,
-         (osspriteop_id) header1,
+         (osspriteop_id) header,
                          "degenerate");
 
+  // maybe create instead? even better: create without initialising
   osspriteop_copy_sprite(osspriteop_PTR,
                          area,
-         (osspriteop_id) header1,
+         (osspriteop_id) header,
                          "result");
 
-  header2 = sprite_select(area, 1);
-  header3 = sprite_select(area, 2);
-
   blender_create(&ew->blender, area);
-
-  /* point the blender at the image data */
-  ew->blender.src = sprite_data(header1);
-  ew->blender.deg = sprite_data(header2);
-  ew->blender.dst = sprite_data(header3);
 
   xhourglass_off();
 
@@ -2195,13 +2194,9 @@ static void effectswin_destroy(effectswin_t *ew)
 
   window_close(ew->window);
 
-
-  // standard stuff
-
   effectswin_unset_window_handlers(ew);
 
   wimp_delete_window(ew->window);
-  // todo: destroy scrollist too here??
 
   free(ew);
 }
