@@ -42,13 +42,14 @@
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/help.h"
 #include "appengine/wimp/icon.h"
+#include "appengine/wimp/window.h"
 
-#include "globals.h"
+//#include "globals.h"
 #include "iconnames.h"          /* generated */
-#include "iconnames2.h"         /* not generated */
-#include "menunames.h"
+//#include "iconnames2.h"         /* not generated */
+//#include "menunames.h"
 
-#include "effects.h"
+#include "appengine/gadgets/effects.h"
 
 #define HEIGHT    44
 #define ICONWIDTH 44
@@ -161,6 +162,20 @@ static void effectarray_init(effects_array *ea)
 
 typedef struct effectswin effectswin_t;
 
+/* ---------------------------------------------------------------------- */
+
+static struct
+{
+  wimp_w        effects_w;
+  wimp_w        effects_add_w;
+  wimp_w        effects_crv_w;
+  dialogue_t    effects_blr_d;
+
+  list_t        list_anchor;	/* linked list of effectswins */
+  effectswin_t *recent;		/* most recent effectswin */
+}
+LOCALS;
+
 /* ----------------------------------------------------------------------- */
 
 static void effects_close(effectswin_t *ew);
@@ -232,7 +247,7 @@ static result_t tone_defaults(effects_element *el)
   if (t->map == NULL)
     return result_OOM;
 
-  tonemap_draw_set_stroke_width(t->map, GLOBALS.choices.effects.curve_width);
+  tonemap_draw_set_stroke_width(t->map, 16); // HACK GLOBALS.choices.effects.curve_width);
 
   effect_tone_reset(t);
 
@@ -729,10 +744,10 @@ static result_t init_main(void)
 {
   result_t err;
 
-  GLOBALS.effects_w = window_create("effects");
+  LOCALS.effects_w = window_create("effects");
 
   // this won't work will it? it's attaching help to the base window
-  err = help_add_window(GLOBALS.effects_w, "effects");
+  err = help_add_window(LOCALS.effects_w, "effects");
   if (err)
     return err;
 
@@ -741,7 +756,7 @@ static result_t init_main(void)
 
 static void fin_main(void)
 {
-  help_remove_window(GLOBALS.effects_w);
+  help_remove_window(LOCALS.effects_w);
 }
 
 static void register_add(int reg)
@@ -754,7 +769,7 @@ static void register_add(int reg)
   event_register_wimp_group(reg,
                             wimp_handlers,
                             NELEMS(wimp_handlers),
-                            GLOBALS.effects_add_w,
+                            LOCALS.effects_add_w,
                             event_ANY_ICON,
                             NULL); // will use LOCALS.etc.
 }
@@ -763,11 +778,11 @@ static result_t init_add(void)
 {
   result_t err;
 
-  GLOBALS.effects_add_w = window_create("effects_add");
+  LOCALS.effects_add_w = window_create("effects_add");
 
   register_add(1);
 
-  err = help_add_window(GLOBALS.effects_add_w, "effects_add");
+  err = help_add_window(LOCALS.effects_add_w, "effects_add");
   if (err)
     return err;
 
@@ -776,7 +791,7 @@ static result_t init_add(void)
 
 static void fin_add(void)
 {
-  help_remove_window(GLOBALS.effects_add_w);
+  help_remove_window(LOCALS.effects_add_w);
   register_add(0);
 }
 
@@ -784,14 +799,14 @@ static result_t init_blur(void)
 {
   result_t err;
 
-  err = dialogue_construct(&GLOBALS.effects_blr_d,
+  err = dialogue_construct(&LOCALS.effects_blr_d,
                             "effects_blr",
                             EFFECTS_BLR_B_APPLY,
                             EFFECTS_BLR_B_CANCEL);
   if (err)
     return err;
 
-  dialogue_set_mouse_click_handler(&GLOBALS.effects_blr_d,
+  dialogue_set_mouse_click_handler(&LOCALS.effects_blr_d,
                                     blur_event_mouse_click);
 
   return result_OK;
@@ -799,7 +814,7 @@ static result_t init_blur(void)
 
 static void fin_blur(void)
 {
-  dialogue_destruct(&GLOBALS.effects_blr_d);
+  dialogue_destruct(&LOCALS.effects_blr_d);
 }
 
 static void register_tone(int reg)
@@ -813,7 +828,7 @@ static void register_tone(int reg)
   event_register_wimp_group(reg,
                             wimp_handlers,
                             NELEMS(wimp_handlers),
-                            GLOBALS.effects_crv_w,
+                            LOCALS.effects_crv_w,
                             event_ANY_ICON,
                             NULL);
 }
@@ -822,11 +837,11 @@ static result_t init_tone(void)
 {
   result_t err;
 
-  GLOBALS.effects_crv_w = window_create("effects_crv");
+  LOCALS.effects_crv_w = window_create("effects_crv");
 
   register_tone(1);
 
-  err = help_add_window(GLOBALS.effects_crv_w, "effects_crv");
+  err = help_add_window(LOCALS.effects_crv_w, "effects_crv");
   if (err)
     return err;
 
@@ -835,7 +850,7 @@ static result_t init_tone(void)
 
 static void fin_tone(void)
 {
-  help_remove_window(GLOBALS.effects_crv_w);
+  help_remove_window(LOCALS.effects_crv_w);
   register_tone(0);
 }
 
@@ -874,16 +889,6 @@ void effects_fin(void)
 
   help_fin();
 }
-
-/* ---------------------------------------------------------------------- */
-
-// push lower, ideally
-static struct
-{
-  list_t        list_anchor;	/* linked list of effectswins */
-  effectswin_t *recent;		/* most recent effectswin */
-}
-LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
@@ -957,7 +962,7 @@ static int main_event_mouse_click(wimp_event_no event_no,
 	 */
 
         LOCALS.recent = ew;
-        window_open_as_menu_here(GLOBALS.effects_add_w, x, y);
+        window_open_as_menu_here(LOCALS.effects_add_w, x, y);
       }
       break;
 
@@ -1428,7 +1433,7 @@ static void tone_set_values_and_redraw(void)
 {
   tonemap_set(tone.map, tone.channels, &tone.spec);
 
-  tonemapgadget_update(tone.map, GLOBALS.effects_crv_w, EFFECTS_CRV_D_CURVE);
+  tonemapgadget_update(tone.map, LOCALS.effects_crv_w, EFFECTS_CRV_D_CURVE);
 }
 
 static const slider_rec tone_sliders[] =
@@ -1496,11 +1501,11 @@ static void tone_reset_dialogue(effectswin_t *ew)
     if (map[i].channels == tone.channels)
       break;
 
-  icon_set_radio(GLOBALS.effects_crv_w, map[i].i);
+  icon_set_radio(LOCALS.effects_crv_w, map[i].i);
 
   /* disable 'alpha' if required */
 
-  icon_set_flags(GLOBALS.effects_crv_w,
+  icon_set_flags(LOCALS.effects_crv_w,
                  EFFECTS_CRV_R_ALPHA,
                  (ew->image->flags & image_FLAG_HAS_ALPHA) ? 0 : wimp_ICON_SHADED,
                  wimp_ICON_SHADED);
@@ -1510,17 +1515,17 @@ static void tone_reset_dialogue(effectswin_t *ew)
   r = &tone_sliders[0];
   for (i = 0; i < NELEMS(tone_sliders); i++)
   {
-    slider_set(GLOBALS.effects_crv_w, r->icon, *r->pval, r->min, r->max);
+    slider_set(LOCALS.effects_crv_w, r->icon, *r->pval, r->min, r->max);
     r++;
   }
 
   /* set option buttons */
 
-  icon_set_selected(GLOBALS.effects_crv_w,
+  icon_set_selected(LOCALS.effects_crv_w,
                     EFFECTS_CRV_O_INVERT,
                     tone.spec.flags & tonemap_FLAG_INVERT);
 
-  icon_set_selected(GLOBALS.effects_crv_w,
+  icon_set_selected(LOCALS.effects_crv_w,
                     EFFECTS_CRV_O_REFLECT,
                     tone.spec.flags & tonemap_FLAG_REFLECT);
 }
@@ -1552,7 +1557,7 @@ static int tone_edit(effectswin_t *ew, effects_element *el, int x, int y)
   tone_start_editing(ew);
 
   LOCALS.recent = ew;
-  window_open_as_menu_here(GLOBALS.effects_crv_w, x, y);
+  window_open_as_menu_here(LOCALS.effects_crv_w, x, y);
 
   return 0;
 }
@@ -1569,7 +1574,7 @@ static int tone_event_redraw_window_request(wimp_event_no event_no,
   NOT_USED(handle);
 
   tonemapgadget_redraw(tone.map,
-                       GLOBALS.effects_crv_w,
+                       LOCALS.effects_crv_w,
                        EFFECTS_CRV_D_CURVE,
                        redraw);
 
@@ -1748,7 +1753,7 @@ static void blur_slider_update(wimp_i i, int val, void *opaque)
 
   *pval = val;
 
-  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d),
+  icon_set_int(dialogue_get_window(&LOCALS.effects_blr_d),
                EFFECTS_BLR_W_VAL,
                val);
 }
@@ -1775,18 +1780,18 @@ static void blur_reset_dialogue(void)
     if (map[i].method == blur.method)
       break;
 
-  icon_set_radio(dialogue_get_window(&GLOBALS.effects_blr_d), map[i].i);
+  icon_set_radio(dialogue_get_window(&LOCALS.effects_blr_d), map[i].i);
 
   /* set slider values */
 
   r = &blur_sliders[0];
-  slider_set(dialogue_get_window(&GLOBALS.effects_blr_d),
+  slider_set(dialogue_get_window(&LOCALS.effects_blr_d),
              r->icon,
             *r->pval,
              r->min,
              r->max);
 
-  icon_set_int(dialogue_get_window(&GLOBALS.effects_blr_d),
+  icon_set_int(dialogue_get_window(&LOCALS.effects_blr_d),
                EFFECTS_BLR_W_VAL,
               *r->pval);
 }
@@ -1811,7 +1816,7 @@ static int blur_edit(effectswin_t *ew, effects_element *el, int x, int y)
    * so we're forced to stash a local copy. */
   LOCALS.recent = ew;
 
-  dialogue_show_here(&GLOBALS.effects_blr_d, x, y);
+  dialogue_show_here(&LOCALS.effects_blr_d, x, y);
 
   return 0;
 }
@@ -1842,7 +1847,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
       switch (pointer->i)
       {
       case EFFECTS_BLR_B_APPLY:
-        val = icon_get_int(dialogue_get_window(&GLOBALS.effects_blr_d),
+        val = icon_get_int(dialogue_get_window(&LOCALS.effects_blr_d),
                            EFFECTS_BLR_W_VAL);
         blur.level = CLAMP(val, BLURMIN, BLURMAX);
 
@@ -2110,7 +2115,7 @@ static result_t effectswin_create(effectswin_t **new_ew, image_t *image)
     goto NoMem;
 
   /* Clone ourselves a window */
-  w = window_clone(GLOBALS.effects_w);
+  w = window_clone(LOCALS.effects_w);
   if (w == NULL)
     goto NoMem;
 

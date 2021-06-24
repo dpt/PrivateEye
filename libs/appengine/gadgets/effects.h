@@ -3,8 +3,8 @@
  * Purpose: Effects dialogue
  * ----------------------------------------------------------------------- */
 
-#ifndef EFFECTS_H
-#define EFFECTS_H
+#ifndef APPENGINE_EFFECTS_H
+#define APPENGINE_EFFECTS_H
 
 #include "appengine/base/errors.h"
 #include "appengine/graphics/image.h"
@@ -14,4 +14,4 @@ void effects_fin(void);
 void effects_open(image_t *image);
 int effects_available(const image_t *image);
 
-#endif /* EFFECTS_H */
+#endif /* APPENGINE_EFFECTS_H */

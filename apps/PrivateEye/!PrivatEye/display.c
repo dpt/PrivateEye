@@ -45,6 +45,7 @@
 #include "appengine/base/oserror.h"
 #include "appengine/base/strings.h"
 #include "appengine/dialogues/dcs-quit.h"
+#include "appengine/gadgets/effects.h"
 #include "appengine/gadgets/hist.h"
 #include "appengine/gadgets/metadata.h"
 #include "appengine/vdu/screen.h"
@@ -58,7 +59,6 @@
 #include "actions.h"
 #include "choicesdat.h"
 #include "clipboard.h"
-#include "effects.h"
 #include "globals.h"
 #include "iconnames.h"          /* generated */
 #include "info.h"
