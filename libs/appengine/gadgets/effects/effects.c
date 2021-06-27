@@ -2020,7 +2020,7 @@ static result_t setup_effects_list(effectswin_t *ew)
 
   ew->sl = scroll_list_create(ew->window, EFFECTS_I_PANE_PLACEHOLDER);
   if (ew->sl == NULL)
-    return result_OOM; // FIXME potentially inaccurate
+    return result_OOM;
 
   scroll_list_set_row_height(ew->sl, HEIGHT, 4);
   scroll_list_set_handlers(ew->sl,

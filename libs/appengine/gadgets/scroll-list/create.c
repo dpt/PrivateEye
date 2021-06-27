@@ -49,6 +49,10 @@ scroll_list *scroll_list_create(wimp_w main_w, wimp_i main_i)
   wimp_window       def;
   wimp_w            sw;
 
+  sl = malloc(sizeof(*sl));
+  if (sl == NULL)
+    return NULL;
+
   wstate.w = main_w;
   wimp_get_window_state(&wstate);
 
@@ -83,13 +87,6 @@ scroll_list *scroll_list_create(wimp_w main_w, wimp_i main_i)
   wimp_open_window_nested((wimp_open *) &wstate,
                           main_w,
                           0 /* all link work area */);
-
-  sl = malloc(sizeof(*sl));
-  if (sl == NULL)
-  {
-    // cleanup
-    return sl;
-  }
 
   sl->w         = sw;
   sl->width     = w;
