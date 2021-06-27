@@ -43,20 +43,31 @@ static void imageobwin_set_handlers(imageobwin_factory_t *factory,
                                     void                 *handle)
 {
   event_wimp_handler_spec wimp_handlers[4];
+  int i;
 
-  wimp_handlers[0].event_no = wimp_REDRAW_WINDOW_REQUEST;
-  wimp_handlers[1].event_no = wimp_CLOSE_WINDOW_REQUEST;
-  wimp_handlers[2].event_no = wimp_MOUSE_CLICK;
-  wimp_handlers[3].event_no = wimp_MENU_SELECTION;
+  i = 0;
+  wimp_handlers[i].event_no = wimp_REDRAW_WINDOW_REQUEST;
+  wimp_handlers[i].handler = factory->event_redraw_window_request;
+  i++;
+  
+  wimp_handlers[i].event_no = wimp_CLOSE_WINDOW_REQUEST;
+  wimp_handlers[i].handler = imageobwin_event_close_window_request;
+  i++;
+  
+  wimp_handlers[i].event_no = wimp_MOUSE_CLICK;
+  wimp_handlers[i].handler = factory->event_mouse_click_request;
+  i++;
 
-  wimp_handlers[0].handler = factory->event_redraw_window_request;
-  wimp_handlers[1].handler = imageobwin_event_close_window_request;
-  wimp_handlers[2].handler = factory->event_mouse_click_request;
-  wimp_handlers[3].handler = factory->event_menu_selection;
+  if (factory->event_menu_selection)
+  {
+    wimp_handlers[i].event_no = wimp_MENU_SELECTION;
+    wimp_handlers[i].handler = factory->event_menu_selection;
+    i++;
+  }
 
   event_register_wimp_group(reg,
                             wimp_handlers,
-                            NELEMS(wimp_handlers),
+                            i,
                             w,
                             event_ANY_ICON,
                             handle);
@@ -133,17 +144,20 @@ result_t imageobwin_construct(imageobwin_factory_t *factory,
 
   factory->w = window_create(name);
 
-  sprintf(scratch, "menu.%s", name);
-  factory->menu = menu_create_from_desc(message0(scratch));
-  if (factory->menu == NULL)
+  if (menu)
   {
-    err = result_OOM;
-    goto Failure;
-  }
+    sprintf(scratch, "menu.%s", name);
+    factory->menu = menu_create_from_desc(message0(scratch));
+    if (factory->menu == NULL)
+    {
+      err = result_OOM;
+      goto Failure;
+    }
 
-  err = help_add_menu(factory->menu, name);
-  if (err)
-    goto Failure;
+    err = help_add_menu(factory->menu, name);
+    if (err)
+      goto Failure;
+  }
 
   list_init(&factory->list_anchor);
 
@@ -151,7 +165,8 @@ result_t imageobwin_construct(imageobwin_factory_t *factory,
   factory->name = malloc(len);
   if (factory->name == NULL)
   {
-    help_remove_menu(factory->menu);
+    if (menu)
+      help_remove_menu(factory->menu);
     goto Failure;
   }
   memcpy(factory->name, name, len);
@@ -172,7 +187,8 @@ result_t imageobwin_construct(imageobwin_factory_t *factory,
 
 Failure:
 
-  menu_destroy(factory->menu);
+  if (menu)
+    menu_destroy(factory->menu);
 
   help_fin();
 
@@ -186,8 +202,11 @@ void imageobwin_destruct(imageobwin_factory_t *doomed)
 
   free(doomed->name);
 
-  help_remove_menu(doomed->menu);
-  menu_destroy(doomed->menu);
+  if (doomed->menu)
+  {
+    help_remove_menu(doomed->menu);
+    menu_destroy(doomed->menu);
+  }
 
   help_fin();
 }
