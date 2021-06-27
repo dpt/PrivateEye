@@ -23,6 +23,7 @@
 #include "oslib/wimp.h"
 
 #include "datastruct/list.h"
+#include "utils/array.h"
 
 #include "appengine/types.h"
 #include "appengine/base/bsearch.h"
@@ -155,6 +156,16 @@ static void effectarray_init(effects_array *ea)
   ea->entries   = NULL;
   ea->nentries  = 0;
   ea->allocated = 0;
+}
+
+static int effectsarray_ensure(effects_array *ea)
+{
+  return array_grow((void **) &ea->entries,
+                               sizeof(*ea->entries),
+                               ea->nentries,
+                              &ea->allocated,
+                               1 /* need */,
+                               1 /* minimum */);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -514,24 +525,8 @@ static int insert_effect(effectswin_t *ew, effects_type type, int where)
 
   ea = &ew->effects;
 
-  if (ea->nentries == ea->allocated)
-  {
-    int   n;
-    void *newentries;
-
-    /* doubling strategy */
-
-    n = ea->allocated * 2;
-    if (n < 1)
-      n = 1;
-
-    newentries = realloc(ea->entries, sizeof(*ea->entries) * n);
-    if (newentries == NULL)
-      return 1; /* failure: out of memory */
-
-    ea->entries   = newentries;
-    ea->allocated = n;
-  }
+  if (effectsarray_ensure(ea))
+    return 1; /* failure: out of memory */
 
   if (where == -1) /* at end */
     where = ea->nentries;
