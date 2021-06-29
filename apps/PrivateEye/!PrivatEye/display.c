@@ -1644,7 +1644,12 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Effects:
-    effects_open(viewer->drawable->image);
+    {
+      effectsconfig_t config;
+
+      config.tonemap_stroke_width = GLOBALS.choices.effects.curve_width;
+      effects_open(&config, viewer->drawable->image);
+    }
     break;
 
   case MetaData:

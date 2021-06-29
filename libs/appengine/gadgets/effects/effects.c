@@ -145,8 +145,8 @@ effects_element;
 typedef struct
 {
   effects_element *entries;
-  int             nentries;
-  int             allocated;
+  int              nentries;
+  int              allocated;
 }
 effects_array;
 
@@ -175,14 +175,14 @@ typedef struct effectswin effectswin_t;
 
 static struct
 {
-  wimp_w         effects_w;
-  wimp_w         effects_add_w;
-  wimp_w         effects_crv_w;
-  dialogue_t     effects_blr_d;
-                
-  list_t         list_anchor;   /* linked list of effectswins */
-  effectswin_t  *current;       /* for event handlers */
-  effect_blur    blur;          /* transient for edits */
+  wimp_w        effects_w;
+  wimp_w        effects_add_w;
+  wimp_w        effects_crv_w;
+  dialogue_t    effects_blr_d;
+
+  list_t        list_anchor;   /* linked list of effectswins */
+  effectswin_t *current;       /* for event handlers */
+  effect_blur   blur;          /* transient for edits */
 }
 LOCALS;
 
@@ -196,14 +196,15 @@ static void effects_cancel(effectswin_t *ew);
 
 struct effectswin
 {
-  list_t           list;        /* an effectswin is a linked list node */
-  wimp_w           window;
-  scroll_list     *sl;
-  image_t         *image;
-  blender          blender;
-  int              blendval;
-  effects_array    effects;
-  effects_element *editing_element;
+  list_t            list;        /* an effectswin is a linked list node */
+  effectsconfig_t   config;
+  wimp_w            window;
+  scroll_list      *sl;
+  image_t          *image;
+  blender           blender;
+  int               blendval;
+  effects_array     effects;
+  effects_element  *editing_element;
 };
 
 /* ---------------------------------------------------------------------- */
@@ -216,8 +217,10 @@ static result_t clear_apply(osspriteop_area   *area,
   return effects_clear_apply(area, src, dst, el->args.clear.colour);
 }
 
-static result_t clear_defaults(effects_element *el)
+static result_t clear_defaults(effectswin_t *ew, effects_element *el)
 {
+  NOT_USED(ew);
+
   el->args.clear.colour = 0x80808000;
 
   return result_OK;
@@ -235,7 +238,7 @@ static void effect_tone_reset(effect_tone *t)
 {
   /* reset all values to their defaults */
 
-  // think this needs to take alpha into account
+  // FIXME: I think this needs to take alpha into account
   tonemap_reset(t->map);
 
   t->channels        = tonemap_CHANNEL_RGB;
@@ -247,7 +250,7 @@ static void effect_tone_reset(effect_tone *t)
   t->spec.gain       = 50;
 }
 
-static result_t tone_defaults(effects_element *el)
+static result_t tone_defaults(effectswin_t *ew, effects_element *el)
 {
   effect_tone *t;
 
@@ -257,7 +260,7 @@ static result_t tone_defaults(effects_element *el)
   if (t->map == NULL)
     return result_OOM;
 
-  tonemap_draw_set_stroke_width(t->map, 16); // HACK GLOBALS.choices.effects.curve_width);
+  tonemap_draw_set_stroke_width(t->map, ew->config.tonemap_stroke_width);
 
   effect_tone_reset(t);
 
@@ -274,8 +277,10 @@ static result_t grey_apply(osspriteop_area   *area,
   return effects_grey_apply(area, src, dst);
 }
 
-static result_t blur_defaults(effects_element *el)
+static result_t blur_defaults(effectswin_t *ew, effects_element *el)
 {
+  NOT_USED(ew);
+
   el->args.blur.method = effects_blur_GAUSSIAN;
   el->args.blur.level  = 2;
 
@@ -344,7 +349,7 @@ typedef int effect_editor(effectswin_t    *ew,
                           int              x,
                           int              y);
 
-typedef result_t effect_initialiser(effects_element *el);
+typedef result_t effect_initialiser(effectswin_t *ew, effects_element *el);
 
 typedef result_t effect_applier(osspriteop_area   *area,
                                 osspriteop_header *src,
@@ -539,7 +544,7 @@ static int insert_effect(effectswin_t *ew, effects_type type, int where)
   el = &ea->entries[where];
   el->effect = type;
   if (editors[type].initialiser)
-    editors[type].initialiser(el);
+    editors[type].initialiser(ew, el);
 
   ea->nentries++;
 
@@ -1907,7 +1912,7 @@ static result_t create_images(effectswin_t *ew)
          (osspriteop_id) header,
                          "degenerate");
 
-  // maybe create instead? even better: create without initialising
+  // FIXME: Maybe create instead of copy? even better: create without initialising
   osspriteop_copy_sprite(osspriteop_PTR,
                          area,
          (osspriteop_id) header,
@@ -2073,17 +2078,21 @@ static void effects_cancel(effectswin_t *ew)
 /* ----------------------------------------------------------------------- */
 
 // todo: check cleanup paths
-static result_t effectswin_create(effectswin_t **new_ew, image_t *image)
+static result_t effectswin_create(effectswin_t   **new_ew,
+                            const effectsconfig_t *config,
+                                  image_t         *image)
 {
-  result_t     err;
+  result_t      err;
   effectswin_t *ew = NULL;
-  wimp_w       w  = wimp_ICON_BAR;
+  wimp_w        w  = wimp_ICON_BAR;
 
   *new_ew = NULL;
 
   ew = malloc(sizeof(*ew));
   if (ew == NULL)
     goto NoMem;
+
+  ew->config = *config;
 
   /* Clone ourselves a window */
   w = window_clone(LOCALS.effects_w);
@@ -2178,9 +2187,10 @@ static void effectswin_destroy(effectswin_t *ew)
 
 /* ----------------------------------------------------------------------- */
 
-void effects_open(image_t *image)
+void effects_open(const effectsconfig_t *config,
+                  image_t               *image)
 {
-  result_t     err;
+  result_t      err;
   effectswin_t *ew;
 
   if (!effects_available(image))
@@ -2189,21 +2199,23 @@ void effects_open(image_t *image)
     return;
   }
 
-  // search list for an effectwin on that image
+  /* find an effectwin for the given image */
   ew = (effectswin_t *) list_find(&LOCALS.list_anchor,
                                    offsetof(effectswin_t, image),
                              (int) image);
   if (ew)
   {
-    /* pop it to the front */
+    /* if it exists, pop it to the front */
     window_open_at(ew->window, AT_BOTTOMPOINTER);
     return;
   }
 
-  err = effectswin_create(&ew, image);
+  /* otherwise create a new one. note that an effectswin handle is returned
+   * but we don't presently use it */
+  err = effectswin_create(&ew, config, image);
   if (err)
     goto Failure;
-  
+
   return;
 
 
