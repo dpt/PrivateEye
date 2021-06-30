@@ -2193,12 +2193,6 @@ void effects_open(const effectsconfig_t *config,
   result_t      err;
   effectswin_t *ew;
 
-  if (!effects_available(image))
-  {
-    beep();
-    return;
-  }
-
   /* find an effectwin for the given image */
   ew = (effectswin_t *) list_find(&LOCALS.list_anchor,
                                    offsetof(effectswin_t, image),
@@ -2210,8 +2204,16 @@ void effects_open(const effectsconfig_t *config,
     return;
   }
 
-  /* otherwise create a new one. note that an effectswin handle is returned
-   * but we don't presently use it */
+  /* otherwise see if one is possible for given image */
+  if (!effects_available(image))
+  {
+    beep();
+    return;
+  }
+
+  /* it is. create a new one.
+   * note that an effectswin handle is returned but we don't presently use it
+   */
   err = effectswin_create(&ew, config, image);
   if (err)
     goto Failure;
