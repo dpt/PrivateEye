@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <string.h>
 
 #include "fortify/fortify.h"
 
@@ -2085,6 +2086,9 @@ static result_t effectswin_create(effectswin_t   **new_ew,
   result_t      err;
   effectswin_t *ew = NULL;
   wimp_w        w  = wimp_ICON_BAR;
+  char          scratch[32];
+  const char   *leaf;
+  char          title[256];
 
   *new_ew = NULL;
 
@@ -2102,6 +2106,13 @@ static result_t effectswin_create(effectswin_t   **new_ew,
   err = help_add_window(w, "effects");
   if (err)
     return err;
+
+  /* set its title, including the leafname of the image */
+
+  sprintf(scratch, "%s.title", "effect");
+  leaf = str_leaf(image->file_name);
+  sprintf(title, message0(scratch), leaf);
+  window_set_title_text(w, title);
 
   ew->window = w;
   

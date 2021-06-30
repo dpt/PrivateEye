@@ -65,6 +65,7 @@ quit.modified:%d images modified.
 
 # Effects window
 
+effect.title:Effects for %s
 effect.clear:Clear
 effect.tone:Curve
 effect.grey:Greyscale
