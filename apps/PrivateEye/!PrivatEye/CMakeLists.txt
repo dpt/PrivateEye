@@ -152,11 +152,9 @@ set(ALL_HEADERS
     clipboard.h
     dataxfer.h
     display.h
-    effects.h
     ffg.h
     globals.h
     iconbar.h
-    iconnames2.h
     imagecache.h
     info.h
     keymap.h
@@ -182,7 +180,6 @@ set(ALL_SOURCES
     clipboard.c
     dataxfer.c
     display.c
-    effects.c
     eye.c
     ffg.c
     globals.c

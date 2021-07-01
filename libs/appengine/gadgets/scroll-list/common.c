@@ -74,6 +74,6 @@ void send_event(scroll_list *sl, scroll_list_event_type type)
   event.type  = type;
   event.index = scroll_list_get_selection(sl);
 
-  sl->event(&event);
+  sl->event(&event, sl->opaque);
 }
 

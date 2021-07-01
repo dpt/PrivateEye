@@ -68,7 +68,7 @@ enum
 
 /* ---------------------------------------------------------------------- */
 
-static error declare_keymap(void)
+static result_t declare_keymap(void)
 {
   /* Keep these sorted by name */
   static const keymap_name_to_action keys[] =
@@ -93,8 +93,8 @@ static error declare_keymap(void)
                            &LOCALS.keymap_id);
 }
 
-static error tags_substrate_callback(const wire_message_t *message,
-                                     void                 *opaque)
+static result_t tags_substrate_callback(const wire_message_t *message,
+                                        void                 *opaque)
 {
   NOT_USED(opaque);
 
@@ -104,26 +104,26 @@ static error tags_substrate_callback(const wire_message_t *message,
       return declare_keymap();
   }
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_substrate_init(void)
+result_t tags_substrate_init(void)
 {
-  error err;
+  result_t err;
 
   err = wire_register(0, tags_substrate_callback, NULL, NULL);
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ---------------------------------------------------------------------- */
 
 /* Delete 'index'. */
-static error deletetag(tag_cloud *tc, int index, void *opaque)
+static result_t deletetag(tag_cloud *tc, int index, void *opaque)
 {
-  error err;
+  result_t err;
 
   err = tags_common_delete_tag(tc, index, opaque);
   if (err)
@@ -133,16 +133,16 @@ static error deletetag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error tag(tag_cloud *tc, int index, void *opaque)
+static result_t tag(tag_cloud *tc, int index, void *opaque)
 {
-  error         err;
+  result_t      err;
   unsigned char digest[16];
 
   if (LOCALS.image == NULL)
-    return error_OK;
+    return result_OK;
 
   err = image_get_digest(LOCALS.image, digest);
   if (err)
@@ -160,16 +160,16 @@ static error tag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-static error detag(tag_cloud *tc, int index, void *opaque)
+static result_t detag(tag_cloud *tc, int index, void *opaque)
 {
-  error         err;
+  result_t      err;
   unsigned char digest[16];
 
   if (LOCALS.image == NULL)
-    return error_OK;
+    return result_OK;
 
   err = image_get_digest(LOCALS.image, digest);
   if (err)
@@ -183,7 +183,7 @@ static error detag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -230,7 +230,7 @@ static void tags_image_changed_callback(image_t             *image,
                                         imageobserver_data  *data,
                                         void                *opaque)
 {
-  error err;
+  result_t err;
 
   /* remember that this gets called even when the tags window is closed */
 
@@ -299,7 +299,7 @@ static void tags_image_changed_callback(image_t             *image,
 
 failure:
 
-  error_report(err);
+  result_report(err);
 
   return;
 }
@@ -311,14 +311,14 @@ failure:
 // tags_common and be divided out there, or choices could be amended to output change notfications on
 // the wire system.
 
-error tags_choices_updated(const choices_group *group)
+result_t tags_choices_updated(const choices_group *group)
 {
   tag_cloud_config c;
 
   NOT_USED(group);
 
   if (LOCALS.tc == NULL)
-    return error_OK;
+    return result_OK;
 
   c.size    = GLOBALS.choices.tagcloud.size;
   c.leading = GLOBALS.choices.tagcloud.leading;
@@ -327,7 +327,7 @@ error tags_choices_updated(const choices_group *group)
 
   tag_cloud_set_config(LOCALS.tc, &c);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -338,9 +338,9 @@ static void tags_lazyfin(int force);
 
 static unsigned int tags_refcount = 0;
 
-error tags_init(void)
+result_t tags_init(void)
 {
-  error err;
+  result_t err;
 
   if (tags_refcount == 0)
   {
@@ -357,7 +357,7 @@ error tags_init(void)
 
   tags_refcount++;
 
-  return error_OK;
+  return result_OK;
 }
 
 void tags_fin(void)
@@ -385,9 +385,9 @@ void tags_fin(void)
 
 static int tags_lazyrefcount = 0;
 
-static error tags_lazyinit(void)
+static result_t tags_lazyinit(void)
 {
-  error err;
+  result_t err;
 
   if (tags_lazyrefcount++ == 0)
   {
@@ -406,7 +406,7 @@ static error tags_lazyinit(void)
     tc = tag_cloud_create(0 /* flags */, &conf);
     if (tc == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto Failure;
     }
 
@@ -437,7 +437,7 @@ static error tags_lazyinit(void)
     LOCALS.image              = NULL;
   }
 
-  return error_OK;
+  return result_OK;
 
 
 Failure:
@@ -468,9 +468,9 @@ static void tags_lazyfin(int force)
 
 /* ----------------------------------------------------------------------- */
 
-error tags_open(image_t *image)
+result_t tags_open(image_t *image)
 {
-  error             err;
+  result_t          err;
   wimp_window_state state;
 
   /* load the databases, create tag cloud, install image observer */
@@ -522,7 +522,7 @@ error tags_open(image_t *image)
   /* FIXME: This doesn't work - needs investigation. */
   /* wimp_set_caret_position(state.w, wimp_ICON_WINDOW, -1, -1, -1, -1); */
 
-  return error_OK;
+  return result_OK;
 
 
 failure:

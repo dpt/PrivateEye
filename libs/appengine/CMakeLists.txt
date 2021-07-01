@@ -109,6 +109,7 @@ set(PUBLIC_HEADERS
     dialogues/save.h
     dialogues/scale.h
     gadgets/card.h
+    gadgets/effects.h
     gadgets/filerwin.h
     gadgets/hist.h
     gadgets/iconbar.h
@@ -251,6 +252,7 @@ set(GENERIC_SOURCES
     dialogues/save/save.c
     dialogues/scale/scale.c
     gadgets/card/card.c
+    gadgets/effects/effects.c
     gadgets/filerwin/filerwin.c
     gadgets/hist/hist.c
     gadgets/iconbar/iconbar.c

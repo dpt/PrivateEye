@@ -45,6 +45,7 @@
 #include "appengine/base/oserror.h"
 #include "appengine/base/strings.h"
 #include "appengine/dialogues/dcs-quit.h"
+#include "appengine/gadgets/effects.h"
 #include "appengine/gadgets/hist.h"
 #include "appengine/gadgets/metadata.h"
 #include "appengine/vdu/screen.h"
@@ -58,7 +59,6 @@
 #include "actions.h"
 #include "choicesdat.h"
 #include "clipboard.h"
-#include "effects.h"
 #include "globals.h"
 #include "iconnames.h"          /* generated */
 #include "info.h"
@@ -1644,7 +1644,12 @@ static void action(viewer_t *viewer, int op)
     break;
 
   case Effects:
-    effects_open(viewer->drawable->image);
+    {
+      effectsconfig_t config;
+
+      config.tonemap_stroke_width = GLOBALS.choices.effects.curve_width;
+      effects_open(&config, viewer->drawable->image);
+    }
     break;
 
   case MetaData:

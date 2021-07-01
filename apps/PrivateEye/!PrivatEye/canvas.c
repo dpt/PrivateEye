@@ -50,7 +50,7 @@ enum
 
 /* ---------------------------------------------------------------------- */
 
-static error declare_keymap(void)
+static result_t declare_keymap(void)
 {
   /* Keep these sorted by name */
   static const keymap_name_to_action keys[] =
@@ -65,8 +65,8 @@ static error declare_keymap(void)
                            &LOCALS.keymap_id);
 }
 
-static error canvas_substrate_callback(const wire_message_t *message,
-                                       void                 *opaque)
+static result_t canvas_substrate_callback(const wire_message_t *message,
+                                          void                 *opaque)
 {
   NOT_USED(opaque);
 
@@ -79,9 +79,9 @@ static error canvas_substrate_callback(const wire_message_t *message,
   return result_OK;
 }
 
-error canvas_substrate_init(void)
+result_t canvas_substrate_init(void)
 {
-  error err;
+  result_t err;
 
   err = wire_register(0, canvas_substrate_callback, NULL, NULL);
   if (err)
@@ -209,9 +209,9 @@ static void canvas__register_global_handlers(int reg)
 
 /* ----------------------------------------------------------------------- */
 
-error canvas_init(void)
+result_t canvas_init(void)
 {
-  error err;
+  result_t err;
 
   /* dependencies */
 
@@ -494,9 +494,9 @@ static void canvas_register_window_handlers(int reg, canvas_t *canvas)
                             canvas);
 }
 
-static error canvas_set_window_handlers(canvas_t *canvas)
+static result_t canvas_set_window_handlers(canvas_t *canvas)
 {
-  error err;
+  result_t err;
 
   canvas_register_window_handlers(1, canvas);
 
@@ -514,9 +514,9 @@ static void canvas_unset_window_handlers(canvas_t *canvas)
 
 /* ----------------------------------------------------------------------- */
 
-error canvas_create(canvas_t **new_canvas)
+result_t canvas_create(canvas_t **new_canvas)
 {
-  error     err;
+  result_t  err;
   canvas_t *canvas = NULL;
   wimp_w    w      = wimp_ICON_BAR;
 

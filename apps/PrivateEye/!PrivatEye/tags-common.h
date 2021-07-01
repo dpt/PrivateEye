@@ -39,47 +39,47 @@ void tags_common_choices_updated(const choices *cs);
 
 /* The following assume that 'opaque' is the tags_common pointer. */
 
-error tags_common_add_tag(tag_cloud  *tc,
-                          const char *name,
-                          int         length,
-                          void       *opaque);
-
-/* Delete 'index'. */
-error tags_common_delete_tag(tag_cloud *tc,
-                             int        index,
-                             void      *opaque);
-
-/* Rename 'index' to 'name'. */
-error tags_common_rename_tag(tag_cloud  *tc,
-                             int         index,
+result_t tags_common_add_tag(tag_cloud  *tc,
                              const char *name,
                              int         length,
                              void       *opaque);
 
-error tags_common_tag(tag_cloud  *tc,
-                      int         index,
-                      const char *digest,
-                      const char *file_name,
-                      void       *opaque);
+/* Delete 'index'. */
+result_t tags_common_delete_tag(tag_cloud *tc,
+                                int        index,
+                                void      *opaque);
 
-error tags_common_detag(tag_cloud  *tc,
-                        int         index,
-                        const char *digest,
-                        void       *opaque);
+/* Rename 'index' to 'name'. */
+result_t tags_common_rename_tag(tag_cloud  *tc,
+                                int         index,
+                                const char *name,
+                                int         length,
+                                void       *opaque);
 
-error tags_common_tagfile(tag_cloud  *tc,
-                          const char *file_name,
-                          int         index,
-                          void       *opaque);
+result_t tags_common_tag(tag_cloud  *tc,
+                         int         index,
+                         const char *digest,
+                         const char *file_name,
+                         void       *opaque);
 
-error tags_common_detagfile(tag_cloud  *tc,
-                            const char *file_name,
-                            int         index,
-                            void       *opaque);
+result_t tags_common_detag(tag_cloud  *tc,
+                           int         index,
+                           const char *digest,
+                           void       *opaque);
 
-error tags_common_event(tag_cloud       *tc,
-                        tag_cloud_event  event,
-                        void            *opaque);
+result_t tags_common_tagfile(tag_cloud  *tc,
+                             const char *file_name,
+                             int         index,
+                             void       *opaque);
+
+result_t tags_common_detagfile(tag_cloud  *tc,
+                               const char *file_name,
+                               int         index,
+                               void       *opaque);
+
+result_t tags_common_event(tag_cloud       *tc,
+                           tag_cloud_event  event,
+                           void            *opaque);
 
 /* ----------------------------------------------------------------------- */
 
@@ -88,16 +88,20 @@ tag_cloud_event tags_common_keyhandler(wimp_key_no  key_no,
 
 /* ----------------------------------------------------------------------- */
 
-error tags_common_set_tags(tag_cloud *tc, tags_common *common);
-error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *common);
-error tags_common_clear_highlights(tag_cloud *tc);
+result_t tags_common_set_tags(tag_cloud *tc, tags_common *common);
+
+result_t tags_common_set_highlights(tag_cloud   *tc,
+                                    image_t     *image,
+                                    tags_common *common);
+
+result_t tags_common_clear_highlights(tag_cloud *tc);
 
 /* ----------------------------------------------------------------------- */
 
-error tags_common_init(void);
+result_t tags_common_init(void);
 void tags_common_fin(void);
 
-error tags_common_lazyinit(void);
+result_t tags_common_lazyinit(void);
 void tags_common_lazyfin(int force);
 
 /* ----------------------------------------------------------------------- */

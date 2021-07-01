@@ -52,9 +52,9 @@ LOCALS;
 
 /* ----------------------------------------------------------------------- */
 
-static error tag(tag_cloud *tc, int index, void *opaque)
+static result_t tag(tag_cloud *tc, int index, void *opaque)
 {
-  error    err;
+  result_t err;
   Indices *ind = &LOCALS.indices;
 
   NOT_USED(opaque);
@@ -66,7 +66,7 @@ static error tag(tag_cloud *tc, int index, void *opaque)
                  1,
                  8))
   {
-    err = error_OOM;
+    err = result_OOM;
     goto failure;
   }
 
@@ -78,7 +78,7 @@ static error tag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
@@ -86,9 +86,9 @@ failure:
   return err;
 }
 
-static error detag(tag_cloud *tc, int index, void *opaque)
+static result_t detag(tag_cloud *tc, int index, void *opaque)
 {
-  error    err;
+  result_t err;
   Indices *ind = &LOCALS.indices;
   int      i;
 
@@ -99,7 +99,7 @@ static error detag(tag_cloud *tc, int index, void *opaque)
       break;
 
   if (i == ind->nindices)
-    return error_OK; /* index not found */
+    return result_OK; /* index not found */
 
   array_delete_element(ind->indices,
                        sizeof(*ind->indices),
@@ -114,7 +114,7 @@ static error detag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -146,11 +146,11 @@ static void tags_search_lazyfin(int force);
 
 static int tags_search_refcount = 0;
 
-error tags_search_init(void)
+result_t tags_search_init(void)
 {
   if (tags_search_refcount++ == 0)
   {
-    error err;
+    result_t err;
 
     /* dependencies */
 
@@ -171,7 +171,7 @@ error tags_search_init(void)
       return err;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 void tags_search_fin(void)
@@ -198,9 +198,9 @@ void tags_search_fin(void)
 
 static int tags_search_lazyrefcount = 0;
 
-static error tags_search_lazyinit(void)
+static result_t tags_search_lazyinit(void)
 {
-  error err;
+  result_t err;
 
   if (tags_search_lazyrefcount++ == 0)
   {
@@ -219,7 +219,7 @@ static error tags_search_lazyinit(void)
     tc = tag_cloud_create(tag_cloud_CREATE_FLAG_TOOLBAR_DISABLED, &conf);
     if (tc == NULL)
     {
-      err = error_OOM;
+      err = result_OOM;
       goto Failure;
     }
 
@@ -247,7 +247,7 @@ static error tags_search_lazyinit(void)
       goto Failure;
   }
 
-  return error_OK;
+  return result_OK;
 
 Failure:
 
@@ -273,9 +273,9 @@ static void tags_search_lazyfin(int force)
 /* ----------------------------------------------------------------------- */
 
 /* This is very rough at the moment. */
-static error tags_search_search(void)
+static result_t tags_search_search(void)
 {
-  error         err;
+  result_t      err;
   int           cont;
   char          buf[256];
   filenamedb_t *fdb;
@@ -323,7 +323,7 @@ static error tags_search_search(void)
   }
   while (cont);
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -366,7 +366,7 @@ static int tags_search_event_mouse_click(wimp_event_no event_no,
   return event_HANDLED;
 }
 
-static error search_attach_child(wimp_w parent, wimp_w child, wimp_i icon)
+static result_t search_attach_child(wimp_w parent, wimp_w child, wimp_i icon)
 {
   wimp_window_state         pstate;
   wimp_icon_state           istate;
@@ -427,12 +427,12 @@ static error search_attach_child(wimp_w parent, wimp_w child, wimp_i icon)
 
   wimp_open_window_nested_with_flags(&cstate, parent, linkage);
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_search_open(void)
+result_t tags_search_open(void)
 {
-  error             err;
+  result_t          err;
   wimp_w            w;
   wimp_window_state state;
 
@@ -464,7 +464,7 @@ error tags_search_open(void)
     search_attach_child(w, tag_cloud_get_window_handle(LOCALS.tc), 2);
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 #else

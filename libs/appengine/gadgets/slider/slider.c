@@ -24,6 +24,7 @@ static struct
   int            y;
   os_box         bbox;
   slider_update *callback;
+  void          *opaque;
   int            val; /* last reported value */
   int            min, max;
 }
@@ -131,7 +132,7 @@ static void slider_resize(wimp_pointer *pointer)
 
   val += slider.min;
   slider.val = val;
-  slider.callback(slider.i - 2, val); /* callback quoting the 'pit' icon */
+  slider.callback(slider.i - 2, val, slider.opaque); /* callback quoting the 'pit' icon */
 }
 
 static int slider_event_pollword_non_zero(wimp_event_no event_no,
@@ -156,9 +157,10 @@ static int slider_event_pollword_non_zero(wimp_event_no event_no,
 /* ----------------------------------------------------------------------- */
 
 void slider_start(wimp_pointer  *pointer,
-                  slider_update *update,
                   int            min,
-                  int            max)
+                  int            max,
+                  slider_update *update,
+                  void          *opaque)
 {
   wimp_window_state state;
   int               x,y;
@@ -222,6 +224,7 @@ void slider_start(wimp_pointer  *pointer,
   slider.val      = 708540049; // mad value for a default
   slider.min      = min;
   slider.max      = max;
+  slider.opaque   = opaque;
 
   slider_set_handlers(1);
 

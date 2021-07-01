@@ -123,12 +123,12 @@ exit:
 
 /* ----------------------------------------------------------------------- */
 
-error tags_common_add_tag(tag_cloud  *tc,
-                          const char *name,
-                          int         length,
-                          void       *opaque)
+result_t tags_common_add_tag(tag_cloud  *tc,
+                             const char *name,
+                             int         length,
+                             void       *opaque)
 {
-  error        err;
+  result_t     err;
   tags_common *common = opaque;
 
   NOT_USED(length);
@@ -139,12 +139,12 @@ error tags_common_add_tag(tag_cloud  *tc,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_common_delete_tag(tag_cloud *tc, int index, void *opaque)
+result_t tags_common_delete_tag(tag_cloud *tc, int index, void *opaque)
 {
-  error        err;
+  result_t     err;
   tags_common *common = opaque;
 
   tagdb_remove(common->db, common->indextotag[index]);
@@ -153,16 +153,16 @@ error tags_common_delete_tag(tag_cloud *tc, int index, void *opaque)
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_common_rename_tag(tag_cloud  *tc,
-                             int         index,
-                             const char *name,
-                             int         length,
-                             void       *opaque)
+result_t tags_common_rename_tag(tag_cloud  *tc,
+                                int         index,
+                                const char *name,
+                                int         length,
+                                void       *opaque)
 {
-  error        err;
+  result_t     err;
   tags_common *common = opaque;
 
   NOT_USED(length);
@@ -175,16 +175,16 @@ error tags_common_rename_tag(tag_cloud  *tc,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_common_tag(tag_cloud  *tc,
-                      int         index,
-                      const char *digest,
-                      const char *file_name,
-                      void       *opaque)
+result_t tags_common_tag(tag_cloud  *tc,
+                         int         index,
+                         const char *digest,
+                         const char *file_name,
+                         void       *opaque)
 {
-  error        err;
+  result_t     err;
   tags_common *common = opaque;
 
   err = tagdb_tagid(common->db, digest, common->indextotag[index]);
@@ -199,15 +199,15 @@ error tags_common_tag(tag_cloud  *tc,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_common_detag(tag_cloud  *tc,
-                        int         index,
-                        const char *digest,
-                        void       *opaque)
+result_t tags_common_detag(tag_cloud  *tc,
+                           int         index,
+                           const char *digest,
+                           void       *opaque)
 {
-  error        err;
+  result_t     err;
   tags_common *common = opaque;
 
   err = tagdb_untagid(common->db, digest, common->indextotag[index]);
@@ -221,15 +221,15 @@ error tags_common_detag(tag_cloud  *tc,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_common_tagfile(tag_cloud  *tc,
-                          const char *file_name,
-                          int         index,
-                          void       *opaque)
+result_t tags_common_tagfile(tag_cloud  *tc,
+                             const char *file_name,
+                             int         index,
+                             void       *opaque)
 {
-  error          err;
+  result_t       err;
   tags_common   *common = opaque;
   unsigned char  digest[md5_DIGESTSZ];
 
@@ -251,15 +251,15 @@ error tags_common_tagfile(tag_cloud  *tc,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_common_detagfile(tag_cloud  *tc,
-                            const char *file_name,
-                            int         index,
-                            void       *opaque)
+result_t tags_common_detagfile(tag_cloud  *tc,
+                               const char *file_name,
+                               int         index,
+                               void       *opaque)
 {
-  error          err;
+  result_t       err;
   tags_common   *common = opaque;
   unsigned char  digest[md5_DIGESTSZ];
 
@@ -277,10 +277,10 @@ error tags_common_detagfile(tag_cloud  *tc,
   if (err)
     return err;
 
-  return error_OK;
+  return result_OK;
 }
 
-error tags_common_event(tag_cloud *tc, tag_cloud_event event, void *opaque)
+result_t tags_common_event(tag_cloud *tc, tag_cloud_event event, void *opaque)
 {
   NOT_USED(tc);
   NOT_USED(opaque);
@@ -299,7 +299,7 @@ error tags_common_event(tag_cloud *tc, tag_cloud_event event, void *opaque)
     break;
   }
 
-  return error_OK;
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -307,9 +307,9 @@ error tags_common_event(tag_cloud *tc, tag_cloud_event event, void *opaque)
 #define BUFMIN 128 /* minimum size of name buffer */
 #define TAGMIN 8   /* minimum size of tags array */
 
-error tags_common_set_tags(tag_cloud *tc, tags_common *common)
+result_t tags_common_set_tags(tag_cloud *tc, tags_common *common)
 {
-  error          err;
+  result_t       err;
   int            tagsallocated;
   tag_cloud_tag *tags;
   int            bufallocated;
@@ -355,7 +355,7 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
     do
     {
       err = tagdb_tagtoname(common->db, tag, bufp, &length, bufend - bufp);
-      if (err == error_TAGDB_BUFF_OVERFLOW)
+      if (err == result_TAGDB_BUFF_OVERFLOW)
       {
         char *oldbuf;
 
@@ -368,7 +368,7 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
                        length,
                        BUFMIN))
         {
-          err = error_OOM;
+          err = result_OOM;
           goto failure;
         }
 
@@ -381,7 +381,7 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
         goto failure;
       }
     }
-    while (err == error_TAGDB_BUFF_OVERFLOW);
+    while (err == result_TAGDB_BUFF_OVERFLOW);
 
     if (array_grow((void **) &tags,
                    sizeof(*tags),
@@ -390,7 +390,7 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
                    1, /* need */
                    TAGMIN))
     {
-      err = error_OOM;
+      err = result_OOM;
       goto failure;
     }
 
@@ -401,7 +401,7 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
                    1, /* need */
                    TAGMIN))
     {
-      err = error_OOM;
+      err = result_OOM;
       goto failure;
     }
 
@@ -439,7 +439,7 @@ error tags_common_set_tags(tag_cloud *tc, tags_common *common)
   common->indextotag  = indextotag;
   common->nindextotag = ntags;
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
@@ -451,9 +451,11 @@ failure:
 
 #define HLMIN 8  /* minimum allocated size of tags array */
 
-error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *common)
+result_t tags_common_set_highlights(tag_cloud   *tc,
+                                    image_t     *image,
+                                    tags_common *common)
 {
-  error         err;
+  result_t      err;
   unsigned char digest[image_DIGESTSZ];
   int          *indices;
   int           nindices;
@@ -462,7 +464,7 @@ error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *com
   tagdb_tag_t   tag;
 
   if (image == NULL)
-    return error_OK;
+    return result_OK;
 
   err = image_get_digest(image, digest);
   if (err)
@@ -479,7 +481,7 @@ error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *com
     int i;
 
     err = tagdb_get_tags_for_id(common->db, (char *) digest, &cont, &tag);
-    if (err == error_TAGDB_UNKNOWN_ID)
+    if (err == result_TAGDB_UNKNOWN_ID)
       break;
     else if (err)
       goto failure;
@@ -494,7 +496,7 @@ error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *com
                    1,
                    HLMIN))
     {
-      err = error_OOM;
+      err = result_OOM;
       goto failure;
     }
 
@@ -512,7 +514,7 @@ error tags_common_set_highlights(tag_cloud *tc, image_t *image, tags_common *com
 
   free(indices);
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
@@ -520,7 +522,7 @@ failure:
   return err;
 }
 
-error tags_common_clear_highlights(tag_cloud *tc)
+result_t tags_common_clear_highlights(tag_cloud *tc)
 {
   return tag_cloud_highlight(tc, NULL, 0);
 }
@@ -529,9 +531,9 @@ error tags_common_clear_highlights(tag_cloud *tc)
 
 static int tags_common_refcount = 0;
 
-error tags_common_init(void)
+result_t tags_common_init(void)
 {
-  error err;
+  result_t err;
 
   if (tags_common_refcount++ == 0)
   {
@@ -557,7 +559,7 @@ error tags_common_init(void)
     }
   }
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
@@ -585,9 +587,9 @@ void tags_common_fin(void)
 
 static unsigned int tags_common_lazyrefcount = 0;
 
-error tags_common_lazyinit(void)
+result_t tags_common_lazyinit(void)
 {
-  error err;
+  result_t err;
 
   if (tags_common_lazyrefcount == 0)
   {
@@ -604,7 +606,7 @@ error tags_common_lazyinit(void)
       oserr = xosfile_create_dir(TAGS_SECTION, 0);
     if (oserr)
     {
-      err = error_OS;
+      err = result_OS;
       goto failure;
     }
 
@@ -624,7 +626,7 @@ error tags_common_lazyinit(void)
 
   tags_common_lazyrefcount++;
 
-  return error_OK;
+  return result_OK;
 
 
 failure:
