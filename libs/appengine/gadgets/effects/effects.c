@@ -186,6 +186,7 @@ static struct
   list_t        list_anchor;   /* linked list of effectswins */
   effectswin_t *current;       /* for event handlers */
   effect_blur   blur;          /* transient for edits */
+  effect_tone   tone;          /* transient for edits */
 }
 LOCALS;
 
@@ -1429,23 +1430,21 @@ slider_rec;
 
 /* ----------------------------------------------------------------------- */
 
-static effect_tone tone; /* transient effect_tone for editing */
-
 static void tone_set_values_and_redraw(void)
 {
-  tonemap_set(tone.map, tone.channels, &tone.spec);
+  tonemap_set(LOCALS.tone.map, LOCALS.tone.channels, &LOCALS.tone.spec);
 
-  tonemapgadget_update(tone.map, LOCALS.effects_crv_w, EFFECTS_CRV_D_CURVE);
+  tonemapgadget_update(LOCALS.tone.map, LOCALS.effects_crv_w, EFFECTS_CRV_D_CURVE);
 }
 
 static const slider_rec tone_sliders[] =
 {
-  { EFFECTS_CRV_S_GAMMA_PIT,  1, 300, 100, &tone.spec.gamma      },
-  { EFFECTS_CRV_S_BRIGHT_PIT, 0, 200, 100, &tone.spec.brightness },
-  { EFFECTS_CRV_S_CONT_PIT,   0, 200, 100, &tone.spec.contrast   },
-  { EFFECTS_CRV_S_SASG_PIT,   0, 100,  50, &tone.spec.midd       },
-  { EFFECTS_CRV_S_BIAS_PIT,   0, 100,  50, &tone.spec.bias       },
-  { EFFECTS_CRV_S_GAIN_PIT,   0, 100,  50, &tone.spec.gain       },
+  { EFFECTS_CRV_S_GAMMA_PIT,  1, 300, 100, &LOCALS.tone.spec.gamma      },
+  { EFFECTS_CRV_S_BRIGHT_PIT, 0, 200, 100, &LOCALS.tone.spec.brightness },
+  { EFFECTS_CRV_S_CONT_PIT,   0, 200, 100, &LOCALS.tone.spec.contrast   },
+  { EFFECTS_CRV_S_SASG_PIT,   0, 100,  50, &LOCALS.tone.spec.midd       },
+  { EFFECTS_CRV_S_BIAS_PIT,   0, 100,  50, &LOCALS.tone.spec.bias       },
+  { EFFECTS_CRV_S_GAIN_PIT,   0, 100,  50, &LOCALS.tone.spec.gain       },
 };
 
 static void tone_slider_update(wimp_i i, int val, void *opaque)
@@ -1495,12 +1494,12 @@ static void tone_reset_dialogue(effectswin_t *ew)
 
   /* reset tone.* to values from tonemap */
 
-  tonemap_get_values(tone.map, tone.channels, &tone.spec);
+  tonemap_get_values(LOCALS.tone.map, LOCALS.tone.channels, &LOCALS.tone.spec);
 
   /* set radio buttons */
 
   for (i = 0; i < NELEMS(map); i++)
-    if (map[i].channels == tone.channels)
+    if (map[i].channels == LOCALS.tone.channels)
       break;
 
   icon_set_radio(LOCALS.effects_crv_w, map[i].i);
@@ -1525,24 +1524,24 @@ static void tone_reset_dialogue(effectswin_t *ew)
 
   icon_set_selected(LOCALS.effects_crv_w,
                     EFFECTS_CRV_O_INVERT,
-                    tone.spec.flags & tonemap_FLAG_INVERT);
+                    LOCALS.tone.spec.flags & tonemap_FLAG_INVERT);
 
   icon_set_selected(LOCALS.effects_crv_w,
                     EFFECTS_CRV_O_REFLECT,
-                    tone.spec.flags & tonemap_FLAG_REFLECT);
+                    LOCALS.tone.spec.flags & tonemap_FLAG_REFLECT);
 }
 
 static void tone_start_editing(effectswin_t *ew)
 {
-  tonemap_destroy(tone.map);
+  tonemap_destroy(LOCALS.tone.map);
 
   /* copy everything across */
 
-  tone = ew->editing_element->args.tone;
+  LOCALS.tone = ew->editing_element->args.tone;
 
   /* clone the tonemap so we have a transient one to play with */
 
-  tone.map = tonemap_copy(tone.map);
+  LOCALS.tone.map = tonemap_copy(LOCALS.tone.map);
 
   tone_reset_dialogue(ew);
 
@@ -1574,7 +1573,7 @@ static int tone_event_redraw_window_request(wimp_event_no event_no,
   NOT_USED(event_no);
   NOT_USED(handle);
 
-  tonemapgadget_redraw(tone.map,
+  tonemapgadget_redraw(LOCALS.tone.map,
                        LOCALS.effects_crv_w,
                        EFFECTS_CRV_D_CURVE,
                        redraw);
@@ -1610,11 +1609,11 @@ static int tone_event_mouse_click(wimp_event_no event_no,
 
         /* copy everything across */
 
-        ew->editing_element->args.tone = tone;
+        ew->editing_element->args.tone = LOCALS.tone;
 
         /* clone a new tonemap, because we need to keep ours in case we're
          * _not_ closing the dialogue */
-        ew->editing_element->args.tone.map = tonemap_copy(tone.map);
+        ew->editing_element->args.tone.map = tonemap_copy(LOCALS.tone.map);
 
         effect_edited(ew, ew->editing_element);
       }
@@ -1624,12 +1623,12 @@ static int tone_event_mouse_click(wimp_event_no event_no,
       break;
 
     case EFFECTS_CRV_O_INVERT:
-      tone.spec.flags ^= tonemap_FLAG_INVERT;
+      LOCALS.tone.spec.flags ^= tonemap_FLAG_INVERT;
       kick = 1;
       break;
 
     case EFFECTS_CRV_O_REFLECT:
-      tone.spec.flags ^= tonemap_FLAG_REFLECT;
+      LOCALS.tone.spec.flags ^= tonemap_FLAG_REFLECT;
       kick = 1;
       break;
 
@@ -1641,7 +1640,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
     {
       tonemap_channels new_channels;
 
-      new_channels = tone.channels;
+      new_channels = LOCALS.tone.channels;
 
       switch (pointer->i)
       {
@@ -1662,14 +1661,14 @@ static int tone_event_mouse_click(wimp_event_no event_no,
         break;
       }
 
-      if (new_channels != tone.channels)
+      if (new_channels != LOCALS.tone.channels)
       {
         /* retrieve values for newly-selected channel from tonemap and store
          * in 'tone' */
 
-        tone.channels = new_channels;
+        LOCALS.tone.channels = new_channels;
 
-        tonemap_get_values(tone.map, tone.channels, &tone.spec);
+        tonemap_get_values(LOCALS.tone.map, LOCALS.tone.channels, &LOCALS.tone.spec);
 
         tone_reset_dialogue(ew);
         kick = 1;
@@ -1681,7 +1680,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
       break;
 
     case EFFECTS_CRV_B_RESET:
-      effect_tone_reset(&tone);
+      effect_tone_reset(&LOCALS.tone);
       tone_reset_dialogue(ew);
       kick = 1;
       break;
@@ -1712,7 +1711,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
         pointer->i == EFFECTS_CRV_B_CANCEL)
     {
       if (pointer->buttons & wimp_CLICK_SELECT)
-        // FIXME: Need to throw away any remaining tonemap from tone.map
+        // FIXME: Need to throw away any remaining tonemap from LOCALS.tone.map
         wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
       else
         tone_start_editing(ew);
