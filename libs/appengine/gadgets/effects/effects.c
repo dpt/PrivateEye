@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "fortify/fortify.h"
@@ -29,6 +30,7 @@
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"
+#include "appengine/base/strings.h"
 #include "appengine/gadgets/scroll-list.h"
 #include "appengine/gadgets/slider.h"
 #include "appengine/gadgets/tonemap-gadget.h"
