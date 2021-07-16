@@ -55,37 +55,48 @@ static void copytrunc(wimp_icon *icon, const char *text, int len)
 
 void icon_set_text(wimp_w w, wimp_i i, const char *text)
 {
-  wimp_icon_state state;
-  int             oldlen;
-  int             newlen;
+  wimp_icon_state   istate;
+  int               oldlen;
+  int               newlen;
+  wimp_window_state wstate;
 
-  state.w = w;
-  state.i = i;
-  wimp_get_icon_state(&state);
+  istate.w = w;
+  istate.i = i;
+  wimp_get_icon_state(&istate);
 
-  if ((state.icon.flags & (wimp_ICON_TEXT | wimp_ICON_INDIRECTED)) == 0)
+  istate.w = w;
+  istate.i = i;
+  wimp_get_icon_state(&istate);
+
+  if ((istate.icon.flags & (wimp_ICON_TEXT | wimp_ICON_INDIRECTED)) == 0)
     return; /* not text + indirected */
 
   /* The old text could be terminated with any control character.
    * The new text will always be zero terminated. */
 
-  /* Note that since state.icon.data.indirected_text.text is in the same
+  /* Note that since istate.icon.data.indirected_text.text is in the same
    * position for both indirected text and indirected text+sprite icon types,
    * using the former works for both. */
 
-  oldlen = str_len(state.icon.data.indirected_text.text);
+  oldlen = str_len(istate.icon.data.indirected_text.text);
   newlen = strlen(text);
 
   if (oldlen == newlen &&
-      memcmp(state.icon.data.indirected_text.text, text, newlen) == 0)
+      memcmp(istate.icon.data.indirected_text.text, text, newlen) == 0)
   {
     return; /* exactly the same contents */
   }
 
-  copytrunc(&state.icon, text, newlen);
+  copytrunc(&istate.icon, text, newlen);
 
+  wstate.w = w;
+  wimp_get_window_state(&wstate);
+
+  if ((wstate.flags & wimp_WINDOW_OPEN) == 0)
+    return;
+  
   /* Update the caret position if it's in the icon. */
-  if (BUTTON_TYPE_IS(state.icon.flags, wimp_BUTTON_WRITABLE))
+  if (BUTTON_TYPE_IS(istate.icon.flags, wimp_BUTTON_WRITABLE))
   {
     wimp_caret caret;
 
