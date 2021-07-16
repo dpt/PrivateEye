@@ -860,17 +860,35 @@ result_t effects_init(void)
 
   err = help_init();
   if (err)
-    return err;
+    goto exit;
 
   /* modules */
 
   LOCALS.effects_w = window_create("effects");
 
   err = init_add();
+  if (err)
+    goto cleanup10;
+  
   err = init_blur();
+  if (err)
+    goto cleanup20;
+ 
   err = init_tone();
+  if (err)
+    goto cleanup30;
 
   return result_OK;
+
+
+cleanup30:
+  fin_blur();
+cleanup20:
+  fin_add();
+cleanup10:
+  help_fin();
+exit:
+  return err;
 }
 
 void effects_fin(void)
