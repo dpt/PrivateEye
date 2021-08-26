@@ -22,7 +22,7 @@ Using CMake to generate a Makefile build:
 export APPENGINE_ROOT=<here>
 cd <here>/apps/PrivateEye
 mkdir build && cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake ../!PrivateEye
+cmake -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake ../!PrivatEye
 make install
 ```
 
