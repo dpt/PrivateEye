@@ -1,0 +1,99 @@
+---
+# CI build for PrivateEye
+#
+
+name: PrivateEye
+
+# Controls when the action will run. Triggers the workflow on:
+#   * push on any branch.
+#   * tag creation for tags beginning with a 'v'
+on:
+  push:
+    branches: ["*"]
+    tags: ["v*"]
+  # Pull request events happen on pull request state transitions, so we probably don't want this here.
+  #pull_request:
+  #  branches: ["*"]
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    container: riscosdotinfo/riscos-gccsdk-4.7:latest
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      leafname: ${{ steps.version.outputs.leafname }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Step intended to be reused in CI pipelines.
+      - name: Cross compile !PrivateEye
+        run: |
+          ./buildit.sh
+
+      - name: Give the output a versioned name
+        id: version
+        run: |
+          if [[ -f VersionNum ]] ; then
+              version=$(sed '/MajorVersion / ! d ; s/.*MajorVersion *"\(.*\)"/\1/' VersionNum)
+          else
+              version=$(git rev-parse --short HEAD)
+          fi
+          echo "This is version: $version"
+          leafname="NAME-$version.zip"
+
+          echo "::set-output name=version::$version"
+          echo "::set-output name=leafname::$leafname"
+
+      - name: Archive it
+        run: |
+          apt-get install -y python3 python3-pip
+          pip install rozipinfo
+          cd apps/PrivateEye/build
+          python3 -m rozipfile --verbose --create ../../../${{ steps.version.outputs.leafname }} \!PrivatEye/
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: PrivateEye
+          path: ${{ steps.version.outputs.leafname }}
+        # The artifact that is downloadable from the Actions is actually a zip of the artifacts
+        # that we supply. So it will be a regular Zip file containing a RISC OS Zip file.
+
+  # The release only triggers when the thing that was pushed was a tag starting with 'v'
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download built binary
+        uses: actions/download-artifact@v1
+        with:
+          name: PrivateEye
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ needs.build-riscos.outputs.version }}
+          draft: true
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
+          # See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: PrivateEye/${{ needs.build-riscos.outputs.leafname }}
+          asset_name: ${{ needs.build-riscos.outputs.leafname }}
+          asset_content_type: application/zip
