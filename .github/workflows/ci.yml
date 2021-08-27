@@ -6,11 +6,11 @@ name: PrivateEye
 
 # Controls when the action will run. Triggers the workflow on:
 #   * push on any branch.
-#   * tag creation for tags beginning with a 'v'
+#   * tag creation for tags beginning with 'privateeye-'
 on:
   push:
     branches: ["*"]
-    tags: ["v*"]
+    tags: ["privateeye-*"]
   # Pull request events happen on pull request state transitions, so we probably don't want this here.
   #pull_request:
   #  branches: ["*"]
@@ -44,7 +44,7 @@ jobs:
               version=$(git rev-parse --short HEAD)
           fi
           echo "This is version: $version"
-          leafname="NAME-$version.zip"
+          leafname="PrivateEye-$version.zip"
 
           echo "::set-output name=version::$version"
           echo "::set-output name=leafname::$leafname"
@@ -63,11 +63,11 @@ jobs:
         # The artifact that is downloadable from the Actions is actually a zip of the artifacts
         # that we supply. So it will be a regular Zip file containing a RISC OS Zip file.
 
-  # The release only triggers when the thing that was pushed was a tag starting with 'v'
+  # The release only triggers when the thing that was pushed was a tag starting with 'privateeye-'
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/privateeye-')
     steps:
       - name: Download built binary
         uses: actions/download-artifact@v1
