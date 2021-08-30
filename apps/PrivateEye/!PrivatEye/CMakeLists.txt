@@ -282,11 +282,14 @@ endif()
 #
 
 # (force this for now)
-set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/!PrivatEye" CACHE PATH "CMake install prefix" FORCE)
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE PATH "CMake install prefix" FORCE)
+set(INSTALL_APPDIR ${CMAKE_INSTALL_PREFIX}/Apps/Graphics/!PrivatEye)
 
 install(TARGETS PrivateEye RUNTIME
-    DESTINATION ${CMAKE_INSTALL_PREFIX})
+    DESTINATION ${INSTALL_APPDIR})
 install(FILES !Boot,feb !Help !Run,feb !Sprites,ff9 !Sprites11,ff9 AppEngine,ffa
-    DESTINATION ${CMAKE_INSTALL_PREFIX})
+    DESTINATION ${INSTALL_APPDIR})
 install(DIRECTORY Resources
+    DESTINATION ${INSTALL_APPDIR})
+install(DIRECTORY ../Package
     DESTINATION ${CMAKE_INSTALL_PREFIX})
