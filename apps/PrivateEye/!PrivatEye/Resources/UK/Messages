@@ -49,10 +49,25 @@ size.bytes:%s bytes
 size.inches:%s × %s inches
 info.depth:%dbpp
 info.colour: colour
+info.extdcolour:%s (%d components, %d bits)
 info.mono: monochrome
 info.alpha: + alpha
 info.mask: with mask
 unspec:Unspecified
+
+# Image Info window - JPEG
+jpginfo.baseline:Baseline
+jpginfo.extseq:Extended Sequential
+jpginfo.prog:Progressive
+jpginfo.huff:Huffman
+jpginfo.arith:Arithmetic
+jpginfo.grey:Greyscale
+jpginfo.rgb:RGB
+jpginfo.ycbcr:YCbCr
+jpginfo.cmyk:CMYK
+jpginfo.ycck:YCCK
+jpginfo.unknown:Unknown colourspace
+
 
 # Histogram window
 

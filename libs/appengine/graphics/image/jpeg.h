@@ -86,15 +86,48 @@ typedef enum        /* JPEG marker codes */
 
 /* jpeg-utils.c */
 
-int jpeg_verify(const unsigned char *jpeg_data,
-                int                  file_size,
-                unsigned int        *mask);
-
 void jpeg_find(const unsigned char  *jpeg_data,
                int                   file_size,
                JPEG_MARKER           marker,
                const unsigned char **location,
                int                  *length,
                int                  *offset);
+
+typedef enum jpeg_colourspace
+{
+  jpeg_COLOURSPACE_GREYSCALE,
+  jpeg_COLOURSPACE_RGB,
+  jpeg_COLOURSPACE_YCBCR,
+  jpeg_COLOURSPACE_CMYK,
+  jpeg_COLOURSPACE_YCCK,
+  jpeg_COLOURSPACE_UNKNOWN
+}
+jpeg_colourspace_t;
+
+#define jpeg_FLAG_JFIF      (1u <<  0)
+#define jpeg_FLAG_EXIF      (1u <<  1)
+#define jpeg_FLAG_ADOBE     (1u <<  2)
+#define jpeg_FLAG_BASELINE  (1u <<  4)
+#define jpeg_FLAG_EXTSEQ    (1u <<  5)
+#define jpeg_FLAG_PRGRSSVE  (1u <<  6)
+#define jpeg_FLAG_ARITH     (1u <<  9) /* otherwise Huffman */
+#define jpeg_FLAG_TRUNCATED (1u << 30)
+
+typedef unsigned int jpeg_flags_t;
+
+typedef struct jpeg_info
+{
+  jpeg_flags_t       flags;
+  jpeg_colourspace_t colourspace;
+}
+jpeg_info_t;
+
+int jpeg_get_info(const unsigned char *jpeg_data,
+                  int                  file_size,
+                  jpeg_info_t         *info);
+
+/* Returns nonzero if the JPEG originating the given info structure is
+ * directly renderable with the current OS. */
+int jpeg_supported(const jpeg_info_t *info);
 
 #endif /* IMAGE_JPEG_H */

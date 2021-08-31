@@ -37,11 +37,81 @@ static int jpeg_to_spr_common(image_t *image);
 
 /* ----------------------------------------------------------------------- */
 
+static result_t jpeg_populate_info(image_t *image, const jpeg_info_t *info)
+{
+  result_t       err;
+  char           buf[100];
+  const char    *tok;
+  unsigned char  bpc = 8;
+  unsigned char  ncomps;
+
+  buf[0] = '\0';
+
+  /* the start of the string is the overall format
+   * JPEGs can be JFIF, Exif or Adobe format, or a combination thereof */
+  if (info->flags & jpeg_FLAG_JFIF)  { strcat(buf, "JFIF"); }
+  if (info->flags & jpeg_FLAG_EXIF)  { if (buf[0] != '\0') strcat(buf, "+"); strcat(buf, "Exif"); }
+  if (info->flags & jpeg_FLAG_ADOBE) { if (buf[0] != '\0') strcat(buf, "+"); strcat(buf, "Adobe"); }
+ 
+  /* append a string for the DCT ordering */
+  switch (info->flags & (jpeg_FLAG_BASELINE | jpeg_FLAG_EXTSEQ | jpeg_FLAG_PRGRSSVE))
+  {
+  case jpeg_FLAG_BASELINE: tok = "jpginfo.baseline"; break;
+  case jpeg_FLAG_EXTSEQ:   tok = "jpginfo.extseq"; break;
+  case jpeg_FLAG_PRGRSSVE: tok = "jpginfo.prog"; break;
+  default: tok = NULL;
+  }
+  if (tok)
+  {
+    if (buf[0] != '\0') strcat(buf, ", ");
+    strcat(buf, message(tok));
+  }
+
+  /* append a string for the compression type */
+  tok = (info->flags & jpeg_FLAG_ARITH) ? "jpginfo.arith" : "jpginfo.huff";  
+  if (tok)
+  {
+    if (buf[0] != '\0') strcat(buf, ", ");
+    strcat(buf, message0(tok));
+  }
+
+  err = image_set_info(image, image_INFO_FORMAT, buf);
+  if (err)
+    return err;
+
+  /* record the colourspace and number of components */
+  switch (info->colourspace)
+  {
+  case jpeg_COLOURSPACE_GREYSCALE: tok = "jpginfo.grey";  ncomps = 1; break;
+  case jpeg_COLOURSPACE_RGB:       tok = "jpginfo.rgb";   ncomps = 3; break;
+  case jpeg_COLOURSPACE_YCBCR:     tok = "jpginfo.ycbcr"; ncomps = 3; break;
+  case jpeg_COLOURSPACE_CMYK:      tok = "jpginfo.cmyk";  ncomps = 4; break;
+  case jpeg_COLOURSPACE_YCCK:      tok = "jpginfo.ycck";  ncomps = 4; break;
+  default:
+  case jpeg_COLOURSPACE_UNKNOWN:   tok = "jpginfo.unknown"; ncomps = 0; break;
+  }
+  err = image_set_info(image, image_INFO_COLOURSPACE, message0(tok));
+  if (err)
+    return err;
+
+  err = image_set_info(image, image_INFO_NCOMPONENTS, &ncomps);
+  if (err)
+    return err;
+  
+  /* bits per component is always 8 presently */
+  err = image_set_info(image, image_INFO_BPC, &bpc);
+  if (err)
+    return err;
+
+  return result_OK;
+}
+
 static int jpeg_load(image_choices *choices, image_t *image)
 {
   os_error       *e;
   unsigned char  *data;
   size_t          file_size;
+  jpeg_info_t     info;
   jpeg_info_flags flags;
   int             width, height;
   int             xdpi, ydpi;
@@ -68,13 +138,11 @@ static int jpeg_load(image_choices *choices, image_t *image)
                                       NULL /* exec */,
                                       NULL /* size */,
                                       NULL /* attr */));
-
   if (e == NULL)
   {
-    unsigned int present;
-
+    jpeg_get_info(data, file_size, &info);
     if (choices->jpeg.cleaning == image_JPEG_CLEANING_ALWAYS ||
-        jpeg_verify(data, file_size, &present) == 0)
+        !jpeg_supported(&info))
     {
       unsigned char *newdata;
       size_t         newlength;
@@ -123,6 +191,8 @@ static int jpeg_load(image_choices *choices, image_t *image)
   image->display.file_type = jpeg_FILE_TYPE;
 
   image->flags |= image_FLAG_CAN_ROT | image_FLAG_CAN_SPR;
+
+  jpeg_populate_info(image, &info);
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &data);
 

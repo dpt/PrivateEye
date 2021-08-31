@@ -3,6 +3,7 @@
  * Purpose: Image block handling
  * ----------------------------------------------------------------------- */
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,7 @@
 #include "oslib/osfile.h"
 
 #include "datastruct/list.h"
+#include "utils/array.h"
 
 #include "appengine/graphics/image-observer.h"
 #include "appengine/io/md5.h"
@@ -25,7 +27,107 @@ static list_t list_anchor = { NULL };
 
 /* ----------------------------------------------------------------------- */
 
-static void image_reset(image_t *i)
+static void image_init_info(image_t *image)
+{
+  image->info.entries          = NULL;
+  image->info.entriesused      = 0;
+  image->info.entriesallocated = 0;
+
+  image->info.data             = NULL;
+  image->info.dataused         = 0;
+  image->info.dataallocated    = 0;
+}
+
+static void image_destroy_info(image_t *image)
+{
+  free(image->info.entries);
+  free(image->info.data);
+  image_init_info(image);
+}
+
+static int image_ensure_entries(image_t *image)
+{
+  return array_grow((void **) &image->info.entries,
+                               sizeof(*image->info.entries),
+                               image->info.entriesused,
+                              &image->info.entriesallocated,
+                               1 /* need */,
+                               4 /* minimum */);
+}
+
+static int image_ensure_data(image_t *image, int bytes_needed)
+{
+  return array_grow((void **) &image->info.data,
+                               sizeof(*image->info.data),
+                               image->info.dataused,
+                              &image->info.dataallocated,
+                               bytes_needed,
+                               64 /* minimum */);
+}
+
+result_t image_set_info(image_t        *image,
+                        image_info_key  key,
+                        const void     *data)
+{
+  image_info *entry;
+  size_t      nbytes;
+
+  if (image_ensure_entries(image))
+    return result_OOM;
+
+  entry = &image->info.entries[image->info.entriesused++];
+
+  switch (key)
+  {
+  case image_INFO_BPC:
+  case image_INFO_NCOMPONENTS:
+    nbytes = 1;
+    break;
+  case image_INFO_FORMAT:
+  case image_INFO_COLOURSPACE:
+    nbytes = strlen(data) + 1;
+    break;
+  case image_INFO_ORDERING:
+  case image_INFO_PALETTE:
+  default:
+    assert(0);
+    break;
+  }
+
+  if (image_ensure_data(image, nbytes))
+    return result_OOM;
+
+  entry->key  = key;
+  entry->data = &image->info.data[image->info.dataused];
+  memcpy(entry->data, data, nbytes);
+  image->info.dataused += nbytes;
+
+  return result_OK;
+}
+
+int image_get_info(image_t         *image,
+                   image_info_key   key,
+                   void           **data)
+{
+  int i;
+
+  if (image->info.entries == NULL)
+    return 0; /* no entries */
+
+  for (i = 0; i < image->info.entriesused; i++)
+    if (image->info.entries[i].key == key)
+    {
+        *data = image->info.entries[i].data;
+        return 1;
+    }
+
+  return 0;
+}
+
+/* ----------------------------------------------------------------------- */
+
+/* Dispose of any transient image data, e.g. calculated histograms. */
+static void image_dispose_transient(image_t *i)
 {
   /* dispose of histogram data */
   free(i->hists);
@@ -44,6 +146,8 @@ image_t *image_create(void)
 
   i->refcount = 1;
   i->background_colour = os_COLOUR_TRANSPARENT;
+
+  image_init_info(i);
 
   list_add_to_head(&list_anchor, &i->list);
 
@@ -157,7 +261,7 @@ void image_modified(image_t *i, image_modified_flags flags)
 
   i->flags |= image_FLAG_MODIFIED;
 
-  image_reset(i);
+  image_dispose_transient(i);
 
   data.modified.flags = flags;
 
@@ -180,7 +284,9 @@ void image_destroy(image_t *i)
     if (i->methods.unload)
       i->methods.unload(i);
 
-    image_reset(i);
+    image_destroy_info(i);
+
+    image_dispose_transient(i);
 
     free(i);
   }
