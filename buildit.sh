@@ -1,6 +1,6 @@
 #!/bin/bash
 ##
-# Build PrivateEye, pulling in all resources.
+# Build PrivateEye and TagCloud, pulling in all resources.
 #
 # Run me with:
 #    docker run -it --rm -v "$PWD:/work" -w /work riscosdotinfo/riscos-gccsdk-4.7:latest ./buildit.sh
@@ -19,6 +19,9 @@ cmake --version || { apt-get update && \
                      apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
                      apt-get install -y cmake ; }
 
+ninja --version || { apt-get update && \
+                     apt-get install -y ninja-build ; }
+
 rsync --version || { apt-get update && \
                      apt-get install -y rsync ; }
 
@@ -35,7 +38,6 @@ fi
 
 if $BUILD_OSLIB ; then
     if [[ ! -d libs/oslib || ! -d "$GCCSDK_INSTALL_ENV/include/oslib/" ]] ; then
-        # FIXME: Instead of installing this, download the distributed version
         cd libs
         svn co 'svn://svn.code.sf.net/p/ro-oslib/code/trunk/!OSLib' oslib
         cd oslib
@@ -61,7 +63,15 @@ else
 fi
 
 export APPENGINE_ROOT=${scriptdir}
+
+# PrivateEye
 cd ${scriptdir}/apps/PrivateEye
 mkdir -p build && cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake '../!PrivatEye' || bash -i
-make install || bash -i
+cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake '../!PrivatEye' || bash -i
+ninja install || bash -i
+
+# TagCloud
+cd ${scriptdir}/apps/TagCloud
+mkdir -p build && cd build
+cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake '../!TagCloud' || bash -i
+ninja install || bash -i
