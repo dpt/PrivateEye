@@ -91,7 +91,7 @@ result_t image_set_info(image_t        *image,
   case image_INFO_PALETTE:
   default:
     assert(0);
-    break;
+    return result_NOT_IMPLEMENTED;
   }
 
   if (image_ensure_data(image, nbytes))

@@ -72,7 +72,7 @@ int jpeg_get_info(const unsigned char *jpeg_data,
   const unsigned char *r;
   ptrdiff_t            l;
   jpeg_flags_t         flags = jpeg_FLAG_TRUNCATED;
-  int                  ncomponents;
+  int                  ncomponents = -1;
   char                 componentids[4];
   int                  app14_colortransform = -1;
   jpeg_colourspace_t   colourspace;
