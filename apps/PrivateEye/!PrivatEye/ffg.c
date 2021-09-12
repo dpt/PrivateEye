@@ -80,7 +80,6 @@ static void read_translators(const char    *wildcard,
     Translator  *ffg;
     const char  *cmd;
     size_t       cmdlen;
-    size_t       l;
     const char  *dollar;
     int          i;
     const char  *p;
@@ -141,7 +140,6 @@ static void read_translators(const char    *wildcard,
      * read variable's name. Hopefully it's always zero terminated. */
 
     p = (const char *) context;
-    l = strlen(p);
     dollar = strchr(p, '$');
     assert(dollar != NULL);
 
