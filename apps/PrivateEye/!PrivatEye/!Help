@@ -1,3 +1,24 @@
 PrivateEye - Image viewer - by David Thomas, © 1999-2021
 
 Please consult the manual for full information.
+
+Changes in 3.10
+---------------
+
+- PrivateEye now passes progressive JPEGs straight through to the OS when the
+  OS is capable of decoding them. This requires RISC OS Select with
+  SpriteExtend 1.30 or RISC OS 5 with SpriteExtend 1.73, or later.
+
+- Information on JPEGs is enhanced. The source info window will show the
+  details of the file format, being JFIF, Exif, Adobe or a combination
+  thereof; Baseline, Extended Sequential or Progressive, and whether the
+  packing was Huffman or Arithmetic.
+  
+- Hand-in-hand with the above is enhanced colourspace reporting. The "Colours"
+  field will show whether the JPEG is encoded as YCbCr (the most common),
+  YCCK (CMYK-like), RGB or CMYK. It will report the number of components
+  used, and the depth of those components.
+
+- Multiple effect windows may now be open concurrently.
+
+- PrivateEye is now cross-compiled using GCCSDK.
