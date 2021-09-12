@@ -72,17 +72,17 @@ image_choices;
 
 enum
 {
-  image_FLAG_VECTOR     = 1 << 0,
-  image_FLAG_COLOUR     = 1 << 1,
+  image_FLAG_VECTOR     = 1 << 0,  /* is a vector format image */
+  image_FLAG_COLOUR     = 1 << 1,  /* is a colour image (otherwise mono) */
   image_FLAG_HAS_MASK   = 1 << 2,  /* has sprite-style binary mask */
-  image_FLAG_EDITING    = 1 << 3,
-  image_FLAG_MODIFIED   = 1 << 4,
+  image_FLAG_EDITING    = 1 << 3,  /* is currently being edited */
+  image_FLAG_MODIFIED   = 1 << 4,  /* is modified */
   image_FLAG_CAN_HIST   = 1 << 5,  /* can obtain histogram */
   image_FLAG_CAN_ROT    = 1 << 6,  /* can rotate */
   image_FLAG_HAS_META   = 1 << 7,  /* has metadata */
   image_FLAG_CAN_SPR    = 1 << 8,  /* can convert to sprite */
   image_FLAG_HAS_ALPHA  = 1 << 9,  /* has alpha mask */
-  image_FLAG_HAS_DIGEST = 1 << 10, /* has digest computed */
+  image_FLAG_HAS_DIGEST = 1 << 10, /* has a digest computed */
 };
 
 typedef unsigned int image_flags;
@@ -117,6 +117,7 @@ struct image_methods
 typedef struct image_methods image_methods;
 
 
+/* image_attrs holds the essential attributes of an image. */
 typedef struct image_attrs image_attrs;
 
 struct image_attrs
@@ -146,6 +147,40 @@ struct image_attrs
 };
 
 
+/* image_info holds the nice-to-have informational attributes of an image. */
+typedef struct image_info image_info;
+
+typedef enum
+{
+  image_INFO_BPC,         /* Byte - Bits Per Component - e.g. 8 bpc */
+  image_INFO_COLOURSPACE, /* String - Name of colourspace - e.g. "YCCK" */
+  image_INFO_FORMAT,      /* String - Format details - e.g. "JFIF+Exif, Baseline" for a JPEG */
+  image_INFO_NCOMPONENTS, /* Byte - Number of Components - e.g. 3 components */
+  image_INFO_ORDERING,    /* TBD - Interlacing - PNG/GIF */
+  image_INFO_PALETTE,     /* TBD - Number of Palette Entries */
+}
+image_info_key;
+
+struct image_info
+{
+  image_info_key  key;
+  unsigned char  *data;
+};
+
+typedef struct imageinfo imageinfo;
+
+struct imageinfo
+{
+  image_info    *entries;
+  int            entriesused;
+  int            entriesallocated;
+
+  unsigned char *data;
+  int            dataused;
+  int            dataallocated;
+};
+
+
 struct T
 {
   list_t        list;
@@ -158,6 +193,8 @@ struct T
 
   char          file_name[256]; /* careful now */
   unsigned char digest[image_DIGESTSZ];
+
+  imageinfo     info;
 
   int           refcount;
 
@@ -272,6 +309,18 @@ void image_destroy_metadata(ntree_t *metadata);
 /* ----------------------------------------------------------------------- */
 
 result_t image_get_digest(T *image, unsigned char digest[image_DIGESTSZ]);
+
+/* ----------------------------------------------------------------------- */
+
+result_t image_set_info(image_t        *image,
+                        image_info_key  key,
+                        const void     *data);
+
+int image_get_info(image_t         *image,
+                   image_info_key   key,
+                   void           **data); // make const
+
+/* ----------------------------------------------------------------------- */
 
 #undef T
 

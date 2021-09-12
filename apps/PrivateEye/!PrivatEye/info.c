@@ -29,7 +29,7 @@
 
 typedef struct InfoDialogueSpecifier
 {
-  int       icon_date;
+  int       is_source;
   ptrdiff_t attrs;
   ptrdiff_t file_type;
   ptrdiff_t file_size;
@@ -131,7 +131,7 @@ static void populate_info_dialogue(dialogue_t                  *d,
       buf += sprintf(buf, message0("size.inches"), scratch, scratch + 12) + 1;
     }
 
-    /* depth, mask, colour */
+    /* depth, colour, alpha, mask */
 
     specs[spec++].value = buf;
 
@@ -149,18 +149,37 @@ static void populate_info_dialogue(dialogue_t                  *d,
     buf += strlen(buf) + 1;
   }
 
-  if (info->icon_date > -1)
+  if (info->is_source)
   {
-    specs[spec++].value = buf;
+    int                  present;
+    const char          *format;
+    const char          *space;
+    const unsigned char *bpc;
+    const unsigned char *ncomps;
 
+    /* decode and set date and time */
     time[0] = image->source.exec;
     time[1] = image->source.load;
     territory_convert_standard_date_and_time(territory_CURRENT,
                   (const os_date_and_time *) time,
                                              scratch,
                                              sizeof(scratch));
-
+    specs[spec++].value = buf;
     buf += sprintf(buf, "%s", scratch) + 1;
+    
+    /* set format */
+    present = image_get_info(image, image_INFO_FORMAT, (void **) &format);
+    specs[spec++].value = (present) ? format : DASH;
+
+    /* set (override) colours field */
+    present = image_get_info(image, image_INFO_COLOURSPACE, (void **) &space);
+    if (present) present = image_get_info(image, image_INFO_BPC, (void **) &bpc);
+    if (present) present = image_get_info(image, image_INFO_NCOMPONENTS, (void **) &ncomps);
+    if (present)
+    {
+      specs[4].value = buf;
+      buf += sprintf(buf, message0("info.extdcolour"), space, *ncomps, *bpc) + 1;
+    }
   }
 
   file_type = *((size_t *) ((char *) image + info->file_type));
@@ -179,7 +198,7 @@ static void viewer_infodlg_fillout(dialogue_t *d, void *opaque)
 {
   static const InfoDialogueSpecifier info =
   {
-    -1, /* no icon for date */
+    0, /* is not source */
     offsetof(image_t, display),
     offsetof(image_t, display.file_type),
     offsetof(image_t, display.file_size)
@@ -198,7 +217,7 @@ static void viewer_srcinfodlg_fillout(dialogue_t *d, void *opaque)
 {
   static const InfoDialogueSpecifier info =
   {
-    0, /* date icon present */
+    1, /* is source */
     offsetof(image_t, source),
     offsetof(image_t, source.file_type),
     offsetof(image_t, source.file_size)
