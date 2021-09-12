@@ -79,7 +79,6 @@ static void populate_info_dialogue(dialogue_t                  *d,
     specs[spec++].value = DASH;
     specs[spec++].value = DASH;
     specs[spec++].value = DASH;
-    specs[spec++].value = DASH;
   }
   else
   {
