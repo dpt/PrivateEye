@@ -1,24 +1,38 @@
-PrivateEye - Image viewer - by David Thomas, © 1999-2021
+PrivateEye - by David Thomas, © 1999-2021
+=========================================
 
-Please consult the manual for full information.
+PrivateEye is a freeware image viewer for RISC OS.
 
-Changes in 3.10
----------------
+Please consult the full PDF manual for full information.
+<URL:http://www.davespace.co.uk/software/privateeye300manual.pdf>
 
-- PrivateEye now passes progressive JPEGs straight through to the OS when the
-  OS is capable of decoding them. This requires RISC OS Select with
-  SpriteExtend 1.30 or RISC OS 5 with SpriteExtend 1.73, or later.
+Recent Changes
+--------------
 
-- Information on JPEGs is enhanced. The source info window will show the
-  details of the file format, being JFIF, Exif, Adobe or a combination
-  thereof; Baseline, Extended Sequential or Progressive, and whether the
-  packing was Huffman or Arithmetic.
+### 3.10 (12 Sep 2021)
+
+- Progressive JPEGs are now passed straight through to the OS when it is
+  capable of decoding them. This requires RISC OS Select with SpriteExtend
+  1.30 or RISC OS 5 with SpriteExtend 1.73, or later.
+
+  You can still force JPEG cleaning on from the choices if you wish.
+
+- The information given on JPEGs is enhanced. The source info window will
+  show the details of the file format, being JFIF, Exif, Adobe or a
+  combination thereof; Baseline, Extended Sequential or Progressive DCT
+  coding and whether the packing was Huffman or Arithmetic.
   
-- Hand-in-hand with the above is enhanced colourspace reporting. The "Colours"
-  field will show whether the JPEG is encoded as YCbCr (the most common),
-  YCCK (CMYK-like), RGB or CMYK. It will report the number of components
-  used, and the depth of those components.
+- Hand-in-hand with the above is enhanced colourspace reporting. The
+  "Colours" field will show whether the JPEG is encoded as YCbCr (the most
+  common), YCCK (like CMYK), RGB or CMYK. It will report the number of
+  components used, and the depth of those components too.
 
 - Multiple effect windows may now be open concurrently.
 
 - PrivateEye is now cross-compiled using GCCSDK.
+
+### 3.01 (19 Jan 2018)
+
+- Made the image stepping routine (PageUp/PageDown) cope with filesystems
+  which don't return predictable context values.
+
