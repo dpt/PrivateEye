@@ -291,5 +291,5 @@ install(FILES !Boot,feb !Help !Run,feb !Sprites,ff9 !Sprites11,ff9 AppEngine,ffa
     DESTINATION ${INSTALL_APPDIR})
 install(DIRECTORY Resources
     DESTINATION ${INSTALL_APPDIR})
-install(DIRECTORY ../Package
+install(DIRECTORY ../Package/RiscPkg
     DESTINATION ${CMAKE_INSTALL_PREFIX})
