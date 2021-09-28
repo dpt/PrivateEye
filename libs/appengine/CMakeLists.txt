@@ -347,6 +347,7 @@ set(GENERIC_SOURCES
     vdu/screen/pixel-size.c
     vdu/screen/read-mode-vars.c
     vdu/screen/screen_clip.c
+    vdu/screen/closest-mode.c
     vdu/sprite/colours.c
     vdu/sprite/data.c
     vdu/sprite/has-alpha.c

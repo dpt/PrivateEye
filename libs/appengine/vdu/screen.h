@@ -29,4 +29,11 @@ void read_drag_box_for_screen(os_box *box);
 
 os_error *screen_clip(const os_box *b);
 
+/**
+ * Enumerates all valid numbered graphics modes from 0-127. Each one is
+ * scored and the one with the smallest number of wasted pixels, and closest
+ * colour depth, is returned.
+ */
+os_mode closest_mode(int min_width, int min_height, int pref_log2bpp);
+
 #endif /* APPENGINE_SCREEN_H */
