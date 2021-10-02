@@ -36,4 +36,7 @@ os_error *screen_clip(const os_box *b);
  */
 os_mode closest_mode(int min_width, int min_height, int pref_log2bpp);
 
+/* Sets the screen mode then calls cache_mode_vars. */
+void set_mode(os_mode mode);
+
 #endif /* APPENGINE_SCREEN_H */

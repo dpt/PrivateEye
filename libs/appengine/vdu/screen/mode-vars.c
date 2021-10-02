@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------
  *    Name: mode-vars.c
  * Purpose: cache_mode_vars, read_current_mode_vars,
- *          read_screen_dimensions, read_drag_box_for_screen
+ *          read_screen_dimensions, read_drag_box_for_screen, set_mode
  * ----------------------------------------------------------------------- */
 
 #include "oslib/os.h"
@@ -53,3 +53,15 @@ void read_drag_box_for_screen(os_box *box)
 
   *box = b;
 }
+
+void set_mode(os_mode mode)
+{
+  char buf[2];
+
+  buf[0] = os_VDU_SET_MODE;
+  buf[1] = (char) (int) mode;
+  os_writen(buf, sizeof(buf));
+
+  cache_mode_vars();
+}
+
