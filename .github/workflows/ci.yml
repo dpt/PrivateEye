@@ -33,6 +33,8 @@ jobs:
       # Step intended to be reused in CI pipelines.
       - name: Cross compile PrivateEye and TagCloud
         run: |
+          apt-get update
+          apt-get install -y ca-certificates
           ./buildit.sh  # this builds both apps...
 
       - name: Give the output a versioned name
@@ -116,6 +118,8 @@ jobs:
       # Step intended to be reused in CI pipelines.
       - name: Cross compile PrivateEye and TagCloud
         run: |
+          apt-get update
+          apt-get install -y ca-certificates
           ./buildit.sh  # this builds both apps...
 
       - name: Give the output a versioned name
