@@ -7,6 +7,12 @@
 
 os_mode closest_mode(int min_width, int min_height, int pref_log2bpp)
 {
+  static const os_VDU_VAR_LIST(2) var_list =
+  {{
+    os_VDUVAR_MAX_MODE,
+    os_VDUVAR_END_LIST
+  }};
+  
   static const os_mode_flags useful_mode_flags = os_MODE_FLAG_NON_GRAPHICS |
                                                  os_MODE_FLAG_TELETEXT     |
                                                  os_MODE_FLAG_GAP          |
@@ -14,11 +20,14 @@ os_mode closest_mode(int min_width, int min_height, int pref_log2bpp)
 
   const int    total_pixels = min_width * min_height;
 
+  int          maxmode;
   int          mode;
   unsigned int bestscore = UINT_MAX;
   int          bestmode  = -1;
 
-  for (mode = 0; mode <= 127; mode++)
+  os_read_vdu_variables((const os_vdu_var_list *) &var_list, &maxmode);
+
+  for (mode = 0; mode <= maxmode; mode++)
   {
     int          mode_status;
     bits         psr;
@@ -30,12 +39,12 @@ os_mode closest_mode(int min_width, int min_height, int pref_log2bpp)
 
     /* reject unselectable modes */
     psr = os_check_mode_valid((os_mode) mode, &mode_status, NULL);
-    if (psr & (2u << 28))
+    if (psr & _C)
       continue;
 
     /* reject invalid modes */
     psr = os_read_mode_variable((os_mode) mode, os_MODEVAR_MODE_FLAGS, &modeflags);
-    if (psr & (2u << 28))
+    if (psr & _C)
       continue;
 
     /* reject non-graphics modes */
@@ -73,3 +82,4 @@ os_mode closest_mode(int min_width, int min_height, int pref_log2bpp)
   return (os_mode) bestmode;
 }
 
+// vim: ts=8 sts=2 sw=2 et
