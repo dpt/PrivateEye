@@ -202,6 +202,9 @@ static int gif_load(image_choices *choices, image_t *image)
 
   xhourglass_on();
 
+  S.global_palette = NULL;
+  S.local_palette  = NULL;
+
 #ifndef NDEBUG
   fprintf(stderr, "gif_load\n");
 #endif
@@ -242,9 +245,6 @@ static int gif_load(image_choices *choices, image_t *image)
   * Sort Flag                                  1 bit
   * Size of Global Color Table                 3 bits
   */
-
-  S.global_palette = NULL;
-  S.local_palette = NULL;
 
   buffer_getblock(buffer, 7);
   /* XXX error check */
