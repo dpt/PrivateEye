@@ -12,7 +12,7 @@
 
 #include "viewer.h"
 
-int viewer_scale_for_box(drawable_t *d, int sw, int sh);
+int drawable_best_fit_for_size(drawable_t *d, int w, int h);
 
 extern dialogue_t *viewer_scaledlg;
 
@@ -20,5 +20,7 @@ result_t viewer_scaledlg_init(void);
 void viewer_scaledlg_fin(void);
 
 void viewer_scaledlg_set(viewer_t *viewer, int scale, int redraw);
+
+int viewer_scaledlg_fit_to_screen(viewer_t *viewer);
 
 #endif /* VIEWER_SCALEDLG_H */
