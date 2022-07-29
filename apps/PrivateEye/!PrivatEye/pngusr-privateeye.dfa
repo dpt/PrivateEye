@@ -2,6 +2,7 @@
 
 everything = off
 
+option ERROR_TEXT on
 option READ_16BIT on
 option READ_BACKGROUND on
 option READ_EXPAND on
