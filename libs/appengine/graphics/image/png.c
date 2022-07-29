@@ -29,22 +29,22 @@
 #include "appengine/vdu/screen.h"
 #include "appengine/vdu/sprite.h"
 
-#include "png/png.h"
+#include <png.h>
 
 #include "bitmap.h"
 #include "appengine/graphics/image.h"
 
 #include "png.h"
 
-static void png_read_row_callback(png_structp png_ptr,
-                                  png_uint_32 row_number,
-                                  int         pass)
+static void png_hourglass(png_structp png_ptr,
+                          png_uint_32 row_number,
+                          int         pass)
 {
   NOT_USED(pass);
 
   /* XXX How do I get the height and total number of passes, legally, so that
    *     I can correctly work out the percentage?  */
-  hourglass_percentage((int) row_number * 100 / (int) png_ptr->height);
+//  hourglass_percentage((int) row_number * 100 / (int) png_get_image_height(png_ptr, info_ptr));
 }
 
 static void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
@@ -128,12 +128,12 @@ static int png_load(image_choices *choices, image_t *image)
     goto CleanUp; /* failure */
   }
 
-  if (setjmp(png_ptr->jmpbuf))
+  if (setjmp(png_jmpbuf(png_ptr)))
     goto CleanUp; /* failure */
 
   png_init_io(png_ptr, fp);
 
-  png_set_read_status_fn(png_ptr, png_read_row_callback);
+  png_set_read_status_fn(png_ptr, png_hourglass);
 
   png_read_info(png_ptr, info_ptr);
 
