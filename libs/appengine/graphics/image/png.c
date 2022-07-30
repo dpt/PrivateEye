@@ -42,6 +42,7 @@ static void png_hourglass(png_structp png_ptr,
                           png_uint_32 row_number,
                           int         pass)
 {
+  NOT_USED(png_ptr);
   NOT_USED(pass);
 
   if (hourglass_height > 0)
