@@ -2,7 +2,7 @@
 #
 # TagCloud
 #
-# Copyright (c) David Thomas, 2021
+# Copyright (c) David Thomas, 2021-2022
 #
 # vim: sw=4 ts=8 et
 
@@ -19,7 +19,7 @@ list(APPEND CMAKE_MODULE_PATH ${APPENGINE_REPO_ROOT}/cmake/Modules)
 include(FetchContent)
 
 
-project(TagCloud VERSION 0.6.0 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
+project(TagCloud VERSION 0.6.0 DESCRIPTION "Image viewer" LANGUAGES C ASM ASM_ASASM)
 
 # If a host tools build was requested, then build them alone
 set(TEMPLHEADR_DIR ${APPENGINE_REPO_ROOT}/utils/templheader)
@@ -76,7 +76,7 @@ set(LIBS_DIR ${APPENGINE_REPO_ROOT}/libs)
 # Import DPTLib
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY https://github.com/dpt/DPTLib
-    GIT_TAG 0.3.0)
+    GIT_TAG 0.4.1)
 # Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
 FetchContent_GetProperties(DPTLib)
 if(NOT DPTLib_POPULATED)
