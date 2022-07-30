@@ -2,7 +2,7 @@
 #
 # PrivateEye
 #
-# Copyright (c) David Thomas, 2021
+# Copyright (c) David Thomas, 2021-2022
 #
 # vim: sw=4 ts=8 et
 
@@ -19,7 +19,7 @@ list(APPEND CMAKE_MODULE_PATH ${APPENGINE_REPO_ROOT}/cmake/Modules)
 include(FetchContent)
 
 
-project(PrivateEye VERSION 3.1.0 DESCRIPTION "Image viewer" LANGUAGES C ASM_ASASM)
+project(PrivateEye VERSION 3.1.0 DESCRIPTION "Image viewer" LANGUAGES C ASM ASM_ASASM)
 
 # If a host tools build was requested, then build them alone
 set(TEMPLHEADR_DIR ${APPENGINE_REPO_ROOT}/utils/templheader)
@@ -84,7 +84,7 @@ set(LIBS_DIR ${APPENGINE_REPO_ROOT}/libs)
 # Import DPTLib
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY https://github.com/dpt/DPTLib
-    GIT_TAG 0.3.0)
+    GIT_TAG 0.4.1)
 # Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
 FetchContent_GetProperties(DPTLib)
 if(NOT DPTLib_POPULATED)
@@ -117,15 +117,8 @@ set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
 add_subdirectory(${MD5_DIR} md5-build EXCLUDE_FROM_ALL)
 
-# Import libpng
-set(PNG_DIR ${LIBS_DIR}/png)
-set(PNG_INCLUDE ${PNG_DIR})
-add_subdirectory(${PNG_DIR} png-build EXCLUDE_FROM_ALL)
-
-# Import zlib
-set(ZLIB_DIR ${LIBS_DIR}/zlib)
-set(ZLIB_INCLUDE ${ZLIB_DIR})
-add_subdirectory(${ZLIB_DIR} zlib-build EXCLUDE_FROM_ALL)
+# libpng
+set(DFA_XTRA ${CMAKE_CURRENT_SOURCE_DIR}/pngusr-privateeye.dfa CACHE FILEPATH "File containing extra configuration settings" FORCE)
 
 
 # Avoid a warning from CMake
@@ -141,11 +134,9 @@ target_include_directories(PrivateEye
     ${FLEX_INCLUDE}
     ${JPEG_INCLUDE}
     ${MD5_INCLUDE}
-    ${PNG_INCLUDE}
-    ${ZLIB_INCLUDE}
     ${CMAKE_SOURCE_DIR})
 
-target_link_libraries(PrivateEye PRIVATE AppEngine DPTLib exiftags flex jpeg trans MD5 png zlib)
+target_link_libraries(PrivateEye PRIVATE AppEngine DPTLib exiftags flex jpeg trans MD5)
 
 set_target_properties(PrivateEye PROPERTIES
     DESCRIPTION "Image viewer"
