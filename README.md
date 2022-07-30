@@ -26,9 +26,9 @@ cmake -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake ../!PrivatEye
 make install
 ```
 
-Or, ideally, install [Ninja](https://ninja-build.org/) and pass `-GNinja` to CMake to build at speeeed.
+Or, ideally, install [Ninja](https://ninja-build.org/) and [ccache](https://ccache.dev/) and pass `-GNinja` to CMake to build at speeeed.
 
-The build will automatically pull in and build in all the dependencies (including DPTLib which lives elsewhere on github, AppEngine which is local, libjpeg, libpng, etc.) If all's well a freshly-baked copy of !PrivateEye will be pooed out into the `build` directory.
+The build will automatically pull in and build in all the dependencies (including DPTLib which lives elsewhere on github, AppEngine which is local, libjpeg, etc.) If all's well a freshly-baked copy of !PrivateEye will be pooed out into the `install` directory.
 
 Building TagCloud
 -----------------
