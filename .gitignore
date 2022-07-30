@@ -45,3 +45,4 @@ build/
 build-release/
 build-debug/
 *.DS_Store
+libs/oslib-bin
