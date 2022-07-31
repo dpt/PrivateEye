@@ -1,4 +1,4 @@
-PrivateEye - by David Thomas, © 1999-2021
+PrivateEye - by David Thomas, © 1999-2022
 =========================================
 
 PrivateEye is a freeware image viewer for RISC OS.
@@ -8,6 +8,16 @@ Please consult the PDF manual for full information.
 
 Recent Changes
 --------------
+
+### 3.14 (xx Aug 2022)
+
+- Updated libpng to 1.6.37.
+
+- Fixed PNG loader leaks.
+
+- Fixed a GIF loader crash.
+
+- ...
 
 ### 3.10 (12 Sep 2021)
 
