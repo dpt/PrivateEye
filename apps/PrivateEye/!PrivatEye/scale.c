@@ -16,23 +16,23 @@
 
 #include "scale.h"
 
-int viewer_scale_for_box(drawable_t *d, int sw, int sh)
+int drawable_best_fit_for_size(drawable_t *d, int w, int h)
 {
   static const os_factors one_to_one = { 1, 1, 1, 1 };
 
   os_box box;
-  int    iw, ih;
-  int    z;
+  int    dw, dh; /* drawable width, height */
+  int    rp; /* ratio percent */
 
   d->methods.get_dimensions(d, &one_to_one, &box);
-  iw = box.x1 - box.x0;
-  ih = box.y1 - box.y0;
+  dw = box.x1 - box.x0;
+  dh = box.y1 - box.y0;
 
-  z = sw * 100 / iw;
-  if (ih * z / 100 > sh)
-    z = sh * 100 / ih;
+  rp = w * 100 / dw;
+  if (dh * rp / 100 > h)
+    rp = h * 100 / dh;
 
-  return z;
+  return rp;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -83,16 +83,18 @@ static void viewer_scaledlg_fillout(dialogue_t *d, void *opaque)
   scale_set(d, viewer->scale.cur);
 }
 
-static void viewer_scaledlg_set_fit_screen(dialogue_t *d, viewer_t *viewer)
+int viewer_scaledlg_fit_to_screen(viewer_t *viewer)
 {
   int sw,sh;
-  int s;
 
   read_max_visible_area(viewer->main_w, &sw, &sh);
 
-  s = viewer_scale_for_box(viewer->drawable, sw, sh);
+  return drawable_best_fit_for_size(viewer->drawable, sw, sh);
+}
 
-  scale_set(d, s);
+static void viewer_scaledlg_set_fit_screen(dialogue_t *d, viewer_t *viewer)
+{
+  scale_set(d, viewer_scaledlg_fit_to_screen(viewer));
 }
 
 static void viewer_scaledlg_set_fit_window(dialogue_t *d, viewer_t *viewer)
@@ -107,7 +109,7 @@ static void viewer_scaledlg_set_fit_window(dialogue_t *d, viewer_t *viewer)
   ww = state.visible.x1 - state.visible.x0;
   wh = state.visible.y1 - state.visible.y0;
 
-  s = viewer_scale_for_box(viewer->drawable, ww, wh);
+  s = drawable_best_fit_for_size(viewer->drawable, ww, wh);
 
   scale_set(d, s);
 }

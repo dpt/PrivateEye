@@ -539,15 +539,13 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box)
   }
 }
 
-/* FIXME: This is largely the same as fit_to_screen in scale.c. */
 static void scale_for_screen(viewer_t *viewer)
 {
-  int w,h;
   int s;
 
-  read_max_visible_area(viewer->main_w, &w, &h);
-
-  s = viewer_scale_for_box(viewer->drawable, w, h);
+  s = viewer_scaledlg_fit_to_screen(viewer);
+  if (s > 100)
+    s = 100;
 
   viewer->scale.cur = viewer->scale.prev = s;
 }
