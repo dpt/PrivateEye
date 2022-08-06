@@ -29,10 +29,11 @@ enum
 
 typedef unsigned int tonemap_internal_flags;
 
-#define FLAG_RGB_IN_SYNC       (1u << 0) /* RGB components in sync */
+#define FLAG_RGB_IN_SYNC       (1u << 0) /* set if RGB components in sync */
 #define FLAG_TABLES_UP_TO_DATE (1u << 2)
 #define FLAG_PATHS_UP_TO_DATE  (1u << 3)
 
+/* Tone map component */
 typedef struct tonemap_comp
 {
   tonemap_spec        spec;
@@ -64,7 +65,7 @@ tonemap *tonemap_create(void)
   map->pathsz = 0;
   map->width  = 8;
 
-  /* tonemap_reset initialises the structure for us */
+  /* tonemap_reset() initialises the structure for us */
 
   tonemap_reset(map);
 
@@ -84,7 +85,7 @@ void tonemap_reset(tonemap *map)
 {
   tonemap_comp *comp;
 
-  map->flags         = FLAG_RGB_IN_SYNC; /* (re-)build tables, paths */
+  map->flags         = FLAG_RGB_IN_SYNC; /* zero UP_TO_DATE flags to build */
   map->ncomponents   = 3;
 
   for (comp = map->comp; comp < map->comp + MaxComponents; comp++)
@@ -110,7 +111,7 @@ tonemap *tonemap_copy(const tonemap *map)
     return NULL;
 
   /* copy the tonemap, but not the path data.
-   * set the flags such that it will be (re-)created when next requested */
+   * set the flags so that it will be created when next requested */
 
   new_map->flags       = map->flags & ~FLAG_PATHS_UP_TO_DATE;
   new_map->ncomponents = map->ncomponents;
@@ -172,10 +173,6 @@ static void calc(tonemap *map)
       else
         j = (midd * 255 / 100) + (j - 128) * (100 - midd) / 50;
 
-      //j = CLAMP(j, 0, 255);
-
-      //j = CLAMP(j, 0, 255);
-
       if (comp->spec.bias != 50 || comp->spec.gain != 50)
       {
         double x, t, b, g;
@@ -196,8 +193,6 @@ static void calc(tonemap *map)
           g = (t - x) / (t - 1.0);
 
         j = (int)(g * 255.0);
-
-        //j = CLAMP(j, 0, 255);
       }
 
       j = CLAMP(j, 0, 255);
@@ -378,6 +373,9 @@ static result_t prepare_paths(tonemap               *map,
   map->flags |= FLAG_PATHS_UP_TO_DATE;
 
   return result_OK;
+
+#undef MOVETO
+#undef LINETO
 }
 
 /* ----------------------------------------------------------------------- */
