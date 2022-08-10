@@ -25,8 +25,9 @@ result_t thumbnail_create(image_t          *image,
 {
   result_t            err;
   osspriteop_area *area;
-  int              w,h;
+  int              w_fix8,h_fix8;
   int              log2bpp;
+  int              w,h;
   size_t           sprimgbytes;
   os_mode          mode;
   int              c0,c1,c2,c3;
@@ -48,19 +49,21 @@ result_t thumbnail_create(image_t          *image,
       80 x 106.446281
       ChangeFSI uses 107 high */
 
-  w = max;
-  h = image->display.dims.bm.height * w / image->display.dims.bm.width;
-
-  if (h > max)
+  w_fix8 = max << 8;
+  h_fix8 = ((image->display.dims.bm.height * max) << 8) / image->display.dims.bm.width;
+  if (h_fix8 > w_fix8) /* if higher than wide */
   {
-    h = max;
-    w = image->display.dims.bm.width * h / image->display.dims.bm.height;
+    h_fix8 = max << 8;
+    w_fix8 = ((image->display.dims.bm.width * max) << 8) / image->display.dims.bm.height;
   }
 
   /* work out sprite area size */
   /* will this work for vector images? probably not */
 
   read_current_mode_vars(NULL, NULL, &log2bpp);
+
+  w = (w_fix8 + 128) >> 8;
+  h = (h_fix8 + 128) >> 8;
 
   sprimgbytes = sprite_size(w, h, log2bpp, FALSE);
 
@@ -114,7 +117,7 @@ result_t thumbnail_create(image_t          *image,
   if (drawable->methods.update_colours)
     drawable->methods.update_colours(drawable);
 
-  os_factors_from_ratio(&factors, w, image->display.dims.bm.width);
+  os_factors_from_ratio(&factors, w_fix8, image->display.dims.bm.width << 8);
 
   drawable->methods.update_scaling(drawable, &factors);
 
