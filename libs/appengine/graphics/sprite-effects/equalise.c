@@ -13,10 +13,10 @@
 #include "appengine/graphics/sprite-effects.h"
 
 result_t effects_equalise_apply(osspriteop_area   *area,
-                             osspriteop_header *src,
-                             osspriteop_header *dst)
+                                osspriteop_header *src,
+                                osspriteop_header *dst)
 {
-  result_t             err;
+  result_t          err;
   sprite_histograms hists;
   int               i;
   sprite_luts       luts;

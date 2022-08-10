@@ -19,11 +19,11 @@
 #include "appengine/graphics/thumbnail.h"
 
 result_t thumbnail_create(image_t          *image,
-                 const drawable_choices *choices,
-                       int               max,
-                       osspriteop_area **anchor)
+                    const drawable_choices *choices,
+                          int               max,
+                          osspriteop_area **anchor)
 {
-  result_t            err;
+  result_t         err;
   osspriteop_area *area;
   int              w_fix8,h_fix8;
   int              log2bpp;
