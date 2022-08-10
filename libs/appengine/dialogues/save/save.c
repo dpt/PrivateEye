@@ -13,6 +13,7 @@
 #include "oslib/osbyte.h"
 #include "oslib/wimp.h"
 #include "oslib/wimpspriteop.h"
+#include "oslib/wimpreadsysinfo.h"
 
 #include "appengine/wimp/dialogue.h"
 #include "appengine/base/oserror.h"
@@ -167,6 +168,9 @@ static int save_event_user_drag_box(wimp_event_no event_no,
   save_t      *s;
   wimp_pointer pointer;
   wimp_w       w;
+  wimp_t       dest_task;
+  wimp_message message;
+  char         file_name[256]; /* Careful Now */
 
   NOT_USED(event_no);
   NOT_USED(block);
@@ -185,33 +189,44 @@ static int save_event_user_drag_box(wimp_event_no event_no,
 
   w = dialogue_get_window(&s->dialogue);
 
-  if (pointer.w != w)
+  /* do nothing if dropped in the save dialogue */
+  if (pointer.w == w)
+    return event_HANDLED;
+
+  /* don't message ourselves unless dropped on the icon bar */
+  if (pointer.w != wimp_ICON_BAR)
   {
-    char         file_name[256]; /* Careful Now */
-    wimp_message message;
-
-    icon_get_text(w, SAVE_W_FILENAME, file_name);
-
-    message.data.data_xfer.w         = pointer.w;
-    message.data.data_xfer.i         = pointer.i;
-    message.data.data_xfer.pos.x     = pointer.pos.x;
-    message.data.data_xfer.pos.y     = pointer.pos.y;
-    message.data.data_xfer.est_size  = -1;
-    message.data.data_xfer.file_type = s->file_type;
-    strcpy(message.data.data_xfer.file_name, str_leaf(file_name));
-
+    message.size     = 16;
     message.your_ref = 0;
-    message.action = message_DATA_SAVE;
-
-    message.size = wimp_SIZEOF_MESSAGE_HEADER((
-                     offsetof(wimp_message_data_xfer, file_name) +
-                     strlen(message.data.data_xfer.file_name) + 1 + 3) & ~3);
-
-    wimp_send_message_to_window(wimp_USER_MESSAGE,
-                               &message,
-                                pointer.w,
-                                pointer.i);
+    dest_task = wimp_send_message_to_window(wimp_USER_MESSAGE_ACKNOWLEDGE,
+                                           &message,
+                                            pointer.w,
+                                            pointer.i);
+    if (dest_task == wimpreadsysinfo_task(NULL))
+      return event_HANDLED;
   }
+
+  icon_get_text(w, SAVE_W_FILENAME, file_name);
+
+  message.data.data_xfer.w         = pointer.w;
+  message.data.data_xfer.i         = pointer.i;
+  message.data.data_xfer.pos.x     = pointer.pos.x;
+  message.data.data_xfer.pos.y     = pointer.pos.y;
+  message.data.data_xfer.est_size  = -1; /* unsafe */
+  message.data.data_xfer.file_type = s->file_type;
+  strcpy(message.data.data_xfer.file_name, str_leaf(file_name));
+
+  message.your_ref = 0;
+  message.action = message_DATA_SAVE;
+
+  message.size = wimp_SIZEOF_MESSAGE_HEADER((
+                   offsetof(wimp_message_data_xfer, file_name) +
+                   strlen(message.data.data_xfer.file_name) + 1 + 3) & ~3);
+
+  wimp_send_message_to_window(wimp_USER_MESSAGE_RECORDED,
+                             &message,
+                              pointer.w,
+                              pointer.i);
 
   return event_HANDLED;
 }

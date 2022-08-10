@@ -19,21 +19,22 @@
 
 dialogue_t *viewer_savedlg;
 
+static viewer_t *saving_viewer;
+
 /* ----------------------------------------------------------------------- */
 
+/* Save dialogue was opened for whatever reason. */
 static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
 {
-  viewer_t *viewer;
-  image_t  *image;
+  image_t *image;
 
   NOT_USED(opaque);
 
-  viewer = GLOBALS.current_viewer;
-  if (viewer == NULL)
+  saving_viewer = GLOBALS.current_viewer;
+  if (saving_viewer == NULL)
     return;
 
-  image = viewer->drawable->image;
-
+  image = saving_viewer->drawable->image;
   save_set_file_name(d, image->file_name);
   save_set_file_type(d, image->display.file_type);
 }
@@ -41,15 +42,25 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
 /* Called on 'Save' button clicks, but not on drag saves. */
 static void viewer_savedlg_handler(dialogue_t *d, const char *file_name)
 {
-  viewer_t *viewer;
-
   NOT_USED(d);
 
-  viewer = GLOBALS.current_viewer;
-  if (viewer == NULL)
-    return;
+  if (saving_viewer)
+  {
+    viewer_save(saving_viewer, file_name);
+    viewer_savedlg_completed();
+  }
+}
 
-  viewer_save(viewer, file_name);
+/* ----------------------------------------------------------------------- */
+
+viewer_t *viewer_savedlg_get(void)
+{
+  return saving_viewer;
+}
+
+void viewer_savedlg_completed(void)
+{
+  saving_viewer = NULL;
 }
 
 /* ----------------------------------------------------------------------- */

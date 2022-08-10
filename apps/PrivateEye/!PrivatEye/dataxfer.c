@@ -23,6 +23,7 @@
 #include "globals.h"
 #include "thumbview.h"
 #include "viewer.h"
+#include "save.h"
 
 #include "dataxfer.h"
 
@@ -69,6 +70,7 @@ void dataxfer_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
+/* Another task has proposed to save to us - tell them to save to <Wimp$Scrap> */
 static int message_data_save(wimp_message *message, void *handle)
 {
   os_error *e;
@@ -78,14 +80,7 @@ static int message_data_save(wimp_message *message, void *handle)
   /* Ensure that Wimp$Scrap exists before we ask anyone to save data to it.
    */
 
-  /* This version didn't error when expected... */
-  /*e = xos_read_var_val_size("Wimp$Scrap",
-                            0,
-                            os_VARTYPE_STRING,
-                            NULL,
-                            NULL,
-                            NULL);*/
-
+  /* I tried xos_read_var_val_size() but it didn't error when expected... */
   e = xos_read_var_val("Wimp$Scrap",
                        0,
                        -1,
@@ -107,8 +102,7 @@ static int message_data_save(wimp_message *message, void *handle)
       return event_NOT_HANDLED;
 
   strcpy(message->data.data_xfer.file_name, "<Wimp$Scrap>");
-  message->data.data_xfer.est_size = -1; /* Let the sender know that the data
-                                          * is unsafe (not saved to disc.) */
+  message->data.data_xfer.est_size = -1; /* Let the sender know that the data is unsafe (not saved to disc.) */
 
   message->size     = wimp_SIZEOF_MESSAGE_HEADER((
                         offsetof(wimp_message_data_xfer, file_name) +
@@ -120,20 +114,22 @@ static int message_data_save(wimp_message *message, void *handle)
   return event_HANDLED;
 }
 
+/* We proposed a save to another task and it's responded */
 static int message_data_save_ack(wimp_message *message, void *handle)
 {
   viewer_t *viewer;
 
   NOT_USED(handle);
 
-  /* FIXME: It may be incorrect to assume that the current_viewer will be
-   * valid at this point. */
-  viewer = GLOBALS.current_viewer;
+  // will this work for the clipboard? might need to fall back
+  viewer = viewer_savedlg_get();
   if (viewer == NULL)
     return event_NOT_HANDLED;
 
   if (viewer_save(viewer, message->data.data_xfer.file_name))
     return event_HANDLED; /* failure */
+
+  viewer_savedlg_completed();
 
   message->your_ref = message->my_ref;
   message->action   = message_DATA_LOAD;
@@ -263,6 +259,7 @@ static int message_data_load(wimp_message *message, void *handle)
 
   viewer_open(viewer);
 
+  // is this a guarantee of a scrap transfer?
   if (strcmp(message->data.data_xfer.file_name, "<Wimp$Scrap>") == 0)
   {
     remove(message->data.data_xfer.file_name);
