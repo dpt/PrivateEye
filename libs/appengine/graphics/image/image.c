@@ -268,6 +268,13 @@ void image_modified(image_t *i, image_modified_flags flags)
   imageobserver_event(i, imageobserver_CHANGE_MODIFIED, &data);
 }
 
+void image_saved(image_t *i)
+{
+  i->flags &= ~image_FLAG_MODIFIED;
+
+  imageobserver_event(i, imageobserver_CHANGE_SAVED, NULL);
+}
+
 /* ----------------------------------------------------------------------- */
 
 void image_destroy(image_t *i)

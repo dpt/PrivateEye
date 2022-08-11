@@ -689,7 +689,11 @@ static int step(viewer_t *viewer, int direction)
   viewer_unload(viewer);
 
   sprintf(file_name, "%s.%s", dir_name, found_info->name);
-  if (viewer_load(viewer, file_name, found_info->load_addr, found_info->exec_addr))
+  if (viewer_load(viewer,
+                  file_name,
+                  found_info->load_addr,
+                  found_info->exec_addr,
+                  FALSE))
   {
     viewer_destroy(viewer);
     return 0;

@@ -76,7 +76,7 @@ enum
   image_FLAG_COLOUR     = 1 << 1,  /* is a colour image (otherwise mono) */
   image_FLAG_HAS_MASK   = 1 << 2,  /* has sprite-style binary mask */
   image_FLAG_EDITING    = 1 << 3,  /* is currently being edited */
-  image_FLAG_MODIFIED   = 1 << 4,  /* is modified */
+  image_FLAG_MODIFIED   = 1 << 4,  /* is modified or unsaved (reset on saves) */
   image_FLAG_CAN_HIST   = 1 << 5,  /* can obtain histogram */
   image_FLAG_CAN_ROT    = 1 << 6,  /* can rotate */
   image_FLAG_HAS_META   = 1 << 7,  /* has metadata */
@@ -263,6 +263,9 @@ enum
 typedef unsigned int image_modified_flags;
 
 void image_modified(T *image, image_modified_flags flags);
+
+/** Call this when an image was saved to disc. */
+void image_saved(T *i);
 
 /* ----------------------------------------------------------------------- */
 

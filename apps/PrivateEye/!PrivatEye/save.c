@@ -37,6 +37,7 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
   image = saving_viewer->drawable->image;
   save_set_file_name(d, image->file_name);
   save_set_file_type(d, image->display.file_type);
+  save_set_file_size(d, image->display.file_size);
 }
 
 /* Called on 'Save' button clicks, but not on drag saves. */
@@ -46,7 +47,7 @@ static void viewer_savedlg_handler(dialogue_t *d, const char *file_name)
 
   if (saving_viewer)
   {
-    viewer_save(saving_viewer, file_name);
+    viewer_save(saving_viewer, file_name, FALSE);
     viewer_savedlg_completed();
   }
 }

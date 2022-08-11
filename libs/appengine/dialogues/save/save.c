@@ -45,6 +45,7 @@ typedef struct save_t
   dialogue_t         dialogue; /* base class */
   char              *file_name;
   bits               file_type;
+  size_t             est_size;
   save_save_handler *save_handler;
 }
 save_t;
@@ -212,11 +213,11 @@ static int save_event_user_drag_box(wimp_event_no event_no,
   message.data.data_xfer.i         = pointer.i;
   message.data.data_xfer.pos.x     = pointer.pos.x;
   message.data.data_xfer.pos.y     = pointer.pos.y;
-  message.data.data_xfer.est_size  = -1; /* unsafe */
+  message.data.data_xfer.est_size  = s->est_size;
   message.data.data_xfer.file_type = s->file_type;
   strcpy(message.data.data_xfer.file_name, str_leaf(file_name));
 
-  message.your_ref = 0;
+  message.your_ref = 0; /* not a reply */
   message.action = message_DATA_SAVE;
 
   message.size = wimp_SIZEOF_MESSAGE_HEADER((
@@ -267,6 +268,13 @@ void save_set_file_type(dialogue_t *d, bits file_type)
   file_type_to_sprite_name(file_type, sprname);
 
   icon_validation_printf(w, SAVE_I_ICON, "Ni_icon;S%s", sprname);
+}
+
+void save_set_file_size(dialogue_t *d, size_t bytes)
+{
+  save_t *s = (save_t *) d;
+
+  s->est_size = bytes;
 }
 
 void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)

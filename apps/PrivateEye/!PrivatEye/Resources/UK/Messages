@@ -165,6 +165,8 @@ error.buffer.start:Buffer failed to start. Probably out of memory.
 
 error.ffg.died:FFG translator died.
 
+error.dataxfer.scrap:Scrap transfer filename wasn't '<Wimp$Scrap>' as expected but instead '%s'. Will not delete.
+
 error.name.missing:Missing name.
 
 # Interactive Help

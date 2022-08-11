@@ -29,6 +29,10 @@
 
 /* ----------------------------------------------------------------------- */
 
+static int our_ref;
+
+/* ----------------------------------------------------------------------- */
+
 static event_message_handler message_data_save,
                              message_data_save_ack,
                              message_data_load,
@@ -102,7 +106,9 @@ static int message_data_save(wimp_message *message, void *handle)
       return event_NOT_HANDLED;
 
   strcpy(message->data.data_xfer.file_name, "<Wimp$Scrap>");
-  message->data.data_xfer.est_size = -1; /* Let the sender know that the data is unsafe (not saved to disc.) */
+ 
+  /* Let the sender know that the data is not "secure" (won't be saved to disc.) */
+  message->data.data_xfer.est_size = -1; 
 
   message->size     = wimp_SIZEOF_MESSAGE_HEADER((
                         offsetof(wimp_message_data_xfer, file_name) +
@@ -111,6 +117,8 @@ static int message_data_save(wimp_message *message, void *handle)
   message->action   = message_DATA_SAVE_ACK;
   wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
 
+  our_ref = message->my_ref;
+
   return event_HANDLED;
 }
 
@@ -118,6 +126,7 @@ static int message_data_save(wimp_message *message, void *handle)
 static int message_data_save_ack(wimp_message *message, void *handle)
 {
   viewer_t *viewer;
+  osbool    unsafe;
 
   NOT_USED(handle);
 
@@ -126,7 +135,9 @@ static int message_data_save_ack(wimp_message *message, void *handle)
   if (viewer == NULL)
     return event_NOT_HANDLED;
 
-  if (viewer_save(viewer, message->data.data_xfer.file_name))
+  unsafe = (message->data.data_xfer.est_size == -1);
+
+  if (viewer_save(viewer, message->data.data_xfer.file_name, unsafe))
     return event_HANDLED; /* failure */
 
   viewer_savedlg_completed();
@@ -146,6 +157,7 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 static int message_data_load(wimp_message *message, void *handle)
 {
   result_t  err;
+  osbool    unsafe;
   osbool    its_ffg;
   osbool    try_ffg;
   viewer_t *viewer;
@@ -184,6 +196,12 @@ static int message_data_load(wimp_message *message, void *handle)
     return event_NOT_HANDLED;
 #endif /* EYE_THUMBVIEW */
   }
+
+  /* The Filer will set est_size to 0 for DataOpen and -1 for DataLoad...
+   * cope with that. */
+  unsafe = (our_ref != 0) &&
+           (message->your_ref == our_ref) &&
+           (message->data.data_xfer.est_size == -1);
 
   if ((its_ffg = ffg_apposite(message)) != FALSE)
   {
@@ -250,7 +268,8 @@ static int message_data_load(wimp_message *message, void *handle)
   if (viewer_load(viewer,
                   message->data.data_xfer.file_name,
                   load_addr,
-                  exec_addr))
+                  exec_addr,
+                  unsafe))
   {
     /* report */
     viewer_destroy(viewer);
@@ -259,10 +278,13 @@ static int message_data_load(wimp_message *message, void *handle)
 
   viewer_open(viewer);
 
-  // is this a guarantee of a scrap transfer?
-  if (strcmp(message->data.data_xfer.file_name, "<Wimp$Scrap>") == 0)
+  if (unsafe)
   {
-    remove(message->data.data_xfer.file_name);
+    our_ref = 0;
+    if (strcmp(message->data.data_xfer.file_name, "<Wimp$Scrap>") == 0)
+      remove(message->data.data_xfer.file_name);
+    else
+      oserror_report(0, "error.dataxfer.scrap", message->data.data_xfer.file_name);
   }
 
   return event_HANDLED;
@@ -348,7 +370,8 @@ static int message_data_open(wimp_message *message, void *handle)
     if (viewer_load(viewer,
                     message->data.data_xfer.file_name,
                     load_addr,
-                    exec_addr))
+                    exec_addr,
+                    FALSE))
     {
       /* report */
       viewer_destroy(viewer);
