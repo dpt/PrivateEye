@@ -194,6 +194,8 @@ struct T
   char          file_name[256]; /* NUL for no file name */
   unsigned char digest[image_DIGESTSZ];
 
+  int           last_save_ref; /* store when we save, zero this on edits */
+
   imageinfo     info;
 
   int           refcount;

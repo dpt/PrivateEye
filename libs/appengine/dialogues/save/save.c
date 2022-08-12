@@ -42,11 +42,12 @@ enum
 
 typedef struct save_t
 {
-  dialogue_t         dialogue; /* base class */
-  char              *file_name;
-  bits               file_type;
-  size_t             est_size;
-  save_save_handler *save_handler;
+  dialogue_t             dialogue; /* base class */
+  char                  *file_name;
+  bits                   file_type;
+  size_t                 est_size;
+  save_save_handler     *save_handler;
+  save_dataxfer_handler *dataxfer_handler;
 }
 save_t;
 
@@ -229,15 +230,22 @@ static int save_event_user_drag_box(wimp_event_no event_no,
                               pointer.w,
                               pointer.i);
 
+  if (s->dataxfer_handler)
+    s->dataxfer_handler(&s->dialogue, message.my_ref);
+
   return event_HANDLED;
 }
 
 /* ----------------------------------------------------------------------- */
 
-result_t save_set_file_name(dialogue_t *d, const char *file_name)
+result_t save_set_info(dialogue_t *d,
+                 const char       *file_name,
+                       bits        file_type,
+                       size_t      bytes)
 {
   save_t *s = (save_t *) d;
-  wimp_w  win;
+  wimp_w  w;
+  char    sprname[osspriteop_NAME_LIMIT];
 
   /* record the filename so we can restore it when Cancel is pressed */
 
@@ -248,33 +256,22 @@ result_t save_set_file_name(dialogue_t *d, const char *file_name)
   if (s->file_name == NULL)
     return result_OOM;
 
-  win = dialogue_get_window(d);
+  s->file_type = file_type;
+  s->est_size = bytes;
 
-  icon_set_text(win, SAVE_W_FILENAME, s->file_name);
+  w = dialogue_get_window(d);
+  icon_set_text(w, SAVE_W_FILENAME, s->file_name);
+  file_type_to_sprite_name(file_type, sprname);
+  icon_validation_printf(w, SAVE_I_ICON, "Ni_icon;S%s", sprname);
 
   return result_OK;
 }
 
-void save_set_file_type(dialogue_t *d, bits file_type)
-{
-  save_t *s = (save_t *) d;
-  wimp_w  w;
-  char    sprname[osspriteop_NAME_LIMIT];
-
-  s->file_type = file_type;
-
-  w = dialogue_get_window(d);
-
-  file_type_to_sprite_name(file_type, sprname);
-
-  icon_validation_printf(w, SAVE_I_ICON, "Ni_icon;S%s", sprname);
-}
-
-void save_set_file_size(dialogue_t *d, size_t bytes)
+void save_set_dataxfer_handler(dialogue_t *d, save_dataxfer_handler *dataxfer_handler)
 {
   save_t *s = (save_t *) d;
 
-  s->est_size = bytes;
+  s->dataxfer_handler = dataxfer_handler;
 }
 
 void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)

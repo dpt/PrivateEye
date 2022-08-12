@@ -265,6 +265,7 @@ void image_modified(image_t *i, image_modified_flags flags)
   imageobserver_data data;
 
   i->flags |= image_FLAG_MODIFIED;
+  i->last_save_ref = 0;
 
   image_dispose_transient(i);
 
@@ -276,6 +277,7 @@ void image_modified(image_t *i, image_modified_flags flags)
 void image_saved(image_t *i)
 {
   i->flags &= ~image_FLAG_MODIFIED;
+  i->last_save_ref = 0; // not sure
 
   imageobserver_event(i, imageobserver_CHANGE_SAVED, NULL);
 }

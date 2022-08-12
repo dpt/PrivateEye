@@ -42,14 +42,13 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
   else
     file_name = message0("untitled.filename");
 
-  // should merge these set methods together
-  save_set_file_name(d, file_name);
-  save_set_file_type(d, image->display.file_type);
-  save_set_file_size(d, image->display.file_size);
+  save_set_info(d, file_name,
+                   image->display.file_type,
+                   image->display.file_size);
 }
 
 /* Called on 'Save' button clicks, but not on drag saves. */
-static void viewer_savedlg_handler(dialogue_t *d, const char *file_name)
+static void viewer_savedlg_save_handler(dialogue_t *d, const char *file_name)
 {
   NOT_USED(d);
 
@@ -57,6 +56,17 @@ static void viewer_savedlg_handler(dialogue_t *d, const char *file_name)
   {
     viewer_save(saving_viewer, file_name, FALSE);
     viewer_savedlg_completed();
+  }
+}
+
+/* Called on drag saves with the ref of the DataSave message. */
+static void viewer_savedlg_dataxfer_handler(dialogue_t *d, int my_ref)
+{
+  NOT_USED(d);
+
+  if (saving_viewer)
+  {
+    saving_viewer->drawable->image->last_save_ref = my_ref;
   }
 }
 
@@ -81,7 +91,8 @@ result_t viewer_savedlg_init(void)
     return result_OOM;
 
   dialogue_set_fillout_handler(viewer_savedlg, viewer_savedlg_fillout, NULL);
-  save_set_save_handler(viewer_savedlg, viewer_savedlg_handler);
+  save_set_dataxfer_handler(viewer_savedlg, viewer_savedlg_dataxfer_handler);
+  save_set_save_handler(viewer_savedlg, viewer_savedlg_save_handler);
 
   return result_OK;
 }
