@@ -7,6 +7,7 @@
 
 #include "oslib/types.h"
 
+#include "appengine/base/messages.h"
 #include "appengine/dialogues/save.h"
 #include "appengine/wimp/dialogue.h"
 
@@ -26,7 +27,8 @@ static viewer_t *saving_viewer;
 /* Save dialogue was opened for whatever reason. */
 static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
 {
-  image_t *image;
+  image_t    *image;
+  const char *file_name;
 
   NOT_USED(opaque);
 
@@ -35,7 +37,13 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
     return;
 
   image = saving_viewer->drawable->image;
-  save_set_file_name(d, image->file_name);
+  if (image->file_name[0] != '\0')
+    file_name = image->file_name;
+  else
+    file_name = message0("untitled.filename");
+
+  // should merge these set methods together
+  save_set_file_name(d, file_name);
   save_set_file_type(d, image->display.file_type);
   save_set_file_size(d, image->display.file_size);
 }

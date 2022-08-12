@@ -240,7 +240,7 @@ static void tags_image_changed_callback(image_t             *image,
   switch (change)
   {
   case imageobserver_CHANGE_GAINED_FOCUS:
-    if (LOCALS.image != image)
+    if (LOCALS.image != image && image->file_name[0] != '\0')
     {
       char        scratch[32];
       const char *leaf;

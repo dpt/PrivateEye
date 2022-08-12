@@ -191,7 +191,7 @@ struct T
 
   void         *image;
 
-  char          file_name[256]; /* careful now */
+  char          file_name[256]; /* NUL for no file name */
   unsigned char digest[image_DIGESTSZ];
 
   imageinfo     info;
@@ -237,7 +237,8 @@ T *image_create(void);
 /* Creates and loads the specified filename. */
 T *image_create_from_file(image_choices *choices,
                           const char    *file_name,
-                          bits           file_type);
+                          bits           file_type,
+                          osbool         unsafe);
 
 void image_destroy(T *image);
 

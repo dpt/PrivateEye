@@ -56,9 +56,12 @@ static void update_viewer_title(viewer_t *viewer)
   char buf[256];
   int  nclones;
 
-  sprintf(file_name, "%.*s",
-    (int) sizeof(file_name),
-          viewer->image->file_name);
+  if (viewer->image->file_name[0] != '\0')
+    sprintf(file_name, "%.*s",
+      (int) sizeof(file_name),
+            viewer->image->file_name);
+  else
+    strcpy(file_name, message0("untitled.title"));
   sprintf(percentage, "%d%%", viewer->scale.cur);
   sprintf(buf, message0("display.title"), file_name, percentage);
 
@@ -856,7 +859,8 @@ osbool viewer_load(viewer_t   *viewer,
 
     image = image_create_from_file(&GLOBALS.choices.image,
                                     file_name,
-                                    (load >> 8) & 0xfff);
+                                    (load >> 8) & 0xfff,
+                                    unsafe);
     if (image == NULL)
     {
       err = result_OOM;

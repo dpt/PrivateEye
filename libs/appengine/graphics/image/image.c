@@ -156,7 +156,8 @@ image_t *image_create(void)
 
 image_t *image_create_from_file(image_choices *choices,
                           const char          *file_name,
-                                bits           file_type)
+                                bits           file_type,
+                                osbool         unsafe)
 {
   image_t *i;
 
@@ -164,14 +165,18 @@ image_t *image_create_from_file(image_choices *choices,
   if (i == NULL)
     goto Failure;
 
-  strcpy(i->file_name, file_name);
   i->source.file_type = file_type;
+
+  strcpy(i->file_name, file_name);
 
   if (loader_export_methods(choices, i, file_type))
     goto Failure;
 
   if (i->methods.load(choices, i))
     goto Failure;
+
+  if (unsafe)
+    i->file_name[0] = '\0';
 
   return i;
 

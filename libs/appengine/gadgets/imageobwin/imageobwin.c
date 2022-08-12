@@ -127,7 +127,7 @@ result_t imageobwin_construct(imageobwin_factory_t *factory,
                               event_wimp_handler   *menu)
 {
   result_t err;
-  char     scratch[32]; /* Careful Now */
+  char     token[32]; /* Careful Now */
   size_t   len;
 
   /* initialise member(s) used in error cleanup */
@@ -146,8 +146,8 @@ result_t imageobwin_construct(imageobwin_factory_t *factory,
 
   if (menu)
   {
-    sprintf(scratch, "menu.%s", name);
-    factory->menu = menu_create_from_desc(message0(scratch));
+    sprintf(token, "menu.%s", name);
+    factory->menu = menu_create_from_desc(message0(token));
     if (factory->menu == NULL)
     {
       err = result_OOM;
@@ -232,7 +232,8 @@ static result_t imageobwin_new(imageobwin_factory_t *factory,
 {
   result_t      err;
   imageobwin_t *obwin;
-  char          scratch[32];
+  char          token[32];
+  char          format[32];
   const char   *leaf;
   char          title[256];
 
@@ -259,9 +260,13 @@ static result_t imageobwin_new(imageobwin_factory_t *factory,
 
   /* set its title, including the leafname of the image */
 
-  sprintf(scratch, "%s.title", factory->name);
-  leaf = str_leaf(image->file_name);
-  sprintf(title, message0(scratch), leaf);
+  sprintf(token, "%s.title", factory->name);
+  strcpy(format, message0(token));
+  if (image->file_name[0] != '\0')
+    leaf = str_leaf(image->file_name);
+  else
+    leaf = message0("untitled.title");
+  sprintf(title, format, leaf);
   window_set_title_text(obwin->w, title);
 
   /* fill out */

@@ -616,6 +616,10 @@ static int step(viewer_t *viewer, int direction)
   else
     direction = -1;
 
+  /* Need a filename to step */
+  if (viewer->drawable->image->file_name[0] == '\0')
+    return 0;
+
   leaf_name = str_leaf(viewer->drawable->image->file_name);
   dir_name  = str_branch(viewer->drawable->image->file_name);
 
@@ -887,11 +891,13 @@ static int display_event_close_window_request(wimp_event_no event_no,
    */
 
   if (pointer.buttons & wimp_CLICK_ADJUST)
+  if (viewer->drawable->image->file_name[0] != '\0')
   {
     filer_open_dir(viewer->drawable->image->file_name);
 
     if (inkey(INKEY_SHIFT))
       return event_HANDLED;
+    }
   }
 
   if (viewer_query_unload(viewer))
@@ -1524,6 +1530,9 @@ static void action_kill(viewer_t *viewer)
   const char       *branch;
   const char       *leaf;
   fileraction_flags flags;
+
+  if (viewer->drawable->image->file_name[0] == '\0')
+    return;
 
   e = EC(xwimp_start_task("Filer_Action", &act));
   if (e)
