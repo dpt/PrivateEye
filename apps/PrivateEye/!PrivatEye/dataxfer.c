@@ -269,7 +269,8 @@ static int message_data_load(wimp_message *message, void *handle)
                   message->data.data_xfer.file_name,
                   load_addr,
                   exec_addr,
-                  unsafe))
+                  unsafe,
+                  FALSE))
   {
     /* report */
     viewer_destroy(viewer);
@@ -334,6 +335,7 @@ static osbool should_load(bits file_type)
 static int message_data_open(wimp_message *message, void *handle)
 {
   viewer_t *viewer;
+  osbool    is_template;
   bits      load_addr;
   bits      exec_addr;
 
@@ -344,6 +346,8 @@ static int message_data_open(wimp_message *message, void *handle)
 
   if (!should_load(message->data.data_xfer.file_type))
     return event_NOT_HANDLED;
+     
+  is_template = (message->data.data_xfer.est_size == -2);
 
   /* acknowledge - even if we fail, we still tried to load it */
   message->your_ref = message->my_ref;
@@ -371,7 +375,8 @@ static int message_data_open(wimp_message *message, void *handle)
                     message->data.data_xfer.file_name,
                     load_addr,
                     exec_addr,
-                    FALSE))
+                    FALSE,
+                    is_template))
     {
       /* report */
       viewer_destroy(viewer);

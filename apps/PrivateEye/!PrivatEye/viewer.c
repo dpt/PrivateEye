@@ -829,7 +829,8 @@ osbool viewer_load(viewer_t   *viewer,
                    const char *file_name,
                    bits        load,
                    bits        exec,
-                   osbool      unsafe)
+                   osbool      unsafe,
+                   osbool      template)
 {
   result_t    err;
   image_t    *image = NULL;
@@ -868,12 +869,15 @@ osbool viewer_load(viewer_t   *viewer,
     }
   }
 
+  if (unsafe)
+    image->flags |= image_FLAG_MODIFIED;
+
+  if (template)
+    strcpy(image->file_name, str_leaf(file_name));
+
   err = drawable_create(image, &drawable);
   if (err)
     goto Failure;
-
-  if (unsafe)
-    image->flags |= image_FLAG_MODIFIED;
 
   viewer->image    = image;
   viewer->drawable = drawable;

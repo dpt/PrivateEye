@@ -112,7 +112,8 @@ osbool viewer_load(viewer_t   *viewer,
                    const char *file_name,
                    bits        load,
                    bits        exec,
-                   osbool      unsafe);
+                   osbool      unsafe,
+                   osbool      template);
 void viewer_unload(viewer_t *viewer);
 
 int viewer_query_unload(viewer_t *viewer);

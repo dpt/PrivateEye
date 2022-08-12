@@ -697,6 +697,7 @@ static int step(viewer_t *viewer, int direction)
                   file_name,
                   found_info->load_addr,
                   found_info->exec_addr,
+                  FALSE,
                   FALSE))
   {
     viewer_destroy(viewer);
