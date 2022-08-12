@@ -875,36 +875,45 @@ static int display_event_close_window_request(wimp_event_no event_no,
                                               wimp_block   *block,
                                               void         *handle)
 {
-  viewer_t    *viewer;
-  wimp_pointer pointer;
+  viewer_t *viewer;
+  char      file_name[256];
+  osbool    should_opendir = FALSE;
+  osbool    should_close = TRUE;
 
   NOT_USED(event_no);
   NOT_USED(block);
 
   viewer = handle;
 
-  wimp_get_pointer_info(&pointer);
-
-  /* Note that we might be entered if another part of the program has
-   * faked a close event, in which case the pointer may or may not have
-   * buttons held.
-   */
-
-  if (pointer.buttons & wimp_CLICK_ADJUST)
   if (viewer->drawable->image->file_name[0] != '\0')
   {
-    filer_open_dir(viewer->drawable->image->file_name);
+    wimp_pointer pointer;
 
-    if (inkey(INKEY_SHIFT))
-      return event_HANDLED;
+    /* Note that we might be entered if another part of the program has
+     * faked a close event, in which case the pointer may or may not have
+     * buttons held.
+     */
+
+    wimp_get_pointer_info(&pointer);
+    if (pointer.buttons & wimp_CLICK_ADJUST)
+    {
+      /* We have to open up the directory display after the viewer is
+       * unloaded, so stash the file name beforehand. */
+      strcpy(file_name, viewer->drawable->image->file_name);
+      should_opendir = TRUE;
+      if (inkey(INKEY_SHIFT))
+        should_close = FALSE;
     }
   }
 
-  if (viewer_query_unload(viewer))
+  if (should_close && viewer_query_unload(viewer))
   {
     viewer_unload(viewer);
     viewer_destroy(viewer);
   }
+
+  if (should_opendir)
+    filer_open_dir(file_name);
 
   return event_HANDLED;
 }
