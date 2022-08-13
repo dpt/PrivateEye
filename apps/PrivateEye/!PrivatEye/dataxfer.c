@@ -155,9 +155,11 @@ static int message_data_save_ack(wimp_message *message, void *handle)
       return event_NOT_HANDLED;
   }
 
-  /* If it's an unsafe transfer (i.e. app-to-app) then tell viewer_save to
-   * not update the image's filename. */
-  unsafe = (message->data.data_xfer.est_size == -1);
+  /* If it's an unsafe transfer (i.e. app-to-app) then tell viewer_save() to
+   * NOT change the image's filename. We don't trust est_size here in case
+   * bad apps don't set it correctly, so check the file_name too. */
+  unsafe = (message->data.data_xfer.est_size == -1) ||
+           (strcmp(message->data.data_xfer.file_name, "<Wimp$Scrap>") == 0);
 
   /* Write the file. */
   if (viewer_save(viewer, message->data.data_xfer.file_name, unsafe))
