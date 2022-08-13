@@ -76,8 +76,8 @@ void dataxfer_fin(void)
 
 /* Acknowledge a Message_DataLoad or Message_DataOpen.
  *
- * We send this even if we failed to load a file since we still attempted to
- * load it. */
+ * We send these even if we fail to load a file since we still made an
+ * attempt. */
 static void send_ack(wimp_message *message)
 {
   message->your_ref = message->my_ref;
@@ -122,7 +122,8 @@ static int message_data_save(wimp_message *message, void *handle)
   /* We are - respond with Message_DataSaveAck. */
   strcpy(message->data.data_xfer.file_name, "<Wimp$Scrap>");
  
-  /* Let the sender know that the data is not "secure" (won't be saved to disc.) */
+  /* Let the sender know that the data is "unsafe" (app-to-app, not
+   * permanently saved.) */
   message->data.data_xfer.est_size = -1; 
 
   message->size     = wimp_SIZEOF_MESSAGE_HEADER((
@@ -155,9 +156,9 @@ static int message_data_save_ack(wimp_message *message, void *handle)
       return event_NOT_HANDLED;
   }
 
-  /* If it's an unsafe transfer (i.e. app-to-app) then tell viewer_save() to
-   * NOT change the image's filename. We don't trust est_size here in case
-   * bad apps don't set it correctly, so check the file_name too. */
+  /* If it's an "unsafe" transfer (i.e. app-to-app) then tell viewer_save()
+   * to NOT change the image's filename. We don't trust est_size here in case
+   * bad apps don't set it to -1 as required, so check the file_name too. */
   unsafe = (message->data.data_xfer.est_size == -1) ||
            (strcmp(message->data.data_xfer.file_name, "<Wimp$Scrap>") == 0);
 
