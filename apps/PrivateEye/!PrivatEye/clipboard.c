@@ -70,48 +70,52 @@ static int message_claim_entity(wimp_message *message, void *handle)
 
 static int message_data_request(wimp_message *message, void *handle)
 {
-  bits file_type;
-  bits *types_list;
-  wimp_message datasave;
-  int i;
+  bits          file_type;
+  bits         *types_list;
+  wimp_message  datasave;
+  int           i;
 
   NOT_USED(handle);
 
-  if (GLOBALS.clipboard_viewer != NULL &&
-      message->data.data_request.flags == wimp_DATA_REQUEST_CLIPBOARD)
+  if (message->data.data_request.flags != wimp_DATA_REQUEST_CLIPBOARD)
+    return event_HANDLED;
+  if (GLOBALS.clipboard_viewer == NULL)
+    return event_HANDLED;
+
+  /* The clipboard was requested and we own the clipboard. */
+
+  types_list = message->data.data_request.file_types;
+
+  file_type = GLOBALS.clipboard_viewer->drawable->image->display.file_type;
+
+  /* If the file type is in the list, or if the list is empty, then send. */
+
+  for (i = 0; types_list[i] != file_type && types_list[i] != 0xffffffffu; i++)
+    ;
+
+  if (types_list[0] == 0xffffffffu || types_list[i] == file_type)
   {
-    /* The clipboard was requested and we own the clipboard. */
+    /* They requested a format we can provide. Respond with a DataSave. */
 
-    types_list = message->data.data_request.file_types;
+    datasave.data.data_xfer.w         = message->data.data_xfer.w;
+    datasave.data.data_xfer.i         = message->data.data_xfer.i;
+    datasave.data.data_xfer.pos.x     = message->data.data_xfer.pos.x;
+    datasave.data.data_xfer.pos.y     = message->data.data_xfer.pos.y;
+    datasave.data.data_xfer.est_size  = GLOBALS.clipboard_viewer->drawable->image->display.file_size;
+    datasave.data.data_xfer.file_type = file_type;
+    strcpy(datasave.data.data_xfer.file_name,
+        str_leaf(GLOBALS.clipboard_viewer->drawable->image->file_name));
 
-    file_type = GLOBALS.clipboard_viewer->drawable->image->display.file_type;
+    datasave.your_ref = message->my_ref;
+    datasave.action = message_DATA_SAVE;
 
-    /* If the file type is in the list, or if the list is empty, then send. */
+    datasave.size = wimp_SIZEOF_MESSAGE_HEADER((
+          offsetof(wimp_message_data_xfer, file_name) +
+          strlen(datasave.data.data_xfer.file_name) + 1 + 3) & ~3);
 
-    for (i = 0; types_list[i] != file_type && types_list[i] != 0xffffffffu; i++)
-      ;
-
-    if (types_list[0] == 0xffffffffu || types_list[i] != 0xffffffffu)
-    {
-      /* They requested a format we can provide. Respond with a DataSave. */
-
-      datasave.data.data_xfer.w         = message->data.data_xfer.w;
-      datasave.data.data_xfer.i         = message->data.data_xfer.i;
-      datasave.data.data_xfer.pos.x     = message->data.data_xfer.pos.x;
-      datasave.data.data_xfer.pos.y     = message->data.data_xfer.pos.y;
-      datasave.data.data_xfer.est_size  = GLOBALS.clipboard_viewer->drawable->image->display.file_size;
-      datasave.data.data_xfer.file_type = file_type;
-      strcpy(datasave.data.data_xfer.file_name,
-             str_leaf(GLOBALS.clipboard_viewer->drawable->image->file_name));
-
-      datasave.size = wimp_SIZEOF_MESSAGE_HEADER((
-                        offsetof(wimp_message_data_xfer, file_name) +
-                        strlen(datasave.data.data_xfer.file_name) + 1 + 3) & ~3);
-      datasave.your_ref = message->my_ref;
-      datasave.action = message_DATA_SAVE;
-
-      wimp_send_message(wimp_USER_MESSAGE, &datasave, message->sender);
-    }
+    wimp_send_message(wimp_USER_MESSAGE_RECORDED,
+        &datasave,
+        message->sender);
   }
 
   return event_HANDLED;

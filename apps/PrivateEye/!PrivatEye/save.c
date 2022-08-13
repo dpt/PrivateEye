@@ -47,16 +47,26 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
                    image->display.file_size);
 }
 
+static int viewer_savedlg_message_menus_deleted(wimp_message *message,
+                                                void         *handle)
+{
+  NOT_USED(message);
+  NOT_USED(handle);
+
+  viewer_savedlg = NULL;
+
+  return event_HANDLED;
+}
+
+/* ----------------------------------------------------------------------- */
+
 /* Called on 'Save' button clicks, but not on drag saves. */
 static void viewer_savedlg_save_handler(dialogue_t *d, const char *file_name)
 {
   NOT_USED(d);
 
   if (saving_viewer)
-  {
     viewer_save(saving_viewer, file_name, FALSE);
-    viewer_savedlg_completed();
-  }
 }
 
 /* Called on drag saves with the ref of the DataSave message. */
@@ -65,9 +75,7 @@ static void viewer_savedlg_dataxfer_handler(dialogue_t *d, int my_ref)
   NOT_USED(d);
 
   if (saving_viewer)
-  {
     saving_viewer->drawable->image->last_save_ref = my_ref;
-  }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -75,11 +83,6 @@ static void viewer_savedlg_dataxfer_handler(dialogue_t *d, int my_ref)
 viewer_t *viewer_savedlg_get(void)
 {
   return saving_viewer;
-}
-
-void viewer_savedlg_completed(void)
-{
-  saving_viewer = NULL;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -91,6 +94,9 @@ result_t viewer_savedlg_init(void)
     return result_OOM;
 
   dialogue_set_fillout_handler(viewer_savedlg, viewer_savedlg_fillout, NULL);
+  dialogue_set_menus_deleted_handler(viewer_savedlg,
+                                     viewer_savedlg_message_menus_deleted);
+
   save_set_dataxfer_handler(viewer_savedlg, viewer_savedlg_dataxfer_handler);
   save_set_save_handler(viewer_savedlg, viewer_savedlg_save_handler);
 

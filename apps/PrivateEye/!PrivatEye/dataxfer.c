@@ -130,18 +130,24 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
   NOT_USED(handle);
 
-  // will this work for the clipboard? might need to fall back
+  /* Find out what were we saving. */
   viewer = viewer_savedlg_get();
   if (viewer == NULL)
-    return event_NOT_HANDLED;
+  {
+    viewer = GLOBALS.clipboard_viewer;
+    if (viewer == NULL)
+      return event_NOT_HANDLED;
+  }
 
+  /* If it's an unsafe transfer (i.e. app-to-app) then tell viewer_save to
+   * not update the image's filename. */
   unsafe = (message->data.data_xfer.est_size == -1);
 
+  /* Write the file. */
   if (viewer_save(viewer, message->data.data_xfer.file_name, unsafe))
     return event_HANDLED; /* failure */
 
-  viewer_savedlg_completed();
-
+  /* Tell the receiving app that the file is ready. */
   message->your_ref = message->my_ref;
   message->action   = message_DATA_LOAD;
   wimp_send_message(wimp_USER_MESSAGE_RECORDED, message, message->sender);
@@ -197,8 +203,6 @@ static int message_data_load(wimp_message *message, void *handle)
 #endif /* EYE_THUMBVIEW */
   }
 
-  /* The Filer will set est_size to 0 for DataOpen and -1 for DataLoad...
-   * cope with that. */
   unsafe = (our_ref != 0) &&
            (message->your_ref == our_ref) &&
            (message->data.data_xfer.est_size == -1);
