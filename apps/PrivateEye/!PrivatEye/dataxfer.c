@@ -29,7 +29,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-static int our_ref;
+static int last_datasave_ref;
 
 /* ----------------------------------------------------------------------- */
 
@@ -74,37 +74,52 @@ void dataxfer_fin(void)
 
 /* ----------------------------------------------------------------------- */
 
-/* Another task has proposed to save to us - tell them to save to <Wimp$Scrap> */
+/* Acknowledge a Message_DataLoad or Message_DataOpen.
+ *
+ * We send this even if we failed to load a file since we still attempted to
+ * load it. */
+static void send_ack(wimp_message *message)
+{
+  message->your_ref = message->my_ref;
+  message->action   = message_DATA_LOAD_ACK;
+  wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
+}
+
+/* ----------------------------------------------------------------------- */
+
+/* Another task has proposed to save to us - tell them to save to
+ * <Wimp$Scrap>. */
 static int message_data_save(wimp_message *message, void *handle)
 {
   os_error *e;
 
   NOT_USED(handle);
 
-  /* Ensure that Wimp$Scrap exists before we ask anyone to save data to it.
-   */
-
-  /* I tried xos_read_var_val_size() but it didn't error when expected... */
+  /* Ensure that the <Wimp$Scrap> system variable exists before we ask anyone
+   * to use it.
+   *
+   * I previously tried to use xos_read_var_val_size() here but it didn't
+   * error when expected... */
   e = xos_read_var_val("Wimp$Scrap",
                        0,
-                       -1,
+                      -1,
                        0,
                        os_VARTYPE_STRING,
                        NULL,
                        NULL,
                        NULL);
-
   if (e != NULL && e->errnum == error_VAR_CANT_FIND)
   {
     oserror_report(0, "error.no.scrap");
     return event_HANDLED;
   }
 
-  /* If we're interested, send DataSaveAck. */
+  /* Are we interested in this file type? */
   if (!image_is_loadable(message->data.data_xfer.file_type))
     if (!ffg_is_loadable(message->data.data_xfer.file_type))
       return event_NOT_HANDLED;
 
+  /* We are - respond with Message_DataSaveAck. */
   strcpy(message->data.data_xfer.file_name, "<Wimp$Scrap>");
  
   /* Let the sender know that the data is not "secure" (won't be saved to disc.) */
@@ -113,16 +128,16 @@ static int message_data_save(wimp_message *message, void *handle)
   message->size     = wimp_SIZEOF_MESSAGE_HEADER((
                         offsetof(wimp_message_data_xfer, file_name) +
                         strlen(message->data.data_xfer.file_name) + 1 + 3) & ~3);
-  message->your_ref = message->my_ref;
+  message->your_ref = message->my_ref; /* reply */
   message->action   = message_DATA_SAVE_ACK;
   wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
 
-  our_ref = message->my_ref;
+  last_datasave_ref = message->my_ref;
 
   return event_HANDLED;
 }
 
-/* We proposed a save to another task and it's responded */
+/* We proposed a save to another task and it's responded. */
 static int message_data_save_ack(wimp_message *message, void *handle)
 {
   viewer_t *viewer;
@@ -130,7 +145,8 @@ static int message_data_save_ack(wimp_message *message, void *handle)
 
   NOT_USED(handle);
 
-  /* Find out what were we saving. */
+  /* Find out what we were attempting to send. If a save dialogue is open
+   * then ask that, otherwise check to see if the clipboard is claimed. */
   viewer = viewer_savedlg_get();
   if (viewer == NULL)
   {
@@ -157,8 +173,7 @@ static int message_data_save_ack(wimp_message *message, void *handle)
   return event_HANDLED;
 }
 
-/* ----------------------------------------------------------------------- */
-
+/* We've been invited to load a file. */
 static int message_data_load(wimp_message *message, void *handle)
 {
   result_t  err;
@@ -171,10 +186,12 @@ static int message_data_load(wimp_message *message, void *handle)
 
   NOT_USED(handle);
 
-  if (message->data.data_xfer.file_type > 0x1000)
+  /* Ignore applications */
+  if (message->data.data_xfer.file_type > osfile_TYPE_DIR)
     return event_NOT_HANDLED;
 
-  if (message->data.data_xfer.file_type == 0x1000)
+  /* Ignore directories, unless thumbview is enabled. */
+  if (message->data.data_xfer.file_type == osfile_TYPE_DIR)
   {
 #ifdef EYE_THUMBVIEW
     result_t   err;
@@ -191,10 +208,7 @@ static int message_data_load(wimp_message *message, void *handle)
 
     thumbview_open(tv);
 
-    /* acknowledge - even if we fail, we still tried to load it */
-    message->your_ref = message->my_ref;
-    message->action   = message_DATA_LOAD_ACK;
-    wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
+    send_ack(message);
 
     return event_HANDLED;
 #else
@@ -202,8 +216,9 @@ static int message_data_load(wimp_message *message, void *handle)
 #endif /* EYE_THUMBVIEW */
   }
 
-  unsafe = (our_ref != 0) &&
-           (message->your_ref == our_ref) &&
+  /* Is it an app-to-app transfer? */
+  unsafe = (last_datasave_ref != 0) &&
+           (message->your_ref == last_datasave_ref) &&
            (message->data.data_xfer.est_size == -1);
 
   if ((its_ffg = ffg_apposite(message)) != FALSE)
@@ -229,10 +244,7 @@ static int message_data_load(wimp_message *message, void *handle)
     }
   }
 
-  /* acknowledge - even if we fail, we still tried to load it */
-  message->your_ref = message->my_ref;
-  message->action   = message_DATA_LOAD_ACK;
-  wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
+  send_ack(message);
 
   if (its_ffg)
   {
@@ -244,21 +256,22 @@ static int message_data_load(wimp_message *message, void *handle)
     return event_HANDLED;
   }
 
+  /* Is it targeting an exsting viewer? */
   viewer = viewer_find(message->data.data_xfer.w);
   if (viewer == NULL)
   {
-    /* a new display */
+    /* It's a new viewer. */
     err = viewer_create(&viewer);
     if (err != result_OK)
       return event_HANDLED; /* tried but failed */
   }
   else
   {
-    /* an existing display, possibly modified */
+    /* It's an existing viewer, possibly modified. */
     if (!viewer_query_unload(viewer))
       return event_HANDLED;
 
-    /* unload the previous occupant */
+    /* Remove the previous occupant. */
     viewer_unload(viewer);
   }
 
@@ -267,7 +280,6 @@ static int message_data_load(wimp_message *message, void *handle)
                      &exec_addr,
                       NULL,
                       NULL);
-
   if (viewer_load(viewer,
                   message->data.data_xfer.file_name,
                   load_addr,
@@ -282,11 +294,12 @@ static int message_data_load(wimp_message *message, void *handle)
 
   viewer_open(viewer);
 
+  /* Clean up after an app-to-app transfer. */
   if (unsafe)
   {
-    our_ref = 0;
+    last_datasave_ref = 0;
     if (strcmp(message->data.data_xfer.file_name, "<Wimp$Scrap>") == 0)
-      remove(message->data.data_xfer.file_name);
+      remove("<Wimp$Scrap>");
     else
       oserror_report(0, "error.dataxfer.scrap", message->data.data_xfer.file_name);
   }
@@ -309,7 +322,7 @@ static const struct
   bits    file_type;
   osbool *load;
 }
-ShouldLoad_map[] =
+enabled_file_types[] =
 {
   /* Sorted by file type so we can binary search. */
   { 0x695 /* gif_FILE_TYPE  */,     &GLOBALS.choices.gif.load      },
@@ -320,23 +333,24 @@ ShouldLoad_map[] =
   { 0xff9 /* osfile_TYPE_SPRITE */, &GLOBALS.choices.sprite.load   }
 };
 
-/* Should we respond to DataOpen messages for the specified file type? */
+/* Should we respond to Message_DataOpen for the specified file type? */
 static osbool should_load(bits file_type)
 {
   int i;
 
-  i = bsearch_uint(&ShouldLoad_map[0].file_type,
-                    NELEMS(ShouldLoad_map),
-                    sizeof(ShouldLoad_map[0]),
+  i = bsearch_uint(&enabled_file_types[0].file_type,
+                    NELEMS(enabled_file_types),
+                    sizeof(enabled_file_types[0]),
                     file_type);
 
-  return i >= 0 && *ShouldLoad_map[i].load;
+  return i >= 0 && *enabled_file_types[i].load;
 }
 
 /* ----------------------------------------------------------------------- */
 
 static int message_data_open(wimp_message *message, void *handle)
 {
+  result_t  err;
   viewer_t *viewer;
   osbool    is_template;
   bits      load_addr;
@@ -344,57 +358,52 @@ static int message_data_open(wimp_message *message, void *handle)
 
   NOT_USED(handle);
 
-  if (message->data.data_xfer.file_type > 0xfff)
+  /* Ignore applications */
+  if (message->data.data_xfer.file_type > osfile_TYPE_DIR)
     return event_NOT_HANDLED;
 
   if (!should_load(message->data.data_xfer.file_type))
     return event_NOT_HANDLED;
      
+  /* When est_size is -2 this is a file being opened as a document template.
+   * In this case we load the file then replace its full filename with the
+   * leafname only. */
   is_template = (message->data.data_xfer.est_size == -2);
 
-  /* acknowledge - even if we fail, we still tried to load it */
-  message->your_ref = message->my_ref;
-  message->action   = message_DATA_LOAD_ACK;
-  wimp_send_message(wimp_USER_MESSAGE, message, message->sender);
+  send_ack(message);
 
   osfile_read_no_path(message->data.data_xfer.file_name,
                      &load_addr,
                      &exec_addr,
                       NULL,
                       NULL);
-
   viewer = viewer_find_by_attrs(message->data.data_xfer.file_name,
                                 load_addr,
                                 exec_addr);
-  if (viewer == NULL)
+  if (viewer)
   {
-    result_t err;
-
-    err = viewer_create(&viewer);
-    if (err != result_OK)
-      return event_HANDLED; /* tried but failed */
-
-    if (viewer_load(viewer,
-                    message->data.data_xfer.file_name,
-                    load_addr,
-                    exec_addr,
-                    FALSE,
-                    is_template))
-    {
-      /* report */
-      viewer_destroy(viewer);
-      return event_HANDLED; /* tried but failed */
-    }
-    else
-    {
-      viewer_open(viewer);
-    }
-  }
-  else
-  {
-    /* already loaded: bring window to top */
+    /* This file is already loaded: bring its window to top. */
     window_open(viewer->main_w);
+    return event_HANDLED;
   }
+
+  err = viewer_create(&viewer);
+  if (err != result_OK)
+    return event_HANDLED; /* tried but failed */
+
+  if (viewer_load(viewer,
+                  message->data.data_xfer.file_name,
+                  load_addr,
+                  exec_addr,
+                  FALSE,
+                  is_template))
+  {
+    /* report */
+    viewer_destroy(viewer);
+    return event_HANDLED; /* tried but failed */
+  }
+ 
+  viewer_open(viewer);
 
   return event_HANDLED;
 }

@@ -70,6 +70,8 @@ static int message_claim_entity(wimp_message *message, void *handle)
 
 static int message_data_request(wimp_message *message, void *handle)
 {
+#define data_request_END_OF_LIST (0xFFFFFFFFu)
+
   bits          file_type;
   bits         *types_list;
   wimp_message  datasave;
@@ -90,35 +92,36 @@ static int message_data_request(wimp_message *message, void *handle)
 
   /* If the file type is in the list, or if the list is empty, then send. */
 
-  for (i = 0; types_list[i] != file_type && types_list[i] != 0xffffffffu; i++)
+  for (i = 0; types_list[i] != file_type && types_list[i] != data_request_END_OF_LIST; i++)
     ;
+  if (types_list[0] != data_request_END_OF_LIST && types_list[i] != file_type)
+    return event_HANDLED;
 
-  if (types_list[0] == 0xffffffffu || types_list[i] == file_type)
-  {
-    /* They requested a format we can provide. Respond with a DataSave. */
+  /* They requested a format we can provide. Respond with a Message_DataSave. */
 
-    datasave.data.data_xfer.w         = message->data.data_xfer.w;
-    datasave.data.data_xfer.i         = message->data.data_xfer.i;
-    datasave.data.data_xfer.pos.x     = message->data.data_xfer.pos.x;
-    datasave.data.data_xfer.pos.y     = message->data.data_xfer.pos.y;
-    datasave.data.data_xfer.est_size  = GLOBALS.clipboard_viewer->drawable->image->display.file_size;
-    datasave.data.data_xfer.file_type = file_type;
-    strcpy(datasave.data.data_xfer.file_name,
-        str_leaf(GLOBALS.clipboard_viewer->drawable->image->file_name));
+  datasave.data.data_xfer.w         = message->data.data_xfer.w;
+  datasave.data.data_xfer.i         = message->data.data_xfer.i;
+  datasave.data.data_xfer.pos.x     = message->data.data_xfer.pos.x;
+  datasave.data.data_xfer.pos.y     = message->data.data_xfer.pos.y;
+  datasave.data.data_xfer.est_size  = GLOBALS.clipboard_viewer->drawable->image->display.file_size;
+  datasave.data.data_xfer.file_type = file_type;
+  strcpy(datasave.data.data_xfer.file_name,
+      str_leaf(GLOBALS.clipboard_viewer->drawable->image->file_name));
 
-    datasave.your_ref = message->my_ref;
-    datasave.action = message_DATA_SAVE;
+  datasave.your_ref = message->my_ref;
+  datasave.action = message_DATA_SAVE;
 
-    datasave.size = wimp_SIZEOF_MESSAGE_HEADER((
-          offsetof(wimp_message_data_xfer, file_name) +
-          strlen(datasave.data.data_xfer.file_name) + 1 + 3) & ~3);
+  datasave.size = wimp_SIZEOF_MESSAGE_HEADER((
+        offsetof(wimp_message_data_xfer, file_name) +
+        strlen(datasave.data.data_xfer.file_name) + 1 + 3) & ~3);
 
-    wimp_send_message(wimp_USER_MESSAGE_RECORDED,
-        &datasave,
-        message->sender);
-  }
+  wimp_send_message(wimp_USER_MESSAGE_RECORDED,
+                   &datasave,
+                    message->sender);
 
   return event_HANDLED;
+
+#undef data_request_END_OF_LIST
 }
 
 /* ----------------------------------------------------------------------- */
@@ -127,12 +130,11 @@ void clipboard_claim(wimp_w w)
 {
   wimp_message message;
 
-  /* We always broadcast this, even if we already own the clipboard (see
-   * RISCOS Ltd. Clipboard TechNote). */
-
-  /* Claim the clipboard, even if we already own it */
+  /* Claim the clipboard, even if we already own it. We always broadcast
+   * this even if we already own the clipboard (see RISCOS Ltd. Clipboard
+   * TechNote). */
   message.size     = sizeof(wimp_full_message_claim_entity);
-  message.your_ref = 0;
+  message.your_ref = 0; /* not a reply */
   message.action   = message_CLAIM_ENTITY;
   message.data.claim_entity.flags = wimp_CLAIM_CLIPBOARD;
   wimp_send_message(wimp_USER_MESSAGE, &message, wimp_BROADCAST);

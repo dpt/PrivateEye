@@ -277,7 +277,11 @@ void image_modified(image_t *i, image_modified_flags flags)
 void image_saved(image_t *i)
 {
   i->flags &= ~image_FLAG_MODIFIED;
-  i->last_save_ref = 0; // not sure
+
+  /* TODO: Enter the world of pain that is implementing support for
+   * Message_DataSaved. It's hard to justify the effort since the only other
+   * app that supports it that I can find is Edit, and even that is only
+   * implementing half the protocol. */
 
   imageobserver_event(i, imageobserver_CHANGE_SAVED, NULL);
 }
