@@ -28,6 +28,6 @@ void save_set_dataxfer_handler(dialogue_t *d, save_dataxfer_handler *handler);
 typedef void (save_save_handler)(dialogue_t *d, const char *file_name);
 void save_set_save_handler(dialogue_t *d, save_save_handler *handler);
 
-int save_should_close_menu(void);
+void save_done(void);
 
 #endif /* APPENGINE_DIALOGUE_SAVE_H */

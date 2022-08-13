@@ -283,7 +283,8 @@ void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)
 
 /* ----------------------------------------------------------------------- */
 
-int save_should_close_menu(void)
+void save_done(void)
 {
-  return saving_close_menu & wimp_DRAG_SELECT;
+  if (saving_close_menu & wimp_DRAG_SELECT)
+    wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
 }
