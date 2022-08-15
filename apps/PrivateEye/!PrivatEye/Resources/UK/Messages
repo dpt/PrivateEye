@@ -7,6 +7,9 @@ version:3.14 (xx Aug 2022)
 task:PrivateEye
 icon:!privateye
 
+untitled.title:<untitled>
+untitled.filename:ImageFile
+
 workspace.image:PrivateEye images
 
 # Menus
@@ -164,6 +167,8 @@ error.jpeg.rotate:JPEG rotate failed.
 error.buffer.start:Buffer failed to start. Probably out of memory.
 
 error.ffg.died:FFG translator died.
+
+error.dataxfer.scrap:Scrap transfer filename wasn't '<Wimp$Scrap>' as expected but instead '%s'. Will not delete.
 
 error.name.missing:Missing name.
 

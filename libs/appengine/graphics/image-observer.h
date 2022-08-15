@@ -19,6 +19,8 @@ enum
   imageobserver_CHANGE_ABOUT_TO_MODIFY,
   imageobserver_CHANGE_MODIFIED,
 
+  imageobserver_CHANGE_SAVED,            /**< When image safely saved to disc */
+
   imageobserver_CHANGE_HIDDEN,
   imageobserver_CHANGE_REVEALED,
 

@@ -449,7 +449,7 @@ int main(int argc, char *argv[])
       err = viewer_create(&viewer); /* reports any failures itself */
       if (err == result_OK)
       {
-        if (viewer_load(viewer, argv[argc], load_addr, exec_addr))
+        if (viewer_load(viewer, argv[argc], load_addr, exec_addr, FALSE, FALSE))
           viewer_destroy(viewer);
         else
           viewer_open(viewer);

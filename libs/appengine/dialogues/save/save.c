@@ -13,6 +13,7 @@
 #include "oslib/osbyte.h"
 #include "oslib/wimp.h"
 #include "oslib/wimpspriteop.h"
+#include "oslib/wimpreadsysinfo.h"
 
 #include "appengine/wimp/dialogue.h"
 #include "appengine/base/oserror.h"
@@ -41,10 +42,12 @@ enum
 
 typedef struct save_t
 {
-  dialogue_t         dialogue; /* base class */
-  char              *file_name;
-  bits               file_type;
-  save_save_handler *save_handler;
+  dialogue_t             dialogue; /* base class */
+  char                  *file_name;
+  bits                   file_type;
+  size_t                 est_size;
+  save_save_handler     *save_handler;
+  save_dataxfer_handler *dataxfer_handler;
 }
 save_t;
 
@@ -167,6 +170,9 @@ static int save_event_user_drag_box(wimp_event_no event_no,
   save_t      *s;
   wimp_pointer pointer;
   wimp_w       w;
+  wimp_t       dest_task;
+  wimp_message message;
+  char         file_name[256]; /* Careful Now */
 
   NOT_USED(event_no);
   NOT_USED(block);
@@ -185,43 +191,61 @@ static int save_event_user_drag_box(wimp_event_no event_no,
 
   w = dialogue_get_window(&s->dialogue);
 
-  if (pointer.w != w)
+  /* do nothing if dropped in the save dialogue */
+  if (pointer.w == w)
+    return event_HANDLED;
+
+  /* don't message ourselves unless dropped on the icon bar */
+  if (pointer.w != wimp_ICON_BAR)
   {
-    char         file_name[256]; /* Careful Now */
-    wimp_message message;
-
-    icon_get_text(w, SAVE_W_FILENAME, file_name);
-
-    message.data.data_xfer.w         = pointer.w;
-    message.data.data_xfer.i         = pointer.i;
-    message.data.data_xfer.pos.x     = pointer.pos.x;
-    message.data.data_xfer.pos.y     = pointer.pos.y;
-    message.data.data_xfer.est_size  = -1;
-    message.data.data_xfer.file_type = s->file_type;
-    strcpy(message.data.data_xfer.file_name, str_leaf(file_name));
-
+    message.size     = 16;
     message.your_ref = 0;
-    message.action = message_DATA_SAVE;
-
-    message.size = wimp_SIZEOF_MESSAGE_HEADER((
-                     offsetof(wimp_message_data_xfer, file_name) +
-                     strlen(message.data.data_xfer.file_name) + 1 + 3) & ~3);
-
-    wimp_send_message_to_window(wimp_USER_MESSAGE,
-                               &message,
-                                pointer.w,
-                                pointer.i);
+    dest_task = wimp_send_message_to_window(wimp_USER_MESSAGE_ACKNOWLEDGE,
+                                           &message,
+                                            pointer.w,
+                                            pointer.i);
+    if (dest_task == wimpreadsysinfo_task(NULL))
+      return event_HANDLED;
   }
+
+  icon_get_text(w, SAVE_W_FILENAME, file_name);
+
+  message.data.data_xfer.w         = pointer.w;
+  message.data.data_xfer.i         = pointer.i;
+  message.data.data_xfer.pos.x     = pointer.pos.x;
+  message.data.data_xfer.pos.y     = pointer.pos.y;
+  message.data.data_xfer.est_size  = s->est_size;
+  message.data.data_xfer.file_type = s->file_type;
+  strcpy(message.data.data_xfer.file_name, str_leaf(file_name));
+
+  message.your_ref = 0; /* not a reply */
+  message.action = message_DATA_SAVE;
+
+  message.size = wimp_SIZEOF_MESSAGE_HEADER((
+                   offsetof(wimp_message_data_xfer, file_name) +
+                   strlen(message.data.data_xfer.file_name) + 1 + 3) & ~3);
+
+  wimp_send_message_to_window(wimp_USER_MESSAGE_RECORDED,
+                             &message,
+                              pointer.w,
+                              pointer.i);
+
+  if (s->dataxfer_handler)
+    s->dataxfer_handler(&s->dialogue, message.my_ref);
 
   return event_HANDLED;
 }
 
 /* ----------------------------------------------------------------------- */
 
-result_t save_set_file_name(dialogue_t *d, const char *file_name)
+result_t save_set_info(dialogue_t *d,
+                 const char       *file_name,
+                       bits        file_type,
+                       size_t      bytes)
 {
   save_t *s = (save_t *) d;
-  wimp_w  win;
+  wimp_w  w;
+  char    sprname[osspriteop_NAME_LIMIT];
 
   /* record the filename so we can restore it when Cancel is pressed */
 
@@ -232,26 +256,22 @@ result_t save_set_file_name(dialogue_t *d, const char *file_name)
   if (s->file_name == NULL)
     return result_OOM;
 
-  win = dialogue_get_window(d);
+  s->file_type = file_type;
+  s->est_size = bytes;
 
-  icon_set_text(win, SAVE_W_FILENAME, s->file_name);
+  w = dialogue_get_window(d);
+  icon_set_text(w, SAVE_W_FILENAME, s->file_name);
+  file_type_to_sprite_name(file_type, sprname);
+  icon_validation_printf(w, SAVE_I_ICON, "Ni_icon;S%s", sprname);
 
   return result_OK;
 }
 
-void save_set_file_type(dialogue_t *d, bits file_type)
+void save_set_dataxfer_handler(dialogue_t *d, save_dataxfer_handler *dataxfer_handler)
 {
   save_t *s = (save_t *) d;
-  wimp_w  w;
-  char    sprname[osspriteop_NAME_LIMIT];
 
-  s->file_type = file_type;
-
-  w = dialogue_get_window(d);
-
-  file_type_to_sprite_name(file_type, sprname);
-
-  icon_validation_printf(w, SAVE_I_ICON, "Ni_icon;S%s", sprname);
+  s->dataxfer_handler = dataxfer_handler;
 }
 
 void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)
@@ -263,7 +283,11 @@ void save_set_save_handler(dialogue_t *d, save_save_handler *save_handler)
 
 /* ----------------------------------------------------------------------- */
 
-int save_should_close_menu(void)
+void save_done(void)
 {
-  return saving_close_menu & wimp_DRAG_SELECT;
+  if (saving_close_menu & wimp_DRAG_SELECT)
+  {
+    wimp_create_menu(wimp_CLOSE_MENU, 0, 0);
+    saving_close_menu = 0;
+  }
 }

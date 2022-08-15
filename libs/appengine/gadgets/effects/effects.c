@@ -2097,6 +2097,7 @@ static void effects_cancel(effectswin_t *ew)
 
 /* ----------------------------------------------------------------------- */
 
+// todo: factor this out to imageobwin
 // todo: check cleanup paths
 static result_t effectswin_create(effectswin_t   **new_ew,
                             const effectsconfig_t *config,
@@ -2105,7 +2106,8 @@ static result_t effectswin_create(effectswin_t   **new_ew,
   result_t      err;
   effectswin_t *ew = NULL;
   wimp_w        w  = wimp_ICON_BAR;
-  char          scratch[32];
+  char          token[32];
+  char          format[32];
   const char   *leaf;
   char          title[256];
 
@@ -2128,9 +2130,13 @@ static result_t effectswin_create(effectswin_t   **new_ew,
 
   /* set its title, including the leafname of the image */
 
-  sprintf(scratch, "%s.title", "effect");
-  leaf = str_leaf(image->file_name);
-  sprintf(title, message0(scratch), leaf);
+  sprintf(token, "%s.title", "effect");
+  strcpy(format, message0(token));
+  if (image->file_name[0] != '\0')
+    leaf = str_leaf(image->file_name);
+  else
+    leaf = message0("untitled.title");
+  sprintf(title, format, leaf);
   window_set_title_text(w, title);
 
   ew->window = w;

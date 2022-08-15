@@ -156,7 +156,8 @@ image_t *image_create(void)
 
 image_t *image_create_from_file(image_choices *choices,
                           const char          *file_name,
-                                bits           file_type)
+                                bits           file_type,
+                                osbool         unsafe)
 {
   image_t *i;
 
@@ -164,14 +165,18 @@ image_t *image_create_from_file(image_choices *choices,
   if (i == NULL)
     goto Failure;
 
-  strcpy(i->file_name, file_name);
   i->source.file_type = file_type;
+
+  strcpy(i->file_name, file_name);
 
   if (loader_export_methods(choices, i, file_type))
     goto Failure;
 
   if (i->methods.load(choices, i))
     goto Failure;
+
+  if (unsafe)
+    i->file_name[0] = '\0';
 
   return i;
 
@@ -260,12 +265,25 @@ void image_modified(image_t *i, image_modified_flags flags)
   imageobserver_data data;
 
   i->flags |= image_FLAG_MODIFIED;
+  i->last_save_ref = 0;
 
   image_dispose_transient(i);
 
   data.modified.flags = flags;
 
   imageobserver_event(i, imageobserver_CHANGE_MODIFIED, &data);
+}
+
+void image_saved(image_t *i)
+{
+  i->flags &= ~image_FLAG_MODIFIED;
+
+  /* TODO: Enter the world of pain that is implementing support for
+   * Message_DataSaved. It's hard to justify the effort since the only other
+   * app that supports it that I can find is Edit, and even that is only
+   * implementing half the protocol. */
+
+  imageobserver_event(i, imageobserver_CHANGE_SAVED, NULL);
 }
 
 /* ----------------------------------------------------------------------- */

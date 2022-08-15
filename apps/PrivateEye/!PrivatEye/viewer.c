@@ -49,16 +49,19 @@ static list_t list_anchor = { NULL };
 
 /* ----------------------------------------------------------------------- */
 
-static void set_view_title(viewer_t *viewer)
+static void update_viewer_title(viewer_t *viewer)
 {
   char file_name[256];
   char percentage[12];
   char buf[256];
   int  nclones;
 
-  sprintf(file_name, "%.*s",
-    (int) sizeof(file_name),
-          viewer->image->file_name);
+  if (viewer->image->file_name[0] != '\0')
+    sprintf(file_name, "%.*s",
+      (int) sizeof(file_name),
+            viewer->image->file_name);
+  else
+    strcpy(file_name, message0("untitled.title"));
   sprintf(percentage, "%d%%", viewer->scale.cur);
   sprintf(buf, message0("display.title"), file_name, percentage);
 
@@ -83,7 +86,7 @@ static int refresh_all_titles_callback(viewer_t *viewer, void *opaque)
 {
   NOT_USED(opaque);
 
-  set_view_title(viewer);
+  update_viewer_title(viewer);
 
   return 0;
 }
@@ -199,7 +202,7 @@ void viewer_destroy(viewer_t *doomed)
 
   /* Update any title bars containing cloned viewer counters */
   /* FIXME: If this could avoid refreshing any unaffected title bars, that
-   *        would be nice. */
+   *        would be nice. Perhaps with a _CLONED/_UNCLONED image event? */
   refresh_all_titles();
 }
 
@@ -581,7 +584,7 @@ void viewer_update(viewer_t *viewer, viewer_update_flags flags)
     if (flags & viewer_UPDATE_SCALING)
     {
       d->methods.update_scaling(d, &factors);
-      set_view_title(viewer);
+      update_viewer_title(viewer);
     }
 
     if (flags & viewer_UPDATE_EXTENT)
@@ -665,6 +668,15 @@ static int reset_callback(viewer_t *viewer, void *opaque)
   return 0;
 }
 
+static int set_titles_callback(viewer_t *viewer, void *opaque)
+{
+  NOT_USED(opaque);
+
+  update_viewer_title(viewer);
+
+  return 0;
+}
+
 /* Called by imageobserver when a registered image changes. */
 static void image_changed_callback(image_t             *image,
                                    imageobserver_change change,
@@ -710,6 +722,10 @@ static void image_changed_callback(image_t             *image,
     viewer_map_for_image(image, update_image_callback, &args);
 
     viewer_map_for_image(image, restore_position_callback, NULL);
+    break;
+
+  case imageobserver_CHANGE_SAVED:
+    viewer_map_for_image(image, set_titles_callback, NULL);
     break;
   }
 }
@@ -812,7 +828,9 @@ Failure:
 osbool viewer_load(viewer_t   *viewer,
                    const char *file_name,
                    bits        load,
-                   bits        exec)
+                   bits        exec,
+                   osbool      unsafe,
+                   osbool      template)
 {
   result_t    err;
   image_t    *image = NULL;
@@ -842,13 +860,20 @@ osbool viewer_load(viewer_t   *viewer,
 
     image = image_create_from_file(&GLOBALS.choices.image,
                                     file_name,
-                                    (load >> 8) & 0xfff);
+                                    (load >> 8) & 0xfff,
+                                    unsafe);
     if (image == NULL)
     {
       err = result_OOM;
       goto Failure;
     }
   }
+
+  if (unsafe)
+    image->flags |= image_FLAG_MODIFIED;
+
+  if (template)
+    strcpy(image->file_name, str_leaf(file_name));
 
   err = drawable_create(image, &drawable);
   if (err)
@@ -858,8 +883,6 @@ osbool viewer_load(viewer_t   *viewer,
   viewer->drawable = drawable;
 
   viewer_update(viewer, viewer_UPDATE_ALL);
-
-  set_view_title(viewer);
 
 #ifdef EYE_ZONES
   /* Now the viewer block is ready we can create the zones. */
@@ -894,7 +917,7 @@ Failure:
   goto Exit;
 }
 
-osbool viewer_save(viewer_t *viewer, const char *file_name)
+osbool viewer_save(viewer_t *viewer, const char *file_name, osbool unsafe)
 {
   if (viewer->image->methods.save(&GLOBALS.choices.image,
                                    viewer->image,
@@ -903,9 +926,11 @@ osbool viewer_save(viewer_t *viewer, const char *file_name)
     return TRUE; /* failure */
   }
 
-  strcpy(viewer->image->file_name, file_name);
-
-  set_view_title(viewer);
+  if (!unsafe)
+  {
+    strcpy(viewer->image->file_name, file_name);
+    image_saved(viewer->image); /* will cause viewer title update */
+  }
 
   return FALSE; /* success */
 }

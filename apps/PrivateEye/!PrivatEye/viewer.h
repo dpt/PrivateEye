@@ -111,12 +111,14 @@ void viewer_open(viewer_t *viewer);
 osbool viewer_load(viewer_t   *viewer,
                    const char *file_name,
                    bits        load,
-                   bits        exec);
+                   bits        exec,
+                   osbool      unsafe,
+                   osbool      template);
 void viewer_unload(viewer_t *viewer);
 
 int viewer_query_unload(viewer_t *viewer);
 
-osbool viewer_save(viewer_t *viewer, const char *file_name);
+osbool viewer_save(viewer_t *viewer, const char *file_name, osbool unsafe);
 
 void viewer_clone(viewer_t *viewer);
 result_t viewer_clone_from_window(wimp_w w, viewer_t **new_viewer);

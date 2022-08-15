@@ -44,8 +44,6 @@ int bitmap_save(image_choices *choices,
     return TRUE; /* failure */
   }
 
-  image->flags &= ~image_FLAG_MODIFIED;
-
   return FALSE; /* success */
 }
 

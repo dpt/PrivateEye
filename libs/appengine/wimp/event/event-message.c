@@ -55,7 +55,7 @@ static int event_message(wimp_event_no event_no,
   }
   locs[] =
   {
-    /* note that a many of these offsets are the same... */
+    /* note that many of these offsets are the same... */
 
     { message_DATA_SAVE,     offsetof(wimp_message_data_xfer, w)           },
     { message_DATA_SAVE_ACK, offsetof(wimp_message_data_xfer, w)           },

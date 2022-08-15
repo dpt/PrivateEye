@@ -202,6 +202,8 @@ static event_wimp_handler display_event_redraw_window_request,
                           display_event_lose_caret,
                           display_event_gain_caret;
 
+static event_message_handler display_message_menus_deleted;
+
 /* ----------------------------------------------------------------------- */
 
 static void display_reg(int reg, viewer_t *viewer)
@@ -217,12 +219,26 @@ static void display_reg(int reg, viewer_t *viewer)
     { wimp_GAIN_CARET,            display_event_gain_caret            },
   };
 
+  static const event_message_handler_spec message_handlers[] =
+  {
+    { message_MENUS_DELETED,      display_message_menus_deleted       },
+  };
+
   event_register_wimp_group(reg,
                             wimp_handlers,
                             NELEMS(wimp_handlers),
                             viewer->main_w,
                             event_ANY_ICON,
                             viewer);
+
+  /* We must cast the menu pointer to a window handle so we can watch for our
+   * specific menu closing. */
+  event_register_message_group(reg,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                      (wimp_w) GLOBALS.image_m,
+                               event_ANY_ICON,
+                               viewer);
 }
 
 result_t display_set_handlers(viewer_t *viewer)
@@ -616,6 +632,10 @@ static int step(viewer_t *viewer, int direction)
   else
     direction = -1;
 
+  /* Need a filename to step */
+  if (viewer->drawable->image->file_name[0] == '\0')
+    return 0;
+
   leaf_name = str_leaf(viewer->drawable->image->file_name);
   dir_name  = str_branch(viewer->drawable->image->file_name);
 
@@ -689,7 +709,12 @@ static int step(viewer_t *viewer, int direction)
   viewer_unload(viewer);
 
   sprintf(file_name, "%s.%s", dir_name, found_info->name);
-  if (viewer_load(viewer, file_name, found_info->load_addr, found_info->exec_addr))
+  if (viewer_load(viewer,
+                  file_name,
+                  found_info->load_addr,
+                  found_info->exec_addr,
+                  FALSE,
+                  FALSE))
   {
     viewer_destroy(viewer);
     return 0;
@@ -867,34 +892,45 @@ static int display_event_close_window_request(wimp_event_no event_no,
                                               wimp_block   *block,
                                               void         *handle)
 {
-  viewer_t    *viewer;
-  wimp_pointer pointer;
+  viewer_t *viewer;
+  char      file_name[256];
+  osbool    should_opendir = FALSE;
+  osbool    should_close = TRUE;
 
   NOT_USED(event_no);
   NOT_USED(block);
 
   viewer = handle;
 
-  wimp_get_pointer_info(&pointer);
-
-  /* Note that we might be entered if another part of the program has
-   * faked a close event, in which case the pointer may or may not have
-   * buttons held.
-   */
-
-  if (pointer.buttons & wimp_CLICK_ADJUST)
+  if (viewer->drawable->image->file_name[0] != '\0')
   {
-    filer_open_dir(viewer->drawable->image->file_name);
+    wimp_pointer pointer;
 
-    if (inkey(INKEY_SHIFT))
-      return event_HANDLED;
+    /* Note that we might be entered if another part of the program has
+     * faked a close event, in which case the pointer may or may not have
+     * buttons held.
+     */
+
+    wimp_get_pointer_info(&pointer);
+    if (pointer.buttons & wimp_CLICK_ADJUST)
+    {
+      /* We have to open up the directory display after the viewer is
+       * unloaded, so stash the file name beforehand. */
+      strcpy(file_name, viewer->drawable->image->file_name);
+      should_opendir = TRUE;
+      if (inkey(INKEY_SHIFT))
+        should_close = FALSE;
+    }
   }
 
-  if (viewer_query_unload(viewer))
+  if (should_close && viewer_query_unload(viewer))
   {
     viewer_unload(viewer);
     viewer_destroy(viewer);
   }
+
+  if (should_opendir)
+    filer_open_dir(file_name);
 
   return event_HANDLED;
 }
@@ -1521,6 +1557,9 @@ static void action_kill(viewer_t *viewer)
   const char       *leaf;
   fileraction_flags flags;
 
+  if (viewer->drawable->image->file_name[0] == '\0')
+    return;
+
   e = EC(xwimp_start_task("Filer_Action", &act));
   if (e)
     goto failure;
@@ -1867,6 +1906,19 @@ static int display_event_gain_caret(wimp_event_no event_no,
   viewer = handle;
 
   image_focus(viewer->drawable->image);
+
+  return event_HANDLED;
+}
+
+static int display_message_menus_deleted(wimp_message *message,
+                                         void         *handle)
+{
+  NOT_USED(message);
+  NOT_USED(handle);
+
+  /* We need to let the save dialogue know when it closes. It can't tell when
+   * it's opened as a sub-menu. */
+  viewer_savedlg_reset();
 
   return event_HANDLED;
 }
