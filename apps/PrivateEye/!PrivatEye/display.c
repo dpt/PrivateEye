@@ -202,6 +202,8 @@ static event_wimp_handler display_event_redraw_window_request,
                           display_event_lose_caret,
                           display_event_gain_caret;
 
+static event_message_handler display_message_menus_deleted;
+
 /* ----------------------------------------------------------------------- */
 
 static void display_reg(int reg, viewer_t *viewer)
@@ -217,12 +219,26 @@ static void display_reg(int reg, viewer_t *viewer)
     { wimp_GAIN_CARET,            display_event_gain_caret            },
   };
 
+  static const event_message_handler_spec message_handlers[] =
+  {
+    { message_MENUS_DELETED,      display_message_menus_deleted       },
+  };
+
   event_register_wimp_group(reg,
                             wimp_handlers,
                             NELEMS(wimp_handlers),
                             viewer->main_w,
                             event_ANY_ICON,
                             viewer);
+
+  /* We must cast the menu pointer to a window handle so we can watch for our
+   * specific menu closing. */
+  event_register_message_group(reg,
+                               message_handlers,
+                               NELEMS(message_handlers),
+                      (wimp_w) GLOBALS.image_m,
+                               event_ANY_ICON,
+                               viewer);
 }
 
 result_t display_set_handlers(viewer_t *viewer)
@@ -1890,6 +1906,19 @@ static int display_event_gain_caret(wimp_event_no event_no,
   viewer = handle;
 
   image_focus(viewer->drawable->image);
+
+  return event_HANDLED;
+}
+
+static int display_message_menus_deleted(wimp_message *message,
+                                         void         *handle)
+{
+  NOT_USED(message);
+  NOT_USED(handle);
+
+  /* We need to let the save dialogue know when it closes. It can't tell when
+   * it's opened as a sub-menu. */
+  viewer_savedlg_reset();
 
   return event_HANDLED;
 }

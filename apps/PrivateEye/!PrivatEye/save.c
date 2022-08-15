@@ -32,11 +32,7 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
 
   NOT_USED(opaque);
 
-  saving_viewer = GLOBALS.current_viewer;
-  if (saving_viewer == NULL)
-    return;
-
-  image = saving_viewer->drawable->image;
+  image = GLOBALS.current_viewer->drawable->image;
   if (image->file_name[0] != '\0')
     file_name = image->file_name;
   else
@@ -47,13 +43,15 @@ static void viewer_savedlg_fillout(dialogue_t *d, void *opaque)
                    image->display.file_size);
 }
 
+/* This only catches the case of <F3><Esc>. If the save dialogue is opened as
+ * a submenu then the owner will need to call viewer_savedlg_reset(). */
 static int viewer_savedlg_message_menus_deleted(wimp_message *message,
                                                 void         *handle)
 {
   NOT_USED(message);
   NOT_USED(handle);
 
-  viewer_savedlg = NULL;
+  saving_viewer = NULL;
 
   return event_HANDLED;
 }
@@ -65,8 +63,7 @@ static void viewer_savedlg_save_handler(dialogue_t *d, const char *file_name)
 {
   NOT_USED(d);
 
-  if (saving_viewer)
-    viewer_save(saving_viewer, file_name, FALSE);
+  viewer_save(GLOBALS.current_viewer, file_name, FALSE);
 }
 
 /* Called on drag saves with the ref of the DataSave message. */
@@ -74,8 +71,8 @@ static void viewer_savedlg_dataxfer_handler(dialogue_t *d, int my_ref)
 {
   NOT_USED(d);
 
-  if (saving_viewer)
-    saving_viewer->drawable->image->last_save_ref = my_ref;
+  saving_viewer = GLOBALS.current_viewer;
+  saving_viewer->drawable->image->last_save_ref = my_ref;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -83,6 +80,11 @@ static void viewer_savedlg_dataxfer_handler(dialogue_t *d, int my_ref)
 viewer_t *viewer_savedlg_get(void)
 {
   return saving_viewer;
+}
+
+void viewer_savedlg_reset(void)
+{
+  saving_viewer = NULL;
 }
 
 /* ----------------------------------------------------------------------- */
