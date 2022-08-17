@@ -52,7 +52,6 @@ int scroll_list_move_selection_absolute(scroll_list *sl, int where)
   int sel;
 
   old = sl->selection;
-
   if (old == -1)
     return -1; /* no selection */
 

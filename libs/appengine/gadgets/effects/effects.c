@@ -1178,21 +1178,18 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
                                           wimp_block   *block,
                                           void         *handle)
 {
-  wimp_pointer pointer;
-  int          index;
+  wimp_pointer  pointer;
+  int           index;
   effectswin_t *ew = handle;
 
   NOT_USED(event_no);
   NOT_USED(block);
 
   drag_object_stop();
-
   drageffect_set_handlers(ew, 0);
-
   scroll_list_clear_marker(ew->sl);
 
   wimp_get_pointer_info(&pointer);
-
   if (pointer.w != scroll_list_get_window_handle(ew->sl))
     return event_HANDLED;
 
@@ -1233,7 +1230,7 @@ static int drageffect_event_user_drag_box(wimp_event_no event_no,
 }
 
 /* called to drag virtual icons, those without actual icons */
-static void drageffect_box(effectswin_t  *ew,
+static void drageffect_box(effectswin_t *ew,
                            wimp_pointer *pointer,
                            int           effect,
                            int           moving,
@@ -1249,7 +1246,8 @@ static void drageffect_box(effectswin_t  *ew,
     /* turn this index into an effect number */
     effect = ew->effects.entries[effect].effect;
 
-  drag_object_box(pointer->w, box,
+  drag_object_box(pointer->w,
+                  box,
                   pointer->pos.x,
                   pointer->pos.y,
                   drageffect_renderer,
