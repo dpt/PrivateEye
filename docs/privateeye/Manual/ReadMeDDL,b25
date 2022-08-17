@@ -1404,7 +1404,7 @@ PICT_177={pictframe
 }
 
 PICTURE_422={picture
-{reference ""<PrivateEyeManual$Dir>.Pictures.sourcewin"}
+{reference "<PrivateEyeManual$Dir>.Pictures.sourcewin"}
 }
 
 TEXT_179={textframe
