@@ -600,6 +600,9 @@ static int move_effect(effectswin_t *ew, int from, int to)
   /* restore the overwritten element in its new place */
   ea->entries[to] = t;
 
+  /* update selection */
+  scroll_list_move_selection_relative(ew->sl, to - from);
+
   /* refresh all affected rows */
   {
     int min,max;
