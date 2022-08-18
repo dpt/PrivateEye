@@ -17,8 +17,11 @@
 /* Returns the N'th sprite in the area */
 osspriteop_header *sprite_select(const osspriteop_area *area, int n);
 
-/* Calculates the byte size of a sprite (sprite header and area) */
-size_t sprite_size(int w, int h, int log2bpp, osbool paletted);
+/* Calculates the byte size of a sprite (sprite header and data) */
+size_t sprite_bytes(int w, int h, int log2bpp, osbool paletted);
+
+/* Returns the byte size of a sprite (sprite data only) */
+size_t sprite_data_bytes(const osspriteop_header *header);
 
 /* Returns a pointer to the sprite data */
 void *sprite_data(const osspriteop_header *header);

@@ -92,6 +92,6 @@ result_t effects_expand_apply(osspriteop_area   *area,
 
 
 copy_only:
-  memcpy(sprite_data(dst), sprite_data(src), src->size);
+  memcpy(sprite_data(dst), sprite_data(src), sprite_data_bytes(src));
   return result_OK;
 }

@@ -65,7 +65,7 @@ result_t thumbnail_create(image_t          *image,
   w = (w_fix8 + 128) >> 8;
   h = (h_fix8 + 128) >> 8;
 
-  sprimgbytes = sprite_size(w, h, log2bpp, FALSE);
+  sprimgbytes = sprite_bytes(w, h, log2bpp, FALSE);
 
   /* allocate an area */
 
