@@ -61,14 +61,8 @@ result_t effects_expand_apply(osspriteop_area   *area,
       max = j;
   }
 
-  /* I'd like at this point to say:
-   *
-   *   if (min == 0 && max == 255)
-   *     return result_OK; // nothing to expand
-   *
-   * but reckon that'll stop sprite_remap degenerating into a straight copy
-   * in that case, and so might screw up the expected result.
-   */
+  if ((min == 0 && max == 255) || (min == max))
+    goto copy_only;
 
   memset(&luts.l[0], 0, sizeof(luts.l[0]));
 
@@ -94,5 +88,10 @@ result_t effects_expand_apply(osspriteop_area   *area,
   if (err)
     return err;
 
+  return result_OK;
+
+
+copy_only:
+  memcpy(sprite_data(dst), sprite_data(src), src->size);
   return result_OK;
 }
