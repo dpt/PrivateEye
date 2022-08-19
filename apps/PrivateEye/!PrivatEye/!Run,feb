@@ -55,7 +55,7 @@ Unset Alias$PrivateEyeRMLoad
 | 
 Set PrivateEye$DALimit 0
 
-WimpSlot -min 520K -max 520K
+WimpSlot -min 480K -max 480K
 
 Run <PrivateEye$Dir>.Resources.PhotoCheck
 

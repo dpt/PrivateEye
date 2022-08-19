@@ -9,15 +9,33 @@ Please consult the PDF manual for full information.
 Recent Changes
 --------------
 
-### 3.14 (xx Aug 2022)
+### 3.14 (19 Aug 2022)
 
-- Updated libpng to 1.6.37.
-
-- Fixed PNG loader leaks.
-
-- Fixed a GIF loader crash.
-
-- ...
+- When loading new images the "Fit to screen" mode will now only ever shrink
+  images. This is more helpful than the previous behaviour which would scale
+  small images up to enormous proportions. Note that the "Fit screen" button on
+  the scale view dialogue is unaffected.
+- The data transfer system has had an upgrade:
+  - `<Wimp$Scrap>` won't appear in title bars now. It'll use `<untitled>` in
+    title bars, and `ImageFile` when saving an image with no known name.
+    Received files are marked as modified too. This matches the behaviour of
+    standard RISC OS apps.
+  - Message_DataOpen template mode (est_size == -2) is supported (it's not
+    super useful because PrivateEye's not a full editor, but it is in there).
+- libpng has been upgraded to 1.6.37.
+- Fix: The GIF loader would crash if fed bad data.
+- Fix: The PNG loader had memory leaks on the failure path.
+- Fix: The rotate window thumbnail could have excessive black borders. I've
+  made a small effort to make the scaling more accurate but note that, if
+  enabled, Tinct has accuracy issues when downscaling that do cause a black
+  border.
+- Fix: When you adjust click to close a modified viewer window, the directory
+  display that's opened will now pop up only after the viewer is gone rather
+  than obscuring the discard/cancel/save dialogue.
+- Fix: The effects window scroll list selection highlight now moves along with
+  the dragged item.
+- Fix: The expand dynamic range effect no longer crashes when there's only two
+  colours in the image.
 
 ### 3.10 (12 Sep 2021)
 
