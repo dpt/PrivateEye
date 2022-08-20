@@ -67,13 +67,13 @@ fi
 export APPENGINE_ROOT=${scriptdir}
 
 # PrivateEye
-cd ${scriptdir}/apps/PrivateEye
-mkdir -p build && cd build
-cmake -GNinja -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake '../!PrivatEye' || bash -i
+cd "${scriptdir}/apps/PrivateEye"
+rm -rf build && mkdir -p build && cd build
+cmake -GNinja -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_TOOLCHAIN_FILE="${APPENGINE_ROOT}/cmake/riscos.cmake" '../!PrivatEye' || bash -i
 ninja install || bash -i
 
 # TagCloud
-cd ${scriptdir}/apps/TagCloud
-mkdir -p build && cd build
-cmake -GNinja -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_TOOLCHAIN_FILE=${APPENGINE_ROOT}/cmake/riscos.cmake '../!TagCloud' || bash -i
+cd "${scriptdir}/apps/TagCloud"
+rm -rf build && mkdir -p build && cd build
+cmake -GNinja -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_TOOLCHAIN_FILE="${APPENGINE_ROOT}/cmake/riscos.cmake" '../!TagCloud' || bash -i
 ninja install || bash -i

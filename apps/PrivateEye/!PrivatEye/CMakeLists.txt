@@ -81,6 +81,9 @@ message(STATUS "${PROJECT_NAME}: Building targets only")
 #
 set(LIBS_DIR ${APPENGINE_REPO_ROOT}/libs)
 
+# Override libpng's configuration
+set(DFA_XTRA ${CMAKE_CURRENT_SOURCE_DIR}/pngusr-privateeye.dfa CACHE FILEPATH "File containing extra configuration settings" FORCE)
+
 # Import DPTLib
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY https://github.com/dpt/DPTLib
@@ -116,9 +119,6 @@ add_subdirectory(${FLEX_DIR} flex-build EXCLUDE_FROM_ALL)
 set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
 add_subdirectory(${MD5_DIR} md5-build EXCLUDE_FROM_ALL)
-
-# libpng
-set(DFA_XTRA ${CMAKE_CURRENT_SOURCE_DIR}/pngusr-privateeye.dfa CACHE FILEPATH "File containing extra configuration settings" FORCE)
 
 
 # Avoid a warning from CMake
