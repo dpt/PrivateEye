@@ -425,6 +425,7 @@ set(GENERIC_SOURCES
     wimp/window/open-at.c
     wimp/window/open-here.c
     wimp/window/read-furn-dims.c
+    wimp/window/read-icon-bar.c
     wimp/window/read-max-vis-area.c
     wimp/window/redraw.c
     wimp/window/set-extent2.c

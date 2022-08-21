@@ -150,7 +150,7 @@ static void open_at_cb(CallbackArgs *args, void *opaque)
   /* compensate for icon bar size */
 
   if (flags & AT_NOCOVERICONBAR)
-    scr_h -= IconBarHeight - IconBarOverlap;
+    scr_h -= read_icon_bar_unobscured();
 
   /* allow the window to be no larger than the screen */
 
@@ -173,7 +173,7 @@ static void open_at_cb(CallbackArgs *args, void *opaque)
   {
     case AT_CEN:    y = (args->screen_h - height) / 2; break;
     case AT_LEFTOP: y = args->screen_h - height;       break;
-    case AT_RIGBOT: y = IconBarHeight;                 break;
+    case AT_RIGBOT: y = read_icon_bar_height();        break;
   }
 
   /* Other positions */
@@ -191,8 +191,7 @@ static void open_at_cb(CallbackArgs *args, void *opaque)
         x = p.pos.x - width / 2;
         y = p.pos.y - height / 2;
 
-        min_y = IconBarHeight; /* exactly above the icon bar */
-
+        min_y = read_icon_bar_height(); /* exactly above the icon bar, like DisplayManager */
         if (y < min_y)
           y = min_y;
       }
@@ -214,7 +213,7 @@ static void open_at_cb(CallbackArgs *args, void *opaque)
           /* move progressively down, then across */
           x = lastopen_x;
           y = lastopen_y - StaggerOffset;
-          if (y < IconBarHeight) /* above the icon bar */
+          if (y < read_icon_bar_height()) /* above the icon bar */
           {
             x += StaggerOffset;
             if (x + width >= args->screen_w)
@@ -231,7 +230,7 @@ static void open_at_cb(CallbackArgs *args, void *opaque)
   /* compensate for icon bar size again */
 
   if (flags & AT_NOCOVERICONBAR)
-    y += IconBarHeight - IconBarOverlap;
+    y += read_icon_bar_unobscured();
 
   /* we've included the window borders in our calculations, now remove */
 

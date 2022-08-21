@@ -101,13 +101,10 @@ void window_set_title_text(wimp_w w, const char *text);
 
 void window_redraw(wimp_w w);
 
-/* Icon bar metrics */
-enum
-{
-  IconBarHeight  = 134,
-  IconBarOverlap = 14,  /* same overlap the Wimp allows */
-  IconBarVisible = IconBarHeight - IconBarOverlap
-};
+/* Reads the height of the icon bar (excluding border), in OS units. */
+int read_icon_bar_height(void);
+/* Reads the height of the icon bar, in OS units, that we should not obscure. */
+int read_icon_bar_unobscured(void);
 
 /* Reads the window furniture dimensions */
 void read_furniture_dimensions(wimp_w w, os_box *furn);

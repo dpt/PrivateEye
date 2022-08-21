@@ -39,7 +39,7 @@ static void open_here_cb(CallbackArgs *sizes, void *opaque)
   /* compensate for icon bar size */
 
   if (args->flags & AT_NOCOVERICONBAR)
-    scr_h -= IconBarHeight - IconBarOverlap;
+    scr_h -= read_icon_bar_unobscured();
 
   /* allow the window to be no larger than the screen */
 
@@ -60,8 +60,8 @@ static void open_here_cb(CallbackArgs *sizes, void *opaque)
 
   /* compensate for icon bar size, if we obscure it */
 
-  if (args->flags & AT_NOCOVERICONBAR && y < IconBarHeight - IconBarOverlap)
-    y += IconBarHeight - IconBarOverlap;
+  if (args->flags & AT_NOCOVERICONBAR && y < read_icon_bar_unobscured())
+    y += read_icon_bar_unobscured();
 
   /* we've included the window borders in our calculations, now remove */
 
