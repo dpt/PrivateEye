@@ -1,0 +1,84 @@
+Choices
+#Parent !Root
+The Choices window is available from the icon bar menu. It provides control over a number of different aspects of PrivateEye's behaviour.
+
+è	<Viewer Choices=>.Viewer>
+è	<Colour Choices=>.Colour>
+è	<Common File Format Choices=>.Common>
+è	<Sprite Choices=>.Sprite>
+è	<JPEG Choices=>.JPEG>
+è	<DrawFile Choices=>.DrawFile>
+è	<ArtWorks Choices=>.ArtWorks>
+#Subpage Viewer
+Viewer & Cache Choices
+#Spritefile ChoicesSpr
+#Sprite c,f choiceview
+#fH4:Viewer Choices
+{*}WINDOW SIZE{*} controls the size of the viewer window.
+
+è	{*}FIT TO IMAGE{*} sizes viewer windows to fit exactly the contained image.
+è	{*}FIT TO SCREEN{*} makes viewer windows at least the size of the screen.
+
+{*}IMAGE SCALE{*} controls the image scale applied when a new image is loaded. The choices are similar to those in the {*}SCALE VIEW{*} dialogue except for {*}PRESERVE{*} which re-uses the previously selected scale, or 100% if a new viewer window is opened.
+
+{*}SCROLLING{*} controls how many steps are used when scrolling and zooming. The more steps you configure the smoother the effect will be. However, too many steps can also slow down if the image is complex to redraw.
+
+PrivateEye tries to keep the viewer window in the same position when moving between images. {*}COVER ICON BAR{*} controls whether it will avoid obscuring the icon bar with viewer windows. If not set, viewer windows will be made smaller and positioned to avoid the icon bar.
+
+#fH4:Cache Choices
+PrivateEye can set aside memory in which to retain discarded images. When configured, if you close an image it will be placed in the cache. Then if you later try to view that image again, the cached entry will be retrieved instead of re-loading the image.
+
+{*}SIZE{*} controls the size of the cache. The default is zero which disables the cache. Choose a non-zero KByte value to enable the cache.
+
+Use {*}EMPTY CACHE{*} on the icon bar menu to discard all cached images.
+#Subpage Colour
+Colour Choices
+#Spritefile ChoicesSpr
+#Sprite c,f choicecol
+
+Screen Correction provides a simple gamma, contrast and brightness control which affects the whole desktop. {*}ENABLE CORRECTION{*} turns on the automatic setting of these values when PrivateEye is loaded.
+#Subpage Common
+Common File Format Choices
+There are some choices which exist for every file format that PrivateEye supports. To avoid repetition, they are described here in advance.
+
+{*}LOAD ON DOUBLE-CLICK{*} controls whether the respective format will be loaded when double-clicked on in a directory display.
+
+{*}BACKGROUND{*} opens a ColourPicker dialogue which selects the background colour PrivateEye will use for masked images and also when in "fit to screen" mode. If {*}NONE{*} is chosen for the colour then a checkered background will be used
+#Subpage Sprite
+Sprite Choices
+#Spritefile ChoicesSpr
+#Sprite c,f choicespr
+
+The Sprite choices will affect any file format which is converted into Sprite format for display (i.e. GIFs, PNGs and, optionally, JPEGs).
+
+{*}DITHERING{*} can be set to {*}NONE{*} or {*}SIMPLE{*}. {*}SIMPLE{*} instructs the OS to use a simple stipple pattern (an ordered dither) to better approximate unavailable colours in modes with less than 16 million colours.
+
+{*}DRAW USING TINCT{*} will draw the Sprite, where possible, using the /Tinct/ module. Tinct offers transparency support and higher quality error diffusion than the regular OS sprite plotting routines, and a number of other features. PrivateEye uses Tinct to display images which contain alpha channel data.
+
+Note that Tinct was a stopgap and has not been maintained for some years. It is now superseded by some versions of RISC OS 5. Sprite support is a complicated area due to the divergence of RISC OS 4 and 5. If you find that you're seeing incorrect colours in particular screen modes (e.g. modern "LTRGB" modes) then try disabling Tinct to see if that fixes it.
+#Subpage JPEG
+JPEG Choices
+#Spritefile ChoicesSpr
+#Sprite c,f choicejpg
+
+{*}DITHERING{*} can be set to {*}NONE{*}, {*}SIMPLE{*} and {*}ERROR DIFFUSION{*}. This controls the dithering level used when JPEGs are rendered directly. The options provide increasing levels of quality at the cost of increased rendering time.
+
+{*}CLEANING{*} can be set to {*}ONLY WHEN REQUIRED{*} or {*}ALWAYS{*}. Progressive JPEGs cannot be directly rendered on many versions of RISC OS, so PrivateEye has a built-in version of jpegtran which automatically translates those JPEGs into the simpler baseline form. Set this option to {*}ALWAYS{*} if you encounter a JPEG which fails to render.
+
+Note that cleaned images will be saved from PrivateEye in their baseline form.
+
+By default JPEGs are retained in memory in their native format. If this is not desirable, perhaps to speed up redraw or to be able to use the Histogram or Editing windows, then enable {*}CONVERT TO SPRITE{*}. The JPEG will be decompressed on loading into an 8bpp grey or 32bpp colour Sprite.
+
+The lossless JPEG rotation code cannot transform boundary blocks. Enabling {*}ROTATE TRIMS EDGES{*} will cause those boundary blocks to be discarded by rotate operations.
+#Subpage DrawFile
+DrawFile Choices
+#Spritefile ChoicesSpr
+#Sprite c,f choicedrw
+
+{*}FLATNESS{*} can be set to {*}COARSE{*}, {*}NORMAL{*}, {*}BEST{*} or {*}AUTOMATIC{*}. It controls how many straight line segments are used to render BÈzier curves. The DrawFile module's automatic setting does not always work well. This control is provided to allow the user to force a high-quality render when viewing at high zoom levels.
+#Subpage ArtWorks
+ArtWorks Choices
+#Spritefile ChoicesSpr
+#Sprite c,f choiceart
+
+{*}QUALITY{*} controls the famous ArtWorks variable quality setting. It offers {*}OUTLINE{*}, {*}SIMPLE{*}, {*}NORMAL{*} and {*}ANTI- ALIASED{*}.

@@ -1,0 +1,20 @@
+Rotate
+#Parent !Root
+The Rotate dialogue can rotate Sprites and JPEGs in multiples of 90 degrees. It can also flip, transpose and transverse.
+
+Rotate and transform functions are only available for Sprites and JPEGs.
+
+#Spritefile Sprites
+#Sprite c,f rotatewin
+
+Rotation and transformation of JPEGs is lossless. That means it does not perform a full decompress-transform-compress cycle which would result in quality degradation. Instead it uses libjpeg's lossless rotation code.
+
+CTRL O opens the Rotate dialogue. The dialogue is straightforward to use. Simply drag the thumbnail image and it will spin around its centre. As you rotate the image it will snap to the nearest 90 degrees. Release when it appears in the desired orientation. Click *ROTATE* to apply the rotation.
+
+Dragging with ADJUST behaves similarly, except that it performs an initial horizontal flip. Using either SELECT or ADJUST allows all possible flips and rotations to be applied.
+
+The icon in the top left hand corner of the window shows which rotation, or transformation, will occur.
+
+#fH5:Keys
+
+The equivalent key presses in the viewer window are CTRL L and CTRL R to rotate left and right respectively and CTRL H and CTRL V respectively to perform horizontal and vertical flips.

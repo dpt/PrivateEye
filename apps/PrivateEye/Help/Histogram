@@ -1,0 +1,32 @@
+Histogram
+#Parent !Root
+The /Histogram window/ displays a histogram of an image's /luma/: the brightness portion of the image.
+
+{/}The histogram window is only available for 8bpp grey and 32bpp colour bitmap formats. If you want to use this feature with a JPEG then *CONVERT TO SPRITE*.{/}
+
+It can also show the histogram of red, green, blue and, where available, alpha, components.
+
+Open the Histogram window by choosing *HISTOGRAM* from the viewer window's menu or by pressing CTRL I. One histogram window may be opened for each image.
+
+#Spritefile Sprites
+#Sprite c,f histwin
+
+The histogram lets you see which tones contain the greatest amount of detail. In the above example, the low level at the right hand side of the graph indicates an absence of detail in the brightest part of the image.
+
+You can use this information to guide your choices when making adjustments with the Effects window.
+
+#fH5:Display Options
+
+The *CUMULATIVE* option displays the histogram as an increasing amount from left to right.
+
+#Sprite c,f histcumul
+
+The *COMPONENTS* pop-up opens a menu which lets you choose which colour channel to view: luma, red, green, blue or alpha (where present).
+
+#fH5:Scale Bars
+
+Light grey horizontal bars are drawn across the display for every 3.125% of total pixels shown (32 intervals.)
+
+#fH5:Luma Calculation
+
+Luma is a weighted sum of gamma corrected components. Luma here is calculated using the Rec. 601 coefficients of Y' = 0.299 R' + 0.587 G' + 0.114 B'.
