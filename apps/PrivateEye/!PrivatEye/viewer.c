@@ -454,7 +454,7 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box)
     read_max_visible_area(viewer->main_w, &sw, &sh);
 
     if (!GLOBALS.choices.viewer.cover_icon_bar)
-      sh -= IconBarVisible;
+      sh -= read_icon_bar_height();
 
     /* Enforce a minimum size. */
 

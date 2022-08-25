@@ -44,7 +44,7 @@ static osbool window_is_maximised(wimp_w win, osbool covericonbar)
    * which overlaps the bottom of the icon bar to be considered maximised. */
 
   if (!covericonbar)
-    if (h == sh - IconBarVisible)
+    if (h == (sh - read_icon_bar_unobscured()))
       return TRUE;
 
   return FALSE;
@@ -109,14 +109,15 @@ void window_restore(wimp_w win, WindowCapture *capture, osbool covericonbar)
     if (!covericonbar)
     {
       os_box furn;
+      int    icon_bar_height = read_icon_bar_unobscured();
 
       /* Are we overlapping the icon bar?
        * If so, move the window up to avoid that. */
 
       read_furniture_dimensions(win, &furn);
 
-      if (box.y0 < IconBarVisible + furn.y0)
-        box.y0 = IconBarVisible + furn.y0;
+      if (box.y0 < icon_bar_height + furn.y0)
+        box.y0 = icon_bar_height + furn.y0;
     }
 
     box.x1 = box.x0 + w;
