@@ -30,6 +30,10 @@ static void selected(const wimp_selection *selection, void *opaque)
 
   switch (selection->items[0])
   {
+  case ICONBAR_HELP:
+    xwimp_start_task("X Filer_Run " APPNAME "Res:Help", NULL);
+    break;
+
 #ifdef EYE_CANVAS
   case ICONBAR_NEW:
     switch (selection->items[1])

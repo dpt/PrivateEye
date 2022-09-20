@@ -11,6 +11,7 @@
 enum
 {
   ICONBAR_INFO          = 0,
+  ICONBAR_HELP,
 #if defined(EYE_CANVAS)
   ICONBAR_NEW,
 #endif
