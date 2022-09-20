@@ -1,0 +1,23 @@
+Features
+#Parent !Root
+è	Loads and displays bitmap and vector images
+è	Sprites, JPEGs, GIFs and PNGs
+è	DrawFiles and ArtWorks
+è	Bitmap effects
+è	Adjust gamma, brightness and contrast
+è	Blur and sharpen
+è	Change saturation and apply histogram effects
+è	Alpha channel support
+è	Bitmap rotation with interactive preview
+è	Rotation is lossless for JPEGs
+è	Native JPEG display using SpriteExtend
+è	Inbuilt lossless "cleaning" transparently loads progressive JPEGs
+è	JFIF, Exif and Adobe metadata information display
+è	Multiple-channel histogram
+è	Display images may be saved
+è	Convert JPEGs, GIFs and PNGs to into Sprites
+è	Any number of images may be open concurrently
+è	Customisable key map
+è	Lots of interactive help (use it!)
+
+PrivateEye requires RISC OS 3.6 or later and a Boot sequence with the Nested Wimp and a 32-bit Shared C Library.

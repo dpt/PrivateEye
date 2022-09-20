@@ -1,0 +1,47 @@
+Keymap
+#Parent !Root
+PrivateEye's key assignments may be customised or supplemented by editing a file called "Keys", which is held in PrivateEye's Choices directory: {fCode}Choices:PrivateEye.Keys{f}. This usually lives inside your !Boot application as {fCode}!Boot.Choices.PrivateEye.Keys{f}.
+
+{fH4}Sections{f}
+
+Keys is a text file built of sections. Sections begin with a square bracketed line {fCode}[Like This]{f} and are followed by a series of entries.
+
+Two sections are presently used: {fCode}[Common]{f} and {fCode}[Viewer]{f}. Common is searched after a lookup in a more specific section is exhausted.
+
+{fH4}Entries{f}
+
+Each entry within a section is of the form:
+
+{fCode}[modifier]keyname:action{f}
+
+Where {fCode}[]{f} indicates an optional part.
+
+Tokens are case sensitive.
+
+{fH4}Modifiers{f}
+
+{fCode}S_{f}	SHIFT
+{fCode}C_{f}	CTRL
+{fCode}SC_{f}	SHIFT CTRL
+
+{fH4}Special key names{f}
+
+{fCode}Escape, F1..F12, Print, Backspace, Tab, Return, Space, Logo, Menu, Insert, Home, Delete, Copy, PageUp, PageDown, Up, Down, Left, Right{f}
+
+{fH4}Common action names{f}
+
+{fCode}Close, Help{f}
+
+{fH4}Viewer action names{f}
+
+{fCode}ConvToSpr, Copy, Effects, Hist, HorzFlip, Info, Kill, NewView, PanDown, PanLeft, PanRandom, PanRight, PanUp, Rotate, RotateLeft, RotateRight, Save, Scale, SourceInfo, StepBackwards, StepForwards, VertFlip, ZoomIn, ZoomOut, ZoomReset, ZoomToggle{f}
+
+{fH4}Examples{f}
+
+To make a TAB keypress step forwards to the next image, when in a viewer window, add the following to the {fCode}[Viewer]{f} section of a Keys file:
+
+{fCode}Tab:StepForwards{f}
+
+To make SHIFT TAB step backwards to the previous image:
+
+{fCode}S_Tab:StepBackwards{f}

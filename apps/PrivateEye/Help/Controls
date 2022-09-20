@@ -1,0 +1,50 @@
+Controls
+#Parent !Root
+è	<Mouse Controls=>.Mouse>
+è	<Keyboard Controls=>.Keyboard>
+#Subpage Mouse
+Mouse Controls
+#Wrap Off
+Viewer windows support the following mouse controls.
+
+	SELECT	ADJUST
+#Line
+	Gain focus	Gain focus
++SHIFT	Zoom in to point	Zoom out from point
++CTRL	Scroll to point	(no action)
++DRAG	Grab	Zoom to box
++SHIFT+CTRL	Embed window	(no action)
+#Subpage Keyboard
+Keyboard Controls
+Viewer windows accept the input focus when clicked. You can use the following keys while the window has the focus:
+
+Key	Action
+#Line
+Cursor keys	Scroll up, down, left, right
+CTRL Z	Scroll to somewhere random
+CTRL W	Zoom in
+CTRL Q	Zoom out
+CTRL T	Toggle to the previous zoom level
+CTRL D	Zoom to 100%
+F11	Open the Scale dialogue
+CTRL L	Rotate left
+CTRL R	Rotate right
+CTRL H	Horizontal flip
+CTRL V	Vertical flip
+CTRL O	Open the Rotate dialogue
+CTRL C	Copy to clipboard
+CTRL N	New view
+F3	Open the Save dialogue
+CTRL S	Convert to Sprite
+CTRL I	Open the Histogram window
+CTRL E	Open the Effects window
+PAGE DOWN/SPACE	Move to the next file in directory
+PAGE UP	Move to the previous file
+CTRL F2 & ESC	Close the viewer window
+ESC	Close the viewer window
+ESC	Cancel a drag (when dragging)
+CTRL K	Kill (delete the file)
+F1	Start Interactive Help
+SHIFT F1	Open the Image Info window
+CTRL F1	Open the Source Info window
+SHIFT CTRL F1	Open the Metadata window

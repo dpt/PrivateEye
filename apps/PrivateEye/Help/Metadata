@@ -1,0 +1,45 @@
+Metadata
+#Parent !Root
+Some image files may contain embedded information additional to the image data. PrivateEye calls this /metadata/. The Metadata window lets you see this information.
+
+{/}The Metadata window is presently only available for JPEG images loaded in their native format. If you want to use this feature you may need to disable *CONVERT TO SPRITE* in the JPEG choices.{/}
+
+Open the Metadata window by choosing *METADATA* from the viewer window's menu or by pressing SHIFT CTRL F1. One metadata window may be opened for each image.
+
+The menu entry will be greyed out if no metadata is present.
+
+è	<Use=>.Use>
+è	<Classes of Metadata=>.Types>
+è	<Examples=>.Examples>
+#Subpage Use
+Use
+The metadata is presented in a tree format like this:
+
+#Spritefile Sprites
+#Sprite c,f metadata
+
+Individual branches of the tree can be collapsed or expanded to hide or reveal relevant data by clicking the controls at the left.
+
+Click MENU to open up a small menu which lets you collapse or expand all tree branches.
+#Subpage Types
+Classes of Metadata
+There are three common types of JPEG metadata which PrivateEye understands:
+
+{fH5}Exif{f}
+
+The standard for digital camera data.
+è	Contains information including time, date, camera make, model, resolution, focus and flash.
+
+{fH5}Adobe{f}
+
+è	Output by Adobe applications, primarily Adobe Photoshop.
+è	Contains information proprietary to Adobe applications such as effect settings. The Adobe segment also includes {/}IPTC-NAA{/} data.
+è	Contains information about captions, headlines, keywords, photographer, copyright holder, etc.
+
+{fH5}JFIF Comments{f}
+
+è	JFIF provides for multiple blocks of plain, unformatted text data.
+#Subpage Examples
+Examples
+{fH5}IPTC-NAA{f}
+Images containing this type of metadata may often be found on The Internet Movie Database <http://www.imdb.com/=>#url>.

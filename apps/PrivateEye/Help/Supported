@@ -1,0 +1,50 @@
+Supported Image Formats
+#Parent !Root
+On loading, PrivateEye may convert images into a RISC OS-native format. This means that bitmap images like GIFs, PNGs and (optionally) JPEGs are converted to Sprite format when loaded.
+
+The converted image is referred to as the {/}display image{/}. Operations such as saving, rotation and the effects system operate on the display image only.
+
+è	<Sprites=>.sprites>
+è	<JPEGs=>.jpegs>
+è	<GIFs=>.gifs>
+è	<PNGs=>.pngs>
+è	<DrawFiles=>.drawfiles>
+è	<ArtWorks=>.artworks>
+è	<Unrecognised Formats=>.others>
+#Subpage sprites
+Sprites
+All varieties of Sprite are loaded and displayed, if the host OS understands them. For example, RISC OS 5 may be unable to load the alpha-blended and CMYK format Sprites native to RISC OS Select.
+
+PrivateEye treats any alpha channel data in 16 millon colour format Sprites as transparency information. The alpha data is expected to reside in the top byte of each 32-bit pixel. This is the same format used by /Tinct/, /Composition/ and /Variations/ but different to the format used by RISC OS Select which instead stores the alpha channel in the mask data portion of the Sprite.
+
+Sprite files containing multiple sprites will only show the first Sprite in the file.
+#Subpage jpegs
+JPEGs
+RISC OS's SpriteExtend module, version 0.99 or later, is used to directly display JPEGs. This allows images larger than available free memory to be displayed by decompressing and plotting on the fly.
+
+Progressive (multiple scan) JPEGs are supported even if the host OS doesn't support them. PrivateEye has an inbuilt version of /jpegtran/ which is used to convert JPEGs into a baseline format that SpriteExtend can render.
+
+JPEGs may be optionally be converted to Sprite when loaded (see the Choices window.)
+#Subpage gifs
+GIFs
+GIFs are converted into Sprite format when loaded. PrivateEye presently has no animation support, so animated GIFs will only show the first frame.
+#Subpage pngs
+PNGs
+PNGs are converted into Sprite format when loaded. Where possible, simple on/off transparency is retained as a Sprite mask. If the transparency is not simple then a 32bpp image with an alpha mask is created.
+
+PNGs with 16 bits per component will be truncated to 8 bits, as there is no RISC OS format capable of holding that level of detail.
+
+Where present, the /bKND/ chunk is used to set the colour of the window background.
+#Subpage drawfiles
+DrawFiles
+The DrawFile module is used to display DrawFiles. A border of 16 OS units is added in display.
+#Subpage artworks
+ArtWorks
+The ArtWorks rendering modules are used to display ArtWorks files.
+
+/AWViewer/ must have been seen by the Filer for this to work. Note that ArtWorks itself won't do: it must be AWViewer. All RISC OS machines since the Risc PC have shipped with a copy of AWViewer on the hard disc.
+#Subpage others
+Unrecognised Formats
+If the file type is not recognised PrivateEye will inspect the contents of the file to see if it is a format that is understood. If so, it will set the file type appropriately and then load the file.
+
+Otherwise, it will use Computer Concepts' FFG protocol to load images it does not natively understand. For this to work you must have /TransFSI/, {/}TranTIFF+{/}, or similar, installed.

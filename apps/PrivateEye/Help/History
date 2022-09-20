@@ -1,0 +1,51 @@
+Version 3.20 (xx yyy 2022)
+#Parent !Root
+Manual converted to StrongHelp format.
+#Line
+<Previous changes=>.314>
+#Subpage 314
+Version 3.14 (19 Aug 2022)
+Changes
+
+è	When loading new images the îFit to screenï mode will now only ever scale downwards. This is more helpful than the previous behaviour which would scale small images up to needlessly enormous proportions. Note that the îFit screenï button on the scale view dialogue is unaffected.
+è	The data transfer system has had an upgrade: 
+	-	An app-to-app transfer wonët result in {fCode}\<Wimp$Scrap>{f} used in title bars now. Itëll use {fCode}\<untitled>{f} in title bars, and {fCode}ImageFile{f} when saving an image with no known name. Received files are marked as modified too. This matches the behaviour of standard RISC OS apps.
+	-	Message_DataOpen template mode (when est_size is -2) is supported (itës not super useful because PrivateEyeës not a full editor, but it is in there).
+è	libpng has been upgraded to 1.6.37.
+
+Fixes
+
+è	Fix: The GIF loader would crash if fed bad data.
+è	Fix: The PNG loader had memory leaks on the failure path.
+è	Fix: The rotate window thumbnail could have excessive black borders. Iëve made a small effort to make the scaling more accurate but note that, if enabled, Tinct has accuracy issues when downscaling that do cause a black border.
+è	Fix: When you adjust click to close a modified viewer window, the directory display thatës opened will now pop up only after the viewer is gone rather than obscuring the discard/cancel/save dialogue.
+è	Fix: The effects window scroll list selection highlight now moves along with the dragged item.
+è	Fix: The expand dynamic range effect no longer crashes when thereës only two colours in the image.
+è	Special bonus fix: Reduced !RunImage by 50K. WimpSlot reduced to 480K.
+#Line
+<Previous changes=>.310>
+#Subpage 310
+Version 3.10 (12 Sep 2021)
+Changes
+
+è	Progressive JPEGs are now passed straight through to the OS when it is capable of decoding them. This requires RISC OS Select with SpriteExtend 1.30 or RISC OS 5 with SpriteExtend 1.73, or later. You can still force JPEG cleaning on from the choices if you wish.
+è	The information given on JPEGs is enhanced. The source info window will show the details of the file format, being JFIF, Exif, Adobe or a combination thereof; Baseline, Extended Sequential or Progressive DCT coding and whether the packing was Huffman or Arithmetic.
+è	Hand-in-hand with the above is enhanced colourspace reporting. The "Colours" field will show whether the JPEG is encoded as YCbCr (the most common), YCCK (like CMYK), RGB or CMYK. It will report the number of components used, and the depth of those components too.
+è	Multiple effect windows may now be open concurrently.
+è	PrivateEye is now cross-compiled using GCCSDK.
+è	PrivateEye has now been packaged for PackMan.
+#Line
+<Previous changes=>.301>
+#Subpage 301
+Version 3.01 (19 Jan 2018)
+Fixes
+
+è	Fixed the image stepping routine (the one which PAGEUP and PAGEDOWN triggers) to cope with filesystems that don't return predictable context values.
+#Line
+<Previous changes=>.300>
+#Subpage 300
+Version 3.00 (08 Feb 2017)
+Fixes
+
+è	Fix: Avoid crashes on Raspberry Pi 3 (Cortex-A53) by fixing a stray "MOVS pc" instruction which had previously gone undetected.
+è	Fix: Zero page access in choices handling code which would cause a crash on zero page protected OSes.

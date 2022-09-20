@@ -1,0 +1,80 @@
+Viewer Windows
+#Parent !Root
+The /viewer window/ is PrivateEye's main interface:
+
+#Spritefile Sprites
+#Sprite c,f viewerwin
+
+è	<Loading Images=>.Loading>
+è	<Input Focus=>.Focus>
+è	<Scrolling Around=>.Scrolling>
+è	<Scaling the View=>.Scaling>
+è	<Moving Between Files=>.Moving>
+è	<Saving=>.Saving>
+è	<Delete=>.Delete>
+è	<New views=>.Views>
+è	<Embedding=>.Embedding>
+#Subpage Loading
+Loading Images
+To view an image, drag it from a directory display to the icon bar icon. You can load any number of images, each will be shown in its own viewer window.
+
+To re-use an existing viewer window drag the image into that viewer window.
+
+If the image does not have the correct file type, then PrivateEye will attempt to identify the correct type and set it.
+#Subpage Focus
+Input Focus
+When you click in a viewer window it gains the input focus. You can then use the keys detailed below HYPERLINK to scroll, scale, etc.
+#Subpage Scrolling
+Scrolling Around
+If parts of the image are not visible, you can scroll around either by dragging within the window using SELECTôthe /grab/ toolôor by using the cursor keys.
+
+On suitable OS versions, the mouse scroll wheel may also be used to scroll vertically.
+
+You can scroll to a specific point by holding CTRL and clicking SELECT at the desired position.
+#Subpage Scaling
+Scaling the View
+You may need to scale the image to fit it to the screen, or to view an area in detail. There are a number of controls for this.
+
+The /Scale view/ dialogue is available from the viewer menu or by pressing F11. The default scale of 100% shows the image at a 1:1 pixel ratio.
+
+#Spritefile Sprites
+#Sprite c,f scalewin
+
+There are standard preset scales of 25%, 50%, 100% and 200%. *FIT SCREEN* fits the view to the size of the screen. *FIT WINDOW* fits the image to the current size of the viewer window. Click *SCALE* to make the scale level take effect.
+
+With the Scale view dialogue open, you can also use the UP and DOWN keys to change the scale by 5%. This takes immediate effect. Using SHIFT in conjunction doubles the step size to 10%. (PAGE UP and PAGE DOWN perform the same function.)
+
+{fH5}Scaling with the Keyboard{f}
+
+CTRL W and CTRL Q zoom in and zoom out respectively. CTRL T toggles between the previously selected and the current scale level. CTRL D resets the scale to 100%.
+
+{fH5}Scaling with the Mouse{f}
+
+A SHIFT SELECT click will zoom in around the clicked point. SHIFT ADJUST click does the same but zooms out. If multiple steps are configured then a zoom effect will be used.
+
+Dragging ADJUST in the viewer window drags out a zoom box. The area of the image highlighted will be scaled to fit the window.
+
+#Sprite c,f zoombox
+#Subpage Moving
+Moving Between Files
+Pressing SPACE, or alternatively PAGE DOWN, will move the viewer onto the next file in the directory. PAGE UP moves to the previous file.
+
+The order of the files in the directory determines the previous / next viewed image.
+#Subpage Saving
+Saving
+F3 opens the /Save/ dialogue. This saves a copy of the display image.
+#Subpage Delete
+Delete
+CTRL K deletes the currently viewed image. It uses the multitasking Filer_Action window to perform the deletion so will interface with /Recyclone/, etc.
+#Subpage Views
+New views
+Should you need to view an image at two different scales, or view multiple different parts of a single large image, you can create a new view by pressing CTRL N. This opens up a new view of the same image.
+
+Additional views require no significant additional memory.
+#Subpage Embedding
+Embedding
+Dragging with SHIFT CTRL SELECT inside the viewer window allows you to embed the viewer window inside another window.
+
+To un-embed a window perform the same action again but release the drag when over the icon bar.
+
+This uses a feature of the Nested Wimp intended for embedding Java plugins inside web browser windows.

@@ -1,0 +1,151 @@
+Effects
+#Parent !Root
+The Effects window lets you apply a multitude of effects to bitmap images.
+
+The Effects window is only available for 32bpp colour bitmap formats. If you want to use this feature with a JPEG then first *CONVERT TO SPRITE*.
+
+Open the Effects window by choosing {*}EFFECTS...{*} from the viewer window's menu or by pressing CTRL E. An effects dialogue will appear containing an empty list:
+
+#Spritefile Sprites
+#Sprite c,f effectswin
+
+è	<Adding Effects=>.Adding>
+è	<Level Slider=>.Slider>
+è	<Editing Effects=>.Editing>
+è	<Effect: Clear=>.Clear>
+è	<Effect: Curve=>.Curve>
+è	<Effect: Greyscale=>.Greyscale>
+è	<Effect: Blur=>.Blur>
+è	<Effect: Sharpen=>.Sharpen>
+è	<Effect: Expand dynamic range=>.Expand>
+è	<Effect: Histogram equalisation=>.Equalise>
+è	<Examples=>.Examples>
+è	<Memory Use & Speed=>.Memory>
+è	<Further Information=>.Further>
+#Subpage Adding
+Adding Effects
+Click ADD to start adding effects. The effects palette window will pop up:
+
+#Spritefile Sprites
+#Sprite c,f effectspal
+
+Drag and drop an effect from the effects palette to the effects window to add it. The viewer window will immediately update with a preview of the effect. The overall level of the effect is controlled with the slider at the bottom of the window. Dragging the slider updates the preview.
+
+Click *APPLY* to make the effect permanent.
+
+{fH5}Multiple Effects{f}
+
+You can add multiple effects at once. Multiple effects are applied in sequence from top-to-bottom. The result is then blended with the original image.
+#Subpage Slider
+Level Slider
+Effects are computed and blended against the original image. The level slider controls the amount of blending.
+
+#Spritefile Sprites
+#Sprite c,f slider
+
+Rather than ranging from 0% (original image) to 100% (processed image) it ranges -100%..200%. This is because the blender is extrapolative: it can produce results outside the normal range.
+
+Setting the level outside the 0..100% range causes extrapolative results. For example, adding a "clear to black" effect then applying a level of -100% causes the image to be brightened.
+#Subpage Editing
+Editing Effects
+The effects are shown in a scrolling list. Effects can be selected with SELECT and de-selected with ADJUST.
+
+The {*}EDIT...{*} and *DELETE* buttons beneath the list will highlight when the respective actions are available.
+
+To delete the currently selected effect, click *DELETE* or press the DELETE key.
+
+{fh4}Re-ordering Effects{f}
+
+The ordering of effects can be significant: drag and drop effects to re-order them. While you drag the effect a light grey indicator line will show you the position where the effect will be inserted.
+
+#Spritefile Sprites
+#Sprite c,f effectsdrag
+#Subpage Clear
+Effect: Clear
+Simply clears the image to the specified colour.
+
+Clicking the {*}EDIT...{*} button will open up a RISC OS standard ColourPicker dialogue.
+
+The Clear effect is only of use by itself, as any further effects added later in the list will be applied to a plain colour.
+#Subpage Curve
+Effect: Curve
+The Curve effect offers a combined control for gamma, brightness, contrast, midpoint, bias and gain adjustment. You can also invert the curve (flip it left-to-right) and reflect it around its middle.
+
+Clicking the {*}EDIT...{*} button will open up the Curve effect dialogue. By default it shows a linear mapping (no change):
+
+#Spritefile Sprites
+#Sprite c,f effectscrv
+
+Choose the channel to edit from the radio buttons on the top right hand side, then drag the sliders to adjust the curve.
+
+Click RESET if you want the default settings back.
+#Subpage Greyscale
+Effect: Greyscale
+The Greyscale effect discards all chroma information leaving only the luma present.
+
+As with the histogram, this uses the Rec. 601 weightings.
+#Subpage Blur
+Effect: Blur
+The Blur effect offers a choice of either a box blur or a gaussian blur. Both can specify a radius of up to 47 pixels.
+
+Clicking the {*}EDIT...{*} button will open up the Blur effect dialogue:
+
+#Spritefile Sprites
+#Sprite c,f effectsblr
+
+Note that using box blur with large radii can result in visible banding.
+#Subpage Sharpen
+Effect: Sharpen
+The Sharpen effect provides a mild sharpening effect, using a 3x3 convolution matrix.
+#Subpage Expand
+Effect: Expand dynamic range
+This effect looks for unused space in the shadows and highlights of the histogram and stretches the image to occupy all of the available volume.
+
+The RGB channels are stretched by the same amount so this will preserve colours.
+#Subpage Equalise
+Effect: Histogram equalisation
+Attempts to create an even spread of values across the available colour volume.
+
+This is useful for extracting obscured detail from images, but processes RGB separately so can lead to colour distortion.
+#Subpage Examples
+Examples
+{fH4}Changing brightness{f}
+
+Add a Clear effect. Set it to black. Dragging the slider to the left will increase the image's brightness.
+
+#Spritefile EffectsSpr
+#Sprite c,f clear
+
+{fH4}Changing contrast{f}
+
+Add a Clear effect. Set its colour to 50% grey. Dragging the slider to the left will increase contrast; to the right will decrease contrast.
+
+#Sprite c,f cont
+
+{fH4}Changing saturation{f}
+
+Add a Greyscale effect. Dragging the slider to the left will increase saturation; to the right will decrease saturation.
+
+#Sprite c,f grey
+
+{fH4}Sharpening an image{f}
+
+Add a Blur effect (yes, really!) then drag the slider to the left past the left-most "notch".
+
+Sharpening this way is sometimes called unsharp mask.
+
+#Sprite c,f sharp
+
+{fH4}Combined saturation and sharpening{f}
+
+Add a Blur effect then a Greyscale effect. Dragging the slider to the left will simultaneously increase saturation and sharpen; to the right will decrease saturation and blur.
+
+#Sprite c,f comb
+#Subpage Memory
+Memory Use & Speed
+The effects system creates two temporary bitmaps of the same size as the original image. Therefore applying effects to large images will claim a lot of memory.
+
+Similarly large images can also take some time to process. The full image is always processed. The update after dragging the effect level slider may not always be instant.
+#Subpage Further
+Further Information
+The effects window's blending technique is based on {/}Image Processing By Interpolation and Extrapolation{/} by Paul Haeberli and Douglas Voorhies. <http://www.graficaobscura.com/interp/=>#url>

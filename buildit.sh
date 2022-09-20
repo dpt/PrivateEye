@@ -15,6 +15,8 @@ BUILD_TYPE=MinSizeRel
 
 scriptdir="$(cd "$(dirname "$0")" && pwd -P)"
 
+# Dependencies
+
 wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
 cmake --version || { apt-get update && \
                      apt-get install -y software-properties-common && \
@@ -28,11 +30,16 @@ rsync --version || { apt-get update && \
                      apt-get install -y rsync ; }
 
 rename --version || { apt-get update && \
-                     apt-get install -y rename ; }
+                      apt-get install -y rename ; }
+
+# StrongCopy
+mkdir bin && \
+  wget -O bin/strongcopy https://github.com/gerph/alexwaugh-strongcopy/releases/download/v1.05/strongcopy-ubuntu-1.05 && \
+  chmod u+x bin/strongcopy
 
 source /home/riscos/gccsdk-params
 
-if [[ ! -d libs/flex ]]  ; then
+if [[ ! -d libs/flex ]] ; then
     cd libs
     ./grabflex.sh
     cd ..

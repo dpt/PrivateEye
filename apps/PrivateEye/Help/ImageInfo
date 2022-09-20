@@ -1,0 +1,18 @@
+Image Information
+#Parent !Root
+PrivateEye has *two* image information windows.
+
+/Image Info/ shows information about the display image. It is available from the viewer menu, or with SHIFT F1, and looks like this:
+
+#Spritefile Sprites
+#Sprite c,f infowin
+
+/Source Info/ shows information about the source image. It is available from the viewer menu, or with CTRL F1, and looks like this:
+
+#Sprite c,f sourcewin
+
+The information windows often display the same or similar information. However, if a change to the size of the image was made, e.g. a rotation, or a change in the image was required upon loading, e.g. converting from JPEG to Sprite, then the information may differ. For example, Sprite files appear to be 4 bytes longer when loaded than when on disc. This is because the in-memory structure of a sprite *is* 4 bytes longer.
+
+Notice that source info window has additional DATE and FORMAT fields. Some formats (presently only JPEG) will fill out the FORMAT field with details of the structure of the image.
+
+Many of the entries don't apply to vector formats so in those cases it will simply display a dash.

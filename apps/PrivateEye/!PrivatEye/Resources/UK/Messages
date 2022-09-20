@@ -14,7 +14,7 @@ workspace.image:PrivateEye images
 
 # Menus
 
-menu.iconbar:PrivateEye,>Info,Close all{Close all,Image viewers},Empty cache,Choices...,Quit
+menu.iconbar:PrivateEye,>Info,Help,Close all{Close all,Image viewers},Empty cache,Choices...,Quit
 menu.image:PrivateEye,File{File,>Info        ‹F1,>Source info ^F1,Metadata    ‹^F1,Histogram    ^I|New view     ^N},>Save        F3,Edit{Edit,Effects...        ^E,Rotate...         ^O|Convert to Sprite ^S|Copy to clipboard ^C,Clear clipboard},>Scale view F11
 menu.metadata:Metadata,Expand all,Collapse all
 menu.histogram:Components,Luma,Red,Green,Blue,Alpha
