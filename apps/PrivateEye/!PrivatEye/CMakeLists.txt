@@ -276,6 +276,42 @@ if(USE_FORTIFY)
 endif()
 
 
+# Generate StrongHelp format manual
+#
+
+set(HELP_SRC_DIR ${CMAKE_SOURCE_DIR}/../Help)
+set(HELP_DST Help,3d6)
+
+set(ALL_HELP_SOURCES
+    ${HELP_SRC_DIR}/!Root
+    ${HELP_SRC_DIR}/Choices
+    ${HELP_SRC_DIR}/ChoicesSpr,fca
+    ${HELP_SRC_DIR}/Controls
+    ${HELP_SRC_DIR}/Copyright
+    ${HELP_SRC_DIR}/Effects
+    ${HELP_SRC_DIR}/EffectsSpr,fca
+    ${HELP_SRC_DIR}/Features
+    ${HELP_SRC_DIR}/Histogram
+    ${HELP_SRC_DIR}/History
+    ${HELP_SRC_DIR}/ImageInfo
+    ${HELP_SRC_DIR}/Keymap
+    ${HELP_SRC_DIR}/Metadata
+    ${HELP_SRC_DIR}/Rotate
+    ${HELP_SRC_DIR}/Sprites,fca
+    ${HELP_SRC_DIR}/Supported
+    ${HELP_SRC_DIR}/Viewers)
+
+find_program(STRONGCOPY
+    strongcopy
+    PATHS ${APPENGINE_REPO_ROOT}/bin
+    NO_DEFAULT_PATH
+    REQUIRED)
+add_custom_command(OUTPUT ${HELP_DST}
+    COMMAND ${STRONGCOPY} -v -o ${HELP_DST} ${HELP_SRC_DIR}
+    DEPENDS ${ALL_HELP_SOURCES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_target(Manual ALL DEPENDS ${HELP_DST})
+
 
 # Installation
 #
@@ -290,5 +326,7 @@ install(FILES !Boot,feb !Help !Run,feb !Sprites,ff9 !Sprites11,ff9 AppEngine,ffa
     DESTINATION ${INSTALL_APPDIR})
 install(DIRECTORY Resources
     DESTINATION ${INSTALL_APPDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${HELP_DST}
+    DESTINATION ${INSTALL_APPDIR}/Resources)
 install(DIRECTORY ../Package/RiscPkg
     DESTINATION ${CMAKE_INSTALL_PREFIX})
