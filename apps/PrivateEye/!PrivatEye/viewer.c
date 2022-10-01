@@ -17,10 +17,12 @@
 #include "oslib/hourglass.h"
 #include "oslib/jpeg.h"
 #include "oslib/os.h"
+#include "oslib/osbyte.h"
 #include "oslib/osfile.h"
 
 #include "geom/box.h"
 
+#include "appengine/types.h"
 #include "appengine/app/choices.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
@@ -31,7 +33,7 @@
 #include "appengine/graphics/drawable.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
-#include "appengine/vdu/screen.h"
+#include "appengine/graphics/stage.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/wimp/window.h"
 
@@ -124,6 +126,11 @@ result_t viewer_create(viewer_t **new_viewer)
   v->image           = NULL;
   v->capture.flags   = 0;
   v->scrolling.count = 0;
+
+  stageconfig_init(&v->background.stage.config);
+  //if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_IMAGE)
+    // set a flag to generate a content box only
+    // but that won't update will it?
 
   if (GLOBALS.choices.viewer.scale == viewerscale_PRESERVE)
     /* 'Preserve' means take the last scale.
@@ -328,7 +335,7 @@ int viewer_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
-static void fill_redraw_rect_prepare(viewer_t *viewer)
+static void clg_prepare(viewer_t *viewer)
 {
   osspriteop_area *area;
 
@@ -340,87 +347,80 @@ static void fill_redraw_rect_prepare(viewer_t *viewer)
 
 #define Tinct_PlotScaled 0x57243
 
+/* Clears the graphics window. */
+static void clg(viewer_t *viewer, int x, int y, os_colour colour)
+{
+  if (colour == os_COLOUR_TRANSPARENT)
+  {
+    (void) _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
+                                   viewer->background.header,
+                                   x,
+                                   y,
+                                   32,
+                                   32,
+                                   0x3C);
+  }
+  else
+  {
+    colourtrans_set_gcol(colour,
+                         colourtrans_SET_BG_GCOL,
+                         os_ACTION_OVERWRITE,
+                         NULL);
+    os_writec(os_VDU_CLG);
+  }
+}
+
 /* Draws a background for transparent/masked bitmaps and vector images. */
-static void fill_redraw_rect(wimp_draw *draw, viewer_t *viewer, int x, int y)
+static void clg_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 {
   NOT_USED(draw);
 
-  if (viewer->background.colour == os_COLOUR_TRANSPARENT)
-  {
-    _kernel_oserror *e;
-
-    e = _swix(Tinct_PlotScaled,
-              _INR(2,6)|_IN(7),
-              viewer->background.header,
-              x,
-              y,
-              32,
-              32,
-              0x3C);
-    if (e == NULL)
-      return;
-  }
-
-  colourtrans_set_gcol(viewer->background.colour,
-                       colourtrans_SET_BG_GCOL,
-                       os_ACTION_OVERWRITE,
-                       NULL);
-
-  os_writec(os_VDU_CLG);
-}
-
-/* Fill in a single edge. */
-static void draw_edge(wimp_draw *draw,
-                      viewer_t  *viewer,
-                      int        x,
-                      int        y,
-                const os_box    *box)
-{
-  os_box clip;
-
-  box_intersection(&draw->clip, box, &clip);
-  if (box_is_empty(&clip))
-    return;
-
-  screen_clip(&clip);
-  fill_redraw_rect(draw, viewer, x, y);
+  clg(viewer, x, y, viewer->background.colour);
 }
 
 /* Draw the window background by filling in the regions around the outside of
  * opaque bitmaps. This avoids flicker. */
-static void draw_edges_only(wimp_draw *draw, viewer_t *viewer, int x, int y)
+static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 {
-  os_box *extent;
-  os_box *imgbox;
-  os_box  box;
+  // TODO: Hoist these to Choices
+  static const os_colour colours[stageboxkind__LIMIT] =
+  {
+    os_COLOUR_MID_DARK_GREY, /* Pasteboard */
+    os_COLOUR_BLACK,         /* Stroke */
+    os_COLOUR_TRANSPARENT,   /* Margin */
+    os_COLOUR_TRANSPARENT,   /* Content */
+    os_COLOUR_VERY_DARK_GREY /* Shadow */
+  };
 
-  extent = &viewer->extent;
-  imgbox = &viewer->imgbox;
+  int i;
 
-  /* Draw top, bottom, left, right. */
+  for (i = 0; i < (int) viewer->background.stage.nboxes; i++)
+  {
+    const stagebox_t *sb = &viewer->background.stage.boxes[i];
+    os_colour         colour;
+    os_box            box;
+    os_box            clip;
 
-  box.x0 = extent->x0 + x;
-  box.y0 = imgbox->y1 + y;
-  box.x1 = extent->x1 + x;
-  box.y1 = extent->y1 + y;
-  draw_edge(draw, viewer, x,y, &box);
+    if ((viewer->drawable->flags & drawable_FLAG_DRAW_BG) == 0 &&
+        sb->kind == stageboxkind_CONTENT) /* i == 0 would also work */
+      continue;
 
-  /* Top and bottom share x coordinates. */
-  box.y0 = extent->y0 + y;
-  box.y1 = imgbox->y0 + y;
-  draw_edge(draw, viewer, x,y, &box);
+    colour = colours[sb->kind];
+    if (colour == os_COLOUR_TRANSPARENT)
+      colour = viewer->background.colour;
 
-  /* Left and bottom share x0 only. */
-  box.y0 = imgbox->y0 + y;
-  box.x1 = imgbox->x0 + x;
-  box.y1 = imgbox->y1 + y;
-  draw_edge(draw, viewer, x,y, &box);
+    box_translated(&sb->box, x, y, &box);
+    box_intersection(&draw->clip, &box, &clip);
+    if (box_is_empty(&clip))
+      continue;
 
-  /* Right and left share y coordinates. */
-  box.x0 = imgbox->x1 + x;
-  box.x1 = extent->x1 + x;
-  draw_edge(draw, viewer, x,y, &box);
-
+    screen_clip(&clip);
+    clg(viewer, x, y, colour);
+    
+    // slow redraw: for testing
+    //for (int t = 0; t < 5; t++)
+    //  osbyte(osbyte_AWAIT_VSYNC, 0, 0);
+  }
   screen_clip(&draw->clip);
 }
 
@@ -438,43 +438,52 @@ static os_colour bgcolour_from_type(bits file_type)
   }
 }
 
-void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box)
+void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
 {
+  os_box rounded;
   int    iw,ih;
   os_box extent;
   int    sw,sh;
   int    minimum_size;
   int    xpix, ypix;
+  int    x,y;
 
-  iw = box->x1 - box->x0;
-  ih = box->y1 - box->y0;
+  /* Read the size of a pixel in OS units. */
+  read_current_pixel_size(&xpix, &ypix);
+
+  /* Round specified dimensions to whole pixel OS units. */
+  rounded.x0 = dimensions->x0 & ~(xpix - 1);
+  rounded.y0 = dimensions->y0 & ~(ypix - 1);
+  rounded.x1 = dimensions->x1 & ~(xpix - 1);
+  rounded.y1 = dimensions->y1 & ~(ypix - 1);
+
+  iw = rounded.x1 - rounded.x0;
+  ih = rounded.y1 - rounded.y0;
 
   if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
   {
-    read_max_visible_area(viewer->main_w, &sw, &sh);
+    int fixed_x, fixed_y;
 
+    read_max_visible_area(viewer->main_w, &sw, &sh);
     if (!GLOBALS.choices.viewer.cover_icon_bar)
-      sh -= read_icon_bar_height();
+      sh -= read_icon_bar_unobscured();
+
+    stage_get_fixed(&viewer->background.stage.config, &fixed_x, &fixed_y);
 
     /* Enforce a minimum size. */
-
-    if (sw < iw)
-      sw = iw;
-    if (sh < ih)
-      sh = ih;
-
-    extent.x0 = box->x0;
-    extent.y0 = box->y0;
-    extent.x1 = box->x0 + sw;
-    extent.y1 = box->y0 + sh;
+    sw = MAX(sw, iw + fixed_x);
+    sh = MAX(sh, ih + fixed_y);
   }
   else
   {
     sw = iw;
     sh = ih;
-
-    extent = *box;
   }
+
+  extent.x0 = 0;
+  extent.y0 = 0;
+  extent.x1 = sw;
+  extent.y1 = sh;
 
   /* Note: We can't do this on a mode change. */
   minimum_size = window_set_extent2(viewer->main_w,
@@ -491,45 +500,61 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box)
     info.w = viewer->main_w;
     wimp_get_window_info(&info);
 
+    sw = info.extent.x1 - info.extent.x0;
+    sh = info.extent.y1 - info.extent.y0;
+
     extent = info.extent;
   }
 
-  /* Remember the extent. */
+  /* Remember the window extent. */
   viewer->extent = extent;
 
-  /* Set where to draw the image. */
-  viewer->x = (sw - iw) / 2;
-  viewer->y = (sh - ih) / 2;
-
-  /* Read the size of a pixel in OS units. */
-  read_current_pixel_size(&xpix, &ypix);
-
-  /* Round to the size of a whole pixel to avoid redraw glitches. */
-  viewer->x &= ~(xpix - 1);
-  viewer->y &= ~(ypix - 1);
-
-  /* Remember the image extent. */
-  viewer->imgbox.x0 = viewer->x;
-  viewer->imgbox.y0 = viewer->y;
-  viewer->imgbox.x1 = viewer->x + iw;
-  viewer->imgbox.y1 = viewer->y + ih;
-
   /* Select a background filling mode. */
-  if (viewer->drawable->flags & drawable_FLAG_DRAW_BG)
+  if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
   {
-    viewer->background.prepare = fill_redraw_rect_prepare;
-    viewer->background.draw    = fill_redraw_rect;
-  }
-  else if (minimum_size ||
-           GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
-  {
-    viewer->background.prepare = fill_redraw_rect_prepare;
-    viewer->background.draw    = draw_edges_only;
+    viewer->background.prepare = clg_prepare;
+    viewer->background.draw    = stage_draw;
+
+    stage_generate(&viewer->background.stage.config,
+                    sw, sh,
+                    iw, ih,
+                    NULL, NULL,
+                    viewer->background.stage.boxes,
+                   &viewer->background.stage.nboxes);
+
+    /* Compute imgbox so that images with a built-in offset are positioned
+     * correctly. */
+    box_translated(&viewer->background.stage.boxes[0].box,
+                   -rounded.x0, -rounded.y0,
+                   &viewer->imgbox);
   }
   else
   {
-    viewer->background.prepare = NULL;
-    viewer->background.draw    = NULL;
+    /* Calculate where to draw the image (by default). */
+    x = (sw - iw) / 2;
+    y = (sh - ih) / 2;
+  
+    /* Round the result to the size of a whole pixel to avoid redraw glitches. */
+    x &= ~(xpix - 1);
+    y &= ~(ypix - 1);
+  
+    /* Remember the image extent. */
+    viewer->imgbox.x0 = x - rounded.x0;
+    viewer->imgbox.y0 = y - rounded.y0;
+    viewer->imgbox.x1 = x - rounded.x0 + iw;
+    viewer->imgbox.y1 = y - rounded.y0 + ih;
+
+    if (minimum_size || viewer->drawable->flags & drawable_FLAG_DRAW_BG)
+    {
+      viewer->background.prepare = clg_prepare;
+      viewer->background.draw    = clg_draw;
+    }
+    else
+    {
+      /* Opaque images won't redraw their background so to avoid flicker. */
+      viewer->background.prepare = NULL;
+      viewer->background.draw    = NULL;
+    }
   }
 
   if (viewer->background.draw)
@@ -571,7 +596,7 @@ void viewer_update(viewer_t *viewer, viewer_update_flags flags)
 
   if (flags & (viewer_UPDATE_SCALING | viewer_UPDATE_EXTENT))
   {
-    os_box     box;
+    os_box     dimensions;
     os_factors factors;
 
     if (viewer->scale.cur == viewerscale_FIT_TO_SCREEN)
@@ -589,13 +614,13 @@ void viewer_update(viewer_t *viewer, viewer_update_flags flags)
 
     if (flags & viewer_UPDATE_EXTENT)
     {
-      d->methods.get_dimensions(d, &factors, &box);
-      viewer_set_extent_from_box(viewer, &box);
+      d->methods.get_dimensions(d, &factors, &dimensions);
+      viewer_set_extent_from_box(viewer, &dimensions);
     }
   }
 
   if (flags & viewer_UPDATE_REDRAW)
-    window_redraw(viewer->main_w);
+    window_redraw(viewer->main_w); // this redraws everything... ideally only refresh the image area
 }
 
 /* ----------------------------------------------------------------------- */

@@ -409,8 +409,8 @@ static int display_event_redraw_window_request(wimp_event_no event_no,
     viewer->drawable->methods.redraw(&GLOBALS.choices.drawable,
                                       redraw,
                                       viewer->drawable,
-                                      x + viewer->x,
-                                      y + viewer->y);
+                                      x + viewer->imgbox.x0,
+                                      y + viewer->imgbox.y0);
 
 #ifdef EYE_ZONES
     zones_update(viewer->zones,

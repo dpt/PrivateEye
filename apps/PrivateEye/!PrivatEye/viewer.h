@@ -14,6 +14,7 @@
 
 #include "appengine/app/choices.h"
 #include "appengine/graphics/drawable.h"
+#include "appengine/graphics/stage.h"
 #include "appengine/base/errors.h"
 #include "appengine/wimp/window.h"
 
@@ -56,6 +57,14 @@ struct viewer_t
     osspriteop_header *header;  /* Used when plotting sprites. */
     void             (*prepare)(viewer_t *);
     void             (*draw)(wimp_draw *, viewer_t *, int x, int y);
+    
+    struct
+    {
+      stageconfig_t    config;
+      stagebox_t       boxes[stage_MAX_BOXES];
+      size_t           nboxes;
+    }
+    stage;
   }
   background;
 
@@ -65,9 +74,6 @@ struct viewer_t
   os_box              extent;   /* Bounding box of the viewer window. */
   os_box              imgbox;   /* Bounding box of the image we're viewing.
                                  */
-
-  int                 x,y;      /* Where to draw the image (OS units rounded
-                                   to nearest whole pixels). */
 };
 
 /* ----------------------------------------------------------------------- */

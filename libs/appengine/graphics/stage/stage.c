@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "appengine/types.h"
+#include "appengine/vdu/screen.h"
 
 #include "appengine/graphics/stage.h"
 
@@ -24,21 +25,11 @@ row_t;
 
 typedef struct stageboxspec
 {
-  /* This must match the order in config.colours. */
-  enum
-  {
-    stageboxkind_PASTEBOARD,
-    stageboxkind_STROKE,
-    stageboxkind_MARGIN,
-    stageboxkind_IMAGE,
-    stageboxkind_SHADOW,
-    stageboxkind__LIMIT
-  }
-  kind;
-  column_t x0;
-  row_t    y0;
-  column_t x1;
-  row_t    y1;
+  stageboxkind_t kind;
+  column_t       x0;
+  row_t          y0;
+  column_t       x1;
+  row_t          y1;
 }
 stageboxspec_t;
 
@@ -48,11 +39,15 @@ static int stagebox_compare(const void *va, const void *vb)
   const stagebox_t *b = vb;
   int               delta;
 
-  delta = (a->box.y0 - b->box.y0);
-  if (delta == 0)
-    delta = (a->box.x0 - b->box.x0);
+  /* Sort the content box to be first in the list. */
+  if (a->kind == stageboxkind_CONTENT || b->kind == stageboxkind_CONTENT)
+    return (a->kind == stageboxkind_CONTENT) ? -1 : 1;
 
-  return (delta < 0) ? -1 : (delta > 0) ? 1 : 0; // correct
+  /* Sort the highest, leftmost boxes to earlier positions in the array. */
+  delta = a->box.y1 - b->box.y1;
+  if (delta == 0)
+    delta = a->box.x0 - b->box.x0;
+  return (delta < 0) ? 1 : (delta > 0) ? -1 : 0;
 }
 
 /* Sum the input sizes (widths/heights) and output an array of positions.
@@ -80,7 +75,6 @@ static void resolve_specs(const stageboxspec_t *speclists[],
                                 size_t          nxsizes,
                           const int            *ysizes,
                                 size_t          nysizes,
-                          const os_colour      *colours,
                                 stagebox_t     *boxes,
                                 size_t         *nboxes)
 {
@@ -95,7 +89,6 @@ static void resolve_specs(const stageboxspec_t *speclists[],
   assert(nxsizes > 0);
   assert(ysizes);
   assert(nysizes > 0);
-  assert(colours);
   assert(boxes);
   assert(nboxes);
 
@@ -112,7 +105,7 @@ static void resolve_specs(const stageboxspec_t *speclists[],
 
     for (i = 0; i < len; i++)
     {
-      boxp->colour = colours[spec->kind];
+      boxp->kind   = spec->kind;
       boxp->box.x0 = xpos[spec->x0];
       boxp->box.y0 = ypos[spec->y0];
       boxp->box.x1 = xpos[spec->x1];
@@ -128,69 +121,77 @@ static void resolve_specs(const stageboxspec_t *speclists[],
   qsort(boxes, *nboxes, sizeof(*boxes), stagebox_compare);
 }
 
-void stage_config_init(stageconfig_t *config)
+void stageconfig_init(stageconfig_t *config)
 {
   assert(config);
 
-  config->flags              = stage_FLAG_SHADOW;
-  config->colours.pasteboard = os_COLOUR_MID_DARK_GREY;
-  config->colours.stroke     = os_COLOUR_BLACK;
-  config->colours.margin     = os_COLOUR_WHITE;
-  config->colours.page       = os_COLOUR_GREEN;
-  config->colours.shadow     = os_COLOUR_VERY_DARK_GREY;
-  config->pasteboard_min     = 32;
-  config->stroke             = 2;
-  config->margin             = 16;
-  config->shadow             = 8;
+  config->flags          = stage_FLAG_SHADOW;
+  config->pasteboard_min = 32;
+  config->stroke         = 2;
+  config->margin         = 16;
+  config->shadow         = 8;
+}
+
+void stage_get_fixed(const stageconfig_t *config,
+                     int                 *width,
+                     int                 *height)
+{
+  assert(config);
+  assert(width);
+  assert(height);
+
+  // TODO: Rounding
+
+  const int PASTEBOARD = 32;
+
+  *width  = config->margin * 2 + PASTEBOARD;
+  *height = config->margin * 2 + PASTEBOARD;
 }
 
 void stage_generate(const stageconfig_t *config,
                     int                  workarea_width,
                     int                  workarea_height,
-                    int                  page_width,
-                    int                  page_height,
+                    int                  content_width,
+                    int                  content_height,
                     int                 *min_workarea_width,
                     int                 *min_workarea_height,
                     stagebox_t          *boxes,
                     size_t              *nboxes)
 {
-  static const stageboxspec_t plain_page[] =
+  static const stageboxspec_t plain_pasteboard[] =
   {
-    { stageboxkind_PASTEBOARD, C00, R80, C90, R90 }, // top
-    { stageboxkind_PASTEBOARD, C00, R10, C10, R80 }, // left
-    { stageboxkind_PASTEBOARD, C70, R10, C90, R80 }, // right
-    { stageboxkind_PASTEBOARD, C00, R00, C90, R20 }, // bottom
+    { stageboxkind_PASTEBOARD, C00, R80, C90, R90 }, /* top */
+    { stageboxkind_PASTEBOARD, C00, R10, C10, R80 }, /* left */
+    { stageboxkind_PASTEBOARD, C70, R10, C90, R80 }, /* right */
+    { stageboxkind_PASTEBOARD, C00, R00, C90, R20 }, /* bottom */
   };
 
-  static const stageboxspec_t shadowed_page[] =
+  static const stageboxspec_t pasteboard_with_shadow[] =
   {
-    { stageboxkind_PASTEBOARD, C00, R80, C90, R90 }, // top
-    { stageboxkind_PASTEBOARD, C00, R10, C10, R80 }, // left
-    { stageboxkind_PASTEBOARD, C80, R10, C90, R80 }, // right
-    { stageboxkind_PASTEBOARD, C00, R00, C90, R10 }, // bottom
-    { stageboxkind_PASTEBOARD, C10, R10, C30, R20 }, // left bottom shim
-    { stageboxkind_PASTEBOARD, C70, R60, C80, R80 }, // right top shim
+    { stageboxkind_PASTEBOARD, C00, R80, C90, R90 }, /* top */
+    { stageboxkind_PASTEBOARD, C00, R10, C10, R80 }, /* left */
+    { stageboxkind_PASTEBOARD, C80, R10, C90, R80 }, /* right */
+    { stageboxkind_PASTEBOARD, C00, R00, C90, R10 }, /* bottom */
+    { stageboxkind_PASTEBOARD, C10, R10, C30, R20 }, /* left bottom shim */
+    { stageboxkind_PASTEBOARD, C70, R60, C80, R80 }, /* right top shim */
 
-    { stageboxkind_SHADOW,     C70, R10, C80, R60 }, // right
-    { stageboxkind_SHADOW,     C30, R10, C70, R20 }, // bottom
+    { stageboxkind_SHADOW,     C70, R10, C80, R60 }, /* right */
+    { stageboxkind_SHADOW,     C30, R10, C70, R20 }, /* bottom */
   };
 
   static const stageboxspec_t common[] =
   {
-    { stageboxkind_STROKE,     C10, R70, C70, R80 }, // top
-    { stageboxkind_STROKE,     C10, R20, C20, R70 }, // left
-    { stageboxkind_STROKE,     C60, R20, C70, R70 }, // right
-    { stageboxkind_STROKE,     C10, R20, C70, R30 }, // bottom
+    { stageboxkind_STROKE,     C10, R70, C70, R80 }, /* top */
+    { stageboxkind_STROKE,     C10, R20, C20, R70 }, /* left */
+    { stageboxkind_STROKE,     C60, R20, C70, R70 }, /* right */
+    { stageboxkind_STROKE,     C10, R20, C70, R30 }, /* bottom */
 
-    { stageboxkind_MARGIN,     C20, R50, C60, R70 }, // top
-    { stageboxkind_MARGIN,     C20, R40, C40, R50 }, // left
-    { stageboxkind_MARGIN,     C50, R40, C60, R50 }, // right
-    { stageboxkind_MARGIN,     C20, R30, C60, R40 }, // bottom
-  };
+    { stageboxkind_MARGIN,     C20, R50, C60, R70 }, /* top */
+    { stageboxkind_MARGIN,     C20, R40, C40, R50 }, /* left */
+    { stageboxkind_MARGIN,     C50, R40, C60, R50 }, /* right */
+    { stageboxkind_MARGIN,     C20, R30, C60, R40 }, /* bottom */
 
-  static const stageboxspec_t page_only[] =
-  {
-    { stageboxkind_IMAGE,      C40, R40, C50, R50 }, // image
+    { stageboxkind_CONTENT,    C40, R40, C50, R50 }
   };
 
   const stageboxspec_t  *specs[3];
@@ -199,7 +200,7 @@ void stage_generate(const stageconfig_t *config,
   size_t                *pnspecs;
   int                    x_sizes[9], y_sizes[9]; /* Careful Now */
   int                   *p;
-  int                    xeig, yeig;
+  int                    xpix, ypix;
   int                    i;
 
   assert(config);
@@ -210,30 +211,25 @@ void stage_generate(const stageconfig_t *config,
   pnspecs = &nspecs[0];
   if (config->flags & stage_FLAG_SHADOW)
   {
-    *pspecs++  = shadowed_page;
-    *pnspecs++ = NELEMS(shadowed_page);
+    *pspecs++  = pasteboard_with_shadow;
+    *pnspecs++ = NELEMS(pasteboard_with_shadow);
   }
   else
   {
-    *pspecs++  = plain_page;
-    *pnspecs++ = NELEMS(plain_page);
+    *pspecs++  = plain_pasteboard;
+    *pnspecs++ = NELEMS(plain_pasteboard);
   }
   *pspecs++  = common;
   *pnspecs++ = NELEMS(common);
-  if (config->flags & stage_FLAG_PAGE)
-  {
-    *pspecs++  = page_only;
-    *pnspecs++ = NELEMS(page_only);
-  }
 
   typedef enum dims
   {
+    ContentW,
+    ContentH,
     StrokeW,
     StrokeH,
     MarginW,
     MarginH,
-    PageW,
-    PageH,
     ShadowW,
     ShadowH,
     dims__LIMIT
@@ -242,33 +238,38 @@ void stage_generate(const stageconfig_t *config,
 
   dims_t d[dims__LIMIT] = /* d = dimensions */
   {
+    content_width,
+    content_height,
     config->stroke, /* width */
     config->stroke, /* height */
-    config->margin,
-    config->margin,
-    page_width,
-    page_height,
-    config->shadow,
-    config->shadow,
+    config->margin, /* width */ 
+    config->margin, /* height */
+    config->shadow, /* width */ 
+    config->shadow, /* height */
   };
 
-  os_read_mode_variable(os_CURRENT_MODE, os_MODEVAR_XEIG_FACTOR, &xeig);
-  os_read_mode_variable(os_CURRENT_MODE, os_MODEVAR_YEIG_FACTOR, &yeig);
-  xeig = (1 << xeig) - 1;
-  yeig = (1 << yeig) - 1;
-#define ROUNDEDX(x) (((x) + xeig) & ~xeig)
-#define ROUNDEDY(y) (((y) + yeig) & ~yeig)
+  /* Read the size of a pixel in OS units. */
+  read_current_pixel_size(&xpix, &ypix);
+#define ROUND_X_DOWN(x) ((x) & ~(xpix - 1))
+#define ROUND_Y_DOWN(y) ((y) & ~(ypix - 1))
+#define ROUND_X_UP(x)   (((x) + (xpix - 1)) & ~(xpix - 1))
+#define ROUND_Y_UP(y)   (((y) + (ypix - 1)) & ~(ypix - 1))
 
-  /* Round the dimensions to match the screen mode EIG factors. */
-  for (i = 0; i < dims__LIMIT; i++)
-    d[i] = ((i & 1) == 0) ? ROUNDEDX(d[i]) : ROUNDEDY(d[i]);
+  /* Round the OS unit dimensions to be whole pixels. */
+  // content is rounded down to match sprite plotting
+  // all others are rounded up
+  for (i = 2; i < dims__LIMIT; i++)
+    if (i >= ContentW && i <= ContentH)
+      d[i] = ((i & 1) == 0) ? ROUND_X_DOWN(d[i]) : ROUND_Y_DOWN(d[i]);
+    else
+      d[i] = ((i & 1) == 0) ? ROUND_X_UP(d[i]) : ROUND_Y_UP(d[i]);
 
   /* The stroked border outline is considered to be atop the margin so we can
    * ignore it here. The shadow is considered be part of the variable
    * pasteboard area.
    */
-  int x_fixed    = d[MarginW] + d[PageW] + d[MarginW];
-  int y_fixed    = d[MarginH] + d[PageH] + d[MarginH];
+  int x_fixed    = d[MarginW] + d[ContentW] + d[MarginW];
+  int y_fixed    = d[MarginH] + d[ContentH] + d[MarginH];
   int x_variable = workarea_width  - x_fixed;
   int y_variable = workarea_height - y_fixed;
 
@@ -283,32 +284,31 @@ void stage_generate(const stageconfig_t *config,
 
   /* Columns */
   p = x_sizes;
-  *p++ = ROUNDEDX(x_variable / 2); // left - pasteboard
+  *p++ = ROUND_X_UP(x_variable / 2); // left - pasteboard
   *p++ = d[StrokeW];
   *p++ = d[ShadowW] - d[StrokeW];
   *p++ = d[MarginW] - d[ShadowW]; // stroke widths cancel out
-  *p++ = d[PageW];
+  *p++ = d[ContentW];
   *p++ = d[MarginW] - d[StrokeW];
   *p++ = d[StrokeW];
   *p++ = d[ShadowW];
-  *p++ = x_variable - ROUNDEDX(x_variable / 2) - d[ShadowW]; // right hand side takes up any slack
+  *p++ = x_variable - ROUND_X_UP(x_variable / 2) - d[ShadowW]; // right hand side takes up any slack
 
   /* Rows */
   p = y_sizes;
-  *p++ = ROUNDEDY(y_variable / 2) - d[ShadowH]; // bottom - pasteboard
+  *p++ = ROUND_Y_UP(y_variable / 2) - d[ShadowH]; // bottom - pasteboard
   *p++ = d[ShadowH];
   *p++ = d[StrokeH];
   *p++ = d[MarginH] - d[StrokeH];
-  *p++ = d[PageH];
+  *p++ = d[ContentH];
   *p++ = d[ShadowH]; // top of shadow
   *p++ = d[MarginH] - d[ShadowH] - d[StrokeH];
   *p++ = d[StrokeH];
-  *p++ = y_variable - ROUNDEDY(y_variable / 2); // top edge takes takes up any slack
+  *p++ = y_variable - ROUND_Y_UP(y_variable / 2); // top edge takes takes up any slack
 
   resolve_specs(specs, nspecs, pnspecs - &nspecs[0],
                 x_sizes, NELEMS(x_sizes),
                 y_sizes, NELEMS(y_sizes),
-(const os_colour *) &config->colours, /* treat as an array */
                 boxes,
                 nboxes);
 }
