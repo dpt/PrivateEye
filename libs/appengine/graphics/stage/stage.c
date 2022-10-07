@@ -175,8 +175,8 @@ void stage_generate(const stageconfig_t *config,
     { stageboxkind_PASTEBOARD, C10, R10, C30, R20 }, /* left bottom shim */
     { stageboxkind_PASTEBOARD, C70, R60, C80, R80 }, /* right top shim */
 
-    { stageboxkind_SHADOW,     C70, R10, C80, R60 }, /* right */
-    { stageboxkind_SHADOW,     C30, R10, C70, R20 }, /* bottom */
+    { stageboxkind_SHADOW,     C70, R20, C80, R60 }, /* right */
+    { stageboxkind_SHADOW,     C30, R10, C80, R20 }, /* bottom */
   };
 
   static const stageboxspec_t common[] =
@@ -258,7 +258,7 @@ void stage_generate(const stageconfig_t *config,
   /* Round the OS unit dimensions to be whole pixels. */
   // content is rounded down to match sprite plotting
   // all others are rounded up
-  for (i = 2; i < dims__LIMIT; i++)
+  for (i = 0; i < dims__LIMIT; i++)
     if (i >= ContentW && i <= ContentH)
       d[i] = ((i & 1) == 0) ? ROUND_X_DOWN(d[i]) : ROUND_Y_DOWN(d[i]);
     else
@@ -301,8 +301,8 @@ void stage_generate(const stageconfig_t *config,
   *p++ = d[StrokeH];
   *p++ = d[MarginH] - d[StrokeH];
   *p++ = d[ContentH];
-  *p++ = d[ShadowH]; // top of shadow
-  *p++ = d[MarginH] - d[ShadowH] - d[StrokeH];
+  *p++ = d[MarginH] - d[ShadowH] - d[StrokeH]; // top of shadow
+  *p++ = d[ShadowH];
   *p++ = d[StrokeH];
   *p++ = y_variable - ROUND_Y_UP(y_variable / 2); // top edge takes takes up any slack
 
