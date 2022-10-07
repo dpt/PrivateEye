@@ -41,6 +41,37 @@ typedef struct
     int               steps;
     int               cover_icon_bar;
     int               scroll_x, scroll_y;
+    struct
+    {
+      struct
+      {
+        int           size; /* minimum */
+        os_colour     colour;
+      }
+      pasteboard;
+
+      struct
+      {
+        int           size;
+        os_colour     colour;
+      }
+      stroke;
+
+      struct
+      {
+        int           size;
+        os_colour     colour;
+      }
+      margin;
+
+      struct
+      {
+        int           size;
+        os_colour     colour;
+      }
+      shadow;
+    }
+    stage;
   }
   viewer;
 

@@ -128,6 +128,12 @@ result_t viewer_create(viewer_t **new_viewer)
   v->scrolling.count = 0;
 
   stageconfig_init(&v->background.stage.config);
+  v->background.stage.config.pasteboard_min = GLOBALS.choices.viewer.stage.pasteboard.size;
+  v->background.stage.config.stroke         = GLOBALS.choices.viewer.stage.stroke.size;
+                                            
+  v->background.stage.config.margin         = GLOBALS.choices.viewer.stage.margin.size;
+  v->background.stage.config.shadow         = GLOBALS.choices.viewer.stage.shadow.size;
+
   //if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_IMAGE)
     // set a flag to generate a content box only
     // but that won't update will it?
@@ -378,18 +384,17 @@ static void clg_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
   clg(viewer, x, y, viewer->background.colour);
 }
 
-/* Draw the window background by filling in the regions around the outside of
+/* Draw the window background by filling in the regions surrounding the
  * opaque bitmaps. This avoids flicker. */
 static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 {
-  // TODO: Hoist these to Choices
-  static const os_colour colours[stageboxkind__LIMIT] =
+  static const os_colour *colours[stageboxkind__LIMIT] =
   {
-    os_COLOUR_MID_DARK_GREY, /* Pasteboard */
-    os_COLOUR_BLACK,         /* Stroke */
-    os_COLOUR_TRANSPARENT,   /* Margin */
-    os_COLOUR_TRANSPARENT,   /* Content */
-    os_COLOUR_VERY_DARK_GREY /* Shadow */
+    &GLOBALS.choices.viewer.stage.pasteboard.colour,
+    &GLOBALS.choices.viewer.stage.stroke.colour,
+    &GLOBALS.choices.viewer.stage.margin.colour,
+    NULL, /* Content */
+    &GLOBALS.choices.viewer.stage.shadow.colour,
   };
 
   int i;
@@ -397,17 +402,14 @@ static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
   for (i = 0; i < (int) viewer->background.stage.nboxes; i++)
   {
     const stagebox_t *sb = &viewer->background.stage.boxes[i];
-    os_colour         colour;
     os_box            box;
     os_box            clip;
+    const os_colour  *pcolour;
+    os_colour         colour;
 
     if ((viewer->drawable->flags & drawable_FLAG_DRAW_BG) == 0 &&
         sb->kind == stageboxkind_CONTENT) /* i == 0 would also work */
       continue;
-
-    colour = colours[sb->kind];
-    if (colour == os_COLOUR_TRANSPARENT)
-      colour = viewer->background.colour;
 
     box_translated(&sb->box, x, y, &box);
     box_intersection(&draw->clip, &box, &clip);
@@ -415,6 +417,19 @@ static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
       continue;
 
     screen_clip(&clip);
+
+    pcolour = colours[sb->kind];
+    if (pcolour)
+    {
+      colour = *pcolour;
+      /* Set transparent stage colours to the bg colour. */
+      if (colour == os_COLOUR_TRANSPARENT)
+        colour = viewer->background.colour;
+    }
+    else
+    {
+      colour = viewer->background.colour;
+    }
     clg(viewer, x, y, colour);
     
     // slow redraw: for testing
