@@ -35,6 +35,8 @@
 #include "oslib/wimp.h"
 #include "oslib/wimpspriteop.h"
 
+#include "geom/box.h"
+
 #include "appengine/types.h"
 #include "appengine/app/choices.h"
 #include "appengine/app/wire.h"
@@ -398,13 +400,22 @@ static int display_event_redraw_window_request(wimp_event_no event_no,
        more;
        more = wimp_get_rectangle(redraw))
   {
-    int x,y;
+    int    x,y;
+    os_box box;
+    os_box clip;
 
     x = redraw->box.x0 - redraw->xscroll;
     y = redraw->box.y1 - redraw->yscroll;
 
     if (viewer->background.draw)
       viewer->background.draw(redraw, viewer, x, y);
+
+    box_translated(&viewer->imgbox, x, y, &box);
+    box_intersection(&redraw->clip, &box, &clip);
+    if (box_is_empty(&clip))
+      continue;
+
+    screen_clip(&clip);
 
     viewer->drawable->methods.redraw(&GLOBALS.choices.drawable,
                                       redraw,
@@ -419,6 +430,7 @@ static int display_event_redraw_window_request(wimp_event_no event_no,
                  viewer->scale.cur);
 #endif
   }
+  screen_clip(&redraw->clip);
 
   return event_HANDLED;
 }
