@@ -45,7 +45,7 @@ typedef struct
     {
       struct
       {
-        int           size; /* minimum */
+        int           minsize;
         os_colour     colour;
       }
       pasteboard;

@@ -204,7 +204,7 @@ static const choices_choice viewerchoices[] =
     { .number_range = NULL /* no GUI */ } },
 
   { "stage.pasteboard.minsize",
-    offsetof(eye_choices, viewer.stage.pasteboard.size),
+    offsetof(eye_choices, viewer.stage.pasteboard.minsize),
     choices_TYPE_NUMBER_RANGE,
     32, /* OS units */
     { .number_range = NULL /* no GUI */ } },
@@ -236,7 +236,7 @@ static const choices_choice viewerchoices[] =
   { "stage.margin.colour",
     offsetof(eye_choices, viewer.stage.margin.colour),
     choices_TYPE_COLOUR,
-    (int) os_COLOUR_TRANSPARENT, /* match content */
+    (int) os_COLOUR_TRANSPARENT, /* transparent = match the content colour */
     { .colour = NULL /* no GUI */ } },
 
   { "stage.shadow.size",

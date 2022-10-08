@@ -102,9 +102,10 @@ static void refresh_all_titles(void)
 
 result_t viewer_create(viewer_t **new_viewer)
 {
-  result_t  err;
-  viewer_t *v;
-  wimp_w    w = wimp_ICON_BAR;
+  result_t       err;
+  viewer_t      *v;
+  wimp_w         w = wimp_ICON_BAR;
+  stageconfig_t *sc;
 
   *new_viewer = NULL;
 
@@ -127,16 +128,12 @@ result_t viewer_create(viewer_t **new_viewer)
   v->capture.flags   = 0;
   v->scrolling.count = 0;
 
-  stageconfig_init(&v->background.stage.config);
-  v->background.stage.config.pasteboard_min = GLOBALS.choices.viewer.stage.pasteboard.size;
-  v->background.stage.config.stroke         = GLOBALS.choices.viewer.stage.stroke.size;
-                                            
-  v->background.stage.config.margin         = GLOBALS.choices.viewer.stage.margin.size;
-  v->background.stage.config.shadow         = GLOBALS.choices.viewer.stage.shadow.size;
-
-  //if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_IMAGE)
-    // set a flag to generate a content box only
-    // but that won't update will it?
+  sc = &v->background.stage.config; 
+  stageconfig_init(sc);
+  sc->pasteboard_min = GLOBALS.choices.viewer.stage.pasteboard.minsize;
+  sc->stroke         = GLOBALS.choices.viewer.stage.stroke.size;
+  sc->margin         = GLOBALS.choices.viewer.stage.margin.size;
+  sc->shadow         = GLOBALS.choices.viewer.stage.shadow.size;
 
   if (GLOBALS.choices.viewer.scale == viewerscale_PRESERVE)
     /* 'Preserve' means take the last scale.
@@ -635,7 +632,7 @@ void viewer_update(viewer_t *viewer, viewer_update_flags flags)
   }
 
   if (flags & viewer_UPDATE_REDRAW)
-    window_redraw(viewer->main_w); // this redraws everything... ideally only refresh the image area
+    window_redraw(viewer->main_w); /* FIXME: Only refresh the imgbox */
 }
 
 /* ----------------------------------------------------------------------- */
