@@ -72,8 +72,8 @@ struct viewer_t
   drawable_t         *drawable; /* How to draw the image. */
 
   os_box              extent;   /* Bounding box of the viewer window. */
-  os_box              imgbox;   /* Bounding box of the image we're viewing.
-                                 */
+  os_box              imgdims;  /* Bounding box of the image in its space. */
+  os_box              imgbox;   /* Bounding box of the image within the window. */
 };
 
 /* ----------------------------------------------------------------------- */

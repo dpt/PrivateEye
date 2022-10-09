@@ -452,12 +452,12 @@ static os_colour bgcolour_from_type(bits file_type)
 
 void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
 {
+  int    xpix, ypix;
   os_box rounded;
   int    iw,ih;
   os_box extent;
   int    sw,sh;
   int    minimum_size;
-  int    xpix, ypix;
   int    x,y;
 
   /* Read the size of a pixel in OS units. */
@@ -468,6 +468,9 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
   rounded.y0 = dimensions->y0 & ~(ypix - 1);
   rounded.x1 = dimensions->x1 & ~(xpix - 1);
   rounded.y1 = dimensions->y1 & ~(ypix - 1);
+
+  /* Remember the image extent. */
+  viewer->imgdims = rounded;
 
   iw = rounded.x1 - rounded.x0;
   ih = rounded.y1 - rounded.y0;
@@ -534,11 +537,7 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
                     viewer->background.stage.boxes,
                    &viewer->background.stage.nboxes);
 
-    /* Compute imgbox so that images with a built-in offset are positioned
-     * correctly. */
-    box_translated(&viewer->background.stage.boxes[0].box,
-                   -rounded.x0, -rounded.y0,
-                   &viewer->imgbox);
+    viewer->imgbox = viewer->background.stage.boxes[0].box;
   }
   else
   {
@@ -549,12 +548,9 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
     /* Round the result to the size of a whole pixel to avoid redraw glitches. */
     x &= ~(xpix - 1);
     y &= ~(ypix - 1);
-  
-    /* Remember the image extent. */
-    viewer->imgbox.x0 = x - rounded.x0;
-    viewer->imgbox.y0 = y - rounded.y0;
-    viewer->imgbox.x1 = x - rounded.x0 + iw;
-    viewer->imgbox.y1 = y - rounded.y0 + ih;
+
+    /* Remember the image extents. */
+    viewer->imgbox = (os_box) { x, y, x+iw, y+ih };
 
     if (minimum_size || viewer->drawable->flags & drawable_FLAG_DRAW_BG)
     {

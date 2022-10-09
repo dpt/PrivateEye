@@ -401,8 +401,8 @@ static int display_event_redraw_window_request(wimp_event_no event_no,
        more = wimp_get_rectangle(redraw))
   {
     int    x,y;
-    os_box box;
-    os_box clip;
+    os_box scrolled;
+    os_box clipped;
 
     x = redraw->box.x0 - redraw->xscroll;
     y = redraw->box.y1 - redraw->yscroll;
@@ -410,18 +410,17 @@ static int display_event_redraw_window_request(wimp_event_no event_no,
     if (viewer->background.draw)
       viewer->background.draw(redraw, viewer, x, y);
 
-    box_translated(&viewer->imgbox, x, y, &box);
-    box_intersection(&redraw->clip, &box, &clip);
-    if (box_is_empty(&clip))
+    box_translated(&viewer->imgbox, x, y, &scrolled);
+    box_intersection(&redraw->clip, &scrolled, &clipped);
+    if (box_is_empty(&clipped))
       continue;
 
-    screen_clip(&clip);
-
+    screen_clip(&clipped);
     viewer->drawable->methods.redraw(&GLOBALS.choices.drawable,
                                       redraw,
                                       viewer->drawable,
-                                      x + viewer->imgbox.x0,
-                                      y + viewer->imgbox.y0);
+                                      scrolled.x0 - viewer->imgdims.x0,
+                                      scrolled.y0 - viewer->imgdims.y0);
 
 #ifdef EYE_ZONES
     zones_update(viewer->zones,
