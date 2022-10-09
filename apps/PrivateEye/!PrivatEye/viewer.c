@@ -613,8 +613,20 @@ void viewer_update(viewer_t *viewer, viewer_update_flags flags)
     }
   }
 
+  /* Redraw the image only */
+  if (flags & viewer_UPDATE_CONTENT)
+  {
+    wimp_force_redraw(viewer->main_w, viewer->imgbox.x0,
+                                      viewer->imgbox.y0,
+                                      viewer->imgbox.x1,
+                                      viewer->imgbox.y1);
+  }
+
+  /* Redraw the whole window */
   if (flags & viewer_UPDATE_REDRAW)
-    window_redraw(viewer->main_w); /* FIXME: Only refresh the imgbox */
+  {
+    window_redraw(viewer->main_w);
+  }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -716,7 +728,7 @@ static void image_changed_callback(image_t             *image,
 
   case imageobserver_CHANGE_PREVIEW:
     /* The preview image has been updated, so just redraw. */
-    args.flags = viewer_UPDATE_REDRAW;
+    args.flags = viewer_UPDATE_CONTENT;
     viewer_map_for_image(image, update_image_callback, &args);
     break;
 
