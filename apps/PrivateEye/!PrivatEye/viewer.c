@@ -417,16 +417,9 @@ static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 
     pcolour = colours[sb->kind];
     if (pcolour)
-    {
       colour = *pcolour;
-      /* Set transparent stage colours to the bg colour. */
-      if (colour == os_COLOUR_TRANSPARENT)
-        colour = viewer->background.colour;
-    }
     else
-    {
       colour = viewer->background.colour;
-    }
     clg(viewer, x, y, colour);
     
     // slow redraw: for testing

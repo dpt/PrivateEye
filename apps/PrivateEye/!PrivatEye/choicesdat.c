@@ -236,7 +236,7 @@ static const choices_choice viewerchoices[] =
   { "stage.margin.colour",
     offsetof(eye_choices, viewer.stage.margin.colour),
     choices_TYPE_COLOUR,
-    (int) os_COLOUR_TRANSPARENT, /* transparent = match the content colour */
+    (int) os_COLOUR_WHITE,
     { .colour = NULL /* no GUI */ } },
 
   { "stage.shadow.size",
