@@ -416,15 +416,8 @@ static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
     screen_clip(&clip);
 
     pcolour = colours[sb->kind];
-    if (pcolour)
-      colour = *pcolour;
-    else
-      colour = viewer->background.colour;
+    colour = (pcolour) ? *pcolour : viewer->background.colour;
     clg(viewer, x, y, colour);
-    
-    // slow redraw: for testing
-    //for (int t = 0; t < 5; t++)
-    //  osbyte(osbyte_AWAIT_VSYNC, 0, 0);
   }
   screen_clip(&draw->clip);
 }
