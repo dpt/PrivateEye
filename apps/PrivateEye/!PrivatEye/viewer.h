@@ -14,6 +14,7 @@
 
 #include "appengine/app/choices.h"
 #include "appengine/graphics/drawable.h"
+#include "appengine/graphics/stage.h"
 #include "appengine/base/errors.h"
 #include "appengine/wimp/window.h"
 
@@ -56,6 +57,14 @@ struct viewer_t
     osspriteop_header *header;  /* Used when plotting sprites. */
     void             (*prepare)(viewer_t *);
     void             (*draw)(wimp_draw *, viewer_t *, int x, int y);
+    
+    struct
+    {
+      stageconfig_t    config;
+      stagebox_t       boxes[stage_MAX_BOXES];
+      size_t           nboxes;
+    }
+    stage;
   }
   background;
 
@@ -63,11 +72,8 @@ struct viewer_t
   drawable_t         *drawable; /* How to draw the image. */
 
   os_box              extent;   /* Bounding box of the viewer window. */
-  os_box              imgbox;   /* Bounding box of the image we're viewing.
-                                 */
-
-  int                 x,y;      /* Where to draw the image (OS units rounded
-                                   to nearest whole pixels). */
+  os_box              imgdims;  /* Bounding box of the image in its space. */
+  os_box              imgbox;   /* Bounding box of the image within the window. */
 };
 
 /* ----------------------------------------------------------------------- */
@@ -91,9 +97,11 @@ enum
   viewer_UPDATE_COLOURS = 1 << 0,
   viewer_UPDATE_SCALING = 1 << 1,
   viewer_UPDATE_EXTENT  = 1 << 2,
-  viewer_UPDATE_REDRAW  = 1 << 3,
-  viewer_UPDATE_FORMAT  = 1 << 4,
+  viewer_UPDATE_CONTENT = 1 << 3, /* just the image */
+  viewer_UPDATE_REDRAW  = 1 << 4, /* the whole window */
+  viewer_UPDATE_FORMAT  = 1 << 5,
 
+  /* This doesn't include _CONTENT since that's covered by _REDRAW. */
   viewer_UPDATE_ALL     = viewer_UPDATE_COLOURS |
                           viewer_UPDATE_SCALING |
                           viewer_UPDATE_EXTENT  |

@@ -88,7 +88,18 @@ int viewer_scaledlg_fit_to_screen(viewer_t *viewer)
   int sw,sh;
 
   read_max_visible_area(viewer->main_w, &sw, &sh);
+  if (!GLOBALS.choices.viewer.cover_icon_bar)
+    sh -= read_icon_bar_unobscured();
 
+  if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
+  {
+    int fixed_x, fixed_y;
+
+    stage_get_fixed(&viewer->background.stage.config, &fixed_x, &fixed_y);
+    sw -= fixed_x;
+    sh -= fixed_y;
+  }
+  
   return drawable_best_fit_for_size(viewer->drawable, sw, sh);
 }
 

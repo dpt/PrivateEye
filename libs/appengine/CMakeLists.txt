@@ -330,6 +330,7 @@ set(GENERIC_SOURCES
     graphics/sprite-effects/grey.c
     graphics/sprite-effects/sharpen.c
     graphics/sprite-effects/tonemap.c
+    graphics/stage/stage.c
     graphics/thumbnail/thumbnail.c
     graphics/tonemap/tonemap.c
     io/basic/file.c

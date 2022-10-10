@@ -87,7 +87,7 @@ set(DFA_XTRA ${CMAKE_CURRENT_SOURCE_DIR}/pngusr-privateeye.dfa CACHE FILEPATH "F
 # Import DPTLib
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY https://github.com/dpt/DPTLib
-    GIT_TAG 0.4.1)
+    GIT_TAG a30b2320ab4ed32b401fb03622c015a27fe3cd56)
 # Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
 FetchContent_GetProperties(DPTLib)
 if(NOT DPTLib_POPULATED)

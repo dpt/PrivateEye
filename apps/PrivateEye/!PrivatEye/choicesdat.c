@@ -202,6 +202,54 @@ static const choices_choice viewerchoices[] =
     choices_TYPE_NUMBER_RANGE,
     32, /* OS units */
     { .number_range = NULL /* no GUI */ } },
+
+  { "stage.pasteboard.minsize",
+    offsetof(eye_choices, viewer.stage.pasteboard.minsize),
+    choices_TYPE_NUMBER_RANGE,
+    32, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
+
+  { "stage.pasteboard.colour",
+    offsetof(eye_choices, viewer.stage.pasteboard.colour),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_MID_DARK_GREY,
+    { .colour = NULL /* no GUI */ } },
+
+  { "stage.stroke.size",
+    offsetof(eye_choices, viewer.stage.stroke.size),
+    choices_TYPE_NUMBER_RANGE,
+    2, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
+
+  { "stage.stroke.colour",
+    offsetof(eye_choices, viewer.stage.stroke.colour),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_BLACK,
+    { .colour = NULL /* no GUI */ } },
+
+  { "stage.margin.size",
+    offsetof(eye_choices, viewer.stage.margin.size),
+    choices_TYPE_NUMBER_RANGE,
+    16, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
+
+  { "stage.margin.colour",
+    offsetof(eye_choices, viewer.stage.margin.colour),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_WHITE,
+    { .colour = NULL /* no GUI */ } },
+
+  { "stage.shadow.size",
+    offsetof(eye_choices, viewer.stage.shadow.size),
+    choices_TYPE_NUMBER_RANGE,
+    8, /* OS units */
+    { .number_range = NULL /* no GUI */ } },
+
+  { "stage.shadow.colour",
+    offsetof(eye_choices, viewer.stage.shadow.colour),
+    choices_TYPE_COLOUR,
+    (int) os_COLOUR_VERY_DARK_GREY,
+    { .colour = NULL /* no GUI */ } },
 };
 
 static const choices_group_handlers viewerchoices_handlers =
