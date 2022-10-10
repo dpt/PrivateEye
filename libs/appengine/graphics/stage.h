@@ -8,6 +8,7 @@
 
 #include "oslib/os.h"
 
+/* Maximum number of boxes we'll emit */
 #define stage_MAX_BOXES (17)
 
 typedef unsigned int stageflags_t;

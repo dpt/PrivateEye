@@ -39,11 +39,11 @@ static int stagebox_compare(const void *va, const void *vb)
   const stagebox_t *b = vb;
   int               delta;
 
-  /* Sort the content box to be first in the list. */
+  /* Sort the content box to be first in the list */
   if (a->kind == stageboxkind_CONTENT || b->kind == stageboxkind_CONTENT)
     return (a->kind == stageboxkind_CONTENT) ? -1 : 1;
 
-  /* Sort the highest, leftmost boxes to earlier positions in the array. */
+  /* Sort the highest, leftmost boxes to earlier positions in the array */
   delta = a->box.y1 - b->box.y1;
   if (delta == 0)
     delta = a->box.x0 - b->box.x0;
@@ -66,8 +66,9 @@ static void makepos(const int *sizes, size_t nsizes, int *pos)
   *pos++ = t;
 }
 
-/* Resolve arrays of stageboxspecs into a list of stageboxes. Input specs are
- * in any order. Output boxes are sorted by their top left position. */
+/* Resolve arrays of stageboxspecs into a list of stageboxes.
+ * Input specs are in any order. Output boxes are sorted by their top left
+ * position. */
 static void resolve_specs(const stageboxspec_t *speclists[],
                                 size_t          lenlist[],
                                 size_t          nspecs,
@@ -142,10 +143,8 @@ void stage_get_fixed(const stageconfig_t *config,
 
   // TODO: Rounding
 
-  const int PASTEBOARD = 32;
-
-  *width  = config->margin * 2 + PASTEBOARD;
-  *height = config->margin * 2 + PASTEBOARD;
+  *width  = config->margin * 2 + config->pasteboard_min;
+  *height = config->margin * 2 + config->pasteboard_min;
 }
 
 void stage_generate(const stageconfig_t *config,
@@ -202,11 +201,14 @@ void stage_generate(const stageconfig_t *config,
   int                   *p;
   int                    xpix, ypix;
   int                    i;
+  int                    x_fixed, y_fixed;
+  int                    x_variable, y_variable;
 
   assert(config);
   assert(boxes);
   assert(nboxes);
 
+  /* Build a list of box specs */
   pspecs  = &specs[0];
   pnspecs = &nspecs[0];
   if (config->flags & stage_FLAG_SHADOW)
@@ -236,7 +238,8 @@ void stage_generate(const stageconfig_t *config,
   }
   dims_t;
 
-  dims_t d[dims__LIMIT] = /* d = dimensions */
+  /* Build a table of [d]imensions */
+  dims_t d[dims__LIMIT] =
   {
     content_width,
     content_height,
@@ -248,33 +251,31 @@ void stage_generate(const stageconfig_t *config,
     config->shadow, /* height */
   };
 
-  /* Read the size of a pixel in OS units. */
+  /* Read the size of a pixel in OS units */
   read_current_pixel_size(&xpix, &ypix);
 #define ROUND_X_DOWN(x) ((x) & ~(xpix - 1))
 #define ROUND_Y_DOWN(y) ((y) & ~(ypix - 1))
 #define ROUND_X_UP(x)   (((x) + (xpix - 1)) & ~(xpix - 1))
 #define ROUND_Y_UP(y)   (((y) + (ypix - 1)) & ~(ypix - 1))
 
-  /* Round the OS unit dimensions to be whole pixels. */
-  // content is rounded down to match sprite plotting
-  // all others are rounded up
+  /* Round the OS unit dimensions to be whole pixels.
+   * Content dimensions are rounded down to match the OS primitives (e.g.
+   * sprite plotting). Others are rounded up to whole pixels with the
+   * assumption that the pasteboard will absorb any difference. */
   for (i = 0; i < dims__LIMIT; i++)
     if (i >= ContentW && i <= ContentH)
       d[i] = ((i & 1) == 0) ? ROUND_X_DOWN(d[i]) : ROUND_Y_DOWN(d[i]);
     else
       d[i] = ((i & 1) == 0) ? ROUND_X_UP(d[i]) : ROUND_Y_UP(d[i]);
 
-  /* The stroked border outline is considered to be atop the margin so we can
+  /* Calculate the fixed and variable portions of the stage.
+   * The stroked border outline is considered to be atop the margin so we can
    * ignore it here. The shadow is considered be part of the variable
-   * pasteboard area.
-   */
-  int x_fixed    = d[MarginW] + d[ContentW] + d[MarginW];
-  int y_fixed    = d[MarginH] + d[ContentH] + d[MarginH];
-  int x_variable = workarea_width  - x_fixed;
-  int y_variable = workarea_height - y_fixed;
-
-  x_variable = MAX(x_variable, config->pasteboard_min);
-  y_variable = MAX(y_variable, config->pasteboard_min);
+   * pasteboard area so we can ignore that too. */
+  x_fixed    = d[MarginW] + d[ContentW] + d[MarginW];
+  y_fixed    = d[MarginH] + d[ContentH] + d[MarginH];
+  x_variable = MAX(workarea_width  - x_fixed, config->pasteboard_min);
+  y_variable = MAX(workarea_height - y_fixed, config->pasteboard_min);
   if (min_workarea_width)
     *min_workarea_width  = x_variable + x_fixed;
   if (min_workarea_height)
@@ -284,27 +285,27 @@ void stage_generate(const stageconfig_t *config,
 
   /* Columns */
   p = x_sizes;
-  *p++ = ROUND_X_UP(x_variable / 2); // left - pasteboard
-  *p++ = d[StrokeW];
-  *p++ = d[ShadowW] - d[StrokeW];
-  *p++ = d[MarginW] - d[ShadowW]; // stroke widths cancel out
-  *p++ = d[ContentW];
-  *p++ = d[MarginW] - d[StrokeW];
-  *p++ = d[StrokeW];
-  *p++ = d[ShadowW];
-  *p++ = x_variable - ROUND_X_UP(x_variable / 2) - d[ShadowW]; // right hand side takes up any slack
+  *p++ = ROUND_X_UP(x_variable / 2);                           /* left pasteboard */
+  *p++ = d[StrokeW];                                           /* left border stroke */
+  *p++ = d[ShadowW] - d[StrokeW];                              /* left margin - shadow start point */
+  *p++ = d[MarginW] - d[ShadowW];                              /* left margin (stroke widths cancel out) */
+  *p++ = d[ContentW];                                          /* content */
+  *p++ = d[MarginW] - d[StrokeW];                              /* right margin */
+  *p++ = d[StrokeW];                                           /* right border stroke */
+  *p++ = d[ShadowW];                                           /* right shadow */
+  *p++ = x_variable - ROUND_X_UP(x_variable / 2) - d[ShadowW]; /* right pasteboard - takes up any slack */
 
   /* Rows */
   p = y_sizes;
-  *p++ = ROUND_Y_UP(y_variable / 2) - d[ShadowH]; // bottom - pasteboard
-  *p++ = d[ShadowH];
-  *p++ = d[StrokeH];
-  *p++ = d[MarginH] - d[StrokeH];
-  *p++ = d[ContentH];
-  *p++ = d[MarginH] - d[ShadowH] - d[StrokeH]; // top of shadow
-  *p++ = d[ShadowH];
-  *p++ = d[StrokeH];
-  *p++ = y_variable - ROUND_Y_UP(y_variable / 2); // top edge takes takes up any slack
+  *p++ = ROUND_Y_UP(y_variable / 2) - d[ShadowH];              /* bottom pasteboard */
+  *p++ = d[ShadowH];                                           /* bottom shadow */
+  *p++ = d[StrokeH];                                           /* bottom border stroke */
+  *p++ = d[MarginH] - d[StrokeH];                              /* bottom margin */
+  *p++ = d[ContentH];                                          /* content */
+  *p++ = d[MarginH] - d[ShadowH] - d[StrokeH];                 /* top margin - shadow start point */
+  *p++ = d[ShadowH];                                           /* top margin */
+  *p++ = d[StrokeH];                                           /* top border stroke */
+  *p++ = y_variable - ROUND_Y_UP(y_variable / 2);              /* top pasteboard - takes up any slack */
 
   resolve_specs(specs, nspecs, pnspecs - &nspecs[0],
                 x_sizes, NELEMS(x_sizes),
