@@ -124,11 +124,24 @@ static void populate_info_dialogue(dialogue_t                  *d,
       specs[spec++].value = buf;
       buf += sprintf(buf, message0("size.dpi"), xdpi, ydpi) + 1;
 
-      comma_double((double) w / xdpi, scratch, sizeof(scratch));
-      comma_double((double) h / ydpi, scratch + 12, sizeof(scratch) - 12);
+      double wdpi_in, hdpi_in, wdpi_cm, hdpi_cm;
+
+      wdpi_in = (double) w / xdpi;
+      hdpi_in = (double) h / ydpi;
+      wdpi_cm = wdpi_in / 2.54;
+      hdpi_cm = hdpi_in / 2.54;
+
+      comma_double(wdpi_cm, scratch +  0, 12);
+      comma_double(hdpi_cm, scratch + 12, 12);
+      comma_double(wdpi_in, scratch + 24, 12);
+      comma_double(hdpi_in, scratch + 36, 12);
 
       specs[spec++].value = buf;
-      buf += sprintf(buf, message0("size.inches"), scratch, scratch + 12) + 1;
+      buf += sprintf(buf, message0("size.physical"),
+                     scratch,
+                     scratch + 12,
+                     scratch + 24,
+                     scratch + 36) + 1;
     }
 
     /* depth, colour, alpha, mask */
@@ -149,7 +162,16 @@ static void populate_info_dialogue(dialogue_t                  *d,
     buf += strlen(buf) + 1;
   }
 
-  if (info->is_source)
+  if (!info->is_source)
+  {
+    int                  present;
+    const char          *format;
+
+    /* set format */
+    present = image_get_info(image, image_INFO_DISPLAY_FORMAT, (void **) &format);
+    specs[spec++].value = (present) ? format : DASH;
+  }
+  else
   {
     int                  present;
     const char          *format;

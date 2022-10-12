@@ -53,11 +53,16 @@ struct viewer_t
 
   struct
   {
-    os_colour          colour;
-    osspriteop_header *header;  /* Used when plotting sprites. */
-    void             (*prepare)(viewer_t *);
-    void             (*draw)(wimp_draw *, viewer_t *, int x, int y);
-    
+    os_colour               colour;
+
+    osspriteop_area        *area;
+    osspriteop_header      *header;  /* Used when plotting sprites. */
+    osspriteop_trans_tab   *trans_tab;
+    os_factors              factors;
+
+    void                  (*prepare)(viewer_t *);
+    void                  (*draw)(wimp_draw *, viewer_t *, int x, int y);
+
     struct
     {
       stageconfig_t    config;

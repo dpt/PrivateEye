@@ -471,7 +471,7 @@ static int gif_load(image_choices *choices, image_t *image)
   area->first = 16;
   osspriteop_clear_sprites(osspriteop_USER_AREA, area);
 
-  mode = sprite_mode(1, 1, (int) floorlog2(S.bpp)); /* 90x90xlog2bpp */
+  mode = sprite_mode(1, 1, (int) floorlog2(S.bpp), FALSE); /* 90x90xlog2bpp */
 
   read_mode_vars(mode, &image->display.dims.bm.xeig,
                        &image->display.dims.bm.yeig,

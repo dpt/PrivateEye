@@ -10,52 +10,24 @@
 #include "oslib/osbyte.h"
 #include "oslib/osmodule.h"
 
+#include "appengine/base/os.h"
+
 #include "jpeg.h"
 
 /* ----------------------------------------------------------------------- */
 
-/* Returns the specified module's version number as BCD, or -1 if not found.
- */
-static int get_module_version(const char *wanted)
-{
-  os_error *e;
-  int       module_no;
-  int       section;
-  char     *module_name;
-  int       bcd_version;
-
-  module_no = 0;
-  section   = -1;
-  for (;;)
-  {
-    e = xosmodule_enumerate_rom_with_info(module_no,
-                                          section,
-                                         &module_no,
-                                         &section,
-                                         &module_name,
-                                          NULL, /* status */
-                                          NULL, /* chunk_no */
-                                         &bcd_version);
-    if (e)
-      return -1; /* unknown */
-
-    if (strcmp(module_name, wanted) == 0)
-      return bcd_version;
-  }
-}
-
 /* Returns non-zero when the OS has progressive JPEG support. */
 static int progressive_jpeg_supported(void)
 {
-  int os     = osbyte1(osbyte_IN_KEY, 0, 0xFF);
+  int os     = os_version();
   int sprext = get_module_version("SpriteExtend");
 
   switch (os)
   {
     /* RISC OS Select 2 with SpriteExtend 1.30 or greater */
-    case 0xA9: return (sprext >= 0x00013000);
+    case osversion_4XX: return (sprext >= 0x00013000);
     /* RISC OS 5 with SpriteExtend 1.73 or greater */
-    case 0xAA: return (sprext >= 0x00017300);
+    case osversion_5: return (sprext >= 0x00017300);
     default: return 0;
   }
 }

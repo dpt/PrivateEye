@@ -20,6 +20,8 @@
 #include "oslib/osbyte.h"
 #include "oslib/osfile.h"
 
+#include "flex.h"
+
 #include "geom/box.h"
 
 #include "appengine/types.h"
@@ -123,6 +125,7 @@ result_t viewer_create(viewer_t **new_viewer)
 #ifdef EYE_ZONES
   v->zones           = NULL;
 #endif
+  v->background.trans_tab = NULL;
   v->drawable        = NULL;
   v->image           = NULL;
   v->capture.flags   = 0;
@@ -188,6 +191,9 @@ static void viewer_dispose(viewer_t *v)
 static void viewer_reset(viewer_t *v)
 {
   viewer_dispose(v);
+
+  if (v->background.trans_tab)
+    flex_free((flex_ptr) &v->background.trans_tab); 
 
   /* Force the viewer to take the user-defined default scale. */
   if (GLOBALS.choices.viewer.scale != viewerscale_PRESERVE)
@@ -338,39 +344,90 @@ int viewer_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
+// too much work - hoist to per-mode-change
+//
+// TODO: Bash this into a state where drawable_ can handle it.
 static void clg_prepare(viewer_t *viewer)
 {
-  osspriteop_area *area;
+  osspriteop_area   *area;
+  osspriteop_header *header;
 
-  area = window_get_sprite_area();
-  viewer->background.header = osspriteop_select_sprite(osspriteop_NAME,
-                                                       area,
-                                      (osspriteop_id) "checker");
+  /* colours */
+  if (viewer->background.trans_tab)
+    flex_free((flex_ptr) &viewer->background.trans_tab); 
+
+  area   = window_get_sprite_area();
+  header = osspriteop_select_sprite(osspriteop_NAME,
+                                    area,
+                    (osspriteop_id) "checker");
+  viewer->background.header = header;
+  if (sprite_colours(&area, header, &viewer->background.trans_tab))
+    return; /* NoMem */
+
+  // might not even need this since we're using PTR
+  viewer->background.area = area;
+
+  /* scaling */
+  os_mode     mode;
+  int         image_xeig, image_yeig;
+  int         screen_xeig, screen_yeig;
+  os_factors *scaled_factors;
+  const int   log2scale = 4;
+
+  sprite_info(area, header, NULL, NULL, NULL, &mode, NULL);
+
+  read_mode_vars(mode, &image_xeig, &image_yeig, NULL);
+  read_current_mode_vars(&screen_xeig, &screen_yeig, NULL);
+
+  scaled_factors = &viewer->background.factors;
+  scaled_factors->xmul = image_xeig << log2scale;
+  scaled_factors->ymul = image_yeig << log2scale;
+  scaled_factors->xdiv = screen_xeig;
+  scaled_factors->ydiv = screen_yeig;
 }
 
-#define Tinct_PlotScaled 0x57243
+#define Tinct_PlotScaled (0x57243)
 
 /* Clears the graphics window. */
 static void clg(viewer_t *viewer, int x, int y, os_colour colour)
 {
+  const int use_tinct = 0;
+
   if (colour == os_COLOUR_TRANSPARENT)
   {
-    (void) _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
-                                   viewer->background.header,
-                                   x,
-                                   y,
-                                   32,
-                                   32,
-                                   0x3C);
+    if (use_tinct == 0)
+    {
+      os_error *e;
+
+      e = xosspriteop_plot_tiled_sprite(osspriteop_PTR,
+                                        viewer->background.area,
+                        (osspriteop_id) viewer->background.header,
+                                        x, y,
+                                        osspriteop_GIVEN_WIDE_ENTRIES,
+                                       &viewer->background.factors,
+                                        viewer->background.trans_tab);
+      if (e == NULL)
+        return;
+    }
+    else
+    {
+      _kernel_oserror *e;
+
+      e = _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
+                                  viewer->background.header,
+                                  x, y,
+                                  32, 32,
+                                  0x3C);
+      if (e == NULL)
+        return;
+    }
   }
-  else
-  {
-    colourtrans_set_gcol(colour,
-                         colourtrans_SET_BG_GCOL,
-                         os_ACTION_OVERWRITE,
-                         NULL);
-    os_writec(os_VDU_CLG);
-  }
+
+  colourtrans_set_gcol(colour,
+                       colourtrans_SET_BG_GCOL,
+                       os_ACTION_OVERWRITE,
+                       NULL);
+  os_writec(os_VDU_CLG);
 }
 
 /* Draws a background for transparent/masked bitmaps and vector images. */

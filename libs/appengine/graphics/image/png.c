@@ -247,7 +247,6 @@ static int png_load(image_choices *choices, image_t *image)
       // paletted stuff
 
       png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, NULL);
-
       if (num_trans == 1)
       {
         // is the trans value zero?
@@ -356,7 +355,7 @@ static int png_load(image_choices *choices, image_t *image)
     sprite_palbytes = 0;
   }
 
-  mode = sprite_mode(1, 1, (int) floorlog2(sprite_bpp));
+  mode = sprite_mode(1, 1, (int) floorlog2(sprite_bpp), has_alpha);
 
   sprite_rowbytes = (int) (((width * sprite_bpp + 31) & ~31) >> 3);
   sprite_imgbytes = 16 + 44 + sprite_palbytes + sprite_rowbytes * (int) height;
@@ -382,7 +381,7 @@ static int png_load(image_choices *choices, image_t *image)
   osspriteop_clear_sprites(osspriteop_USER_AREA, area);
 
 #ifndef NDEBUG
-  fprintf(stderr, "creating sprite; %d\n", (int) mode);
+  fprintf(stderr, "creating sprite; mode=%d\n", (int) mode);
 #endif
   osspriteop_create_sprite(osspriteop_NAME,
                            area,

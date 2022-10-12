@@ -49,7 +49,7 @@ display.title:%s at %s
 size.pixels:%s × %s (%s)
 size.dpi:%d × %d dpi
 size.bytes:%s bytes
-size.inches:%s × %s inches
+size.physical:%s × %scm / %s × %sin
 info.depth:%dbpp
 info.colour: colour
 info.extdcolour:%s (%d components, %d bits)

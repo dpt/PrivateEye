@@ -14,6 +14,57 @@
 
 #include "appengine/base/errors.h"
 
+/* ----------------------------------------------------------------------- */
+
+/* Supplement until this stuff arrives in OSLib */
+
+#define osspriteop_EXT_STYLE                   ((osspriteop_mode_word) 0x78000001u) /* includes osspriteop_NEW_STYLE */
+#define osspriteop_EXT_STYLE_MASK              ((osspriteop_mode_word) 0x780F000Fu)
+#define osspriteop_EXT_XRES                    ((osspriteop_mode_word) 0x00000030u)
+#define osspriteop_EXT_XRES_SHIFT              (4)
+#define osspriteop_EXT_YRES                    ((osspriteop_mode_word) 0x000000C0u)
+#define osspriteop_EXT_YRES_SHIFT              (6)
+#define osspriteop_EXT_MODE_FLAGS              ((osspriteop_mode_word) 0x0000FF00u)
+#define osspriteop_EXT_MODE_FLAGS_SHIFT        (8)
+#define osspriteop_EXT_TYPE                    ((osspriteop_mode_word) 0x07F00000u)
+#define osspriteop_EXT_TYPE_SHIFT              (20)
+
+#define osspriteop_EXT_RES_180                 (0)
+#define osspriteop_EXT_RES_90                  (1)
+#define osspriteop_EXT_RES_45                  (2)
+#define osspriteop_EXT_RES_23                  (3)
+
+#define osspriteop_TYPE_24BPP                  ((osspriteop_mode_word) 0x8u) /* RISC OS 3.5/6 defined this but didn't support it */
+#define osspriteop_TYPE_JPEG                   ((osspriteop_mode_word) 0x9u) /* RISC OS 3.5/6 defined this but didn't support it */ 
+#define osspriteop_TYPE_EXT                    ((osspriteop_mode_word) 0xFu) /* RISC OS 5.21+ */
+#define osspriteop_TYPE_16BPP4K                ((osspriteop_mode_word) 0x10u) /* RISC OS 5.21+ */
+#define osspriteop_TYPE_420YCC                 ((osspriteop_mode_word) 0x11u) /* RISC OS 5.21+ */
+#define osspriteop_TYPE_422YCC                 ((osspriteop_mode_word) 0x12u) /* RISC OS 5.21+ */
+
+// os_MODE_FLAG_DATA_FORMAT_RGB is in OSLib
+// os_MODE_FLAG_DATA_FORMAT_CMYK is in OSLib but ought to be supplemented with MISC:
+#define os_MODE_FLAG_DATA_FORMAT_MISC          ((os_mode_flags) 0x1u) /* RISC OS 5.21+ */
+#define os_MODE_FLAG_DATA_FORMAT_YCBCR         ((os_mode_flags) 0x2u) /* RISC OS 5.21+ */
+
+#define os_MODE_FLAG_DATA_SUBFORMAT_SHIFT      (14)
+
+#define os_MODE_FLAG_DATA_SUBFORMAT_TBGR       ((os_mode_flags) 0x0u) // technically this is on 4.32+
+#define os_MODE_FLAG_DATA_SUBFORMAT_TRGB       ((os_mode_flags) 0x1u) /* RISC OS 5.21+ */
+#define os_MODE_FLAG_DATA_SUBFORMAT_ABGR       ((os_mode_flags) 0x2u) /* RISC OS 5.21+ */
+#define os_MODE_FLAG_DATA_SUBFORMAT_ARGB       ((os_mode_flags) 0x3u) /* RISC OS 5.21+ */
+
+#define os_MODE_FLAG_DATA_SUBFORMAT_KYMC       ((os_mode_flags) 0x0u) // technically this is on 4.32+
+
+#define os_MODE_FLAG_DATA_SUBFORMAT_YCC601FULL ((os_mode_flags) 0x0u) /* RISC OS 5.21+ */
+#define os_MODE_FLAG_DATA_SUBFORMAT_YCC601VID  ((os_mode_flags) 0x1u) /* RISC OS 5.21+ */
+#define os_MODE_FLAG_DATA_SUBFORMAT_YCC709FULL ((os_mode_flags) 0x2u) /* RISC OS 5.21+ */
+#define os_MODE_FLAG_DATA_SUBFORMAT_YCC709VID  ((os_mode_flags) 0x3u) /* RISC OS 5.21+ */
+
+/* Sprite types that ought to be in OSLib */
+//#define sprite_MODE_16M_ABGR    (0x78608051) /* RISC OS 5.21+ */
+
+/* ----------------------------------------------------------------------- */
+
 /* Returns the N'th sprite in the area */
 osspriteop_header *sprite_select(const osspriteop_area *area, int n);
 
@@ -99,8 +150,13 @@ int sprite_colours(osspriteop_area      **area_anc,
                    osspriteop_header     *header,
                    osspriteop_trans_tab **trans_tab_anc);
 
-/* Returns the best mode for the specified args */
-os_mode sprite_mode(int xeig, int yeig, int log2bpp);
+/* Returns the best mode for the specified args.
+ * If set, inline_alpha will attempt to find an ABGR mode etc. 
+ * Returns -1 if failure. */
+os_mode sprite_mode(int xeig, int yeig, int log2bpp, osbool inline_alpha);
+
+/* Return a string describing the specified mode. */
+result_t sprite_describe_mode(os_mode mode, char *desc, size_t sz);
 
 /* Adds a mask covering the specified pixel value */
 void sprite_mask_pixel(osspriteop_area   *area,

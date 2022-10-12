@@ -152,12 +152,14 @@ typedef struct image_info image_info;
 
 typedef enum
 {
-  image_INFO_BPC,         /* Byte - Bits Per Component - e.g. 8 bpc */
-  image_INFO_COLOURSPACE, /* String - Name of colourspace - e.g. "YCCK" */
-  image_INFO_FORMAT,      /* String - Format details - e.g. "JFIF+Exif, Baseline" for a JPEG */
-  image_INFO_NCOMPONENTS, /* Byte - Number of Components - e.g. 3 components */
-  image_INFO_ORDERING,    /* TBD - Interlacing - PNG/GIF */
-  image_INFO_PALETTE,     /* TBD - Number of Palette Entries */
+  image_INFO_BPC,            /* Byte - Bits Per Component - e.g. 8 bpc */
+  image_INFO_COLOURSPACE,    /* String - Name of colourspace - e.g. "YCCK" */
+  image_INFO_FORMAT,         /* String - Format details - e.g. "JFIF+Exif, Baseline" for a JPEG */
+  image_INFO_NCOMPONENTS,    /* Byte - Number of Components - e.g. 3 components */
+  image_INFO_ORDERING,       /* TBD - Interlacing - PNG/GIF */
+  image_INFO_PALETTE,        /* TBD - Number of Palette Entries */
+
+  image_INFO_DISPLAY_FORMAT, /* String - Sprite mode etc. */
 }
 image_info_key;
 

@@ -90,10 +90,7 @@ void card_prepare(int item_w, int item_h)
   LOCALS.area = area;
 
   if (LOCALS.trans_tab)
-  {
     flex_free((flex_ptr) &LOCALS.trans_tab);
-    LOCALS.trans_tab = NULL;
-  }
 
   /* set up header ptrs */
 
@@ -107,7 +104,7 @@ void card_prepare(int item_w, int item_h)
   sprite_info(area, LOCALS.header[0], &w, &h, NULL, &mode, NULL);
 
   /* taking &area here is ok, as it's only used to deref in sprite_colours */
-  sprite_colours(&area, LOCALS.header[0], &LOCALS.trans_tab);
+  sprite_colours(&area, LOCALS.header[0], &LOCALS.trans_tab); // NoMem
 
   {
     int         image_xeig, image_yeig;
