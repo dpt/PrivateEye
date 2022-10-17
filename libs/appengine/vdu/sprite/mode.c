@@ -101,11 +101,12 @@ static osbool has_alpha(os_mode_flags mode_flags)
 result_t sprite_describe_mode(os_mode osmode, char *desc, size_t sz)
 {
   unsigned int mode = (unsigned int) osmode;
+  const char  *compat;
   char         buf[64];
 
   if (mode < 256)
   {
-    snprintf(buf, sizeof(buf), "Mode %d (Arthur)", mode);
+    snprintf(buf, sizeof(buf), "Mode %d", mode);
   }
   else if (mode & osspriteop_NEW_STYLE)
   {
@@ -117,43 +118,42 @@ result_t sprite_describe_mode(os_mode osmode, char *desc, size_t sz)
       unsigned int sprite_type;
       unsigned int sbz;
       unsigned int mode_flags;
-      unsigned int y_eigen;
-      unsigned int x_eigen;
-
-      snprintf(buf, sizeof(buf), "&%X (RISC OS 5.21)", mode);
+      // unsigned int y_eigen;
+      // unsigned int x_eigen;
 
       wide_mask   = (mode & osspriteop_ALPHA_MASK) == osspriteop_ALPHA_MASK;
       sprite_type = (mode & osspriteop_EXT_TYPE)       >> osspriteop_EXT_TYPE_SHIFT;
       sbz         = (mode & 0x000F000E); /* should be zero */
       mode_flags  = (mode & osspriteop_EXT_MODE_FLAGS) >> osspriteop_EXT_MODE_FLAGS_SHIFT;
-      y_eigen     = (mode & osspriteop_EXT_YRES)       >> osspriteop_EXT_YRES_SHIFT;
-      x_eigen     = (mode & osspriteop_EXT_XRES)       >> osspriteop_EXT_XRES_SHIFT;
+      // y_eigen     = (mode & osspriteop_EXT_YRES)       >> osspriteop_EXT_YRES_SHIFT;
+      // x_eigen     = (mode & osspriteop_EXT_XRES)       >> osspriteop_EXT_XRES_SHIFT;
 
       warning = (sbz != 0) ||
 	        (sprite_type == 0) ||
 		(wide_mask && has_alpha(mode_flags << 8));
+
+      compat = "RISC OS 5.21";
     }
     else
     {
       osbool       wide_mask;
       unsigned int sprite_type;
-      unsigned int vertical_dpi;
-      unsigned int horizontal_dpi;
+      // unsigned int vertical_dpi;
+      // unsigned int horizontal_dpi;
       
       wide_mask      = (mode & osspriteop_ALPHA_MASK) == osspriteop_ALPHA_MASK;
       sprite_type    = (mode & osspriteop_TYPE) >> osspriteop_TYPE_SHIFT;
-      vertical_dpi   = (mode & osspriteop_YRES) >> osspriteop_YRES_SHIFT;
-      horizontal_dpi = (mode & osspriteop_XRES) >> osspriteop_XRES_SHIFT;
+      // vertical_dpi   = (mode & osspriteop_YRES) >> osspriteop_YRES_SHIFT;
+      // horizontal_dpi = (mode & osspriteop_XRES) >> osspriteop_XRES_SHIFT;
 
       warning = (sprite_type == 0);
       if (wide_mask || sprite_type >= osspriteop_TYPE_CMYK)
-	snprintf(buf, sizeof(buf), "&%X (RISC OS Select, 5.21)", mode);
+        compat = "RISC OS Select, 5.21";
       else
-	snprintf(buf, sizeof(buf), "&%X (RISC OS 3.5)", mode);
+        compat = "RISC OS 3.5";
     }
-    
-    if (warning)
-      strcat(buf, " (?)");
+
+    snprintf(buf, sizeof(buf), "&%X (%s)%s", mode, compat, warning ? " [?]" : "");
   }
   else
   {
