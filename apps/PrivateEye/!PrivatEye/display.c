@@ -393,9 +393,6 @@ static int display_event_redraw_window_request(wimp_event_no event_no,
   redraw = &block->redraw;
   viewer = handle;
 
-  if (viewer->background.prepare)
-    viewer->background.prepare(viewer);
-
   for (more = wimp_redraw_window(redraw);
        more;
        more = wimp_get_rectangle(redraw))

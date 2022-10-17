@@ -53,21 +53,13 @@ struct viewer_t
 
   struct
   {
-    os_colour               colour;
-
-    osspriteop_area        *area;
-    osspriteop_header      *header;  /* Used when plotting sprites. */
-    osspriteop_trans_tab   *trans_tab;
-    os_factors              factors;
-
-    void                  (*prepare)(viewer_t *);
-    void                  (*draw)(wimp_draw *, viewer_t *, int x, int y);
-
+    os_colour         colour;
+    void            (*draw)(wimp_draw *, viewer_t *, int x, int y);
     struct
     {
-      stageconfig_t    config;
-      stagebox_t       boxes[stage_MAX_BOXES];
-      size_t           nboxes;
+      stageconfig_t   config;
+      stagebox_t      boxes[stage_MAX_BOXES];
+      size_t          nboxes;
     }
     stage;
   }
@@ -95,6 +87,7 @@ void viewer_map(viewer_map_callback *fn, void *opaque);
 void viewer_map_for_image(image_t *image, viewer_map_callback *fn, void *opaque);
 
 int viewer_get_count(void);
+void viewer_mode_change(void);
 void viewer_set_extent_from_box(viewer_t *viewer, const os_box *box);
 
 enum

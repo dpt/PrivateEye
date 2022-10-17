@@ -125,7 +125,6 @@ result_t viewer_create(viewer_t **new_viewer)
 #ifdef EYE_ZONES
   v->zones           = NULL;
 #endif
-  v->background.trans_tab = NULL;
   v->drawable        = NULL;
   v->image           = NULL;
   v->capture.flags   = 0;
@@ -192,8 +191,8 @@ static void viewer_reset(viewer_t *v)
 {
   viewer_dispose(v);
 
-  if (v->background.trans_tab)
-    flex_free((flex_ptr) &v->background.trans_tab); 
+//  if (v->background.trans_tab)
+//    flex_free((flex_ptr) &v->background.trans_tab); 
 
   /* Force the viewer to take the user-defined default scale. */
   if (GLOBALS.choices.viewer.scale != viewerscale_PRESERVE)
@@ -344,28 +343,34 @@ int viewer_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
-// too much work - hoist to per-mode-change
-//
-// TODO: Bash this into a state where drawable_ can handle it.
-static void clg_prepare(viewer_t *viewer)
+static struct
+{
+  osspriteop_area      *area;
+  osspriteop_header    *header;  /* Used when plotting sprites. */
+  osspriteop_trans_tab *trans_tab;
+  os_factors            factors;
+}
+LOCALS;
+
+void viewer_mode_change(void)
 {
   osspriteop_area   *area;
   osspriteop_header *header;
 
   /* colours */
-  if (viewer->background.trans_tab)
-    flex_free((flex_ptr) &viewer->background.trans_tab); 
+  if (LOCALS.trans_tab)
+    flex_free((flex_ptr) &LOCALS.trans_tab); 
 
   area   = window_get_sprite_area();
   header = osspriteop_select_sprite(osspriteop_NAME,
                                     area,
                     (osspriteop_id) "checker");
-  viewer->background.header = header;
-  if (sprite_colours(&area, header, &viewer->background.trans_tab))
+  LOCALS.header = header;
+  if (sprite_colours(&area, header, &LOCALS.trans_tab))
     return; /* NoMem */
 
   // might not even need this since we're using PTR
-  viewer->background.area = area;
+  LOCALS.area = area;
 
   /* scaling */
   os_mode     mode;
@@ -379,7 +384,7 @@ static void clg_prepare(viewer_t *viewer)
   read_mode_vars(mode, &image_xeig, &image_yeig, NULL);
   read_current_mode_vars(&screen_xeig, &screen_yeig, NULL);
 
-  scaled_factors = &viewer->background.factors;
+  scaled_factors = &LOCALS.factors;
   scaled_factors->xmul = image_xeig << log2scale;
   scaled_factors->ymul = image_yeig << log2scale;
   scaled_factors->xdiv = screen_xeig;
@@ -389,7 +394,7 @@ static void clg_prepare(viewer_t *viewer)
 #define Tinct_PlotScaled (0x57243)
 
 /* Clears the graphics window. */
-static void clg(viewer_t *viewer, int x, int y, os_colour colour)
+static void clg(int x, int y, os_colour colour)
 {
   const int use_tinct = 0;
 
@@ -400,12 +405,12 @@ static void clg(viewer_t *viewer, int x, int y, os_colour colour)
       os_error *e;
 
       e = xosspriteop_plot_tiled_sprite(osspriteop_PTR,
-                                        viewer->background.area,
-                        (osspriteop_id) viewer->background.header,
+                                        LOCALS.area,
+                        (osspriteop_id) LOCALS.header,
                                         x, y,
                                         osspriteop_GIVEN_WIDE_ENTRIES,
-                                       &viewer->background.factors,
-                                        viewer->background.trans_tab);
+                                       &LOCALS.factors,
+                                        LOCALS.trans_tab);
       if (e == NULL)
         return;
     }
@@ -414,7 +419,7 @@ static void clg(viewer_t *viewer, int x, int y, os_colour colour)
       _kernel_oserror *e;
 
       e = _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
-                                  viewer->background.header,
+                                  LOCALS.header,
                                   x, y,
                                   32, 32,
                                   0x3C);
@@ -435,7 +440,7 @@ static void clg_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 {
   NOT_USED(draw);
 
-  clg(viewer, x, y, viewer->background.colour);
+  clg(x, y, viewer->background.colour);
 }
 
 /* Draw the window background by filling in the regions surrounding the
@@ -474,7 +479,7 @@ static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 
     pcolour = colours[sb->kind];
     colour = (pcolour) ? *pcolour : viewer->background.colour;
-    clg(viewer, x, y, colour);
+    clg(x, y, colour);
   }
   screen_clip(&draw->clip);
 }
@@ -570,7 +575,6 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
   /* Select a background filling mode. */
   if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
   {
-    viewer->background.prepare = clg_prepare;
     viewer->background.draw    = stage_draw;
 
     stage_generate(&viewer->background.stage.config,
@@ -597,13 +601,11 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
 
     if (minimum_size || viewer->drawable->flags & drawable_FLAG_DRAW_BG)
     {
-      viewer->background.prepare = clg_prepare;
       viewer->background.draw    = clg_draw;
     }
     else
     {
       /* Opaque images won't redraw their background so to avoid flicker. */
-      viewer->background.prepare = NULL;
       viewer->background.draw    = NULL;
     }
   }
