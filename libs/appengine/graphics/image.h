@@ -81,7 +81,7 @@ enum
   image_FLAG_CAN_ROT    = 1 << 6,  /* can rotate */
   image_FLAG_HAS_META   = 1 << 7,  /* has metadata */
   image_FLAG_CAN_SPR    = 1 << 8,  /* can convert to sprite */
-  image_FLAG_HAS_ALPHA  = 1 << 9,  /* has alpha mask */
+  image_FLAG_HAS_ALPHA  = 1 << 9,  /* has a Compo-style alpha mask */
   image_FLAG_HAS_DIGEST = 1 << 10, /* has a digest computed */
 };
 

@@ -12,7 +12,7 @@ osbool sprite_has_alpha(const osspriteop_header *header)
   unsigned int *p;
   int           y,x;
 
-  if (((osspriteop_mode_word) header->mode >> 27) != osspriteop_TYPE32BPP)
+  if (((osspriteop_mode_word) header->mode >> osspriteop_TYPE_SHIFT) != osspriteop_TYPE32BPP)
     return FALSE;
 
   p = sprite_data(header);
@@ -23,10 +23,25 @@ osbool sprite_has_alpha(const osspriteop_header *header)
    * created by default with 0 in their spare byte, so all-zero means "no
    * alpha" as does all-255. */
 
+  int lowest, highest;
+
+  lowest  = 256;
+  highest = -1;
   for (y = 0; y < header->height + 1; y++)
     for (x = 0; x < header->width + 1; x++)
-      if (((*p++ & 0xff000000) >> 24) != 0)
-        return TRUE;
+    {
+      int a;
+
+      a = (*p++ & 0xff000000) >> 24;
+      if (a >= 1 && a <= 254)
+        return TRUE; /* must have alpha */
+      if (a < lowest)
+        lowest = a;
+      if (a > highest)
+        highest = a;
+      if (lowest != highest)
+        return TRUE; /* return true as soon as we see differing alphas */
+    }
 
   return FALSE;
 }
