@@ -47,20 +47,6 @@
 
 #define tinct_SPRITE_TYPE       (0x301680B5) /* 90x90dpi, 24bpp */
 
-// (osspriteop_NEW_STYLE |
-// (90 << osspriteop_XRES_SHIFT) |
-// (90 << osspriteop_YRES_SHIFT) |
-// (osspriteop_TYPE32BPP << osspriteop_TYPE_SHIFT));
-//
-// this is not an alpha format to RISC OS 5.21
-//
-// wttt tyyy yyyy yyyy yyxx xxxx xxxx xxx1   RISC OS 3.5
-// w111 1ttt tttt 0000 ffff ffff 0101 0001   RISC OS 5.21
-// t = must be 6 for 32bpp 8:8:8:8 TBGR
-// f = (8 << 4)  for ABGR
-// 
-// w111 1000 0110 0000 1000 0000 1010 0001   RISC OS 5.21
-
 static void redraw_tinct(const drawable_choices *choices,
                          wimp_draw              *draw,
                          drawable_t             *drawable,

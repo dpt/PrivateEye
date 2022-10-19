@@ -129,8 +129,8 @@ result_t sprite_describe_mode(os_mode osmode, char *desc, size_t sz)
       // x_eigen     = (mode & osspriteop_EXT_XRES)       >> osspriteop_EXT_XRES_SHIFT;
 
       warning = (sbz != 0) ||
-	        (sprite_type == 0) ||
-		(wide_mask && has_alpha(mode_flags << 8));
+                (sprite_type == 0) ||
+                (wide_mask && has_alpha(mode_flags << 8));
 
       compat = "RISC OS 5.21";
     }
