@@ -78,17 +78,18 @@ static int sprite_load(image_choices *choices, image_t *image)
 
   if (has_mask)
     image->flags |= image_FLAG_HAS_MASK;
+  if ((osspriteop_mode_word) mode & osspriteop_ALPHA_MASK)
+    image->flags |= image_FLAG_HAS_ALPHA_MASK;
 
   if (((unsigned int) mode >> osspriteop_TYPE_SHIFT) == osspriteop_TYPE32BPP)
     image->flags |= image_FLAG_CAN_HIST;
 
-  read_mode_vars(mode, &image->display.dims.bm.xeig,
-                       &image->display.dims.bm.yeig,
-                       &log2bpp);
-
   if (sprite_has_alpha(header))
     image->flags |= image_FLAG_HAS_ALPHA;
 
+  read_mode_vars(mode, &image->display.dims.bm.xeig,
+                       &image->display.dims.bm.yeig,
+                       &log2bpp);
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &area);
 

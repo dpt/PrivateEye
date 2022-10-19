@@ -154,9 +154,10 @@ static void populate_info_dialogue(dialogue_t                  *d,
            message0((image->flags & image_FLAG_COLOUR) ? "info.colour" : "info.mono"));
 
     if (image->flags & image_FLAG_HAS_ALPHA)
-      strcat(buf, message0("info.alpha"));
-
-    if (image->flags & image_FLAG_HAS_MASK)
+      strcat(buf, message0("info.alpha.chan"));
+    if (image->flags & image_FLAG_HAS_ALPHA_MASK)
+      strcat(buf, message0("info.alpha.mask"));
+    else if (image->flags & image_FLAG_HAS_MASK)
       strcat(buf, message0("info.mask"));
 
     buf += strlen(buf) + 1;
