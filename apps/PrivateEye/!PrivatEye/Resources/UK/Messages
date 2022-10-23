@@ -54,6 +54,7 @@ info.depth:%dbpp
 info.colour: colour
 info.extdcolour:%s (%d components, %d bits)
 info.mono: monochrome
+info.cmyk: CMYK
 info.alpha.chan: with alpha channel
 info.mask: and mask
 info.alpha.mask: and alpha mask

@@ -84,6 +84,7 @@ enum
   image_FLAG_HAS_ALPHA      = (1 <<  9), /* has a Tinct-style alpha channel */
   image_FLAG_HAS_DIGEST     = (1 << 10), /* has a digest computed */
   image_FLAG_HAS_ALPHA_MASK = (1 << 11), /* has an alpha mask */
+  image_FLAG_CMYK           = (1 << 12), /* is a CMYK image */
 };
 
 typedef unsigned int image_flags;

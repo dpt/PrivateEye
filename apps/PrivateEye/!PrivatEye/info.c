@@ -150,8 +150,13 @@ static void populate_info_dialogue(dialogue_t                  *d,
 
     sprintf(buf, message0("info.depth"), attrs->dims.bm.bpp);
 
-    strcat(buf,
-           message0((image->flags & image_FLAG_COLOUR) ? "info.colour" : "info.mono"));
+    /* test in order CMYK then COLOUR, otherwise it's monochrome */
+    if (image->flags & image_FLAG_CMYK)
+      strcat(buf, message0("info.cmyk"));
+    else if (image->flags & image_FLAG_COLOUR)
+      strcat(buf, message0("info.colour"));
+    else
+      strcat(buf, message0("info.mono"));
 
     if (image->flags & image_FLAG_HAS_ALPHA)
       strcat(buf, message0("info.alpha.chan"));
