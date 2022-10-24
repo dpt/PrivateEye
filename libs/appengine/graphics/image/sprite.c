@@ -33,6 +33,20 @@ static int sprite_type(osspriteop_mode_word mode_word)
     return osspriteop_TYPE_OLD;
 }
 
+static result_t sprite_populate_info(image_t *image, os_mode mode)
+{
+  result_t rc;
+  char     buf[64];
+
+  sprite_describe_mode(mode, buf, sizeof(buf));
+
+  rc = image_set_info(image, image_INFO_FORMAT, buf);
+  if (rc)
+    return rc;
+
+  return result_OK;
+}
+
 static int sprite_load(image_choices *choices, image_t *image)
 {
   int                file_size;
@@ -108,6 +122,9 @@ static int sprite_load(image_choices *choices, image_t *image)
   read_mode_vars(mode, &image->display.dims.bm.xeig,
                        &image->display.dims.bm.yeig,
                        &log2bpp);
+  
+  /* Pass mode separately since it's not setup yet. */
+  sprite_populate_info(image, mode); // error check
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &area);
 

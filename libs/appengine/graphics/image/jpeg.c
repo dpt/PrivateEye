@@ -192,7 +192,7 @@ static int jpeg_load(image_choices *choices, image_t *image)
 
   image->flags |= image_FLAG_CAN_ROT | image_FLAG_CAN_SPR;
 
-  jpeg_populate_info(image, &info);
+  jpeg_populate_info(image, &info); // error check missing
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &data);
 
