@@ -191,9 +191,6 @@ static void viewer_reset(viewer_t *v)
 {
   viewer_dispose(v);
 
-//  if (v->background.trans_tab)
-//    flex_free((flex_ptr) &v->background.trans_tab); 
-
   /* Force the viewer to take the user-defined default scale. */
   if (GLOBALS.choices.viewer.scale != viewerscale_PRESERVE)
     v->scale.cur = v->scale.prev = GLOBALS.choices.viewer.scale;
@@ -345,85 +342,95 @@ int viewer_get_count(void)
 
 static struct
 {
-  osspriteop_area      *area;
-  osspriteop_header    *header;  /* Used when plotting sprites. */
-  osspriteop_trans_tab *trans_tab;
-  os_factors            factors;
+  struct
+  {
+    osspriteop_area      *area;
+    osspriteop_header    *header;  /* Used when plotting sprites. */
+    osspriteop_trans_tab *trans_tab;
+    os_factors            factors;
+  }
+  checker;
 }
 LOCALS;
 
 void viewer_mode_change(void)
 {
+  const int          log2scale = 4; /* checker scale factor */
+
   osspriteop_area   *area;
   osspriteop_header *header;
+  os_mode            mode;
+  int                image_xeig, image_yeig;
+  int                screen_xeig, screen_yeig;
+  os_factors        *scaled_factors;
 
   /* colours */
-  if (LOCALS.trans_tab)
-    flex_free((flex_ptr) &LOCALS.trans_tab); 
+
+  if (LOCALS.checker.trans_tab)
+    flex_free((flex_ptr) &LOCALS.checker.trans_tab); 
 
   area   = window_get_sprite_area();
   header = osspriteop_select_sprite(osspriteop_NAME,
                                     area,
                     (osspriteop_id) "checker");
-  LOCALS.header = header;
-  if (sprite_colours(&area, header, &LOCALS.trans_tab))
+  if (sprite_colours(&area, header, &LOCALS.checker.trans_tab))
     return; /* NoMem */
 
-  // might not even need this since we're using PTR
-  LOCALS.area = area;
+  LOCALS.checker.area   = area;
+  LOCALS.checker.header = header;
 
   /* scaling */
-  os_mode     mode;
-  int         image_xeig, image_yeig;
-  int         screen_xeig, screen_yeig;
-  os_factors *scaled_factors;
-  const int   log2scale = 4;
 
   sprite_info(area, header, NULL, NULL, NULL, &mode, NULL);
-
   read_mode_vars(mode, &image_xeig, &image_yeig, NULL);
   read_current_mode_vars(&screen_xeig, &screen_yeig, NULL);
 
-  scaled_factors = &LOCALS.factors;
+  scaled_factors = &LOCALS.checker.factors;
   scaled_factors->xmul = image_xeig << log2scale;
   scaled_factors->ymul = image_yeig << log2scale;
   scaled_factors->xdiv = screen_xeig;
   scaled_factors->ydiv = screen_yeig;
 }
 
-#define Tinct_PlotScaled (0x57243)
-
 /* Clears the graphics window. */
 static void clg(int x, int y, os_colour colour)
 {
-  const int use_tinct = 0;
+  static unsigned int try_flags = 3;
 
   if (colour == os_COLOUR_TRANSPARENT)
   {
-    if (use_tinct == 0)
+    /* Try to use the recent PlotTiledSprite SpriteOp. If that fails never
+     * attempt it again. Do the same for Tinct. */
+    if (try_flags & 1)
     {
       os_error *e;
 
       e = xosspriteop_plot_tiled_sprite(osspriteop_PTR,
-                                        LOCALS.area,
-                        (osspriteop_id) LOCALS.header,
+                                        LOCALS.checker.area,
+                        (osspriteop_id) LOCALS.checker.header,
                                         x, y,
                                         osspriteop_GIVEN_WIDE_ENTRIES,
-                                       &LOCALS.factors,
-                                        LOCALS.trans_tab);
-      if (e == NULL)
+                                       &LOCALS.checker.factors,
+                                        LOCALS.checker.trans_tab);
+      if (e)
+        try_flags &= ~1;
+      else
         return;
     }
-    else
+    
+    if (try_flags & 2)
     {
       _kernel_oserror *e;
 
+#define Tinct_PlotScaled (0x57243)
       e = _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
-                                  LOCALS.header,
+                                  LOCALS.checker.header,
                                   x, y,
                                   32, 32,
                                   0x3C);
-      if (e == NULL)
+      if (e)
+        try_flags &= ~2;
+      else
         return;
     }
   }
