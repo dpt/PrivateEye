@@ -146,11 +146,28 @@ result_t sprite_describe_mode(os_mode osmode, char *desc, size_t sz)
       // vertical_dpi   = (mode & osspriteop_YRES) >> osspriteop_YRES_SHIFT;
       // horizontal_dpi = (mode & osspriteop_XRES) >> osspriteop_XRES_SHIFT;
 
-      warning = (sprite_type == 0);
-      if (wide_mask || sprite_type >= osspriteop_TYPE_CMYK)
-        compat = "RISC OS Select, 5.21";
-      else
-        compat = "RISC OS 3.5";
+      warning = (sprite_type == osspriteop_TYPE_OLD);
+
+      switch (sprite_type)
+      {
+      case osspriteop_TYPE1BPP:
+      case osspriteop_TYPE2BPP:
+      case osspriteop_TYPE4BPP:
+      case osspriteop_TYPE8BPP:
+      case osspriteop_TYPE16BPP:
+      case osspriteop_TYPE32BPP:
+        compat = (wide_mask) ? "RISC OS Select, 5.21" : "RISC OS 3.5";
+        break;
+      case osspriteop_TYPE_CMYK:
+        compat = "RISC OS Select";
+        break;
+      case osspriteop_TYPE16BPP64K:
+        compat = "RISC OS 6, 5.21";
+        break;
+      default:
+        compat = "Unknown";
+        break;
+      }
     }
 
     snprintf(buf, sizeof(buf), "&%X (%s)%s", mode, compat, warning ? " [?]" : "");
