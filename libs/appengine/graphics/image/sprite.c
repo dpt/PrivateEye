@@ -49,6 +49,7 @@ static result_t sprite_populate_info(image_t *image, os_mode mode)
 
 static int sprite_load(image_choices *choices, image_t *image)
 {
+  result_t           rc;
   int                file_size;
   int                log2bpp;
   osspriteop_area   *area;
@@ -124,7 +125,13 @@ static int sprite_load(image_choices *choices, image_t *image)
                        &log2bpp);
   
   /* Pass mode separately since it's not setup yet. */
-  sprite_populate_info(image, mode); // error check
+  rc = sprite_populate_info(image, mode);
+  if (rc)
+  {
+    flex_free((flex_ptr) &area);
+    result_report(rc);
+    return TRUE; /* failure */
+  }
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &area);
 
