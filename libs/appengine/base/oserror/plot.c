@@ -10,7 +10,7 @@
 
 #include "appengine/base/oserror.h"
 
-void oserror_plot(os_error *e, int x, int y)
+void oserror_plot(const os_error *e, int x, int y)
 {
   os_colour_number c;
 
