@@ -217,6 +217,7 @@ set(GENERIC_SOURCES
     base/numstr/comma-dbl.c
     base/numstr/comma-num.c
     base/os/beep.c
+    base/os/getmodver.c
     base/os/inkey.c
     base/oserror/check.c
     base/oserror/plot.c

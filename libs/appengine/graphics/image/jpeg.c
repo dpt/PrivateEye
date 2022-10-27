@@ -39,7 +39,7 @@ static int jpeg_to_spr_common(image_t *image);
 
 static result_t jpeg_populate_info(image_t *image, const jpeg_info_t *info)
 {
-  result_t       err;
+  result_t       rc;
   char           buf[100];
   const char    *tok;
   unsigned char  bpc = 8;
@@ -75,9 +75,9 @@ static result_t jpeg_populate_info(image_t *image, const jpeg_info_t *info)
     strcat(buf, message0(tok));
   }
 
-  err = image_set_info(image, image_INFO_FORMAT, buf);
-  if (err)
-    return err;
+  rc = image_set_info(image, image_INFO_FORMAT, buf);
+  if (rc)
+    return rc;
 
   /* record the colourspace and number of components */
   switch (info->colourspace)
@@ -90,24 +90,25 @@ static result_t jpeg_populate_info(image_t *image, const jpeg_info_t *info)
   default:
   case jpeg_COLOURSPACE_UNKNOWN:   tok = "jpginfo.unknown"; ncomps = 0; break;
   }
-  err = image_set_info(image, image_INFO_COLOURSPACE, message0(tok));
-  if (err)
-    return err;
+  rc = image_set_info(image, image_INFO_COLOURSPACE, message0(tok));
+  if (rc)
+    return rc;
 
-  err = image_set_info(image, image_INFO_NCOMPONENTS, &ncomps);
-  if (err)
-    return err;
+  rc = image_set_info(image, image_INFO_NCOMPONENTS, &ncomps);
+  if (rc)
+    return rc;
   
   /* bits per component is always 8 presently */
-  err = image_set_info(image, image_INFO_BPC, &bpc);
-  if (err)
-    return err;
+  rc = image_set_info(image, image_INFO_BPC, &bpc);
+  if (rc)
+    return rc;
 
   return result_OK;
 }
 
 static int jpeg_load(image_choices *choices, image_t *image)
 {
+  result_t        rc;
   os_error       *e;
   unsigned char  *data;
   size_t          file_size;
@@ -150,8 +151,8 @@ static int jpeg_load(image_choices *choices, image_t *image)
       if (jpegtran_clean(data, file_size, &newdata, &newlength))
       {
         flex_free((flex_ptr) &data);
-        oserror_report(0, "error.jpeg.transcode", jpegtran_get_messages());
         jpegtran_discard_messages();
+        oserror_report(0, "error.jpeg.transcode", jpegtran_get_messages());
         return TRUE; /* failure */
       }
 
@@ -192,7 +193,14 @@ static int jpeg_load(image_choices *choices, image_t *image)
 
   image->flags |= image_FLAG_CAN_ROT | image_FLAG_CAN_SPR;
 
-  jpeg_populate_info(image, &info);
+  rc = jpeg_populate_info(image, &info);
+  if (rc)
+  {
+    flex_free((flex_ptr) &data);
+    result_report(rc);
+    return TRUE; /* failure */
+  }
+
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &data);
 
@@ -227,9 +235,7 @@ static int jpeg_load(image_choices *choices, image_t *image)
 
 
 NoMem:
-
   oserror_report(0, "error.no.mem");
-
   return TRUE; /* failure */
 }
 

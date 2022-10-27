@@ -29,7 +29,7 @@ void oserror_report_block(os_error *error);
 /* ----------------------------------------------------------------------- */
 
 /* Plots the error message using Wimp_TextOp */
-void oserror_plot(os_error *e, int x, int y);
+void oserror_plot(const os_error *e, int x, int y);
 
 /* ----------------------------------------------------------------------- */
 

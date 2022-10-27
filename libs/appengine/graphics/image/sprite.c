@@ -23,8 +23,33 @@
 
 #include "sprite.h"
 
+static int sprite_type(osspriteop_mode_word mode_word)
+{
+  if ((mode_word & osspriteop_EXT_STYLE) == osspriteop_EXT_STYLE)
+    return (mode_word & osspriteop_EXT_TYPE) >> osspriteop_EXT_TYPE_SHIFT;
+  else if ((mode_word & osspriteop_NEW_STYLE) == osspriteop_NEW_STYLE)
+    return (mode_word & osspriteop_TYPE) >> osspriteop_TYPE_SHIFT;
+  else
+    return osspriteop_TYPE_OLD;
+}
+
+static result_t sprite_populate_info(image_t *image, os_mode mode)
+{
+  result_t rc;
+  char     buf[64];
+
+  sprite_describe_mode(mode, buf, sizeof(buf));
+
+  rc = image_set_info(image, image_INFO_FORMAT, buf);
+  if (rc)
+    return rc;
+
+  return result_OK;
+}
+
 static int sprite_load(image_choices *choices, image_t *image)
 {
+  result_t           rc;
   int                file_size;
   int                log2bpp;
   osspriteop_area   *area;
@@ -32,6 +57,7 @@ static int sprite_load(image_choices *choices, image_t *image)
   os_error          *e;
   osbool             has_mask;
   os_mode            mode;
+  osspriteop_mode_word mode_word;
 
   NOT_USED(choices);
 
@@ -73,22 +99,39 @@ static int sprite_load(image_choices *choices, image_t *image)
                              &image->display.dims.bm.height,
                              &has_mask,
                              &mode);
+  mode_word = (osspriteop_mode_word) mode;
 
   image->flags = image_FLAG_COLOUR | image_FLAG_CAN_ROT;
 
   if (has_mask)
     image->flags |= image_FLAG_HAS_MASK;
+  if ((osspriteop_mode_word) mode & osspriteop_ALPHA_MASK)
+    image->flags |= image_FLAG_HAS_ALPHA_MASK;
 
-  if (((unsigned int) mode >> osspriteop_TYPE_SHIFT) == osspriteop_TYPE32BPP)
+  switch (sprite_type(mode_word))
+  {
+  case osspriteop_TYPE32BPP:
     image->flags |= image_FLAG_CAN_HIST;
+    if (sprite_has_alpha(header))
+      image->flags |= image_FLAG_HAS_ALPHA;
+    break;
+  case osspriteop_TYPE_CMYK:
+    image->flags |= image_FLAG_CMYK;
+    break;
+  }
 
   read_mode_vars(mode, &image->display.dims.bm.xeig,
                        &image->display.dims.bm.yeig,
                        &log2bpp);
-
-  if (sprite_has_alpha(header))
-    image->flags |= image_FLAG_HAS_ALPHA;
-
+  
+  /* Pass mode separately since it's not setup yet. */
+  rc = sprite_populate_info(image, mode);
+  if (rc)
+  {
+    flex_free((flex_ptr) &area);
+    result_report(rc);
+    return TRUE; /* failure */
+  }
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &area);
 

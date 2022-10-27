@@ -1,6 +1,11 @@
 Version 3.20 (xx yyy 2022)
 #Parent !Root
-Manual converted to StrongHelp format.
+è	Checkerboard drawing code was hoisted out of the viewer code (will use less memory).
+è	"Format" added to image info - this shows the mode of the sprite, or its &hexvalue and a note of which RISC OS versions are compatible.
+è	RISC OS 5 format sprites are used as required when running on RO5.
+è	When in "Fit to screen" mode a document style backdrop (a "stage") is drawn behind images. This is optimised to avoid flicker where possible.
+è	The user guide/manual was converted to StrongHelp format and included in the app itself.
+è	The icon bar's height is now read from the OS rather than being assumed.
 #Line
 <Previous changes=>.314>
 #Subpage 314

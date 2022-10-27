@@ -49,10 +49,10 @@ extern char *get_messages_fd(void); /* icky */
 /*
  * Compatibility macros
  */
-#define message(m)	    messages_lookup(m,NULL,NULL,NULL,NULL)
-#define message0(m)	    messages_lookup(m,NULL,NULL,NULL,NULL)
-#define message1(m,n)	    messages_lookup(m,   n,NULL,NULL,NULL)
-#define message2(m,n,o)	    messages_lookup(m,   n,   o,NULL,NULL)
+#define message(m)          messages_lookup(m,NULL,NULL,NULL,NULL)
+#define message0(m)         messages_lookup(m,NULL,NULL,NULL,NULL)
+#define message1(m,n)       messages_lookup(m,   n,NULL,NULL,NULL)
+#define message2(m,n,o)     messages_lookup(m,   n,   o,NULL,NULL)
 #define message3(m,n,o,p)   messages_lookup(m,   n,   o,   p,NULL)
 #define message4(m,n,o,p,q) messages_lookup(m,   n,   o,   p,   q)
 

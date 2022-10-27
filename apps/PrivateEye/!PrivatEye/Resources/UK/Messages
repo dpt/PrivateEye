@@ -49,13 +49,15 @@ display.title:%s at %s
 size.pixels:%s × %s (%s)
 size.dpi:%d × %d dpi
 size.bytes:%s bytes
-size.inches:%s × %s inches
+size.physical:%s × %scm / %s × %sin
 info.depth:%dbpp
 info.colour: colour
 info.extdcolour:%s (%d components, %d bits)
 info.mono: monochrome
-info.alpha: + alpha
-info.mask: with mask
+info.cmyk: CMYK
+info.alpha.chan: with alpha channel
+info.mask: and mask
+info.alpha.mask: and alpha mask
 unspec:Unspecified
 
 # Image Info window - JPEG

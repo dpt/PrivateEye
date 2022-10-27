@@ -408,6 +408,8 @@ int main(int argc, char *argv[])
 
   templates_close();
 
+  viewer_mode_change();
+
   /* Register the main event handlers last. This has the effect of putting
    * them at the end of the event handler lists, so they get called after
    * any other event handlers. */
@@ -616,6 +618,8 @@ static int message_mode_change(wimp_message *message, void *handle)
   NOT_USED(handle);
 
   cache_mode_vars();
+
+  viewer_mode_change();
 
   viewer_update_all(viewer_UPDATE_COLOURS | viewer_UPDATE_SCALING);
 

@@ -89,6 +89,7 @@ result_t image_set_info(image_t        *image,
     break;
   case image_INFO_ORDERING:
   case image_INFO_PALETTE:
+  case image_INFO_DISPLAY_FORMAT: /* handled elsewhere */
   default:
     assert(0);
     return result_NOT_IMPLEMENTED;
@@ -111,17 +112,38 @@ int image_get_info(image_t         *image,
 {
   int i;
 
-  if (image->info.entries == NULL)
-    return 0; /* no entries */
-
-  for (i = 0; i < image->info.entriesused; i++)
-    if (image->info.entries[i].key == key)
+  /* display format info is live */
+  switch (key)
+  {
+  case image_INFO_DISPLAY_FORMAT:
+    if (image->display.file_type == osfile_TYPE_SPRITE)
     {
+      static char buf[64]; // HACK
+
+      sprite_describe_mode(image->details.sprite.mode, buf, sizeof(buf));
+      *data = buf;
+      return 1;
+    }
+    else
+    {
+      return 0;
+    }
+    break;
+
+  default:
+    if (image->info.entries == NULL)
+      return 0; /* no entries */
+    
+    /* search stored info - created at load time */
+    for (i = 0; i < image->info.entriesused; i++)
+      if (image->info.entries[i].key == key)
+      {
         *data = image->info.entries[i].data;
         return 1;
-    }
+      }
 
-  return 0;
+    return 0;
+  }
 }
 
 /* ----------------------------------------------------------------------- */

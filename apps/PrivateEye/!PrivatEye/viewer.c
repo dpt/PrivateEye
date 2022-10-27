@@ -20,6 +20,8 @@
 #include "oslib/osbyte.h"
 #include "oslib/osfile.h"
 
+#include "flex.h"
+
 #include "geom/box.h"
 
 #include "appengine/types.h"
@@ -338,39 +340,106 @@ int viewer_get_count(void)
 
 /* ----------------------------------------------------------------------- */
 
-static void clg_prepare(viewer_t *viewer)
+static struct
 {
-  osspriteop_area *area;
+  struct
+  {
+    osspriteop_area      *area;
+    osspriteop_header    *header;  /* Used when plotting sprites. */
+    osspriteop_trans_tab *trans_tab;
+    os_factors            factors;
+  }
+  checker;
+}
+LOCALS;
 
-  area = window_get_sprite_area();
-  viewer->background.header = osspriteop_select_sprite(osspriteop_NAME,
-                                                       area,
-                                      (osspriteop_id) "checker");
+void viewer_mode_change(void)
+{
+  const int          log2scale = 4; /* checker scale factor */
+
+  osspriteop_area   *area;
+  osspriteop_header *header;
+  os_mode            mode;
+  int                image_xeig, image_yeig;
+  int                screen_xeig, screen_yeig;
+  os_factors        *scaled_factors;
+
+  /* colours */
+
+  if (LOCALS.checker.trans_tab)
+    flex_free((flex_ptr) &LOCALS.checker.trans_tab); 
+
+  area   = window_get_sprite_area();
+  header = osspriteop_select_sprite(osspriteop_NAME,
+                                    area,
+                    (osspriteop_id) "checker");
+  if (sprite_colours(&area, header, &LOCALS.checker.trans_tab))
+    return; /* NoMem */
+
+  LOCALS.checker.area   = area;
+  LOCALS.checker.header = header;
+
+  /* scaling */
+
+  sprite_info(area, header, NULL, NULL, NULL, &mode, NULL);
+  read_mode_vars(mode, &image_xeig, &image_yeig, NULL);
+  read_current_mode_vars(&screen_xeig, &screen_yeig, NULL);
+
+  scaled_factors = &LOCALS.checker.factors;
+  scaled_factors->xmul = image_xeig << log2scale;
+  scaled_factors->ymul = image_yeig << log2scale;
+  scaled_factors->xdiv = screen_xeig;
+  scaled_factors->ydiv = screen_yeig;
 }
 
-#define Tinct_PlotScaled 0x57243
-
 /* Clears the graphics window. */
-static void clg(viewer_t *viewer, int x, int y, os_colour colour)
+static void clg(int x, int y, os_colour colour)
 {
+  static unsigned int try_flags = 3;
+
   if (colour == os_COLOUR_TRANSPARENT)
   {
-    (void) _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
-                                   viewer->background.header,
-                                   x,
-                                   y,
-                                   32,
-                                   32,
-                                   0x3C);
+    /* Try to use the recent PlotTiledSprite SpriteOp. If that fails never
+     * attempt it again. Do the same for Tinct. */
+    if (try_flags & 1)
+    {
+      os_error *e;
+
+      e = xosspriteop_plot_tiled_sprite(osspriteop_PTR,
+                                        LOCALS.checker.area,
+                        (osspriteop_id) LOCALS.checker.header,
+                                        x, y,
+                                        osspriteop_GIVEN_WIDE_ENTRIES,
+                                       &LOCALS.checker.factors,
+                                        LOCALS.checker.trans_tab);
+      if (e)
+        try_flags &= ~1;
+      else
+        return;
+    }
+    
+    if (try_flags & 2)
+    {
+      _kernel_oserror *e;
+
+#define Tinct_PlotScaled (0x57243)
+      e = _swix(Tinct_PlotScaled, _INR(2,6)|_IN(7),
+                                  LOCALS.checker.header,
+                                  x, y,
+                                  32, 32,
+                                  0x3C);
+      if (e)
+        try_flags &= ~2;
+      else
+        return;
+    }
   }
-  else
-  {
-    colourtrans_set_gcol(colour,
-                         colourtrans_SET_BG_GCOL,
-                         os_ACTION_OVERWRITE,
-                         NULL);
-    os_writec(os_VDU_CLG);
-  }
+
+  colourtrans_set_gcol(colour,
+                       colourtrans_SET_BG_GCOL,
+                       os_ACTION_OVERWRITE,
+                       NULL);
+  os_writec(os_VDU_CLG);
 }
 
 /* Draws a background for transparent/masked bitmaps and vector images. */
@@ -378,7 +447,7 @@ static void clg_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 {
   NOT_USED(draw);
 
-  clg(viewer, x, y, viewer->background.colour);
+  clg(x, y, viewer->background.colour);
 }
 
 /* Draw the window background by filling in the regions surrounding the
@@ -417,7 +486,7 @@ static void stage_draw(wimp_draw *draw, viewer_t *viewer, int x, int y)
 
     pcolour = colours[sb->kind];
     colour = (pcolour) ? *pcolour : viewer->background.colour;
-    clg(viewer, x, y, colour);
+    clg(x, y, colour);
   }
   screen_clip(&draw->clip);
 }
@@ -513,7 +582,6 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
   /* Select a background filling mode. */
   if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
   {
-    viewer->background.prepare = clg_prepare;
     viewer->background.draw    = stage_draw;
 
     stage_generate(&viewer->background.stage.config,
@@ -540,13 +608,11 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
 
     if (minimum_size || viewer->drawable->flags & drawable_FLAG_DRAW_BG)
     {
-      viewer->background.prepare = clg_prepare;
       viewer->background.draw    = clg_draw;
     }
     else
     {
       /* Opaque images won't redraw their background so to avoid flicker. */
-      viewer->background.prepare = NULL;
       viewer->background.draw    = NULL;
     }
   }

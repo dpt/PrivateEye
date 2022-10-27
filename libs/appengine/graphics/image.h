@@ -72,17 +72,19 @@ image_choices;
 
 enum
 {
-  image_FLAG_VECTOR     = 1 << 0,  /* is a vector format image */
-  image_FLAG_COLOUR     = 1 << 1,  /* is a colour image (otherwise mono) */
-  image_FLAG_HAS_MASK   = 1 << 2,  /* has sprite-style binary mask */
-  image_FLAG_EDITING    = 1 << 3,  /* is currently being edited */
-  image_FLAG_MODIFIED   = 1 << 4,  /* is modified or unsaved (reset on saves) */
-  image_FLAG_CAN_HIST   = 1 << 5,  /* can obtain histogram */
-  image_FLAG_CAN_ROT    = 1 << 6,  /* can rotate */
-  image_FLAG_HAS_META   = 1 << 7,  /* has metadata */
-  image_FLAG_CAN_SPR    = 1 << 8,  /* can convert to sprite */
-  image_FLAG_HAS_ALPHA  = 1 << 9,  /* has alpha mask */
-  image_FLAG_HAS_DIGEST = 1 << 10, /* has a digest computed */
+  image_FLAG_VECTOR         = (1 <<  0), /* is a vector format image */
+  image_FLAG_COLOUR         = (1 <<  1), /* is a colour image (otherwise mono) */
+  image_FLAG_HAS_MASK       = (1 <<  2), /* has sprite-style binary mask */
+  image_FLAG_EDITING        = (1 <<  3), /* is currently being edited */
+  image_FLAG_MODIFIED       = (1 <<  4), /* is modified or unsaved (reset on saves) */
+  image_FLAG_CAN_HIST       = (1 <<  5), /* can obtain histogram */
+  image_FLAG_CAN_ROT        = (1 <<  6), /* can rotate */
+  image_FLAG_HAS_META       = (1 <<  7), /* has metadata */
+  image_FLAG_CAN_SPR        = (1 <<  8), /* can convert to sprite */
+  image_FLAG_HAS_ALPHA      = (1 <<  9), /* has a Tinct-style alpha channel */
+  image_FLAG_HAS_DIGEST     = (1 << 10), /* has a digest computed */
+  image_FLAG_HAS_ALPHA_MASK = (1 << 11), /* has an alpha mask */
+  image_FLAG_CMYK           = (1 << 12), /* is a CMYK image */
 };
 
 typedef unsigned int image_flags;
@@ -152,12 +154,14 @@ typedef struct image_info image_info;
 
 typedef enum
 {
-  image_INFO_BPC,         /* Byte - Bits Per Component - e.g. 8 bpc */
-  image_INFO_COLOURSPACE, /* String - Name of colourspace - e.g. "YCCK" */
-  image_INFO_FORMAT,      /* String - Format details - e.g. "JFIF+Exif, Baseline" for a JPEG */
-  image_INFO_NCOMPONENTS, /* Byte - Number of Components - e.g. 3 components */
-  image_INFO_ORDERING,    /* TBD - Interlacing - PNG/GIF */
-  image_INFO_PALETTE,     /* TBD - Number of Palette Entries */
+  image_INFO_BPC,            /* Byte - Bits Per Component - e.g. 8 bpc */
+  image_INFO_COLOURSPACE,    /* String - Name of colourspace - e.g. "YCCK" */
+  image_INFO_FORMAT,         /* String - Format details - e.g. "JFIF+Exif, Baseline" for a JPEG */
+  image_INFO_NCOMPONENTS,    /* Byte - Number of Components - e.g. 3 components */
+  image_INFO_ORDERING,       /* TBD - Interlacing - PNG/GIF */
+  image_INFO_PALETTE,        /* TBD - Number of Palette Entries */
+
+  image_INFO_DISPLAY_FORMAT, /* String - Sprite mode etc. */
 }
 image_info_key;
 

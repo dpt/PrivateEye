@@ -53,6 +53,7 @@ static void redraw_tinct(const drawable_choices *choices,
                          int                     x,
                          int                     y)
 {
+  const os_error    *e;
   osspriteop_area   *area;
   osspriteop_header *header;
   int                w,h;
@@ -77,11 +78,13 @@ static void redraw_tinct(const drawable_choices *choices,
   w = drawable->image->display.dims.bm.width  * 2 * scale / SCALE_100PC;
   h = drawable->image->display.dims.bm.height * 2 * scale / SCALE_100PC;
 
-  flags = (choices->sprite.plot_flags == osspriteop_DITHERED) ? 1 << 3 : 0;
+  flags = (choices->sprite.plot_flags == osspriteop_DITHERED) ? tinct_DIFFUSE : 0;
 
   swi = (drawable->image->flags & image_FLAG_HAS_ALPHA) ?
         Tinct_PlotScaledAlpha : Tinct_PlotScaled;
-  _swi(swi, _INR(2,7), header, x, y, w, h, flags);
+  e = (const os_error *) _swix(swi, _INR(2,7), header, x, y, w, h, flags);
+  if (e)
+    oserror_plot(e, x, y);
 }
 
 static void redraw_os(const drawable_choices *choices,
@@ -90,6 +93,7 @@ static void redraw_os(const drawable_choices *choices,
                       int                     x,
                       int                     y)
 {
+  const os_error       *e;
   osspriteop_area      *area;
   osspriteop_header    *header;
   osspriteop_trans_tab *trans_tab;
@@ -101,15 +105,17 @@ static void redraw_os(const drawable_choices *choices,
 
   trans_tab = drawable->details.sprite.trans_tab;
 
-  osspriteop_put_sprite_scaled(osspriteop_PTR,
-                               area,
-               (osspriteop_id) header,
-                               x, y,
-                               choices->sprite.plot_flags |
-                               osspriteop_USE_MASK        |
-                               osspriteop_GIVEN_WIDE_ENTRIES,
-                              &drawable->details.sprite.factors,
-                               trans_tab);
+  e = EC(xosspriteop_put_sprite_scaled(osspriteop_PTR,
+                                       area,
+                       (osspriteop_id) header,
+                                       x, y,
+                                       choices->sprite.plot_flags |
+                                       osspriteop_USE_MASK        |
+                                       osspriteop_GIVEN_WIDE_ENTRIES,
+                                      &drawable->details.sprite.factors,
+                                       trans_tab));
+  if (e)
+    oserror_plot(e, x, y);
 }
 
 typedef void (redraw_fn)(const drawable_choices *choices,
