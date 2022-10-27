@@ -969,6 +969,9 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
   wax = pointer->pos.x + (info.xscroll - info.visible.x0);
   way = pointer->pos.y + (info.yscroll - info.visible.y1);
 
+  wax -= viewer->imgbox.x0;
+  way -= viewer->imgbox.y0;
+
   old_scale = viewer->scale.cur;
   if (pointer->buttons & wimp_CLICK_SELECT)
     new_scale = old_scale * 2;
@@ -977,6 +980,9 @@ static void zoom_to_point(wimp_pointer *pointer, viewer_t *viewer)
   
   wax = wax * new_scale / old_scale;
   way = way * new_scale / old_scale;
+
+  wax += viewer->imgbox.x0;
+  way += viewer->imgbox.y0;
 
   scrolling_start(viewer, wax, way, new_scale, 0,
                   GLOBALS.choices.viewer.steps);
