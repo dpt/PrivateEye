@@ -34,9 +34,9 @@
 #define osspriteop_EXT_RES_45                  (2)
 #define osspriteop_EXT_RES_23                  (3)
 
-#define osspriteop_TYPE_24BPP                  ((osspriteop_mode_word) 0x8u) /* RISC OS 3.5/6 defined this but didn't support it */
-#define osspriteop_TYPE_JPEG                   ((osspriteop_mode_word) 0x9u) /* RISC OS 3.5/6 defined this but didn't support it */ 
-#define osspriteop_TYPE_EXT                    ((osspriteop_mode_word) 0xFu) /* RISC OS 5.21+ */
+#define osspriteop_TYPE_24BPP                  ((osspriteop_mode_word) 0x08u) /* RISC OS 3.5/6 defined this but no-one properly supports it */
+#define osspriteop_TYPE_JPEG                   ((osspriteop_mode_word) 0x09u) /* RISC OS 3.5/6 defined this but no-one properly supports it */ 
+#define osspriteop_TYPE_EXT                    ((osspriteop_mode_word) 0x0Fu) /* RISC OS 5.21+ */
 #define osspriteop_TYPE_16BPP4K                ((osspriteop_mode_word) 0x10u) /* RISC OS 5.21+ */
 #define osspriteop_TYPE_420YCC                 ((osspriteop_mode_word) 0x11u) /* RISC OS 5.21+ */
 #define osspriteop_TYPE_422YCC                 ((osspriteop_mode_word) 0x12u) /* RISC OS 5.21+ */
@@ -59,9 +59,6 @@
 #define os_MODE_FLAG_DATA_SUBFORMAT_YCC601VID  ((os_mode_flags) 0x1u) /* RISC OS 5.21+ */
 #define os_MODE_FLAG_DATA_SUBFORMAT_YCC709FULL ((os_mode_flags) 0x2u) /* RISC OS 5.21+ */
 #define os_MODE_FLAG_DATA_SUBFORMAT_YCC709VID  ((os_mode_flags) 0x3u) /* RISC OS 5.21+ */
-
-/* Sprite types that ought to be in OSLib */
-//#define sprite_MODE_16M_ABGR    (0x78608051) /* RISC OS 5.21+ */
 
 /* ----------------------------------------------------------------------- */
 
