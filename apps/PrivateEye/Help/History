@@ -1,11 +1,24 @@
 Version 3.20 (xx yyy 2022)
 #Parent !Root
-è	Checkerboard drawing code was hoisted out of the viewer code (will use less memory).
-è	"Format" added to image info - this shows the mode of the sprite, or its &hexvalue and a note of which RISC OS versions are compatible.
-è	RISC OS 5 format sprites are used as required when running on RO5.
-è	When in "Fit to screen" mode a document style backdrop (a "stage") is drawn behind images. This is optimised to avoid flicker where possible.
-è	The user guide/manual was converted to StrongHelp format and included in the app itself.
-è	The icon bar's height is now read from the OS rather than being assumed.
+Changes
+
+è	The user guide has been converted into StrongHelp format and incorporated into the app itself. The icon bar menu gains a "Help" menu entry to open it. Hello!
+è	RISC OS 5.21's extended format sprites are now used where possible, e.g. when loading PNGs containing alpha channels. This avoids the need to use the Tinct module which, while having provided great service for many years, has become problematic due to being unmaintained.
+è	When in "Fit to screen" mode viewers now draw a paper document style backdrop behind images. Its redraw is optimised to avoid flicker where possible.
+è	A "Format" field was added to the image info window. This shows the screen mode of the display sprite and which OS versions it's compatible with.
+è	Image info window's "Colours" field now shows when CMYK format sprites are detected.
+è	Image info window's "Dimensions" field shows centimetres in addition to inches.
+è	The checkerboard drawing code, used to indicate alpha transparency, was hoisted out of the viewer code (will use less memory). It now uses the PlotTiledSprite SpriteOp where available, in preference to Tinct's equivalent.
+è	The icon bar's height is now read from the OS rather than being assumed. Just in case it ever changes.
+è	The Sprite alpha channel detector now treats "all 0" and "all 255" values as indicating no alpha.
+è	Alpha channels and Alpha masks are now distinguished in the image info window. Note on terminology: "Alpha channels" are where the alpha data is inline amonst the pixels, as Tinct and various software uses. "Alpha masks" are where the alpha data stored separately in the mask bytes: the newer standard that RISC OS Select established. It's theoretically possible, but meaningless, to have both in the same sprite.
+
+Fixes
+
+è	Fix: Edits performed in "Fit to screen" will now refresh just the image area, not the whole window.
+è	Fix: Zoom-to-point (Shift-Click) now works correctly when in "Fit to screen" mode.
+è	Fix: Scale > Fit to screen now respects the cover icon bar flag.
+è	Fix: Sprites which error when rendering will now, like JPEGs, draw the error message to the viewer window rather than causing a crash.
 #Line
 <Previous changes=>.314>
 #Subpage 314
