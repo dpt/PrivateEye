@@ -2279,7 +2279,7 @@ int effects_available(const image_t *image)
 
   if (image == NULL ||
       image_is_editing(image) ||
-      image->display.file_type != osfile_TYPE_SPRITE)
+      (image->flags & image_FLAG_CAN_HIST) == 0) /* hist and effects have same requirements */
     return 0;
 
   area   = (const osspriteop_area *) image->image;

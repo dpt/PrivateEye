@@ -86,6 +86,8 @@ void sprite_info(const osspriteop_area   *area,
                  os_mode                 *mode,
                  int                     *log2bpp);
 
+int sprite_type(osspriteop_mode_word mode_word);
+
 /* Returns whether a sprite has alpha data */
 osbool sprite_has_alpha(const osspriteop_header *header);
 

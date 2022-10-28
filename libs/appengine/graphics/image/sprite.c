@@ -23,16 +23,6 @@
 
 #include "sprite.h"
 
-static int sprite_type(osspriteop_mode_word mode_word)
-{
-  if ((mode_word & osspriteop_EXT_STYLE) == osspriteop_EXT_STYLE)
-    return (mode_word & osspriteop_EXT_TYPE) >> osspriteop_EXT_TYPE_SHIFT;
-  else if ((mode_word & osspriteop_NEW_STYLE) == osspriteop_NEW_STYLE)
-    return (mode_word & osspriteop_TYPE) >> osspriteop_TYPE_SHIFT;
-  else
-    return osspriteop_TYPE_OLD;
-}
-
 static result_t sprite_populate_info(image_t *image, os_mode mode)
 {
   result_t rc;

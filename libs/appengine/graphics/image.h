@@ -77,7 +77,7 @@ enum
   image_FLAG_HAS_MASK       = (1 <<  2), /* has sprite-style binary mask */
   image_FLAG_EDITING        = (1 <<  3), /* is currently being edited */
   image_FLAG_MODIFIED       = (1 <<  4), /* is modified or unsaved (reset on saves) */
-  image_FLAG_CAN_HIST       = (1 <<  5), /* can obtain histogram */
+  image_FLAG_CAN_HIST       = (1 <<  5), /* can obtain histogram (also used for effects) */
   image_FLAG_CAN_ROT        = (1 <<  6), /* can rotate */
   image_FLAG_HAS_META       = (1 <<  7), /* has metadata */
   image_FLAG_CAN_SPR        = (1 <<  8), /* can convert to sprite */
