@@ -1,68 +1,9 @@
-PrivateEye - by David Thomas, ï¿½ 1999-2022
+PrivateEye - by David Thomas, © 1999-2022
 =========================================
 
 PrivateEye is a freeware image viewer for RISC OS.
 
-Please consult the PDF manual for full information.
-<URL:http://www.davespace.co.uk/software/privateeye310manual.pdf>
-
-Recent Changes
---------------
-
-### 3.20 (xx yyy 2022)
-
-### 3.14 (19 Aug 2022)
-
-- When loading new images the "Fit to screen" mode will now only ever shrink
-  images. This is more helpful than the previous behaviour which would scale
-  small images up to enormous proportions. Note that the "Fit screen" button on
-  the scale view dialogue is unaffected.
-- The data transfer system has had an upgrade:
-  - `<Wimp$Scrap>` won't appear in title bars now. It'll use `<untitled>` in
-    title bars, and `ImageFile` when saving an image with no known name.
-    Received files are marked as modified too. This matches the behaviour of
-    standard RISC OS apps.
-  - Message_DataOpen template mode (est_size == -2) is supported (it's not
-    super useful because PrivateEye's not a full editor, but it is in there).
-- libpng has been upgraded to 1.6.37.
-- Fix: The GIF loader would crash if fed bad data.
-- Fix: The PNG loader had memory leaks on the failure path.
-- Fix: The rotate window thumbnail could have excessive black borders. I've
-  made a small effort to make the scaling more accurate but note that, if
-  enabled, Tinct has accuracy issues when downscaling that do cause a black
-  border.
-- Fix: When you adjust click to close a modified viewer window, the directory
-  display that's opened will now pop up only after the viewer is gone rather
-  than obscuring the discard/cancel/save dialogue.
-- Fix: The effects window scroll list selection highlight now moves along with
-  the dragged item.
-- Fix: The expand dynamic range effect no longer crashes when there's only two
-  colours in the image.
-
-### 3.10 (12 Sep 2021)
-
-- Progressive JPEGs are now passed straight through to the OS when it is
-  capable of decoding them. This requires RISC OS Select with SpriteExtend
-  1.30 or RISC OS 5 with SpriteExtend 1.73, or later.
-
-  You can still force JPEG cleaning on from the choices if you wish.
-
-- The information given on JPEGs is enhanced. The source info window will
-  show the details of the file format, being JFIF, Exif, Adobe or a
-  combination thereof; Baseline, Extended Sequential or Progressive DCT
-  coding and whether the packing was Huffman or Arithmetic.
-  
-- Hand-in-hand with the above is enhanced colourspace reporting. The
-  "Colours" field will show whether the JPEG is encoded as YCbCr (the most
-  common), YCCK (like CMYK), RGB or CMYK. It will report the number of
-  components used, and the depth of those components too.
-
-- Multiple effect windows may now be open concurrently.
-
-- PrivateEye is now cross-compiled using GCCSDK.
-
-### 3.01 (19 Jan 2018)
-
-- Made the image stepping routine (PageUp/PageDown) cope with filesystems
-  which don't return predictable context values.
+Please consult the StrongHelp manual for full
+information. It's available from the 'Help' menu
+entry on PrivateEye's icon bar icon.
 
