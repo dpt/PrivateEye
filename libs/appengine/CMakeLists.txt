@@ -127,6 +127,7 @@ set(PUBLIC_HEADERS
     graphics/drawable.h
     graphics/image-observer.h
     graphics/image.h
+    graphics/imagecache.h
     graphics/jpegtran.h
     graphics/sprite-effects.h
     graphics/thumbnail.h
@@ -321,6 +322,7 @@ set(GENERIC_SOURCES
     graphics/image/png.c
     graphics/image/recognise.c
     graphics/image/sprite.c
+    graphics/imagecache/imagecache.c
     graphics/jpegtran/jpegtran.c
     graphics/sprite-effects/blender.c
     graphics/sprite-effects/blur.c

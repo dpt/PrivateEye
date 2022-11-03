@@ -35,13 +35,13 @@
 #include "appengine/graphics/drawable.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
+#include "appengine/graphics/imagecache.h"
 #include "appengine/graphics/stage.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/wimp/window.h"
 
 #include "display.h"
 #include "globals.h"
-#include "imagecache.h"
 #include "privateeye.h"
 #include "save.h"
 #include "scale.h"
@@ -947,7 +947,7 @@ osbool viewer_load(viewer_t   *viewer,
 
   /* Is it in the cache? */
 
-  err = imagecache_get(file_name, load, exec, &image);
+  err = imagecache_get(GLOBALS.cache, file_name, load, exec, &image);
   if (err)
     goto Failure;
 
@@ -1047,7 +1047,7 @@ void viewer_unload(viewer_t *viewer)
   drawable_destroy(viewer->drawable);
   viewer->drawable = NULL;
 
-  imagecache_destroy(viewer->image);
+  imagecache_dispose(GLOBALS.cache, viewer->image);
   viewer->image = NULL;
 }
 

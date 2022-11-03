@@ -11,6 +11,7 @@
 
 #include "databases/tag-db.h"
 
+#include "appengine/graphics/imagecache.h"
 #include "appengine/wimp/dialogue.h"
 
 #include "privateeye.h"
@@ -60,6 +61,8 @@ extern struct PrivateEyeGlobals
   wimp_version_no  wimp_version;
 
   viewer_t        *dragging_viewer;
+
+  imagecache_t    *cache;
 }
 GLOBALS;
 

@@ -49,6 +49,7 @@
 #include "appengine/base/oserror.h"
 #include "appengine/base/strings.h"
 #include "appengine/gadgets/effects.h"
+#include "appengine/graphics/imagecache.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/vdu/sprite.h"
 #include "appengine/wimp/event.h"
@@ -64,7 +65,6 @@
 #include "globals.h"
 #include "iconbar.h"
 #include "iconnames.h"          /* generated */
-#include "imagecache.h"
 #include "menunames.h"          /* not generated */
 #include "privateeye.h"
 #include "quit.h"
@@ -416,6 +416,12 @@ int main(int argc, char *argv[])
 
   register_event_handlers(1);
 
+  err = imagecache_create(GLOBALS.choices.cache.size * 1024,
+                         128,
+                        &GLOBALS.cache);
+  if (err)
+    goto Failure;
+
   /* Process command line arguments */
   while (--argc)
   {
@@ -476,7 +482,7 @@ int main(int argc, char *argv[])
 
   viewer_close_all();
 
-  imagecache_empty();
+  imagecache_destroy(GLOBALS.cache);
 
   register_event_handlers(0);
 

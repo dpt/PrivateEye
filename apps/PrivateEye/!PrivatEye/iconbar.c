@@ -10,6 +10,7 @@
 #include "appengine/types.h"
 #include "appengine/app/choices.h"
 #include "appengine/gadgets/iconbar.h"
+#include "appengine/graphics/imagecache.h"
 #include "appengine/wimp/menu.h"
 
 #include "canvas.h"
@@ -17,7 +18,6 @@
 #include "globals.h"
 #include "iconbar.h"
 #include "iconnames.h"          /* generated */
-#include "imagecache.h"
 #include "menunames.h"          /* not generated */
 #include "quit.h"
 #include "tags-search.h"
@@ -78,7 +78,7 @@ static void selected(const wimp_selection *selection, void *opaque)
     break;
 
   case ICONBAR_EMPTYCACHE:
-    imagecache_empty();
+    imagecache_empty(GLOBALS.cache);
     break;
 
 #ifdef EYE_TAGS
@@ -140,7 +140,7 @@ static void update(wimp_menu *menu, void *opaque)
   /* Shade the "Empty cache" entry if the cache is already empty */
   menu_set_icon_flags(menu,
                       ICONBAR_EMPTYCACHE,
-                     (imagecache_get_count() > 0) ? 0 : wimp_ICON_SHADED,
+                     (imagecache_get_count(GLOBALS.cache) > 0) ? 0 : wimp_ICON_SHADED,
                       wimp_ICON_SHADED);
 }
 
