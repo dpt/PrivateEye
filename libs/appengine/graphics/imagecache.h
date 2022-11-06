@@ -21,11 +21,12 @@ result_t imagecache_create(size_t         maxsize,
 void imagecache_destroy(imagecache_t *cache);
 
 // get an image, via the cache
-result_t imagecache_get(imagecache_t *cache,
-                        const char   *file_name,
-                        bits          load,
-                        bits          exec,
-                        image_t     **image);
+result_t imagecache_get(imagecache_t  *cache,
+                  const image_choices *choices,
+                  const char          *file_name,
+                        bits           load,
+                        bits           exec,
+                        image_t      **image);
 
 // image can be disposed
 result_t imagecache_dispose(imagecache_t *cache,

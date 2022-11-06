@@ -26,7 +26,7 @@
 
 #include "artworks.h"
 
-static int artworks_load(image_choices *choices, image_t *image)
+static int artworks_load(const image_choices *choices, image_t *image)
 {
   static osbool   have_renderer = FALSE;
 
@@ -129,7 +129,7 @@ static int artworks_unload(image_t *image)
   return FALSE; /* success */
 }
 
-void artworks_export_methods(image_choices *choices, image_t *image)
+void artworks_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

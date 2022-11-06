@@ -37,7 +37,7 @@ static result_t sprite_populate_info(image_t *image, os_mode mode)
   return result_OK;
 }
 
-static int sprite_load(image_choices *choices, image_t *image)
+static int sprite_load(const image_choices *choices, image_t *image)
 {
   result_t           rc;
   int                file_size;
@@ -150,7 +150,7 @@ NoMem:
   return TRUE; /* failure */
 }
 
-void sprite_export_methods(image_choices *choices, image_t *image)
+void sprite_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

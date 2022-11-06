@@ -67,11 +67,12 @@ void imagecache_destroy(imagecache_t *cache)
   free(cache);
 }
 
-result_t imagecache_get(imagecache_t *cache,
-                        const char   *file_name,
-                        bits          load,
-                        bits          exec,
-                        image_t     **image)
+result_t imagecache_get(imagecache_t  *cache,
+                  const image_choices *choices,
+                  const char          *file_name,
+                        bits           load,
+                        bits           exec,
+                        image_t      **image)
 {
   int      i;
   image_t *ci = NULL;
@@ -89,11 +90,21 @@ result_t imagecache_get(imagecache_t *cache,
 
   if (i == cache->nentries)
   {
-    /* no, it's not in the cache */
-
-    // TODO: Make it!
+    image_t *newimage = NULL;
 
     *image = NULL;
+
+    /* no, it's not in the cache */
+
+    newimage = image_create_from_file(choices,
+                                      file_name,
+                                      (load >> 8) & 0xfff);
+    if (newimage == NULL)
+    {
+      // assume OOM
+
+
+    }
   }
   else
   {

@@ -95,25 +95,13 @@ typedef struct T T;
 
 struct image_methods
 {
-  int (*load)     (image_choices *choices,
-                   T             *image);
-
-  int (*save)     (image_choices *choices,
-                   T             *image,
-                   const char    *file_name);
-
-  int (*unload)   (T             *image);
-
-  int (*histogram)(T             *image);
-
-  int (*rotate)   (image_choices *choices,
-                   T             *image,
-                   int            angle);
-
-  int (*get_meta) (T             *image,
-                   ntree_t      **data);
-
-  int (*to_spr)   (T             *image);
+  int (*load)(const image_choices *choices, T *image);
+  int (*save)(const image_choices *choices, T *image, const char *file_name);
+  int (*unload)(T *image);
+  int (*histogram)(T *image);
+  int (*rotate)(const image_choices *choices, T *image, int angle);
+  int (*get_meta)(T *image, ntree_t **data);
+  int (*to_spr)(T *image);
 };
 
 typedef struct image_methods image_methods;
@@ -241,10 +229,9 @@ struct T
 T *image_create(void);
 
 /* Creates and loads the specified filename. */
-T *image_create_from_file(image_choices *choices,
-                          const char    *file_name,
-                          bits           file_type,
-                          osbool         unsafe);
+T *image_create_from_file(const image_choices *choices,
+                          const char          *file_name,
+                          bits                 file_type);
 
 void image_destroy(T *image);
 

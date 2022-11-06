@@ -10,8 +10,8 @@
 
 #include "appengine/graphics/image.h"
 
-osbool loader_export_methods(image_choices *choices,
-                             image_t       *image,
-                             bits           file_type);
+osbool loader_export_methods(const image_choices *choices,
+                             image_t             *image,
+                             bits                 file_type);
 
 #endif /* IMAGE_FORMATS_H */

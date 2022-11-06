@@ -176,10 +176,9 @@ image_t *image_create(void)
   return i;
 }
 
-image_t *image_create_from_file(image_choices *choices,
-                          const char          *file_name,
-                                bits           file_type,
-                                osbool         unsafe)
+image_t *image_create_from_file(const image_choices *choices,
+                                const char          *file_name,
+                                      bits           file_type)
 {
   image_t *i;
 
@@ -196,9 +195,6 @@ image_t *image_create_from_file(image_choices *choices,
 
   if (i->methods.load(choices, i))
     goto Failure;
-
-  if (unsafe)
-    i->file_name[0] = '\0';
 
   return i;
 

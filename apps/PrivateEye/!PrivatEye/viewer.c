@@ -922,12 +922,12 @@ Failure:
  * associated with a previous image.
  */
 
-osbool viewer_load(viewer_t   *viewer,
-                   const char *file_name,
-                   bits        load,
-                   bits        exec,
-                   osbool      unsafe,
-                   osbool      template)
+osbool viewer_load(viewer_t *viewer,
+             const char     *file_name,
+                   bits      load,
+                   bits      exec,
+                   osbool    unsafe,
+                   osbool    template)
 {
   result_t    err;
   image_t    *image = NULL;
@@ -947,7 +947,12 @@ osbool viewer_load(viewer_t   *viewer,
 
   /* Is it in the cache? */
 
-  err = imagecache_get(GLOBALS.cache, file_name, load, exec, &image);
+  err = imagecache_get(GLOBALS.cache,
+                      &GLOBALS.choices.image,
+                       file_name,
+                       load,
+                       exec,
+                      &image);
   if (err)
     goto Failure;
 
@@ -957,8 +962,7 @@ osbool viewer_load(viewer_t   *viewer,
 
     image = image_create_from_file(&GLOBALS.choices.image,
                                     file_name,
-                                    (load >> 8) & 0xfff,
-                                    unsafe);
+                                    (load >> 8) & 0xfff);
     if (image == NULL)
     {
       err = result_OOM;
@@ -967,7 +971,10 @@ osbool viewer_load(viewer_t   *viewer,
   }
 
   if (unsafe)
+  {
+    image->file_name[0] = '\0';
     image->flags |= image_FLAG_MODIFIED;
+  }
 
   if (template)
     strcpy(image->file_name, str_leaf(file_name));

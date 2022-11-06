@@ -27,7 +27,7 @@
 
 #include "drawfile.h"
 
-static int drawfile_load(image_choices *choices, image_t *image)
+static int drawfile_load(const image_choices *choices, image_t *image)
 {
   drawfile_diagram *data;
   int               file_size;
@@ -92,7 +92,7 @@ static int drawfile_unload(image_t *image)
   return FALSE; /* success */
 }
 
-void drawfile_export_methods(image_choices *choices, image_t *image)
+void drawfile_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

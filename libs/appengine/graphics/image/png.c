@@ -62,7 +62,7 @@ static void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
   oserror_report(0, "error.png.warning", warning_msg);
 }
 
-static int png_load(image_choices *choices, image_t *image)
+static int png_load(const image_choices *choices, image_t *image)
 {
   int                source_xdpi, source_ydpi;
   int                source_bpp;
@@ -540,7 +540,7 @@ NoMem:
   goto CleanUp;
 }
 
-void png_export_methods(image_choices *choices, image_t *image)
+void png_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

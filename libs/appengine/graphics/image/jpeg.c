@@ -106,7 +106,7 @@ static result_t jpeg_populate_info(image_t *image, const jpeg_info_t *info)
   return result_OK;
 }
 
-static int jpeg_load(image_choices *choices, image_t *image)
+static int jpeg_load(const image_choices *choices, image_t *image)
 {
   result_t        rc;
   os_error       *e;
@@ -247,7 +247,7 @@ static int jpeg_unload(image_t *image)
   return FALSE; /* success */
 }
 
-static int jpeg_rotate(image_choices *choices, image_t *image, int angle)
+static int jpeg_rotate(const image_choices *choices, image_t *image, int angle)
 {
   jpegtran_transform_type    args;
   int              rc;
@@ -459,7 +459,7 @@ NoMem:
   return TRUE; /* failure */
 }
 
-void jpeg_export_methods(image_choices *choices, image_t *image)
+void jpeg_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {
