@@ -176,11 +176,14 @@ image_t *image_create(void)
   return i;
 }
 
-image_t *image_create_from_file(const image_choices *choices,
+result_t image_create_from_file(const image_choices *choices,
                                 const char          *file_name,
-                                      bits           file_type)
+                                      bits           file_type,
+                                      image_t      **new_image)
 {
   image_t *i;
+
+  *new_image = NULL;
 
   i = image_create();
   if (i == NULL)
@@ -196,14 +199,16 @@ image_t *image_create_from_file(const image_choices *choices,
   if (i->methods.load(choices, i))
     goto Failure;
 
-  return i;
+  *new_image = i;
+
+  return result_OK;
 
 
 Failure:
 
   image_destroy(i);
 
-  return NULL;
+  return result_OOM; // not accurate enough
 }
 
 /* ----------------------------------------------------------------------- */

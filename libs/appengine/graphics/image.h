@@ -229,9 +229,10 @@ struct T
 T *image_create(void);
 
 /* Creates and loads the specified filename. */
-T *image_create_from_file(const image_choices *choices,
-                          const char          *file_name,
-                          bits                 file_type);
+result_t image_create_from_file(const image_choices *choices,
+                                const char          *file_name,
+                                      bits           file_type,
+                                      T            **new_image);
 
 void image_destroy(T *image);
 

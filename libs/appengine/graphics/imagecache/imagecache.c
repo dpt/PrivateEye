@@ -3,6 +3,9 @@
  * Purpose: Image cache
  * ----------------------------------------------------------------------- */
 
+// caches all images requested
+// disposed/non-open images are subject to a size limit and eviction
+
 /* TODO
  *
  * - What should we do about changes to choices, e.g. sprite->jpeg
@@ -23,6 +26,8 @@
 
 #include "appengine/graphics/imagecache.h"
 
+/* ----------------------------------------------------------------------- */
+
 typedef struct entry
 {
   image_t *image;
@@ -31,12 +36,13 @@ entry_t;
 
 struct imagecache
 {
-  size_t  used;     /* in bytes */
-  size_t  maxsize;  /* in bytes */
-  int     nentries; /* number of used entries */
+  size_t  maxsize;          /* max 'idle' bytes */
+  int     nentries;         /* number of used entries */
   int     maxentries;
-  entry_t entries[UNKNOWN];  /* stored in age order: oldest come first */
+  entry_t entries[UNKNOWN]; /* stored in age order: oldest come first */
 };
+
+/* ----------------------------------------------------------------------- */
 
 result_t imagecache_create(size_t         maxsize,
                            size_t         maxentries,
@@ -46,11 +52,12 @@ result_t imagecache_create(size_t         maxsize,
 
   *newcache = NULL;
 
-  cache = calloc(offsetof(imagecache_t, entries) + maxentries * sizeof(cache->entries[0]), 1);
+  cache = malloc(offsetof(imagecache_t, entries) + maxentries * sizeof(cache->entries[0]));
   if (cache == NULL)
     return result_OOM;
 
   cache->maxsize    = maxsize;
+  cache->nentries   = 0;
   cache->maxentries = maxentries;
 
   *newcache = cache;
@@ -67,78 +74,33 @@ void imagecache_destroy(imagecache_t *cache)
   free(cache);
 }
 
-result_t imagecache_get(imagecache_t  *cache,
-                  const image_choices *choices,
-                  const char          *file_name,
-                        bits           load,
-                        bits           exec,
-                        image_t      **image)
+/* ----------------------------------------------------------------------- */
+
+/* Return the total number of evictable bytes. */
+static int evictable_bytes(const imagecache_t *cache)
 {
-  int      i;
-  image_t *ci = NULL;
+  size_t total;
+  int    i;
 
-  /* is the file already in our cache? */
+  total = 0;
   for (i = 0; i < cache->nentries; i++)
-  {
-    ci = cache->entries[i].image;
-    if (ci &&
-        strcmp(ci->file_name, file_name) == 0 &&
-        ci->source.load == load &&
-        ci->source.exec == exec)
-      break;
-  }
-
-  if (i == cache->nentries)
-  {
-    image_t *newimage = NULL;
-
-    *image = NULL;
-
-    /* no, it's not in the cache */
-
-    newimage = image_create_from_file(choices,
-                                      file_name,
-                                      (load >> 8) & 0xfff);
-    if (newimage == NULL)
-    {
-      // assume OOM
-
-
-    }
-  }
-  else
-  {
-    /* yes, it's in the cache */
-
-    array_delete_element(cache->entries,
-                         sizeof(cache->entries[0]),
-                         cache->nentries,
-                         i);
-
-    cache->nentries -= 1;
-    cache->used     -= ci->display.file_size;
-
-    image_addref(ci);
-
-    /* tell any observers that we're revealing the image */
-    image_reveal(ci);
-
-    *image = ci;
-  }
-
-  return result_OK;
+    if (cache->entries[i].image->refcount == 0)
+      total += cache->entries[i].image->display.file_size;
+  return total;
 }
 
-static int evict_one_image(imagecache_t *cache)
+/* Evict the oldest evictable entry to make space. */
+static int evict_oldest_image(imagecache_t *cache)
 {
   int i;
-  int t;
 
-  i = 0; /* oldest entry */
+  /* Proceed oldest..newest */
+  for (i = 0; i < cache->nentries; i++)
+    if (cache->entries[i].image->refcount == 0)
+      break;
 
-  t = cache->entries[i].image->display.file_size;
-
-  /* evict the oldest entry to make space */
+  if (i == cache->nentries)
+    return 1; /* failed to find an evictable entry */
 
   image_destroy(cache->entries[i].image);
 
@@ -146,11 +108,9 @@ static int evict_one_image(imagecache_t *cache)
                        sizeof(cache->entries[0]),
                        cache->nentries,
                        i);
+  cache->nentries--;
 
-  cache->nentries -= 1;
-  cache->used     -= t;
-
-  return 0;
+  return 0; /* evicted one entry */
 }
 
 /* Evicts enough entries to satisfy 'need' bytes. */
@@ -188,9 +148,90 @@ static int evict_nbytes(imagecache_t *cache, size_t need)
                         i - 1);
 
   cache->nentries -= i;
-  cache->used     -= t;
 
   return 0;
+}
+
+/* ----------------------------------------------------------------------- */
+
+result_t imagecache_get(imagecache_t  *cache,
+                  const image_choices *choices,
+                  const char          *file_name,
+                        bits           load,
+                        bits           exec,
+                        image_t      **image)
+{
+  result_t rc;
+  int      i;
+  image_t *cached_image = NULL;
+  image_t *new_image    = NULL;
+
+  *image = NULL;
+
+  /* is the file already in our cache? */
+  for (i = 0; i < cache->nentries; i++)
+  {
+    cached_image = cache->entries[i].image;
+    if (cached_image &&
+        strcmp(cached_image->file_name, file_name) == 0 &&
+        cached_image->source.load == load &&
+        cached_image->source.exec == exec)
+      break;
+  }
+
+  if (i < cache->nentries)
+  {
+    /* yes, it's in the cache */
+
+    /* make cached image the youngest */
+    array_delete_element(cache->entries,
+                         sizeof(cache->entries[0]),
+                         cache->nentries,
+                         i);
+    cache->entries[cache->nentries - 1].image = cached_image;
+  
+    image_addref(cached_image);
+
+    /* tell any observers that we're revealing the image */
+    // perhaps only when refs goes 0 -> 1 ?
+    image_reveal(cached_image);
+
+    *image = cached_image;
+
+    return result_OK;
+  }
+
+  /* no, it's not in the cache - create it and insert */
+
+  for (;;)
+  {
+    /* this is a bit of a headbanger - will repeatedly evict and retry */
+
+    rc = image_create_from_file(choices, file_name, (load >> 8) & 0xfff, &new_image);
+    if (rc)
+    {
+      if (rc != result_OOM)
+        return rc; /* it's a proper error so bail */
+
+      if (cache->nentries == 0)
+        return result_OOM; /* nothing left to discard - return OOM */
+
+      /* evict and retry */
+      evict_oldest_image(cache);
+    }
+    else
+    {
+      assert(cache->nentries < cache->maxentries); // TODO redo properly
+
+      /* insert at the end (youngest entry) */
+      cache->entries[cache->nentries].image = new_image;
+      cache->nentries++;
+
+      *image = new_image;
+
+      return result_OK;
+    }
+  }
 }
 
 result_t imagecache_dispose(imagecache_t *cache, image_t *image)
@@ -198,31 +239,32 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
   size_t need;
   size_t free;
 
-  need = image->display.file_size;
-
-  /* Don't bother to insert if the image size is larger than the cache. That
-   * would just cause all entries to be evicted in the attempt to find enough
+  /* Don't retain the image if the size is larger than the cache. That would
+   * just cause all entries to be evicted in the attempt to find enough
    * space. Finally it would fail anyway.
    */
+  need = image->display.file_size;
   if (need > cache->maxsize)
-    return result_OK; /* not inserted */
+    goto destroy;
 
-  free = cache->maxsize - cache->used;
+  /* don't retain modified images */
+  if (image->flags & image_FLAG_MODIFIED)
+    goto destroy;
 
+  free = cache->maxsize - evictable_bytes(cache);
   if (need > free) /* enough free space? */
     evict_nbytes(cache, need - free); /* no - need to evict */
 
   /* there's enough free space now */
 
-  if (cache->nentries == cache->maxentries) /* a free cache entry? */
-    evict_one_image(cache); /* no - force one eviction */
+  if (cache->nentries == cache->maxentries) /* is there a free cache entry? */
+    evict_oldest_image(cache); /* no - force one eviction */
 
   /* there's a free cache entry now */
 
   /* insert at the end (youngest entry) */
   cache->entries[cache->nentries].image = image;
   cache->nentries++;
-  cache->used += need;
 
   image_deleteref(image);
 
@@ -230,7 +272,14 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
   image_hide(image);
 
   return result_OK; /* inserted */
+
+
+destroy:
+  image_destroy(image);
+  return result_OK; /* not inserted */
 }
+
+/* ----------------------------------------------------------------------- */
 
 void imagecache_empty(imagecache_t *cache)
 {
@@ -238,15 +287,14 @@ void imagecache_empty(imagecache_t *cache)
 
   hourglass_on();
 
-  /* The entries are stored in age order, so oldest comes first. If we free
-   * in reverse order we may speed up the emptying process by avoiding the
-   * need to repeatedly shift the heap down. */
+  /* It's an LRU cache with oldest entries stored first. If we free in
+   * reverse order we may speed up the emptying process by avoiding the need
+   * to repeatedly shift the flex heap down. */
 
   for (i = cache->nentries - 1; i >= 0; i--)
     image_destroy(cache->entries[i].image);
 
   cache->nentries = 0;
-  cache->used     = 0;
 
   hourglass_off();
 }
@@ -256,29 +304,3 @@ int imagecache_get_count(imagecache_t *cache)
   return cache->nentries;
 }
 
-// /* This is like image_destroy but uses the refcount to see whether to cache
-//  * the image. */
-// void imagecache_put(imagecache_t *cache, image_t *image)
-// {
-//   int inserted = 0;
-// 
-//   /* destroy modified images */
-//   if (image->flags & image_FLAG_MODIFIED)
-//     goto destroy;
-// 
-//   /* if there are (will be) no references left to it,
-//    * then it's eligible to be cached. */
-//   if (image->refcount == 1)
-//     inserted = imagecache_dispose(cache, image);
-// 
-//   /* otherwise it might not have fit in the cache */
-//   if (!inserted)
-//     goto destroy;
-// 
-//   return;
-// 
-// 
-// destroy:
-// 
-//   image_destroy(image);
-// }

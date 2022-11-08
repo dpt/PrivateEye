@@ -956,20 +956,6 @@ osbool viewer_load(viewer_t *viewer,
   if (err)
     goto Failure;
 
-  if (image == NULL)
-  {
-    /* It's not in the cache. */
-
-    image = image_create_from_file(&GLOBALS.choices.image,
-                                    file_name,
-                                    (load >> 8) & 0xfff);
-    if (image == NULL)
-    {
-      err = result_OOM;
-      goto Failure;
-    }
-  }
-
   if (unsafe)
   {
     image->file_name[0] = '\0';
