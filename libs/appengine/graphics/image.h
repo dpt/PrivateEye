@@ -95,7 +95,7 @@ typedef struct T T;
 
 struct image_methods
 {
-  int (*load)(const image_choices *choices, T *image);
+  result_t (*load)(const image_choices *choices, T *image);
   int (*save)(const image_choices *choices, T *image, const char *file_name);
   int (*unload)(T *image);
   int (*histogram)(T *image);

@@ -27,7 +27,7 @@
 
 #include "drawfile.h"
 
-static int drawfile_load(const image_choices *choices, image_t *image)
+static result_t drawfile_load(const image_choices *choices, image_t *image)
 {
   drawfile_diagram *data;
   int               file_size;
@@ -41,10 +41,7 @@ static int drawfile_load(const image_choices *choices, image_t *image)
                       NULL);
 
   if (flex_alloc((flex_ptr) &data, file_size) == 0)
-  {
-    oserror_report(0, "error.no.mem");
-    return TRUE; /* failure */
-  }
+    return result_OOM;
 
   osfile_load_stamped_no_path(image->file_name,
                      (byte *) data,
@@ -82,7 +79,7 @@ static int drawfile_load(const image_choices *choices, image_t *image)
   image->scale.min = 1;
   image->scale.max = 800;
 
-  return FALSE; /* success */
+  return result_OK;
 }
 
 static int drawfile_unload(image_t *image)

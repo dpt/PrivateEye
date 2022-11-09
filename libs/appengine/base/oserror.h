@@ -24,7 +24,7 @@ os_error *oserror_check(os_error   *e,
 /* ----------------------------------------------------------------------- */
 
 void oserror_report(int, const char *, ...);
-void oserror_report_block(os_error *error);
+void oserror_report_block(const os_error *error);
 
 /* ----------------------------------------------------------------------- */
 

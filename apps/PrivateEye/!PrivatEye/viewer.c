@@ -929,7 +929,7 @@ osbool viewer_load(viewer_t *viewer,
                    osbool    unsafe,
                    osbool    template)
 {
-  result_t    err;
+  result_t    rc;
   image_t    *image = NULL;
   drawable_t *drawable;
   osbool      r;
@@ -947,13 +947,13 @@ osbool viewer_load(viewer_t *viewer,
 
   /* Is it in the cache? */
 
-  err = imagecache_get(GLOBALS.cache,
-                      &GLOBALS.choices.image,
-                       file_name,
-                       load,
-                       exec,
-                      &image);
-  if (err)
+  rc = imagecache_get(GLOBALS.cache,
+                     &GLOBALS.choices.image,
+                      file_name,
+                      load,
+                      exec,
+                     &image);
+  if (rc)
     goto Failure;
 
   if (unsafe)
@@ -965,8 +965,8 @@ osbool viewer_load(viewer_t *viewer,
   if (template)
     strcpy(image->file_name, str_leaf(file_name));
 
-  err = drawable_create(image, &drawable);
-  if (err)
+  rc = drawable_create(image, &drawable);
+  if (rc)
     goto Failure;
 
   viewer->image    = image;
@@ -992,6 +992,8 @@ osbool viewer_load(viewer_t *viewer,
   r = FALSE; /* success */
 
 Exit:
+
+  result_report(rc);
 
   hourglass_off();
 

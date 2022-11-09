@@ -106,7 +106,7 @@ static result_t jpeg_populate_info(image_t *image, const jpeg_info_t *info)
   return result_OK;
 }
 
-static int jpeg_load(const image_choices *choices, image_t *image)
+static result_t jpeg_load(const image_choices *choices, image_t *image)
 {
   result_t        rc;
   os_error       *e;
@@ -130,7 +130,7 @@ static int jpeg_load(const image_choices *choices, image_t *image)
   file_size = image->source.file_size;
 
   if (flex_alloc((flex_ptr) &data, file_size) == 0)
-    goto NoMem;
+    return result_OOM;
 
   e = EC(xosfile_load_stamped_no_path(image->file_name,
                                       data,
@@ -152,8 +152,7 @@ static int jpeg_load(const image_choices *choices, image_t *image)
       {
         flex_free((flex_ptr) &data);
         jpegtran_discard_messages();
-        oserror_report(0, "error.jpeg.transcode", jpegtran_get_messages());
-        return TRUE; /* failure */
+        return oserror_build(0, "error.jpeg.transcode", jpegtran_get_messages());
       }
 
       flex_free((flex_ptr) &data);
@@ -175,8 +174,7 @@ static int jpeg_load(const image_choices *choices, image_t *image)
   if (e)
   {
     flex_free((flex_ptr) &data);
-    oserror_report_block(e);
-    return TRUE; /* failure */
+    return oserror_stash(e);
   }
 
   if (flags & jpeg_INFO_MONOCHROME)
@@ -197,8 +195,7 @@ static int jpeg_load(const image_choices *choices, image_t *image)
   if (rc)
   {
     flex_free((flex_ptr) &data);
-    result_report(rc);
-    return TRUE; /* failure */
+    return rc;
   }
 
 
@@ -231,12 +228,7 @@ static int jpeg_load(const image_choices *choices, image_t *image)
   if (choices->jpeg.sprite)
     return jpeg_to_spr_common(image);
 
-  return FALSE; /* success */
-
-
-NoMem:
-  oserror_report(0, "error.no.mem");
-  return TRUE; /* failure */
+  return result_OK;
 }
 
 static int jpeg_unload(image_t *image)

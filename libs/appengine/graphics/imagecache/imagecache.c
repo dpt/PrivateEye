@@ -269,7 +269,7 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
   free = cache->maxsize - evictable_bytes(cache);
   if (need > free) /* enough free space? */
     (void) evict_nbytes(cache, need - free); /* no - need to evict */
-  // if < 1 then destroy
+  // if < 1 then destroy?
 
   /* there's enough free space now */
 

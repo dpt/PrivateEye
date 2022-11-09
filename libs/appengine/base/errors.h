@@ -6,6 +6,8 @@
 #ifndef APPENGINE_ERRORS_H
 #define APPENGINE_ERRORS_H
 
+#include "oslib/os.h"
+
 /* AppEngine result codes extend DPTLib's result_t. */
 
 #include "base/result.h"
@@ -57,6 +59,11 @@
 
 /* report an error using Wimp_ReportError */
 void result_report(result_t err);
+
+result_t oserror_stash(const os_error *e);
+result_t oserror_build(int errnum, const char *format_token, ...);
+const os_error *oserror_last(void);
+void oserror_clear(void);
 
 /* throw a fatal error */
 void error_fatal(const char *token);
