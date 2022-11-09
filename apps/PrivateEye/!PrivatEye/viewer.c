@@ -1000,7 +1000,7 @@ Exit:
 
 Failure:
 
-  image_destroy(image);
+  imagecache_dispose(GLOBALS.cache, image);
 
   r = TRUE;
 

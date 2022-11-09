@@ -116,38 +116,36 @@ static int evict_oldest_image(imagecache_t *cache)
 /* Evicts enough entries to satisfy 'need' bytes. */
 static int evict_nbytes(imagecache_t *cache, size_t need)
 {
-  size_t t;
+  size_t total;
   int    i;
-  int    j;
 
   /* sum the size of the oldest entries until a sufficient amount is
    * achieved */
 
-  t = 0;
+  total = 0;
   for (i = 0; i < cache->nentries; i++)
   {
-    t += cache->entries[i].image->display.file_size;
-    if (t >= need)
-      break;
+    image_t *image = cache->entries[i].image;
+
+    if (image->refcount > 0)
+      continue;
+
+    total += image->display.file_size;
+
+    image_destroy(image);
+   
+    array_delete_element(cache->entries,
+                         sizeof(cache->entries[0]),
+                         cache->nentries,
+                         i);
+    cache->nentries--;
+    
+    if (total >= need)
+      return 0;
   }
 
-  if (t < need)
+  if (total < need)
     return 1; /* didn't find enough space */
-
-  i++; /* make exclusive */
-
-  /* evict the oldest entries to make space */
-
-  for (j = 0; j < i; j++)
-    image_destroy(cache->entries[j].image);
-
-  array_delete_elements(cache->entries,
-                        sizeof(cache->entries[0]),
-                        cache->nentries,
-                        0,
-                        i - 1);
-
-  cache->nentries -= i;
 
   return 0;
 }
@@ -234,10 +232,30 @@ result_t imagecache_get(imagecache_t  *cache,
   }
 }
 
+// an image (which already sits in the imagecache entries) is to be disposed
+// of. decide whether to destroy it, or let it sit in the cache.
 result_t imagecache_dispose(imagecache_t *cache, image_t *image)
 {
+  int    i;
   size_t need;
   size_t free;
+  
+  for (i = 0; i < cache->nentries; i++)
+    if (cache->entries[i].image == image)
+      break;
+
+  assert(i != cache->nentries);
+
+  /* tell any observers that we're hiding the image */
+  image_hide(image);
+
+  image_deleteref(image);
+
+  /* don't retain modified images */
+  if (image->flags & image_FLAG_MODIFIED)
+    goto destroy;
+
+  // if (image->refcount == 0) { ...
 
   /* Don't retain the image if the size is larger than the cache. That would
    * just cause all entries to be evicted in the attempt to find enough
@@ -247,36 +265,34 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
   if (need > cache->maxsize)
     goto destroy;
 
-  /* don't retain modified images */
-  if (image->flags & image_FLAG_MODIFIED)
-    goto destroy;
-
+  // replace this with evict_until_nbytes_free() ?
   free = cache->maxsize - evictable_bytes(cache);
   if (need > free) /* enough free space? */
-    evict_nbytes(cache, need - free); /* no - need to evict */
+    (void) evict_nbytes(cache, need - free); /* no - need to evict */
+  // if < 1 then destroy
 
   /* there's enough free space now */
 
-  if (cache->nentries == cache->maxentries) /* is there a free cache entry? */
-    evict_oldest_image(cache); /* no - force one eviction */
+  /* make cached image the youngest */
+  array_delete_element(cache->entries,
+                       sizeof(cache->entries[0]),
+                       cache->nentries,
+                       i);
+  cache->entries[cache->nentries - 1].image = image;
 
-  /* there's a free cache entry now */
-
-  /* insert at the end (youngest entry) */
-  cache->entries[cache->nentries].image = image;
-  cache->nentries++;
-
-  image_deleteref(image);
-
-  /* tell any observers that we're hiding the image */
-  image_hide(image);
-
-  return result_OK; /* inserted */
+  return result_OK; /* retained in the cache */
 
 
 destroy:
+  array_delete_element(cache->entries,
+                       sizeof(cache->entries[0]),
+                       cache->nentries,
+                       i);
+  cache->nentries--;
+
   image_destroy(image);
-  return result_OK; /* not inserted */
+
+  return result_OK; /* not retained in the cache */
 }
 
 /* ----------------------------------------------------------------------- */
@@ -292,9 +308,16 @@ void imagecache_empty(imagecache_t *cache)
    * to repeatedly shift the flex heap down. */
 
   for (i = cache->nentries - 1; i >= 0; i--)
-    image_destroy(cache->entries[i].image);
+    if (cache->entries[i].image->refcount == 0)
+    {
+      image_destroy(cache->entries[i].image);
 
-  cache->nentries = 0;
+      array_delete_element(cache->entries,
+                           sizeof(cache->entries[0]),
+                           cache->nentries,
+                           i);
+      cache->nentries--;
+    }
 
   hourglass_off();
 }
