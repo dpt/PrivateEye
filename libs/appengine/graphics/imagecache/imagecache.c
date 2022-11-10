@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "oslib/hourglass.h"
 
@@ -60,6 +61,8 @@ result_t imagecache_create(size_t         maxsize,
   cache->nentries   = 0;
   cache->maxentries = maxentries;
 
+  fprintf(stderr, "cache: maxsize=%d maxentries=%d\n", maxsize, maxentries);
+
   *newcache = cache;
 
   return result_OK;
@@ -71,6 +74,7 @@ void imagecache_destroy(imagecache_t *cache)
     return;
   
   imagecache_empty(cache);
+  assert(cache->nentries == 0);
   free(cache);
 }
 
@@ -102,6 +106,8 @@ static int evict_oldest_image(imagecache_t *cache)
   if (i == cache->nentries)
     return 1; /* failed to find an evictable entry */
 
+  assert(cache->entries[i].image->refcount == 0);
+
   image_destroy(cache->entries[i].image);
 
   array_delete_element(cache->entries,
@@ -109,6 +115,8 @@ static int evict_oldest_image(imagecache_t *cache)
                        cache->nentries,
                        i);
   cache->nentries--;
+  assert(cache->nentries >= 0);
+  assert(cache->nentries <= cache->maxentries);
 
   return 0; /* evicted one entry */
 }
@@ -118,6 +126,8 @@ static int evict_nbytes(imagecache_t *cache, size_t need)
 {
   size_t total;
   int    i;
+
+  fprintf(stderr, "cache: evicting %d bytes\n", need);
 
   /* sum the size of the oldest entries until a sufficient amount is
    * achieved */
@@ -139,16 +149,16 @@ static int evict_nbytes(imagecache_t *cache, size_t need)
                          cache->nentries,
                          i);
     cache->nentries--;
-    i--;
+  assert(cache->nentries >= 0);
+  assert(cache->nentries <= cache->maxentries);
+    i--; /* restart at the same just overwritten entry */
     
     if (total >= need)
       return 0;
   }
 
-  if (total < need)
-    return 1; /* didn't find enough space */
-
-  return 0;
+  fprintf(stderr, "cache: not enough\n");
+  return 1; /* didn't find enough space */
 }
 
 /* ----------------------------------------------------------------------- */
@@ -171,8 +181,8 @@ result_t imagecache_get(imagecache_t  *cache,
   for (i = 0; i < cache->nentries; i++)
   {
     cached_image = cache->entries[i].image;
-    if (cached_image &&
-        strcmp(cached_image->file_name, file_name) == 0 &&
+    assert(cached_image);
+    if (strcmp(cached_image->file_name, file_name) == 0 &&
         cached_image->source.load == load &&
         cached_image->source.exec == exec)
       break;
@@ -182,12 +192,17 @@ result_t imagecache_get(imagecache_t  *cache,
   {
     /* yes, it's in the cache */
 
-    /* make cached image the youngest */
-    array_delete_element(cache->entries,
-                         sizeof(cache->entries[0]),
-                         cache->nentries,
-                         i);
-    cache->entries[cache->nentries - 1].image = cached_image;
+    fprintf(stderr, "cache: found %p in cache\n", cached_image);
+
+    if (i < cache->nentries - 1)
+    {
+      /* make cached image the youngest */
+      array_delete_element(cache->entries,
+                           sizeof(cache->entries[0]),
+                           cache->nentries,
+                           i);
+      cache->entries[cache->nentries - 1].image = cached_image;
+    }
   
     image_addref(cached_image);
 
@@ -202,19 +217,24 @@ result_t imagecache_get(imagecache_t  *cache,
 
   /* no, it's not in the cache - create it and insert */
 
+  fprintf(stderr, "cache: not in cache\n");
   for (;;)
   {
-    /* this is a bit of a headbanger - will repeatedly evict and retry */
+    /* this is a bit of a headbanger - will repeatedly evict and retry since
+     * we don't know how much memory the image will need in advance. */
 
     rc = image_create_from_file(choices, file_name, (load >> 8) & 0xfff, &new_image);
     if (rc)
     {
+  fprintf(stderr, "cache: image errored\n");
       if (rc != result_OOM)
         return rc; /* it's a proper error so bail */
+  fprintf(stderr, "cache: image OOM\n");
 
       if (cache->nentries == 0)
         return result_OOM; /* nothing left to discard - return OOM */
 
+  fprintf(stderr, "cache: evict and retry\n");
       /* evict and retry */
       evict_oldest_image(cache);
     }
@@ -225,8 +245,11 @@ result_t imagecache_get(imagecache_t  *cache,
       /* insert at the end (youngest entry) */
       cache->entries[cache->nentries].image = new_image;
       cache->nentries++;
+  assert(cache->nentries >= 0);
+  assert(cache->nentries <= cache->maxentries);
 
       *image = new_image;
+  fprintf(stderr, "cache: created\n");
 
       return result_OK;
     }
@@ -242,63 +265,86 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
   size_t free;
 
   if (image == NULL)
-    return;
+    return result_OK;
   
+  fprintf(stderr, "cache: dispose\n");
   for (i = 0; i < cache->nentries; i++)
     if (cache->entries[i].image == image)
       break;
 
-  assert(i != cache->nentries);
+  // tried to dispose an image not claimed via the cache in the first place
+  if (i == cache->nentries)
+    return result_NOT_FOUND; /* unknown image */
 
-  /* don't retain modified images */
-  if (image->flags & image_FLAG_MODIFIED)
-    goto destroy;
-
-  // if (image->refcount == 0) { ...
-
-  /* Don't retain the image if the size is larger than the cache. That would
-   * just cause all entries to be evicted in the attempt to find enough
-   * space. Finally it would fail anyway.
-   */
   need = image->display.file_size;
-  if (need > cache->maxsize)
-    goto destroy;
+  if ((image->flags & image_FLAG_MODIFIED) || (need > cache->maxsize))
+  {
+    int refcount;
 
-  // replace this with evict_until_nbytes_free() ?
-  free = cache->maxsize - evictable_bytes(cache);
-  if (need > free) /* enough free space? */
-    (void) evict_nbytes(cache, need - free); /* no - need to evict */
-  // if < 1 then destroy?
+    /* Don't retain awkward images - those modified (shouldn't be cached) or
+     * too large to fit in the cache (would just cause all entries to be
+     * evicted).
+     */
 
-  /* there's enough free space now */
-  /* tell any observers that we're hiding the image */
-  image_hide(image);
-  image_deleteref(image);
+    fprintf(stderr, "cache: destroy case\n");
+  
+    /* tell any observers that we're hiding the image */
+    image_hide(image);
+    refcount = image->refcount;
+    image_destroy(image);
 
-  /* make cached image the youngest */
-  array_delete_element(cache->entries,
-                       sizeof(cache->entries[0]),
-                       cache->nentries,
-                       i);
-  cache->entries[cache->nentries - 1].image = image;
+    /* image_destroy doesn't destroy until the refcount hits zero, so it may
+     * or may not have gone away at this point. If it's still got at least
+     * one reference then we leave it in the cache. */
+  
+    if (refcount > 0)
+    {
+      /* the image went away */
+      array_delete_element(cache->entries,
+                           sizeof(cache->entries[0]),
+                           cache->nentries,
+                           i);
+      cache->nentries--;
+      assert(cache->nentries >= 0);
+      assert(cache->nentries <= cache->maxentries);
+    }
+  }
+  else
+  {
+    int refcount;
 
-  return result_OK; /* retained in the cache */
+    /* This image is eligible to be retained in the cache, which it's already
+     * in anyway. */
+  
+    /* tell any observers that we're hiding the image */
+    refcount = image->refcount;
+    if (refcount == 1)
+    {
+      /* This is changing from an in-use image to a zero refcount. Should we
+       * keep it? */
 
+      fprintf(stderr, "cache: inserting case\n");
 
-destroy:
-  /* tell any observers that we're hiding the image */
-  image_hide(image);
-  image_deleteref(image);
+      free = cache->maxsize - evictable_bytes(cache);
+      fprintf(stderr, "cache: need=%d free=%d\n", need, free);
+      if (need > free) /* enough free space? */
+        (void) evict_nbytes(cache, need - free); /* not enough - need to evict */
+   
+      /* there's enough free space now - can adjust the refcount */
+   
+      image_hide(image);
+      image_deleteref(image); // deleteref not destroy to let refcount go to zero
 
-  array_delete_element(cache->entries,
-                       sizeof(cache->entries[0]),
-                       cache->nentries,
-                       i);
-  cache->nentries--;
+      /* make cached image the youngest */
+      array_delete_element(cache->entries,
+                           sizeof(cache->entries[0]),
+                           cache->nentries,
+                           i);
+      cache->entries[cache->nentries - 1].image = image;
+    }
+  }
 
-  image_destroy(image);
-
-  return result_OK; /* not retained in the cache */
+  return result_OK;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -308,6 +354,14 @@ void imagecache_empty(imagecache_t *cache)
   int i;
 
   hourglass_on();
+
+  for (i = 0; i < cache->nentries; i++)
+  {
+    fprintf(stderr, "cache: i=%d refcount=%d size=%d\n",
+        i,
+        cache->entries[i].image->refcount,
+        cache->entries[i].image->display.file_size);
+  }
 
   /* It's an LRU cache with oldest entries stored first. If we free in
    * reverse order we may speed up the emptying process by avoiding the need
@@ -323,6 +377,8 @@ void imagecache_empty(imagecache_t *cache)
                            cache->nentries,
                            i);
       cache->nentries--;
+      assert(cache->nentries >= 0);
+      assert(cache->nentries <= cache->maxentries);
     }
 
   hourglass_off();
@@ -333,3 +389,4 @@ int imagecache_get_count(imagecache_t *cache)
   return cache->nentries;
 }
 
+// TODO check the refcount in rendering or something...
