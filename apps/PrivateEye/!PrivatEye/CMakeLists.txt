@@ -270,6 +270,7 @@ endif()
 
 option(USE_FORTIFY "Use Fortify" OFF)
 if(USE_FORTIFY)
+    target_compile_definitions(PrivateEye PRIVATE FORTIFY)
     target_link_libraries(PrivateEye PRIVATE Fortify)
 endif()
 

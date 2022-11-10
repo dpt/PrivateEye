@@ -55,7 +55,7 @@ FetchContent_MakeAvailable(DPTLib)
 # Fortify too.
 option(USE_FORTIFY "Use Fortify" OFF)
 if(USE_FORTIFY)
-    add_subdirectory(${APPENGINE_REPO_ROOT}/libs/fortify fortify-build)
+#    add_subdirectory(${APPENGINE_REPO_ROOT}/libs/fortify fortify-build)
 endif()
 
 add_library(AppEngine)
@@ -495,6 +495,7 @@ if(TARGET_RISCOS)
 endif()
 
 if(USE_FORTIFY)
+    target_compile_definitions(AppEngine PRIVATE FORTIFY)
     target_link_libraries(AppEngine PUBLIC Fortify)
 endif()
 
