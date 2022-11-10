@@ -139,6 +139,7 @@ static int evict_nbytes(imagecache_t *cache, size_t need)
                          cache->nentries,
                          i);
     cache->nentries--;
+    i--;
     
     if (total >= need)
       return 0;
@@ -239,17 +240,15 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
   int    i;
   size_t need;
   size_t free;
+
+  if (image == NULL)
+    return;
   
   for (i = 0; i < cache->nentries; i++)
     if (cache->entries[i].image == image)
       break;
 
   assert(i != cache->nentries);
-
-  /* tell any observers that we're hiding the image */
-  image_hide(image);
-
-  image_deleteref(image);
 
   /* don't retain modified images */
   if (image->flags & image_FLAG_MODIFIED)
@@ -272,6 +271,9 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
   // if < 1 then destroy?
 
   /* there's enough free space now */
+  /* tell any observers that we're hiding the image */
+  image_hide(image);
+  image_deleteref(image);
 
   /* make cached image the youngest */
   array_delete_element(cache->entries,
@@ -284,6 +286,10 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
 
 
 destroy:
+  /* tell any observers that we're hiding the image */
+  image_hide(image);
+  image_deleteref(image);
+
   array_delete_element(cache->entries,
                        sizeof(cache->entries[0]),
                        cache->nentries,
