@@ -1,10 +1,7 @@
 /* --------------------------------------------------------------------------
  *    Name: imagecache.c
- * Purpose: Image cache
+ * Purpose: Read-through image cache
  * ----------------------------------------------------------------------- */
-
-// caches all images requested
-// disposed/non-open images are subject to a size limit and eviction
 
 /* TODO
  *
@@ -37,15 +34,15 @@ entry_t;
 
 struct imagecache
 {
-  size_t  maxsize;          /* max 'idle' bytes */
+  size_t  maxidle;          /* max 'idle' bytes */
   int     nentries;         /* number of used entries */
-  int     maxentries;
+  int     maxentries;       /* max entries */
   entry_t entries[UNKNOWN]; /* stored in age order: oldest come first */
 };
 
 /* ----------------------------------------------------------------------- */
 
-result_t imagecache_create(size_t         maxsize,
+result_t imagecache_create(size_t         maxidle,
                            size_t         maxentries,
                            imagecache_t **newcache)
 {
@@ -57,11 +54,11 @@ result_t imagecache_create(size_t         maxsize,
   if (cache == NULL)
     return result_OOM;
 
-  cache->maxsize    = maxsize;
+  cache->maxidle    = maxidle;
   cache->nentries   = 0;
   cache->maxentries = maxentries;
 
-  fprintf(stderr, "cache: maxsize=%d maxentries=%d\n", maxsize, maxentries);
+  fprintf(stderr, "cache: maxidle=%d maxentries=%d\n", maxidle, maxentries);
 
   *newcache = cache;
 
@@ -277,7 +274,7 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
     return result_NOT_FOUND; /* unknown image */
 
   need = image->display.file_size;
-  if ((image->flags & image_FLAG_MODIFIED) || (need > cache->maxsize))
+  if ((image->flags & image_FLAG_MODIFIED) || (need > cache->maxidle))
   {
     int refcount;
 
@@ -325,7 +322,7 @@ result_t imagecache_dispose(imagecache_t *cache, image_t *image)
 
       fprintf(stderr, "cache: inserting case\n");
 
-      free = cache->maxsize - evictable_bytes(cache);
+      free = cache->maxidle - evictable_bytes(cache);
       fprintf(stderr, "cache: need=%d free=%d\n", need, free);
       if (need > free) /* enough free space? */
         (void) evict_nbytes(cache, need - free); /* not enough - need to evict */
@@ -389,4 +386,3 @@ int imagecache_get_count(imagecache_t *cache)
   return cache->nentries;
 }
 
-// TODO check the refcount in rendering or something...
