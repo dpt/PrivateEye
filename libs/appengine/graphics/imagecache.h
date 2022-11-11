@@ -26,6 +26,8 @@ result_t imagecache_create(size_t         maxidle,
                            imagecache_t **newcache);
 void imagecache_destroy(imagecache_t *cache);
 
+result_t imagecache_resize(imagecache_t *cache, size_t maxidle);
+
 /* Get an image from the cache. */
 result_t imagecache_get(imagecache_t  *cache,
                   const image_choices *choices,

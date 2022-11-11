@@ -154,6 +154,7 @@ set(ALL_HEADERS
     ffg.h
     globals.h
     iconbar.h
+    imgcache.h
     info.h
     keymap.h
     menunames.h
@@ -182,6 +183,7 @@ set(ALL_SOURCES
     ffg.c
     globals.c
     iconbar.c
+    imgcache.c
     info.c
     keymap.c
     quit.c

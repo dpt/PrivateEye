@@ -96,6 +96,7 @@ typedef struct
   struct
   {
     int               size; /* in kilobytes */
+    int               entries; /* max entries */
   }
   cache;
 

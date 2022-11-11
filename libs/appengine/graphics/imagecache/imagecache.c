@@ -160,6 +160,25 @@ static int evict_nbytes(imagecache_t *cache, size_t need)
 
 /* ----------------------------------------------------------------------- */
 
+result_t imagecache_resize(imagecache_t *cache, size_t newmaxidle)
+{
+  if (newmaxidle >= cache->maxidle)
+  {
+    cache->maxidle = newmaxidle;
+    return result_OK;
+  }
+
+  size_t drop = cache->maxidle - newmaxidle;
+  if (drop)
+    (void) evict_nbytes(cache, drop);
+
+  cache->maxidle = newmaxidle;
+
+  return result_OK;
+}
+
+/* ----------------------------------------------------------------------- */
+
 result_t imagecache_get(imagecache_t  *cache,
                   const image_choices *choices,
                   const char          *file_name,

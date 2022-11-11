@@ -14,6 +14,7 @@
 #include "choices-colour.h"
 #include "globals.h"
 #include "iconnames.h"
+#include "imgcache.h"
 #include "privateeye.h"
 #include "tags.h"
 #include "viewer.h"
@@ -285,6 +286,17 @@ static const choices_choice cache[] =
     choices_TYPE_NUMBER_RANGE,
     0,
     { .number_range = &cache_size } },
+
+  { "entries",
+    offsetof(eye_choices, cache.entries),
+    choices_TYPE_NUMBER_RANGE,
+    128,
+    { .number_range = NULL /* no GUI */ } },
+};
+
+static const choices_group_handlers cachechoices_handlers =
+{
+  imgcache_choices_updated
 };
 
 static const choices_group cache_group =
@@ -293,7 +305,7 @@ static const choices_group cache_group =
   NELEMS(cache),
   cache,
   choicepane_vwr,
-  NULL, /* callbacks */
+  &cachechoices_handlers
 };
 
 /* ----------------------------------------------------------------------- */
