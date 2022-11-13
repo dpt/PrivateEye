@@ -51,7 +51,8 @@ static void png_hourglass(png_structp png_ptr,
 
 static void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
 {
-  oserror_report(0, "error.png.error", error_msg);
+  (void) oserror_build(0, "error.png.error", error_msg);
+
   png_longjmp(png_ptr, 1);
 }
 
@@ -62,8 +63,9 @@ static void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
   oserror_report(0, "error.png.warning", warning_msg);
 }
 
-static int png_load(image_choices *choices, image_t *image)
+static result_t png_load(const image_choices *choices, image_t *image)
 {
+  result_t           rc = result_OK;
   int                source_xdpi, source_ydpi;
   int                source_bpp;
   bits               source_load;
@@ -108,7 +110,7 @@ static int png_load(image_choices *choices, image_t *image)
   fp = fopen(image->file_name, "rb");
   if (fp == NULL)
   {
-    oserror_report(0, "error.fopen");
+    rc = oserror_build(0, "error.fopen");
     goto CleanUp; /* failure */
   }
 
@@ -118,19 +120,22 @@ static int png_load(image_choices *choices, image_t *image)
                    (png_error_ptr) user_warning_fn);
   if (png_ptr == NULL)
   {
-    oserror_report(0, "error.png.create");
+    rc = oserror_build(0, "error.png.create");
     goto CleanUp; /* failure */
   }
 
   info_ptr = png_create_info_struct(png_ptr);
   if (info_ptr == NULL)
   {
-    oserror_report(0, "error.png.info");
+    rc = oserror_build(0, "error.png.info");
     goto CleanUp; /* failure */
   }
 
   if (setjmp(png_jmpbuf(png_ptr)))
+  {
+    rc = result_OS;
     goto CleanUp; /* failure */
+  }
 
   png_init_io(png_ptr, fp);
 
@@ -228,7 +233,7 @@ static int png_load(image_choices *choices, image_t *image)
 
     default:
       /* unknown colour type */
-      oserror_report(0, "error.png.colour");
+      rc = oserror_build(0, "error.png.colour");
       goto CleanUp; /* failure */
   }
 
@@ -512,7 +517,7 @@ static int png_load(image_choices *choices, image_t *image)
 
   hourglass_off();
 
-  return FALSE; /* success */
+  return result_OK;
 
 
 CleanUp:
@@ -530,17 +535,15 @@ CleanUp:
 
   hourglass_off();
 
-  return TRUE; /* failure */
+  return rc;
 
 
 NoMem:
-
-  oserror_report(0, "error.no.mem");
-
+  rc = result_OOM;
   goto CleanUp;
 }
 
-void png_export_methods(image_choices *choices, image_t *image)
+void png_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

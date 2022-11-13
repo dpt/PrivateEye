@@ -55,7 +55,7 @@ FetchContent_MakeAvailable(DPTLib)
 # Fortify too.
 option(USE_FORTIFY "Use Fortify" OFF)
 if(USE_FORTIFY)
-    add_subdirectory(${APPENGINE_REPO_ROOT}/libs/fortify fortify-build)
+#    add_subdirectory(${APPENGINE_REPO_ROOT}/libs/fortify fortify-build)
 endif()
 
 add_library(AppEngine)
@@ -127,6 +127,7 @@ set(PUBLIC_HEADERS
     graphics/drawable.h
     graphics/image-observer.h
     graphics/image.h
+    graphics/imagecache.h
     graphics/jpegtran.h
     graphics/sprite-effects.h
     graphics/thumbnail.h
@@ -321,6 +322,7 @@ set(GENERIC_SOURCES
     graphics/image/png.c
     graphics/image/recognise.c
     graphics/image/sprite.c
+    graphics/imagecache/imagecache.c
     graphics/jpegtran/jpegtran.c
     graphics/sprite-effects/blender.c
     graphics/sprite-effects/blur.c
@@ -493,6 +495,7 @@ if(TARGET_RISCOS)
 endif()
 
 if(USE_FORTIFY)
+    target_compile_definitions(AppEngine PRIVATE FORTIFY)
     target_link_libraries(AppEngine PUBLIC Fortify)
 endif()
 

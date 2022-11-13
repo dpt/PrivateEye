@@ -22,7 +22,7 @@
  *
  */
 
-void oserror_report_block(os_error *error)
+void oserror_report_block(const os_error *error)
 {
   os_error e;
   char     icon[13]; /* twelve characters plus terminator */

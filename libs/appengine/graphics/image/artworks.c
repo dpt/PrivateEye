@@ -26,7 +26,7 @@
 
 #include "artworks.h"
 
-static int artworks_load(image_choices *choices, image_t *image)
+static result_t artworks_load(const image_choices *choices, image_t *image)
 {
   static osbool   have_renderer = FALSE;
 
@@ -40,14 +40,9 @@ static int artworks_load(image_choices *choices, image_t *image)
   {
     /* Check the ArtWorks renderer is present. */
     if (xos_cli("LoadArtWorksModules")) /* no _kernel_system in GCC */
-    {
-      oserror_report(1, "error.no.artworks");
-      return TRUE; /* failure */
-    }
+      return oserror_build(1, "error.no.artworks");
     else
-    {
       have_renderer = TRUE;
-    }
   }
 
   osfile_read_no_path(image->file_name,
@@ -59,17 +54,13 @@ static int artworks_load(image_choices *choices, image_t *image)
   file_size = image->source.file_size;
 
   if (flex_alloc((flex_ptr) &image->image, file_size) == 0)
-  {
-    oserror_report(1, "error.no.mem");
-    return TRUE; /* failure */
-  }
+    return result_OOM;
 
   if (flex_alloc((flex_ptr) &image->details.artworks.workspace,
                   awrender_DefaultWorkSpace) == 0)
   {
-    oserror_report(1, "error.no.mem");
     flex_free((flex_ptr) &image->image);
-    return TRUE; /* failure */
+    return result_OOM;
   }
 
   osfile_load_stamped_no_path(image->file_name,
@@ -91,8 +82,7 @@ static int artworks_load(image_choices *choices, image_t *image)
   {
     flex_free((flex_ptr) &image->details.artworks.workspace);
     flex_free((flex_ptr) &image->image);
-    oserror_report_block(e);
-    return TRUE; /* failure */
+    return oserror_stash(e);
   }
 
   bbox = &image->display.dims.vc.box;
@@ -118,7 +108,7 @@ static int artworks_load(image_choices *choices, image_t *image)
   image->scale.min = 1;
   image->scale.max = 4000;
 
-  return FALSE; /* success */
+  return result_OK;
 }
 
 static int artworks_unload(image_t *image)
@@ -129,7 +119,7 @@ static int artworks_unload(image_t *image)
   return FALSE; /* success */
 }
 
-void artworks_export_methods(image_choices *choices, image_t *image)
+void artworks_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

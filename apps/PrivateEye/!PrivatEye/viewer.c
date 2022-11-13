@@ -35,13 +35,13 @@
 #include "appengine/graphics/drawable.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
+#include "appengine/graphics/imagecache.h"
 #include "appengine/graphics/stage.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/wimp/window.h"
 
 #include "display.h"
 #include "globals.h"
-#include "imagecache.h"
 #include "privateeye.h"
 #include "save.h"
 #include "scale.h"
@@ -922,14 +922,14 @@ Failure:
  * associated with a previous image.
  */
 
-osbool viewer_load(viewer_t   *viewer,
-                   const char *file_name,
-                   bits        load,
-                   bits        exec,
-                   osbool      unsafe,
-                   osbool      template)
+osbool viewer_load(viewer_t *viewer,
+             const char     *file_name,
+                   bits      load,
+                   bits      exec,
+                   osbool    unsafe,
+                   osbool    template)
 {
-  result_t    err;
+  result_t    rc;
   image_t    *image = NULL;
   drawable_t *drawable;
   osbool      r;
@@ -947,33 +947,26 @@ osbool viewer_load(viewer_t   *viewer,
 
   /* Is it in the cache? */
 
-  err = imagecache_get(file_name, load, exec, &image);
-  if (err)
+  rc = imagecache_get(GLOBALS.cache,
+                     &GLOBALS.choices.image,
+                      file_name,
+                      load,
+                      exec,
+                     &image);
+  if (rc)
     goto Failure;
 
-  if (image == NULL)
-  {
-    /* It's not in the cache. */
-
-    image = image_create_from_file(&GLOBALS.choices.image,
-                                    file_name,
-                                    (load >> 8) & 0xfff,
-                                    unsafe);
-    if (image == NULL)
-    {
-      err = result_OOM;
-      goto Failure;
-    }
-  }
-
   if (unsafe)
+  {
+    image->file_name[0] = '\0';
     image->flags |= image_FLAG_MODIFIED;
+  }
 
   if (template)
     strcpy(image->file_name, str_leaf(file_name));
 
-  err = drawable_create(image, &drawable);
-  if (err)
+  rc = drawable_create(image, &drawable);
+  if (rc)
     goto Failure;
 
   viewer->image    = image;
@@ -1000,6 +993,8 @@ osbool viewer_load(viewer_t   *viewer,
 
 Exit:
 
+  result_report(rc);
+
   hourglass_off();
 
   return r;
@@ -1007,7 +1002,7 @@ Exit:
 
 Failure:
 
-  image_destroy(image);
+  imagecache_dispose(GLOBALS.cache, image);
 
   r = TRUE;
 
@@ -1047,7 +1042,7 @@ void viewer_unload(viewer_t *viewer)
   drawable_destroy(viewer->drawable);
   viewer->drawable = NULL;
 
-  imagecache_destroy(viewer->image);
+  imagecache_dispose(GLOBALS.cache, viewer->image);
   viewer->image = NULL;
 }
 

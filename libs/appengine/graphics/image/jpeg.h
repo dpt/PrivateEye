@@ -13,7 +13,7 @@ extern int jpeg_get_meta(image_t *image, ntree_t **data);
 extern int jpeg_meta_available(image_t *image);
 
 /* jpeg.c */
-extern void jpeg_export_methods(image_choices *choices, image_t *image);
+extern void jpeg_export_methods(const image_choices *choices, image_t *image);
 
 /* lifted from jdmarker.c */
 typedef enum        /* JPEG marker codes */

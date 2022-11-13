@@ -64,7 +64,7 @@
 #include "globals.h"
 #include "iconbar.h"
 #include "iconnames.h"          /* generated */
-#include "imagecache.h"
+#include "imgcache.h"
 #include "menunames.h"          /* not generated */
 #include "privateeye.h"
 #include "quit.h"
@@ -145,6 +145,7 @@ static result_t initialise_subsystems(void)
   static const initfn initfns[] =
   {
     eye_icon_bar_init,
+    imgcache_init,
     rotate_init,
     effects_init,
 #ifdef EYE_TAGS
@@ -196,6 +197,7 @@ static void finalise_subsystems(void)
 #endif
     effects_fin,
     rotate_fin,
+    imgcache_fin,
     eye_icon_bar_fin,
   };
 
@@ -475,8 +477,6 @@ int main(int argc, char *argv[])
   }
 
   viewer_close_all();
-
-  imagecache_empty();
 
   register_event_handlers(0);
 

@@ -37,7 +37,7 @@ static result_t sprite_populate_info(image_t *image, os_mode mode)
   return result_OK;
 }
 
-static int sprite_load(image_choices *choices, image_t *image)
+static result_t sprite_load(const image_choices *choices, image_t *image)
 {
   result_t           rc;
   int                file_size;
@@ -60,7 +60,7 @@ static int sprite_load(image_choices *choices, image_t *image)
   file_size = image->source.file_size + sizeof(area->size);
 
   if (flex_alloc((flex_ptr) &area, file_size) == 0)
-    goto NoMem;
+    return result_OOM;
 
   area->size = file_size;
   area->first = 16;
@@ -76,8 +76,7 @@ static int sprite_load(image_choices *choices, image_t *image)
   if (e)
   {
     flex_free((flex_ptr) &area);
-    oserror_report_block(e);
-    return TRUE; /* failure */
+    return oserror_stash(e);
   }
 
   header = sprite_select(area, 0);
@@ -119,8 +118,7 @@ static int sprite_load(image_choices *choices, image_t *image)
   if (rc)
   {
     flex_free((flex_ptr) &area);
-    result_report(rc);
-    return TRUE; /* failure */
+    return rc;
   }
 
   flex_reanchor((flex_ptr) &image->image, (flex_ptr) &area);
@@ -140,17 +138,10 @@ static int sprite_load(image_choices *choices, image_t *image)
 
   image->details.sprite.mode = mode;
 
-  return FALSE; /* success */
-
-
-NoMem:
-
-  oserror_report(0, "error.no.mem");
-
-  return TRUE; /* failure */
+  return result_OK;
 }
 
-void sprite_export_methods(image_choices *choices, image_t *image)
+void sprite_export_methods(const image_choices *choices, image_t *image)
 {
   static const image_methods methods =
   {

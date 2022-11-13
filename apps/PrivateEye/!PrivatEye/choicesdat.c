@@ -14,6 +14,7 @@
 #include "choices-colour.h"
 #include "globals.h"
 #include "iconnames.h"
+#include "imgcache.h"
 #include "privateeye.h"
 #include "tags.h"
 #include "viewer.h"
@@ -274,7 +275,7 @@ static const choices_numberrange cache_size =
   CHOICES_VWR_B_CACHEDOWN,
   CHOICES_VWR_B_CACHEUP,
   0, 256 * 1024,
-  1024,
+  1024, /* increment */
   0 /* precision */
 };
 
@@ -285,6 +286,17 @@ static const choices_choice cache[] =
     choices_TYPE_NUMBER_RANGE,
     0,
     { .number_range = &cache_size } },
+
+  { "entries",
+    offsetof(eye_choices, cache.entries),
+    choices_TYPE_NUMBER_RANGE,
+    128,
+    { .number_range = NULL /* no GUI */ } },
+};
+
+static const choices_group_handlers cachechoices_handlers =
+{
+  imgcache_choices_updated
 };
 
 static const choices_group cache_group =
@@ -293,7 +305,7 @@ static const choices_group cache_group =
   NELEMS(cache),
   cache,
   choicepane_vwr,
-  NULL, /* callbacks */
+  &cachechoices_handlers
 };
 
 /* ----------------------------------------------------------------------- */
@@ -433,8 +445,8 @@ static const choices_numberrange colour_gamma =
   CHOICES_COL_B_GAMMADOWN,
   CHOICES_COL_B_GAMMAUP,
   10, 290,
-  1,
-  2
+  1, /* increment */
+  2 /* precision */
 };
 
 static const choices_numberrange colour_contrast =
@@ -443,8 +455,8 @@ static const choices_numberrange colour_contrast =
   CHOICES_COL_B_CONTRASTDOWN,
   CHOICES_COL_B_CONTRASTUP,
   10, 190,
-  1,
-  0
+  1, /* increment */
+  0 /* precision */
 };
 
 static const choices_numberrange colour_brightness =
@@ -453,8 +465,8 @@ static const choices_numberrange colour_brightness =
   CHOICES_COL_B_BRIGHTNESSDOWN,
   CHOICES_COL_B_BRIGHTNESSUP,
   10, 190,
-  1,
-  0
+  1, /* increment */
+  0 /* precision */
 };
 
 static const choices_choice colour[] =

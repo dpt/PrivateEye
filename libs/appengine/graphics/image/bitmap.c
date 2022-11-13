@@ -27,9 +27,9 @@
 
 #include "bitmap.h"
 
-int bitmap_save(image_choices *choices,
-                image_t       *image,
-                const char    *file_name)
+int bitmap_save(const image_choices *choices,
+                      image_t       *image,
+                const char          *file_name)
 {
   osspriteop_area *area;
   os_error        *e;
@@ -283,7 +283,7 @@ static int rotate_easy(image_t *image, int angle)
   return FALSE; /* success */
 }
 
-int bitmap_rotate(image_choices *choices, image_t *image, int angle)
+int bitmap_rotate(const image_choices *choices, image_t *image, int angle)
 {
   int r;
 

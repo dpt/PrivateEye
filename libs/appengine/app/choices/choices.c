@@ -386,7 +386,7 @@ static result_t update_icons_numberrange(const choices        *cs,
   {
     icon_set_int(*cs->panes[g->pane_index].window,
                   number_range->icon_display,
-                  val);
+                  val / number_range->inc);
   }
   else
   {

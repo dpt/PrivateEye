@@ -176,38 +176,46 @@ image_t *image_create(void)
   return i;
 }
 
-image_t *image_create_from_file(image_choices *choices,
-                          const char          *file_name,
-                                bits           file_type,
-                                osbool         unsafe)
+result_t image_create_from_file(const image_choices *choices,
+                                const char          *file_name,
+                                      bits           file_type,
+                                      image_t      **new_image)
 {
+  result_t rc;
   image_t *i;
+
+  *new_image = NULL;
 
   i = image_create();
   if (i == NULL)
+  {
+    rc = result_OOM;
     goto Failure;
+  }
 
   i->source.file_type = file_type;
 
   strcpy(i->file_name, file_name);
 
   if (loader_export_methods(choices, i, file_type))
+  {
+    rc = result_NOT_FOUND;
+    goto Failure;
+  }
+
+  rc = i->methods.load(choices, i);
+  if (rc)
     goto Failure;
 
-  if (i->methods.load(choices, i))
-    goto Failure;
+  *new_image = i;
 
-  if (unsafe)
-    i->file_name[0] = '\0';
-
-  return i;
+  return result_OK;
 
 
 Failure:
-
   image_destroy(i);
 
-  return NULL;
+  return rc;
 }
 
 /* ----------------------------------------------------------------------- */
