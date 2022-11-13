@@ -45,6 +45,4 @@ void imagecache_empty(imagecache_t *cache);
 
 int imagecache_get_count(imagecache_t *cache);
 
-// need a 'resize' op
-
 #endif /* APPENGINE_IMAGECACHE_H */

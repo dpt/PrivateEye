@@ -1,4 +1,4 @@
-Version 3.20 (29 Oct 2022)
+Version 3.20 (13 Nov 2022)
 #Parent !Root
 Changes
 
@@ -12,6 +12,8 @@ Changes
 è	The icon bar's height is now read from the OS rather than being assumed. Just in case it ever changes.
 è	The Sprite alpha channel detector now treats "all 0" and "all 255" values as indicating no alpha.
 è	Alpha channels and Alpha masks are now distinguished in the image info window. Note on terminology: "Alpha channels" are where the alpha data is inline amonst the pixels, as Tinct and various software uses. "Alpha masks" are where the alpha data stored separately in the mask bytes: the newer standard that RISC OS Select established. It's theoretically possible, but meaningless, to have both in the same sprite.
+è	The cache was rewritten to cope better in low memory situations. All images are now requested through the cache. There's now a limit of 128 entries in the cache (= total open images). If this is a problem then set "cache.entries" to a larger value in Choices.
+è	Choices cache size value is now shown in MBytes.
 
 Fixes
 

@@ -63,8 +63,6 @@ static void redraw_tinct(const drawable_choices *choices,
 
   NOT_USED(draw);
 
-  assert(drawable->image->refcount > 0);
-
   area   = (osspriteop_area *) drawable->image->image;
   header = sprite_select(area, drawable->image->details.sprite.index);
 
@@ -101,8 +99,6 @@ static void redraw_os(const drawable_choices *choices,
   osspriteop_trans_tab *trans_tab;
 
   NOT_USED(draw);
-
-  assert(drawable->image->refcount > 0);
 
   area   = (osspriteop_area *) drawable->image->image;
   header = sprite_select(area, drawable->image->details.sprite.index);
@@ -172,8 +168,6 @@ static void bitmap_colours(drawable_t *drawable)
   osspriteop_area   *area;
   osspriteop_header *header;
 
-  assert(drawable->image->refcount > 0);
-
   if (drawable->details.sprite.trans_tab)
     /* Discard previous translation table */
     flex_free((flex_ptr) &drawable->details.sprite.trans_tab);
@@ -192,8 +186,6 @@ static void bitmap_scaling(drawable_t *drawable, const os_factors *factors)
   int         screen_xeig, screen_yeig;
   os_factors *scaled_factors;
 
-  assert(drawable->image->refcount > 0);
-
   image_xeig = drawable->image->display.dims.bm.xeig;
   image_yeig = drawable->image->display.dims.bm.yeig;
 
@@ -211,8 +203,6 @@ void bitmap_get_dimensions(drawable_t       *drawable,
                            os_box           *box)
 {
   image_t *image;
-
-  assert(drawable->image->refcount > 0);
 
   image = drawable->image;
 
