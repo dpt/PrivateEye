@@ -184,7 +184,7 @@ static unsigned int *gif_load_palette(int entries)
   return palette;
 }
 
-static int gif_load(const image_choices *choices, image_t *image)
+static result_t gif_load(const image_choices *choices, image_t *image)
 {
   State S;
   int log2bpp;
@@ -220,8 +220,7 @@ static int gif_load(const image_choices *choices, image_t *image)
   if (buffer_start(image->file_name, 16384 /* buffer size */) < 0)
   {
     tidyup(&S);
-    oserror_report(0, "error.buffer.start"); /* XXX poor (fixed) error */
-    return TRUE; /* failure */
+    return oserror_build(0, "error.buffer.start"); /* XXX poor (fixed) error */
   }
 
 #ifndef NDEBUG
@@ -232,8 +231,7 @@ static int gif_load(const image_choices *choices, image_t *image)
     != '8' || (buffer[4] != '7' && buffer[4] != '9') || buffer[5] != 'a')
   {
     tidyup(&S);
-    oserror_report(0, "error.gif.not");
-    return TRUE; /* failure */
+    return oserror_build(0, "error.gif.not");
   }
 
 #ifndef NDEBUG
@@ -265,8 +263,7 @@ static int gif_load(const image_choices *choices, image_t *image)
       fprintf(stderr, "failed to load global palette\n");
 #endif
       tidyup(&S);
-      oserror_report(0, "error.no.mem");      /* XXX or bad.gif */
-      return TRUE; /* failure */
+      return result_OOM; /* XXX or bad.gif */
     }
   }
 
@@ -384,8 +381,7 @@ static int gif_load(const image_choices *choices, image_t *image)
           fprintf(stderr, "failed to load local palette\n");
 #endif
           tidyup(&S);
-          oserror_report(0, "error.no.mem");
-          return TRUE; /* failure */
+          return result_OOM;
         }
 
         /* we have a local palette */
@@ -413,8 +409,7 @@ static int gif_load(const image_choices *choices, image_t *image)
             fprintf(stderr, "failed to alloc space for emergency global palette\n");
 #endif
             tidyup(&S);
-            oserror_report(0, "error.no.mem");
-            return TRUE; /* failure */
+            return result_OOM;
           }
 
           make_grey_palette(3, S.global_palette);
@@ -458,8 +453,7 @@ static int gif_load(const image_choices *choices, image_t *image)
     fprintf(stderr, "failed to alloc space for sprite\n");
 #endif
     tidyup(&S);
-    oserror_report(0, "error.no.mem");
-    return TRUE; /* failure */
+    return result_OOM;
   }
 
 #ifndef NDEBUG
@@ -559,7 +553,7 @@ static int gif_load(const image_choices *choices, image_t *image)
 #ifndef NDEBUG
   fprintf(stderr, "Done\n\n");
 #endif
-  return FALSE; /* success */
+  return result_OK;
 }
 
 /* DECODE.C - An LZW decoder for GIF
