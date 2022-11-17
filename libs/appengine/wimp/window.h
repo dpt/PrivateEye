@@ -82,12 +82,12 @@ enum
 };
 
 void window_open_at(wimp_w w, window_open_at_flags where);
-#define window_open(window) window_open_at(window, AT_DEFAULT)
+#define window_open(window) window_open_at(window,AT_DEFAULT)
 
 void window_open_here_flags(wimp_w                w,
                       const os_box               *box,
                             window_open_at_flags  flags);
-#define window_open_here(window) window_open_here_flags(window,0)
+#define window_open_here(window, box) window_open_here_flags(window,box,0)
 
 void window_open_as_menu(wimp_w w);
 void window_open_as_menu_here(wimp_w w, int x, int y);

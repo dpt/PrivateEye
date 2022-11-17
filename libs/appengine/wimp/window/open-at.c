@@ -3,6 +3,7 @@
 #include "oslib/wimp.h"
 #include "oslib/wimpreadsysinfo.h"
 
+#include "appengine/types.h"
 #include "appengine/wimp/window.h"
 
 #include "appengine/wimp/window/open.h" /* private header */
@@ -17,7 +18,7 @@ enum
 /* ----------------------------------------------------------------------- */
 
 void window_open_with_callback(wimp_w w,
-                               void (*cb)(CallbackArgs *, void *),
+                               void (*cb)(window_open_args_t *, void *),
                                void  *opaque)
 {
   static const os_VDU_VAR_LIST(5) var_list =
@@ -29,8 +30,8 @@ void window_open_with_callback(wimp_w w,
     -1,
   }};
 
-  int          vdu_vars[4];
-  CallbackArgs args;
+  int                vdu_vars[4];
+  window_open_args_t args;
 
   os_read_vdu_variables((const os_vdu_var_list *) &var_list, vdu_vars);
 
@@ -101,7 +102,7 @@ void centre_scrollbars(wimp_window_info *info)
 
 /* ----------------------------------------------------------------------- */
 
-static void open_at_cb(CallbackArgs *args, void *opaque)
+static void open_at_cb(window_open_args_t *args, void *opaque)
 {
   unsigned int where;
   unsigned int flags;
@@ -147,13 +148,7 @@ static void open_at_cb(CallbackArgs *args, void *opaque)
   scr_w = args->screen_w;
   scr_h = args->screen_h;
 
-  /* compensate for icon bar size */
-
-  if (flags & AT_NOCOVERICONBAR)
-    scr_h -= read_icon_bar_unobscured();
-
   /* allow the window to be no larger than the screen */
-
   if (width  > scr_w) width  = scr_w;
   if (height > scr_h) height = scr_h;
 
@@ -227,13 +222,20 @@ static void open_at_cb(CallbackArgs *args, void *opaque)
       break;
   }
 
-  /* compensate for icon bar size again */
-
+  /* avoid covering the icon bar, if we would obscure it */
   if (flags & AT_NOCOVERICONBAR)
-    y += read_icon_bar_unobscured();
+  {
+    int ibh;
+    
+    ibh = read_icon_bar_unobscured();
+    if (y < ibh)
+    {
+      y      = ibh;
+      height = MIN(height, scr_h - ibh);
+    }
+  }
 
   /* we've included the window borders in our calculations, now remove */
-
   args->info.visible.x0 =   args->left   + x;
   args->info.visible.y0 =   args->bottom + y;
   args->info.visible.x1 = - args->right  + x + width;

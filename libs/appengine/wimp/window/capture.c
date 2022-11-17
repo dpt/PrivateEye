@@ -105,21 +105,6 @@ void window_restore(wimp_w win, WindowCapture *capture, osbool covericonbar)
 
     box.x0 = capture->cx - w / 2;
     box.y0 = capture->cy - h / 2;
-
-    if (!covericonbar)
-    {
-      os_box furn;
-      int    icon_bar_height = read_icon_bar_unobscured();
-
-      /* Are we overlapping the icon bar?
-       * If so, move the window up to avoid that. */
-
-      read_furniture_dimensions(win, &furn);
-
-      if (box.y0 < icon_bar_height + furn.y0)
-        box.y0 = icon_bar_height + furn.y0;
-    }
-
     box.x1 = box.x0 + w;
     box.y1 = box.y0 + h;
 
