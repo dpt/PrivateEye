@@ -128,8 +128,8 @@ static void populate_info_dialogue(dialogue_t                  *d,
 
       wdpi_in = (double) w / xdpi;
       hdpi_in = (double) h / ydpi;
-      wdpi_cm = wdpi_in / 2.54;
-      hdpi_cm = hdpi_in / 2.54;
+      wdpi_cm = wdpi_in * 2.54;
+      hdpi_cm = hdpi_in * 2.54;
 
       comma_double(wdpi_cm, scratch +  0, 12);
       comma_double(hdpi_cm, scratch + 12, 12);
