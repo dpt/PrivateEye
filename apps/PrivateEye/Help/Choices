@@ -28,7 +28,7 @@ PrivateEye tries to keep the viewer window in the same position when moving betw
 #fH4:Cache Choices
 PrivateEye can set aside memory in which to retain discarded images. When configured, if you close an image it will be placed in the cache. Then if you later try to view that image again, the cached entry will be retrieved instead of re-loading the image.
 
-{*}SIZE{*} controls the size of the cache. The default is zero which disables the cache. Choose a non-zero KByte value to enable the cache.
+{*}SIZE{*} controls the size of the cache. The default is zero which disables the cache. Choose a non-zero value to enable the cache.
 
 Use {*}EMPTY CACHE{*} on the icon bar menu to discard all cached images.
 #Subpage Colour
@@ -43,7 +43,7 @@ There are some choices which exist for every file format that PrivateEye support
 
 {*}LOAD ON DOUBLE-CLICK{*} controls whether the respective format will be loaded when double-clicked on in a directory display.
 
-{*}BACKGROUND{*} opens a ColourPicker dialogue which selects the background colour PrivateEye will use for masked images and also when in "fit to screen" mode. If {*}NONE{*} is chosen for the colour then a checkered background will be used
+{*}BACKGROUND{*} opens a ColourPicker dialogue which selects the background colour PrivateEye will use for masked images and also when in "fit to screen" mode. If {*}NONE{*} is chosen for the colour then a chequered background will be used
 #Subpage Sprite
 Sprite Choices
 #Spritefile ChoicesSpr

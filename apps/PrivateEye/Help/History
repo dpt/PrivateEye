@@ -2,18 +2,19 @@ Version 3.20 (18 Nov 2022)
 #Parent !Root
 Changes
 
-è	The user guide has been converted into StrongHelp format and incorporated into the app itself. The icon bar menu gains a "Help" menu entry to open it. Hello!
-è	RISC OS 5.21's extended format sprites are now used where possible, e.g. when loading PNGs containing alpha channels. This avoids the need to use the Tinct module which, while having provided great service for many years, has become problematic due to being unmaintained.
-è	When in "Fit to screen" mode viewers now draw a paper document style backdrop behind images. Its redraw is optimised to avoid flicker where possible.
+è	PrivateEye's user guide has been converted into StrongHelp format and now lives inside the app itself. Hello! The icon bar menu gains a "Help" menu entry to open it and the Filer's "Help" menu entry will launch it too.
+è	RISC OS 5.21's extended format sprites are now used wherever possible, e.g. when loading PNGs containing alpha channels. This avoids the need to use the Tinct module which, while having provided great service for many years, is now unmaintained.
+è	When in "Fit to screen" mode the viewer windows now draw a paper document style backdrop behind images. Its redraw is optimised to avoid flicker where possible.
 è	A "Format" field was added to the image info window. This shows the screen mode of the display sprite and which OS versions it's compatible with.
-è	Image info window's "Colours" field now shows when CMYK format sprites are detected.
-è	Image info window's "Dimensions" field shows centimetres in addition to inches.
-è	The checkerboard drawing code, used to indicate alpha transparency, was hoisted out of the viewer code (will use less memory). It now uses the PlotTiledSprite SpriteOp where available, in preference to Tinct's equivalent.
-è	The icon bar's height is now read from the OS rather than being assumed. Just in case it ever changes.
-è	The Sprite alpha channel detector now treats "all 0" and "all 255" values as indicating no alpha.
-è	Alpha channels and Alpha masks are now distinguished in the image info window. Note on terminology: "Alpha channels" are where the alpha data is inline amonst the pixels, as Tinct and various software uses. "Alpha masks" are where the alpha data stored separately in the mask bytes: the newer standard that RISC OS Select established. It's theoretically possible, but meaningless, to have both in the same sprite.
-è	The cache was rewritten to cope better in low memory situations. All images are now requested through the cache. There's now a limit of 128 entries in the cache (= total open images). If this is a problem then set "cache.entries" to a larger value in Choices.
-è	Choices cache size value is now shown in MBytes.
+è	The image info window's "Colours" field now shows when CMYK format sprites are detected.
+è	The image info window's "Dimensions" field shows centimetres in addition to inches.
+è	The chequerboard drawing code, used to indicate alpha transparency, was made common across all viewer windows. It now uses the PlotTiledSprite SpriteOp where available, in preference to Tinct's equivalent.
+è	The icon bar's height is now read from the OS rather than being assumed, just in case it ever changes.
+è	The Sprite alpha channel detector now treats both "all 0" and "all 255" for alpha values as indicating no alpha.
+è	Sprite alpha channels and alpha masks are now identified in the image info window.
+	è	Note on terminology: "Alpha channels" have alpha data inline amongst the pixels. This is the format that third party RISC OS applications used for years, including Tinct. "Alpha masks" have alpha data stored separately in the mask: a newer standard that RISC OS Select established. It's theoretically possible, but meaningless, to have both present in the same sprite.
+è	The cache was rewritten to cope better in low memory situations. All open images are now requested through the cache. There's now a limit of 128 entries in the cache (= total open images). If this is a problem then set "cache.entries" to a larger value in Choices.
+è	The cache size value in Choices is now shown in MBytes.
 
 Fixes
 
