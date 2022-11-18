@@ -1,0 +1,5 @@
+| >!Help for PrivateEye
+| by David Thomas, © 2022
+
+IF "<Alias$@RunType_3d6>"="" THEN ERROR PrivateEye's manual needs StrongHelp to be available.
+Filer_Run <Obey$Dir>.Resources.Help
