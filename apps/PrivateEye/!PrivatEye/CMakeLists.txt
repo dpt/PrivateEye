@@ -323,7 +323,7 @@ set(INSTALL_APPDIR ${CMAKE_INSTALL_PREFIX}/Apps/Graphics/!PrivatEye)
 
 install(TARGETS PrivateEye RUNTIME
     DESTINATION ${INSTALL_APPDIR})
-install(FILES !Boot,feb !Help !Run,feb !Sprites,ff9 !Sprites11,ff9 AppEngine,ffa
+install(FILES !Boot,feb !Help,feb !Run,feb !Sprites,ff9 !Sprites11,ff9 AppEngine,ffa
     DESTINATION ${INSTALL_APPDIR})
 install(DIRECTORY Resources
     DESTINATION ${INSTALL_APPDIR})
