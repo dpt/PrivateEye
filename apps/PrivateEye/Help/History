@@ -1,5 +1,15 @@
-Version 3.20 (18 Nov 2022)
+Version 3.30 (29 Nov 2022)
 #Parent !Root
+Changes
+è	TBD
+
+Fixes
+è	TBD
+
+#Line
+<Previous changes=>.320>
+#Subpage 320
+Version 3.20 (18 Nov 2022)
 Changes
 
 è	PrivateEye's user guide has been converted into StrongHelp format and now lives inside the app itself. Hello! The icon bar menu gains a "Help" menu entry to open it and the Filer's "Help" menu entry will launch it too.
