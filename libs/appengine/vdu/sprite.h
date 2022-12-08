@@ -18,6 +18,8 @@
 
 /* Supplement until this stuff arrives in OSLib */
 
+#ifndef osspriteop_EXT_STYLE
+
 #define osspriteop_EXT_STYLE                   ((osspriteop_mode_word) 0x78000001u) /* includes osspriteop_NEW_STYLE */
 #define osspriteop_EXT_STYLE_MASK              ((osspriteop_mode_word) 0x780F000Fu)
 #define osspriteop_EXT_XRES                    ((osspriteop_mode_word) 0x00000030u)
@@ -59,6 +61,8 @@
 #define os_MODE_FLAG_DATA_SUBFORMAT_YCC601VID  ((os_mode_flags) 0x1u) /* RISC OS 5.21+ */
 #define os_MODE_FLAG_DATA_SUBFORMAT_YCC709FULL ((os_mode_flags) 0x2u) /* RISC OS 5.21+ */
 #define os_MODE_FLAG_DATA_SUBFORMAT_YCC709VID  ((os_mode_flags) 0x3u) /* RISC OS 5.21+ */
+
+#endif
 
 /* ----------------------------------------------------------------------- */
 
