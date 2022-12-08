@@ -4,7 +4,7 @@ Changes
 è	TBD
 
 Fixes
-è	TBD
+è	Fix: Alpha channels in RISC OS 5 format sprites weren't detected correctly.
 
 #Line
 <Previous changes=>.320>

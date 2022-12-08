@@ -9,10 +9,13 @@
 
 osbool sprite_has_alpha(const osspriteop_header *header)
 {
-  unsigned int *p;
-  int           y,x;
+  const unsigned int  mask  = 0xff000000u;
+  const int           shift = 24;
 
-  if (((osspriteop_mode_word) header->mode >> osspriteop_TYPE_SHIFT) != osspriteop_TYPE32BPP)
+  unsigned int       *p;
+  int                 y,x;
+
+  if (sprite_type((osspriteop_mode_word) header->mode) != osspriteop_TYPE32BPP)
     return FALSE;
 
   p = sprite_data(header);
@@ -32,7 +35,7 @@ osbool sprite_has_alpha(const osspriteop_header *header)
     {
       int a;
 
-      a = (*p++ & 0xff000000) >> 24;
+      a = (*p++ & mask) >> shift;
       if (a >= 1 && a <= 254)
         return TRUE; /* must have alpha */
       if (a < lowest)
