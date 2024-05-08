@@ -203,7 +203,9 @@ result_t image_create_from_file(const image_choices *choices,
     goto Failure;
   }
 
+  xhourglass_on();
   rc = i->methods.load(choices, i);
+  xhourglass_off();
   if (rc)
     goto Failure;
 

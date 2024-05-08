@@ -627,12 +627,14 @@ static int step_strcmp(const char *a, const char *b)
  */
 static int step(viewer_t *viewer, int direction)
 {
-  const char *leaf_name;
-  const char *dir_name;
-  int         context;
-  char        file_name[256]; /* Careful Now */
-  int         read_count;
-  int         found; /* bool */
+  int                 rc;
+  const char         *leaf_name;
+  const char         *dir_name;
+  int                 context;
+  int                 pass;
+  char                file_name[256]; /* Careful Now */
+  int                 read_count;
+  int                 found; /* bool */
   osgbpb_info_stamped found_info[11];
 
   if (direction > 0)
@@ -640,9 +642,11 @@ static int step(viewer_t *viewer, int direction)
   else
     direction = -1;
 
-  /* Need a filename to step */
+  /* We need a filename from which to step */
   if (viewer->drawable->image->file_name[0] == '\0')
     return 0;
+
+  xhourglass_on();
 
   leaf_name = str_leaf(viewer->drawable->image->file_name);
   dir_name  = str_branch(viewer->drawable->image->file_name);
@@ -661,17 +665,20 @@ static int step(viewer_t *viewer, int direction)
    * matching "less than" filename from the directory. Reversing the signs
    * makes the same process work for stepping forwards.
    */
+  pass    = 0;
   found   = 0;
   context = 0;
   do
   {
-    char   buffer[256];
+    char   buffer[1024];
     char  *bufp;
     size_t len;
 
+    xhourglass_leds((pass & 1) ? 2 : 1, 0, NULL);
+
     /* Read in as many directory entries as will fit in the buffer */
     EC(xosgbpb_dir_entries_info_stamped(dir_name,
-                                        (osgbpb_info_stamped_list *) buffer,
+           (osgbpb_info_stamped_list *) buffer,
                                         INT_MAX, /* count */
                                         context,
                                         sizeof(buffer), /* size */
@@ -700,19 +707,25 @@ static int step(viewer_t *viewer, int direction)
         }
       }
     }
+
+    pass++;
   }
   while (context > -1);
 
   if (!found)
   {
-    /* beep or something */
-    return -1;
+    /* TODO: Beep or something? */
+    rc = -1;
+    goto exit;
   }
 
   /* now we've got a file, and it's loadable */
 
   if (!viewer_query_unload(viewer))
-    return 0;
+  {
+    rc = 0;
+    goto exit;
+  }
 
   viewer_unload(viewer);
 
@@ -725,11 +738,18 @@ static int step(viewer_t *viewer, int direction)
                   FALSE))
   {
     viewer_destroy(viewer);
-    return 0;
+    rc = 0;
+    goto exit;
   }
 
   viewer_open(viewer);
-  return 0;
+  rc = 0;
+
+
+exit:
+  xhourglass_off();
+
+  return rc;
 }
 
 /* ---------------------------------------------------------------------- */
