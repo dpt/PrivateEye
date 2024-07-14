@@ -11,6 +11,7 @@
 #include "fortify/fortify.h"
 
 #include "oslib/types.h"
+#include "oslib/hourglass.h"
 #include "oslib/osfile.h"
 
 #include "datastruct/list.h"

@@ -390,7 +390,7 @@ int main(int argc, char *argv[])
   window_load_sprites(APPNAME "Res:Sprites");
 
   /* Window creation and event registration */
-  templates_open(APPNAME "Res:Templates");
+  (void) templates_open(APPNAME "Res:Templates");
 
   /* I would otherwise call this in initialise_subsystems, but the choices
    * must be made available before that is called. */
@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
 
   ffg_initialise(image_is_loadable);
 
-  templates_close();
+  (void) templates_close();
 
   viewer_mode_change();
 
