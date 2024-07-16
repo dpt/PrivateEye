@@ -78,6 +78,12 @@ static event_message_handler choices_message_menus_deleted,
 
 /* ----------------------------------------------------------------------- */
 
+static result_t choices_set(const choices *);
+static result_t choices_cancel(const choices *);
+static result_t choices_save(const choices *);
+
+/* ----------------------------------------------------------------------- */
+
 static unsigned int choices_refcount = 0;
 
 result_t choices_init(void)
@@ -181,12 +187,12 @@ static result_t for_every_pane(const choices           *cs,
 
 /* ----------------------------------------------------------------------- */
 
-/* mapping is indexed by menu entry, so must do a linear search... */
-static int stringset_index_of_val(const choices_stringset *string_set,
-                                  int                      val)
+static int string_set_val_to_index(const choices_stringset *string_set,
+                                   int                      val)
 {
   int i;
 
+  /* mapping is indexed by menu entry, so must do a linear search... */
   for (i = 0; i < string_set->nelems; i++)
     if (string_set->elems[i].val == val)
       break;
@@ -322,25 +328,25 @@ static result_t save_callback(const choices        *cs,
   return result_OK;
 }
 
-result_t choices_save(const choices *cs)
+static result_t choices_save(const choices *cs)
 {
-  char                      buf[256]; /* Careful Now */
+  char                      filename[256]; /* Careful Now */
   struct save_callback_args args;
   fileswitch_object_type    type;
 
-  sprintf(buf, "<Choices$Write>.%s", cs->app);
+  sprintf(filename, "<Choices$Write>.%s", cs->app);
 
   /* Does the choices directory exist? */
-  type = osfile_read_no_path(buf, NULL, NULL, NULL, NULL);
+  type = osfile_read_no_path(filename, NULL, NULL, NULL, NULL);
   if (type != fileswitch_IS_DIR)
   {
     /* it's not a directory - try making one */
-    osfile_create_dir(buf, 0);
+    osfile_create_dir(filename, 0);
   }
 
-  sprintf(buf, "<Choices$Write>.%s.Choices", cs->app);
+  sprintf(filename, "<Choices$Write>.%s.Choices", cs->app);
 
-  args.f = fopen(buf, "w");
+  args.f = fopen(filename, "w");
   if (args.f == NULL)
     return result_FILE_OPEN_FAILED;
 
@@ -357,28 +363,31 @@ result_t choices_save(const choices *cs)
 
 /* entry points */
 
-/*
-static result_t update_icons_colour(const choices        *cs,
-                                    const choices_group  *g,
-                                    const choices_choice *c)
+static result_t update_colour_icon(const choices        *cs,
+                                   const choices_group  *g,
+                                   const choices_choice *c)
 {
+  NOT_USED(cs);
+  NOT_USED(g);
+  NOT_USED(c);
+
   return result_OK;
 }
-*/
 
-static result_t update_icons_numberrange(const choices        *cs,
+static result_t update_number_range_icon(const choices        *cs,
                                          const choices_group  *g,
                                          const choices_choice *c)
 {
-  static const double        precs[] = { 10.0, 100.0, 1000.0 };
+  static const double precs[] = { 10.0, 100.0, 1000.0 };
 
   const choices_numberrange *number_range;
   int                        val;
 
   number_range = c->data.number_range;
 
+  /* let ranges exist internally but have no display */
   if (number_range == NULL)
-    return result_OK; /* let ranges exist internally but have no display */
+    return result_OK;
 
   val = PVALINT(c->offset);
 
@@ -401,9 +410,9 @@ static result_t update_icons_numberrange(const choices        *cs,
   return result_OK;
 }
 
-static result_t update_icons_option(const choices        *cs,
-                                    const choices_group  *g,
-                                    const choices_choice *c)
+static result_t update_option_icon(const choices        *cs,
+                                   const choices_group  *g,
+                                   const choices_choice *c)
 {
   const choices_option *option;
   int                   val;
@@ -419,28 +428,28 @@ static result_t update_icons_option(const choices        *cs,
   return result_OK;
 }
 
-static result_t update_icons_stringset(const choices        *cs,
+static result_t update_string_set_icon(const choices        *cs,
                                        const choices_group  *g,
                                        const choices_choice *c)
 {
   const choices_stringset *string_set;
-  char                     buf[32]; /* Careful Now */
   int                      val;
   int                      i;
-  wimp_selection           sel;
+  char                     token[32];
+  wimp_selection           selection;
   const char              *text;
 
   string_set = c->data.string_set;
 
   val = PVALINT(c->offset);
 
-  i = stringset_index_of_val(string_set, val);
+  i = string_set_val_to_index(string_set, val);
 
-  sprintf(buf, "menu.%s", string_set->name);
+  snprintf(token, sizeof(token), "menu.%s", string_set->name);
 
-  sel.items[0] = i;
-  sel.items[1] = -1;
-  text = menu_desc_name_from_sel(message0(buf), &sel);
+  selection.items[0] = i;
+  selection.items[1] = -1;
+  text = menu_desc_name_from_sel(message0(token), &selection);
 
   icon_set_text(*cs->panes[g->pane_index].window,
                  string_set->icon_display,
@@ -454,36 +463,25 @@ static result_t update_icons_callback(const choices        *cs,
                                       const choices_choice *c,
                                       void                 *opaque)
 {
+  typedef result_t (*updatefn)(const choices        *cs,
+                               const choices_group  *g,
+                               const choices_choice *c);
+
+  static const updatefn tab[] = 
+  {
+    update_colour_icon,
+    update_number_range_icon,
+    update_option_icon,
+    update_string_set_icon
+  };
+
   NOT_USED(opaque);
 
-  switch (c->type)
-  {
-  case choices_TYPE_COLOUR:
-    /* update_icons_colour(cs, g, c); */ /* has no effect presently */
-    break;
-
-  case choices_TYPE_NUMBER_RANGE:
-    update_icons_numberrange(cs, g, c);
-    break;
-
-  case choices_TYPE_OPTION:
-    update_icons_option(cs, g, c);
-    break;
-
-  case choices_TYPE_STRING_SET:
-    update_icons_stringset(cs, g, c);
-    break;
-
-  default:
-    assert(0);
-    break;
-  }
-
-  return result_OK;
+  return tab[c->type](cs, g, c);
 }
 
-/* Populate display icons from stores choices */
-result_t choices_update_icons(const choices *cs)
+/* Populate display icons from stored choices */
+static result_t choices_update_icons(const choices *cs)
 {
   return for_every_choice(cs, update_icons_callback, NULL);
 }
@@ -513,20 +511,20 @@ static result_t create_windows_callback(const choices      *cs,
                                         void               *opaque)
 {
   result_t err;
-  char     buf[13];
+  char     templatename[13];
 
   NOT_USED(opaque);
 
   if (p->window == NULL)
     return result_OK; /* this group has no associated window */
 
-  sprintf(buf, "choices_%s", p->name);
+  sprintf(templatename, "choices_%s", p->name);
 
-  *p->window = window_create(buf);
+  *p->window = window_create(templatename);
   if (*p->window == 0)
     return result_OOM; /* potentially inaccurate */
 
-  err = help_add_window(*p->window, buf);
+  err = help_add_window(*p->window, templatename);
   if (err)
     return err;
 
@@ -568,7 +566,6 @@ static void choices_set_handlers(int reg, const choices *cs)
                                cs);
 }
 
-/* create panes */
 result_t choices_create_windows(const choices *cs)
 {
   result_t err;
@@ -765,7 +762,7 @@ result_t choices_open(const choices *cs)
 
 /* ----------------------------------------------------------------------- */
 
-result_t choices_set(const choices *cs)
+static result_t choices_set(const choices *cs)
 {
   result_t err;
   int      i;
@@ -823,7 +820,7 @@ static result_t call_changed_callback(const choices      *cs,
   return result_OK;
 }
 
-result_t choices_cancel(const choices *cs)
+static result_t choices_cancel(const choices *cs)
 {
   result_t err;
 
@@ -849,7 +846,7 @@ static result_t mouse_click_pane_select(const choices *cs,
                                         wimp_pointer  *pointer)
 {
   const choices_pane *p;
-  wimp_w              mainw;
+  wimp_w              main_w;
   wimp_w              old;
   wimp_w              pane;
 
@@ -860,11 +857,11 @@ static result_t mouse_click_pane_select(const choices *cs,
   if (p == &cs->panes[cs->npanes])
     return result_OK; /* not a radio click (e.g. work area) */
 
-  mainw = *cs->window;
+  main_w = *cs->window;
 
   /* Switch radio icons back on if they are ADJUST-clicked */
   if (pointer->buttons & wimp_CLICK_ADJUST)
-    icon_set_selected(mainw, p->icon, TRUE);
+    icon_set_selected(main_w, p->icon, TRUE);
 
   pane = *p->window;
   old  = *cs->current;
@@ -875,7 +872,7 @@ static result_t mouse_click_pane_select(const choices *cs,
 
     *cs->current = pane;
 
-    attach_child(cs, mainw);
+    attach_child(cs, main_w);
   }
 
   return result_OK;
@@ -945,7 +942,7 @@ static result_t mouse_click_numberrange(const choices        *cs,
     {
       PVALINT(c->offset) = n;
 
-      err = update_icons_numberrange(cs, g, c);
+      err = update_number_range_icon(cs, g, c);
       if (err)
         return err;
 
@@ -986,7 +983,7 @@ static result_t mouse_click_stringset(const choices        *cs,
   {
     result_t                 err;
     const choices_stringset *string_set;
-    char                     buf[32]; /* Careful Now */
+    char                     menuname[32]; /* Careful Now */
     wimp_menu               *menu;
     int                      val;
     int                      i;
@@ -1003,9 +1000,9 @@ static result_t mouse_click_stringset(const choices        *cs,
 
     string_set = c->data.string_set;
 
-    sprintf(buf, "menu.%s", c->data.string_set->name);
+    sprintf(menuname, "menu.%s", c->data.string_set->name);
 
-    menu = menu_create_from_desc(message(buf));
+    menu = menu_create_from_desc(message(menuname));
     if (menu == NULL)
       return result_OOM; /* potentially inaccurate */
 
@@ -1015,7 +1012,7 @@ static result_t mouse_click_stringset(const choices        *cs,
 
     val = PVALINT(c->offset);
 
-    i = stringset_index_of_val(string_set, val);
+    i = string_set_val_to_index(string_set, val);
 
     menu_tick_exclusive(menu, i);
 
@@ -1099,6 +1096,9 @@ int choices_event_mouse_click_pane(wimp_event_no  event_no,
           return event_HANDLED;
         }
         break;
+
+      default:
+        break;
       }
     }
   }
@@ -1181,7 +1181,7 @@ int choices_event_menu_selection(wimp_event_no event_no,
 
     PVALINT(c->offset) = string_set->elems[i].val;
 
-    update_icons_stringset(cs, g, c);
+    update_string_set_icon(cs, g, c);
 
     p = &cs->panes[g->pane_index];
     if (p->handlers && p->handlers->changed_callback)

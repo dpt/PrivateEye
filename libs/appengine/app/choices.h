@@ -21,7 +21,8 @@ typedef enum choices_type
   choices_TYPE_COLOUR,
   choices_TYPE_NUMBER_RANGE,
   choices_TYPE_OPTION,
-  choices_TYPE_STRING_SET
+  choices_TYPE_STRING_SET,
+  choices_TYPE__LIMIT
 }
 choices_type;
 
@@ -88,7 +89,7 @@ typedef result_t (choices_pane_initialise_handler)(const choices_pane *);
 typedef void (choices_pane_finalise_handler)(const choices_pane *);
 typedef result_t (choices_pane_changed_handler)(const choices_pane *);
 typedef result_t (choices_pane_redraw_handler)(const choices_pane *,
-                                               wimp_draw          *);
+                                               wimp_draw *);
 
 /* these handlers deal with 'proposed' choices */
 typedef struct choices_pane_handlers
@@ -104,7 +105,7 @@ choices_pane_handlers;
 struct choices_pane
 {
   wimp_w                      *window;  /* pointer to window handle */
-  const char                   name[4]; /* eg. 'vwr' */
+  const char                   name[4]; /* short identifier, eg. 'vwr' */
   wimp_i                       icon;    /* radio icon in main window */
   const choices_pane_handlers *handlers;
 };
@@ -153,10 +154,11 @@ typedef struct choices choices;
 struct choices
 {
   const char              *app;     /* eg. 'PrivateEye' (keep <= 10 chars) */
+
   int                      ngroups;
   const choices_group    **groups;
 
-  wimp_w                  *window;  /* pointer to window handle */
+  wimp_w                  *window;  /* pointer to choices window handle */
   wimp_w                  *current; /* pointer to current pane handle */
   wimp_i                   icon_set;
   wimp_i                   icon_cancel;
@@ -179,10 +181,8 @@ void choices_fin(void);
 result_t choices_create_windows(const choices *);
 void choices_destroy_windows(const choices *);
 result_t choices_load(const choices *);
-result_t choices_save(const choices *);
-result_t choices_update_icons(const choices *);
 result_t choices_open(const choices *);
-result_t choices_set(const choices *);
-result_t choices_cancel(const choices *);
+
+/* ----------------------------------------------------------------------- */
 
 #endif /* APPENGINE_CHOICES_H */
