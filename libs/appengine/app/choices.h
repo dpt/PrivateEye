@@ -3,6 +3,24 @@
  * Purpose: Choices library interface
  * ----------------------------------------------------------------------- */
 
+/* Overview:
+ *
+ * The choices library manages an application's choices (settings or
+ * preferences) window. The application supplies a choices structure
+ * hierarchy and from that this library provides the UI and the loading and
+ * saving of those values.
+ *
+ * Individual choices can be colours, number ranges, options or string sets.
+ *
+ * Structure:
+ *
+ * - The root choices struct has sets of choices_groups and choices_panes
+ * - Each choices_group has a set of choices_choices (the actual settings)
+ * - Each choices_group associates with a single choices_pane
+ *
+ * This allows more than one group of choices to share a single window pane.
+ */
+
 #ifndef APPENGINE_CHOICES_H
 #define APPENGINE_CHOICES_H
 
@@ -16,6 +34,7 @@ typedef void choices_valbuf;
 
 /* ----------------------------------------------------------------------- */
 
+/* The type of an individual choice. */
 typedef enum choices_type
 {
   choices_TYPE_COLOUR,
@@ -26,12 +45,14 @@ typedef enum choices_type
 }
 choices_type;
 
+/* The value associated with a stringset item. */
 typedef struct choices_stringset_vals
 {
   int val;
 }
 choices_stringset_vals;
 
+/* A menu of items, of which one can be selected from a pop-up menu. */
 typedef struct choices_stringset
 {
   const char                   *name; /* name of menu in messages file */
@@ -41,28 +62,31 @@ typedef struct choices_stringset
 }
 choices_stringset;
 
+/* A bumpable integer clamped to min..max shown with specified precision. */
 typedef struct choices_numberrange
 {
   wimp_i icon_display, icon_down, icon_up;
   int    min, max;
   int    inc;  /* increment */
-  int    prec; /* precision */
+  int    prec; /* display precision (e.g. 2 for 2dp) */
 }
 choices_numberrange;
 
+/* An on/off option. */
 typedef struct choices_option
 {
   wimp_i icon;
 }
 choices_option;
 
+/* A colour. */
 typedef struct choices_colour
 {
   wimp_i icon;
 }
 choices_colour;
 
-/* A single choice */
+/* A single choice. */
 typedef struct choices_choice
 {
   const char                  *name;
@@ -71,7 +95,7 @@ typedef struct choices_choice
   int                          defaultval;
   union
   {
-    const void                *ui;
+    const void                *ui; /* used when no visible UI */
     const choices_colour      *colour;
     const choices_numberrange *number_range;
     const choices_option      *option;
@@ -83,6 +107,7 @@ choices_choice;
 
 /* ----------------------------------------------------------------------- */
 
+/* The window pane associated with a single radio button. */
 typedef struct choices_pane choices_pane;
 
 typedef result_t (choices_pane_initialise_handler)(const choices_pane *);
@@ -91,12 +116,12 @@ typedef result_t (choices_pane_changed_handler)(const choices_pane *);
 typedef result_t (choices_pane_redraw_handler)(const choices_pane *,
                                                wimp_draw *);
 
-/* these handlers deal with 'proposed' choices */
+/* These handlers deal with proposed choices. */
 typedef struct choices_pane_handlers
 {
   choices_pane_initialise_handler *initialise_callback;
   choices_pane_finalise_handler   *finalise_callback;
-  /* called when the proposed choices are changed */
+  /* Called when the proposed choices are changed. */
   choices_pane_changed_handler    *changed_callback;
   choices_pane_redraw_handler     *redraw_callback;
 }
@@ -112,14 +137,14 @@ struct choices_pane
 
 /* ----------------------------------------------------------------------- */
 
-/* A grouping of choices */
+/* A grouping of choices. */
 typedef struct choices_group choices_group;
 
 typedef result_t (choices_group_changed_handler)(const choices_group *);
 
 typedef struct choices_group_handlers
 {
-  /* called when the choices are set and the group has changes */
+  /* Called when the choices are set and the group has had changes. */
   choices_group_changed_handler *changed_callback;
 }
 choices_group_handlers;
@@ -135,7 +160,7 @@ struct choices_group
 
 /* ----------------------------------------------------------------------- */
 
-/* Since everything else is const, keep the variables self-contained */
+/* Since everything else is const, keep the variables self-contained. */
 typedef struct choices_vars choices_vars;
 
 struct choices_vars
@@ -143,7 +168,7 @@ struct choices_vars
   unsigned int         *temporary_colour; /* stash var for ColourPicker */
   wimp_menu            *current_menu;
   const choices_group  *group_menu;
-  const choices_choice *choice_menu; /* which choice does it relate to? */
+  const choices_choice *choice_menu; /* the choice an open menu belongs to */
 };
 
 /* ----------------------------------------------------------------------- */
