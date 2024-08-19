@@ -1,7 +1,7 @@
 Version 3.30 (29 Nov 2022)
 #Parent !Root
 Changes
-è	TBD
+è	Boosted directory buffer to 1K, from 256 bytes, speeding up directory enumeration on directories containing lots of long filenames.
 
 Fixes
 è	Fix: Alpha channels in RISC OS 5 format sprites weren't detected correctly.
