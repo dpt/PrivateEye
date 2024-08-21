@@ -12,6 +12,7 @@
 #include "oslib/wimp.h"
 
 #include "appengine/types.h"
+#include "appengine/datastruct/array.h"
 #include "appengine/wimp/event.h"
 
 #include "event-wimp.h"
@@ -340,15 +341,10 @@ int event_register_wimp_handler(wimp_event_no       event_no,
 static void delete_wimp_handler_element(wimp_handler_array   *v,
                                         wimp_handler_element *e)
 {
-  size_t n;
-
-  // FIXME: is there an array_ util function to do this?
-
-  n = (v->entries + v->nentries) - (e + 1);
-
-  if (n)
-    memmove(e, e + 1, sizeof(*v->entries) * n);
-
+  array_delete_element(v->entries,
+                       sizeof(*v->entries),
+                       v->nentries,
+                       v->entries - e);
   v->nentries--;
 }
 
