@@ -272,7 +272,7 @@ static result_t treeview_walk_node(ntree_t *t, void *opaque)
 
   /* need to know how high the text will be */
 
-  height = txtfmt_get_height(tx);
+  height = txtfmt_get_nlines(tx);
 
   /* call the callback */
 
@@ -509,7 +509,7 @@ static result_t draw_walk(treeview_t     *tr,
   /* plot text */
 
   x0 = x + (depth + 1) * line_height;
-  err = txtfmt_paint(tx, x0, y, bgcolour);
+  err = txtfmt_paint(tx, x0, y, line_height, bgcolour);
   if (err)
     goto Failure;
 
@@ -618,15 +618,14 @@ result_t treeview_click(treeview_t *tr, int x, int y, int *redraw_y)
 
 static result_t string_to_txtfmt(void *data, void *opaque, void **newdata)
 {
-  result_t       err;
-  treeview_t *tr = opaque;
-  txtfmt_t   *tx;
+  result_t  err;
+  txtfmt_t *tx;
+
+  NOT_USED(opaque);
 
   err = txtfmt_create(data, &tx);
   if (err)
     return err;
-
-  txtfmt_set_line_height(tx, tr->line_height);
 
   *newdata = tx;
 
@@ -683,7 +682,7 @@ static result_t make_collapsible_walk(ntree_t *t, void *opaque)
   if (err)
     return err;
 
-  if (txtfmt_get_height(tx) > 1)
+  if (txtfmt_get_nlines(tx) > 1)
   {
     err = bitvec_set(tr->multiline, i);
     if (err)

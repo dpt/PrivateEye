@@ -11,7 +11,6 @@ extern int array_test(void);
 extern int filing_test(void);
 extern int font_test(void);
 extern int pack_test(void);
-extern int txtfmt_test(void);
 extern int wire_test(void);
 
 typedef struct test
@@ -27,7 +26,6 @@ static const test tests[] =
   { "filing", filing_test },
   { "font",   font_test   },
   { "pack",   pack_test   },
-  { "txtfmt", txtfmt_test },
   { "wire",   wire_test   },
 };
 

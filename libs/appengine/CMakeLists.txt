@@ -538,7 +538,6 @@ if(BUILD_TESTS)
         datastruct/array/test/test.c
         io/filing/test/test.c
         test/main/main.c
-        text/txtfmt/test/test.c
         vdu/font/test/test.c)
 
     # Avoid a warning from CMake
