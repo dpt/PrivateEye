@@ -23,7 +23,7 @@
 #include "oslib/osfile.h"
 #include "oslib/wimp.h"
 
-#include "appengine/base/bitwise.h"
+#include "utils/barith.h"
 #include "appengine/base/oserror.h"
 #include "appengine/base/messages.h"
 #include "appengine/vdu/screen.h"

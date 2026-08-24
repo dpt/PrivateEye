@@ -15,7 +15,7 @@
 #include "datastruct/atom.h"
 
 #include "appengine/types.h"
-#include "appengine/base/bitwise.h"
+#include "utils/barith.h"
 #include "appengine/base/errors.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/menu.h"

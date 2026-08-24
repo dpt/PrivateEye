@@ -14,10 +14,10 @@
 #include "oslib/osfind.h"
 #include "oslib/osgbpb.h"
 
-#include "appengine/base/bsearch.h"
+#include "utils/bsearch.h"
 #include "appengine/base/oserror.h"
 #include "appengine/base/strings.h"
-#include "appengine/base/utils.h"
+#include "utils/maths.h"
 
 #include "artworks.h"
 #include "bitmap.h"

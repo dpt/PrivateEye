@@ -12,7 +12,7 @@
 #include "oslib/os.h"
 
 #include "appengine/geom/trfm.h"
-#include "appengine/base/utils.h"
+#include "utils/maths.h"
 
 /* This should really be 16, but that makes many of the multiplies overflow.
  * So, for now, I'm leaving it at 8 and will scale up later. */

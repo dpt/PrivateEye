@@ -20,7 +20,7 @@
 #include "geom/box.h"
 
 #include "appengine/types.h"
-#include "appengine/base/bitwise.h"
+#include "utils/barith.h"
 #include "appengine/wimp/event.h"
 #include "appengine/vdu/font.h"
 

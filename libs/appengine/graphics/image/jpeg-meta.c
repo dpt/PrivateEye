@@ -30,11 +30,11 @@
 #include "datastruct/ntree.h"
 
 #include "appengine/types.h"
-#include "appengine/base/bsearch.h"
-#include "appengine/base/bytesex.h"
+#include "utils/bsearch.h"
+#include "utils/bytesex.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/oserror.h"
-#include "appengine/base/pack.h"
+#include "utils/pack.h"
 #include "appengine/base/strings.h"
 
 #include "jpeg.h"
