@@ -101,7 +101,6 @@ set(PUBLIC_HEADERS
     base/primes.h
     base/strings.h
     base/utils.h
-    datastruct/array.h
     dialogues/dcs-quit.h
     dialogues/info.h
     dialogues/name.h
@@ -241,12 +240,6 @@ set(GENERIC_SOURCES
     base/strings/strnncasecmp.c
     base/utils/degs-to-rads.c
     base/utils/gcd.c
-    datastruct/array/delelem.c
-    datastruct/array/delelems.c
-    datastruct/array/grow.c
-    datastruct/array/shrinkwrap.c
-    datastruct/array/squeeze.c
-    datastruct/array/stretch.c
     dialogues/dcs-quit/dcs-quit.c
     dialogues/info/info.c
     dialogues/name/name.c
@@ -535,7 +528,6 @@ if(BUILD_TESTS)
     set(TEST_SOURCES
         app/wire/test/test.c
         base/pack/test/test.c
-        datastruct/array/test/test.c
         io/filing/test/test.c
         test/main/main.c
         vdu/font/test/test.c)

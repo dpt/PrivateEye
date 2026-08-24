@@ -30,7 +30,6 @@
 #include "appengine/base/messages.h"
 #include "appengine/base/oserror.h"
 #include "appengine/base/strings.h"
-#include "appengine/datastruct/array.h"
 #include "appengine/dialogues/dcs-quit.h"
 #include "appengine/graphics/drawable.h"
 #include "appengine/graphics/image-observer.h"

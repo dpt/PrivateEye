@@ -11,8 +11,9 @@
 
 #include "oslib/wimp.h"
 
+#include "utils/array.h"
+
 #include "appengine/types.h"
-#include "appengine/datastruct/array.h"
 #include "appengine/wimp/event.h"
 
 #include "event-wimp.h"
