@@ -19,10 +19,10 @@
 #include "databases/digest-db.h"
 #include "databases/filename-db.h"
 #include "databases/tag-db.h"
+#include "utils/array.h"
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
-#include "appengine/datastruct/array.h"
 #include "appengine/gadgets/tag-cloud.h"
 #include "appengine/graphics/image.h"
 #include "appengine/io/md5.h"

@@ -24,7 +24,7 @@
 
 #include "appengine/base/messages.h"
 #include "appengine/base/oserror.h"
-#include "appengine/base/utils.h"
+#include "utils/maths.h"
 #include "appengine/graphics/jpegtran.h"
 #include "appengine/vdu/sprite.h"
 

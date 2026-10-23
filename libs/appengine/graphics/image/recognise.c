@@ -10,7 +10,7 @@
 #include "oslib/osfind.h"
 #include "oslib/osgbpb.h"
 
-#include "appengine/base/bsearch.h"
+#include "utils/bsearch.h"
 #include "appengine/base/oserror.h"
 
 #include "gif.h"

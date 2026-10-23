@@ -40,7 +40,7 @@
 #include "appengine/types.h"
 #include "appengine/app/choices.h"
 #include "appengine/app/wire.h"
-#include "appengine/base/bsearch.h"
+#include "utils/bsearch.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"

@@ -13,7 +13,7 @@
 #include "oslib/os.h"
 #include "oslib/osfile.h"
 
-#include "appengine/base/bsearch.h"
+#include "utils/bsearch.h"
 #include "appengine/graphics/image.h"
 
 #include "drawable-artworks.h"

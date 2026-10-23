@@ -10,7 +10,7 @@
 
 #include "datastruct/bitvec.h"
 
-#include "appengine/base/bsearch.h"
+#include "utils/bsearch.h"
 #include "appengine/gadgets/tag-cloud.h"
 
 #include "impl.h"

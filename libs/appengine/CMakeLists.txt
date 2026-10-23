@@ -46,8 +46,8 @@ endif()
 
 # Import DPTLib
 FetchContent_Declare(DPTLib
-    GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
-    GIT_TAG HEAD)
+    GIT_REPOSITORY https://github.com/dpt/DPTLib
+    GIT_TAG 0.6.0)
 FetchContent_MakeAvailable(DPTLib)
 
 # Import Fortify
@@ -87,21 +87,13 @@ set(PUBLIC_HEADERS
     app/keymap.h
     app/wire.h
     base/appengine.h
-    base/bitwise.h
-    base/bsearch.h
-    base/bytesex.h
     base/errors.h
-    base/fxp.h
     base/heap.h
     base/messages.h
     base/numstr.h
     base/os.h
     base/oserror.h
-    base/pack.h
-    base/primes.h
     base/strings.h
-    base/utils.h
-    datastruct/array.h
     dialogues/dcs-quit.h
     dialogues/info.h
     dialogues/name.h
@@ -153,15 +145,6 @@ set(PUBLIC_HEADERS
     wimp/window.h)
 
 set(PRIVATE_HEADERS
-    base/bitwise/util.h
-    base/bsearch/bsearch-impl.h
-    base/bytesex/util.h
-    datastruct/atom/impl.h
-    datastruct/bitvec/impl.h
-    datastruct/hash/impl.h
-    datastruct/hlist/impl.h
-    datastruct/ntree/impl.h
-    datastruct/vector/impl.h
     gadgets/scroll-list/impl.h
     gadgets/tag-cloud/iconnames.h
     gadgets/tag-cloud/impl.h
@@ -191,26 +174,6 @@ set(GENERIC_SOURCES
     app/wire/wire.c
     base/appengine/heap.c
     base/appengine/resource.c
-    base/bitwise/ceillog2.c
-    base/bitwise/countbits.c
-    base/bitwise/ctz.c
-    base/bitwise/floorlog2.c
-    base/bitwise/msb.c
-    base/bitwise/power2gt.c
-    base/bitwise/power2le.c
-    base/bitwise/reversebits.c
-    base/bsearch/bsearch-int.c
-    base/bsearch/bsearch-short.c
-    base/bsearch/bsearch-uint.c
-    base/bsearch/bsearch-ushort.c
-    base/bytesex/rev-l-block.c
-    base/bytesex/rev-l-m.c
-    base/bytesex/rev-l.c
-    base/bytesex/rev-s-block.c
-    base/bytesex/rev-s-m.c
-    base/bytesex/rev-s-pair-m.c
-    base/bytesex/rev-s-pair.c
-    base/bytesex/rev-s.c
     base/errors/errors.c
     base/errors/fatal.c
     base/heap/heap.c
@@ -224,9 +187,6 @@ set(GENERIC_SOURCES
     base/oserror/plot.c
     base/oserror/report-block.c
     base/oserror/report.c
-    base/pack/pack.c
-    base/pack/unpack.c
-    base/primes/primes.c
     base/strings/str_branch.c
     base/strings/str_cpy.c
     base/strings/str_dup.c
@@ -239,14 +199,6 @@ set(GENERIC_SOURCES
     base/strings/strcasecmp.c
     base/strings/strncasecmp.c
     base/strings/strnncasecmp.c
-    base/utils/degs-to-rads.c
-    base/utils/gcd.c
-    datastruct/array/delelem.c
-    datastruct/array/delelems.c
-    datastruct/array/grow.c
-    datastruct/array/shrinkwrap.c
-    datastruct/array/squeeze.c
-    datastruct/array/stretch.c
     dialogues/dcs-quit/dcs-quit.c
     dialogues/info/info.c
     dialogues/name/name.c
@@ -451,27 +403,7 @@ set(ARM_SOURCES
     net/internet/xresolver_get_host_by_addr.s
     net/internet/xresolver_get_host_by_name.s)
 
-# ARM sources that depend on the target architecture
-#
-# SMULL and UMULL need ARMv3M and above
-# CLZ needs ARMv5 and above
-set(ARM_BEFORE_V3M_SOURCES
-    base/fxp/smull-fxp16.c
-    base/fxp/umull-fxp16.c)
-set(ARM_AFTER_V3M_SOURCES
-    base/fxp/target/arm-v3m/smull-fxp16.s
-    base/fxp/target/arm-v3m/umull-fxp16.s)
-set(ARM_BEFORE_V5_SOURCES
-    base/bitwise/clz.c)
-set(ARM_AFTER_V5_SOURCES
-    base/bitwise/target/arm-v5/clz.s)
-
 set(ALL_SOURCES ${PUBLIC_HEADERS} ${GENERIC_SOURCES} ${ARM_SOURCES})
-if(ARMV5)
-    list(APPEND ALL_SOURCES ${ARM_AFTER_V3M_SOURCES} ${ARM_AFTER_V5_SOURCES})
-else()
-    list(APPEND ALL_SOURCES ${ARM_BEFORE_V3M_SOURCES} ${ARM_BEFORE_V5_SOURCES})
-endif()
 
 target_sources(AppEngine PRIVATE ${ALL_SOURCES})
 
@@ -534,11 +466,8 @@ option(BUILD_TESTS "Build test program" OFF)
 if(BUILD_TESTS)
     set(TEST_SOURCES
         app/wire/test/test.c
-        base/pack/test/test.c
-        datastruct/array/test/test.c
         io/filing/test/test.c
         test/main/main.c
-        text/txtfmt/test/test.c
         vdu/font/test/test.c)
 
     # Avoid a warning from CMake

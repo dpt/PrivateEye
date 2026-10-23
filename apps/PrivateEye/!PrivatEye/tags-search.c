@@ -17,11 +17,11 @@
 
 #include "databases/filename-db.h"
 #include "databases/tag-db.h"
+#include "utils/array.h"
 
 #include "appengine/types.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/os.h"
-#include "appengine/datastruct/array.h"
 #include "appengine/wimp/event.h"
 #include "appengine/wimp/help.h"
 

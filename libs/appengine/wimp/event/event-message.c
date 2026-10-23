@@ -14,7 +14,7 @@
 #include "oslib/wimp.h"
 
 #include "appengine/types.h"
-#include "appengine/base/bsearch.h"
+#include "utils/bsearch.h"
 #include "appengine/wimp/event.h"
 
 #include "event-message.h"

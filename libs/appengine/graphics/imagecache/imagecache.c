@@ -19,7 +19,8 @@
 
 #include "oslib/hourglass.h"
 
-#include "appengine/datastruct/array.h"
+#include "utils/array.h"
+
 #include "appengine/graphics/image.h"
 
 #include "appengine/graphics/imagecache.h"

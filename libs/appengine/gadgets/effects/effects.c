@@ -26,7 +26,7 @@
 #include "utils/array.h"
 
 #include "appengine/types.h"
-#include "appengine/base/bsearch.h"
+#include "utils/bsearch.h"
 #include "appengine/base/errors.h"
 #include "appengine/base/messages.h"
 #include "appengine/base/os.h"

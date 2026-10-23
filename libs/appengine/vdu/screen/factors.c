@@ -5,7 +5,7 @@
 
 #include "oslib/os.h"
 
-#include "appengine/base/utils.h"
+#include "utils/maths.h"
 
 #include "appengine/vdu/screen.h"
 
