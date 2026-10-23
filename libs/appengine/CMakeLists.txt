@@ -46,8 +46,8 @@ endif()
 
 # Import DPTLib
 FetchContent_Declare(DPTLib
-    GIT_REPOSITORY $ENV{HOME}/SyncProjects/github/DPTLib
-    GIT_TAG HEAD)
+    GIT_REPOSITORY https://github.com/dpt/DPTLib
+    GIT_TAG 0.6.0)
 FetchContent_MakeAvailable(DPTLib)
 
 # Import Fortify
