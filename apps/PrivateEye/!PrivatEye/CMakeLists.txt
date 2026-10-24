@@ -84,17 +84,6 @@ set(LIBS_DIR ${APPENGINE_REPO_ROOT}/libs)
 # Override libpng's configuration
 set(DFA_XTRA ${CMAKE_CURRENT_SOURCE_DIR}/pngusr-privateeye.dfa CACHE FILEPATH "File containing extra configuration settings" FORCE)
 
-# Import DPTLib
-FetchContent_Declare(DPTLib
-    GIT_REPOSITORY https://github.com/dpt/DPTLib
-    GIT_TAG HEAD)
-# Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
-FetchContent_GetProperties(DPTLib)
-if(NOT DPTLib_POPULATED)
-    FetchContent_Populate(DPTLib)
-    add_subdirectory(${dptlib_SOURCE_DIR} ${dptlib_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
-
 # Import AppEngine
 set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
@@ -124,7 +113,6 @@ add_executable(PrivateEye)
 target_include_directories(PrivateEye
     PRIVATE
     ${APPENGINE_INCLUDE}
-    ${DPTLIB_INCLUDE}
     ${EXIFTAGS_INCLUDE}
     ${JPEG_INCLUDE}
     ${MD5_INCLUDE}

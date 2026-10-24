@@ -73,17 +73,6 @@ message(STATUS "${PROJECT_NAME}: Building targets only")
 #
 set(LIBS_DIR ${APPENGINE_REPO_ROOT}/libs)
 
-# Import DPTLib
-FetchContent_Declare(DPTLib
-    GIT_REPOSITORY https://github.com/dpt/DPTLib
-    GIT_TAG 0.4.1)
-# Expanding out FetchContent_MakeAvailable(DPTLib) here so I can use EXCLUDE_FROM_ALL
-FetchContent_GetProperties(DPTLib)
-if(NOT DPTLib_POPULATED)
-    FetchContent_Populate(DPTLib)
-    add_subdirectory(${dptlib_SOURCE_DIR} ${dptlib_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
-
 # Import AppEngine
 set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
@@ -98,7 +87,6 @@ add_executable(TagCloud)
 target_include_directories(TagCloud
     PRIVATE
     ${APPENGINE_INCLUDE}
-    ${DPTLIB_INCLUDE}
     ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(TagCloud PRIVATE AppEngine DPTLib flex)
