@@ -14,7 +14,7 @@
 
 #include "appengine/app/choices.h"
 #include "appengine/graphics/drawable.h"
-#include "appengine/graphics/stage.h"
+#include "geom/stage.h"
 #include "appengine/base/errors.h"
 #include "appengine/wimp/window.h"
 

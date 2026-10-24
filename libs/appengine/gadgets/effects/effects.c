@@ -23,6 +23,10 @@
 #include "oslib/wimp.h"
 
 #include "datastruct/list.h"
+#include "framebuf/bitmap.h"
+#include "framebuf/colour.h"
+#include "framebuf/effects.h"
+#include "framebuf/tonemap.h"
 #include "utils/array.h"
 
 #include "appengine/types.h"
@@ -37,8 +41,6 @@
 #include "appengine/graphics/colour.h"
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
-#include "appengine/graphics/sprite-effects.h"
-#include "appengine/graphics/tonemap.h"
 #include "appengine/vdu/sprite.h"
 #include "appengine/wimp/dialogue.h"
 #include "appengine/wimp/event.h"
@@ -117,16 +119,16 @@ effect_clear;
 
 typedef struct
 {
-  effects_blur_method method;
-  int                 level;
+  effects_blur_method_t method;
+  int                   level;
 }
 effect_blur;
 
 typedef struct
 {
-  tonemap         *map;
-  tonemap_channels channels;
-  tonemap_spec     spec;
+  tonemap_t         *map;
+  tonemap_channels_t channels;
+  tonemap_spec_t     spec;
 }
 effect_tone;
 
@@ -205,7 +207,6 @@ struct effectswin
   wimp_w            window;
   scroll_list      *sl;
   image_t          *image;
-  blender           blender;
   int               blendval;
   effects_array     effects;
   effects_element  *editing_element;
@@ -213,12 +214,15 @@ struct effectswin
 
 /* ---------------------------------------------------------------------- */
 
-static result_t clear_apply(osspriteop_area   *area,
-                            osspriteop_header *src,
-                            osspriteop_header *dst,
-                            effects_element   *el)
+static result_t clear_apply(const bitmap_t  *src,
+                            bitmap_t        *dst,
+                            effects_element *el)
 {
-  return effects_clear_apply(area, src, dst, el->args.clear.colour);
+  return effects_clear_apply(src,
+                             dst,
+                             colour_rgb((el->args.clear.colour >>  8) & 0xFF,
+                                        (el->args.clear.colour >> 16) & 0xFF,
+                                        (el->args.clear.colour >> 24) & 0xFF));
 }
 
 static result_t clear_defaults(effectswin_t *ew, effects_element *el)
@@ -230,12 +234,11 @@ static result_t clear_defaults(effectswin_t *ew, effects_element *el)
   return result_OK;
 }
 
-static result_t tone_apply(osspriteop_area   *area,
-                           osspriteop_header *src,
-                           osspriteop_header *dst,
-                           effects_element   *el)
+static result_t tone_apply(const bitmap_t  *src,
+                           bitmap_t        *dst,
+                           effects_element *el)
 {
-  return effects_tonemap_apply(area, src, dst, el->args.tone.map);
+  return effects_tonemap_apply(src, dst, el->args.tone.map);
 }
 
 static void effect_tone_reset(effect_tone *t)
@@ -258,27 +261,26 @@ static result_t tone_defaults(effectswin_t *ew, effects_element *el)
 {
   effect_tone *t;
 
+  NOT_USED(ew);
+
   t = &el->args.tone;
 
   t->map = tonemap_create();
   if (t->map == NULL)
     return result_OOM;
 
-  tonemap_draw_set_stroke_width(t->map, ew->config.tonemap_stroke_width);
-
   effect_tone_reset(t);
 
   return result_OK;
 }
 
-static result_t grey_apply(osspriteop_area   *area,
-                           osspriteop_header *src,
-                           osspriteop_header *dst,
-                           effects_element   *el)
+static result_t grey_apply(const bitmap_t  *src,
+                           bitmap_t        *dst,
+                           effects_element *el)
 {
   NOT_USED(el);
 
-  return effects_grey_apply(area, src, dst);
+  return effects_grey_apply(src, dst);
 }
 
 static result_t blur_defaults(effectswin_t *ew, effects_element *el)
@@ -291,54 +293,47 @@ static result_t blur_defaults(effectswin_t *ew, effects_element *el)
   return result_OK;
 }
 
-static result_t blur_apply(osspriteop_area   *area,
-                           osspriteop_header *src,
-                           osspriteop_header *dst,
-                           effects_element   *el)
+static result_t blur_apply(const bitmap_t  *src,
+                           bitmap_t        *dst,
+                           effects_element *el)
 {
-  return effects_blur_apply(area,
-                            src,
+  return effects_blur_apply(src,
                             dst,
                             el->args.blur.method,
                             el->args.blur.level);
 }
 
-static result_t sharpen_apply(osspriteop_area   *area,
-                              osspriteop_header *src,
-                              osspriteop_header *dst,
-                              effects_element   *el)
+static result_t sharpen_apply(const bitmap_t  *src,
+                              bitmap_t        *dst,
+                              effects_element *el)
 {
   NOT_USED(el);
 
-  return effects_sharpen_apply(area, src, dst, 0 /* unused */);
+  return effects_sharpen_apply(src, dst);
 }
 
-static result_t expand_apply(osspriteop_area   *area,
-                             osspriteop_header *src,
-                             osspriteop_header *dst,
-                             effects_element   *el)
+static result_t expand_apply(const bitmap_t  *src,
+                             bitmap_t        *dst,
+                             effects_element *el)
 {
   NOT_USED(el);
 
-  return effects_expand_apply(area, src, dst, 0 /* threshold */);
+  return effects_expand_apply(src, dst, 0 /* threshold */);
 }
 
-static result_t equalise_apply(osspriteop_area   *area,
-                               osspriteop_header *src,
-                               osspriteop_header *dst,
-                               effects_element   *el)
+static result_t equalise_apply(const bitmap_t  *src,
+                               bitmap_t        *dst,
+                               effects_element *el)
 {
   NOT_USED(el);
 
-  return effects_equalise_apply(area, src, dst);
+  return effects_equalise_apply(src, dst);
 }
 
-static result_t emboss_apply(osspriteop_area   *area,
-                             osspriteop_header *src,
-                             osspriteop_header *dst,
-                             effects_element   *el)
+static result_t emboss_apply(const bitmap_t  *src,
+                             bitmap_t        *dst,
+                             effects_element *el)
 {
-  NOT_USED(area);
   NOT_USED(src);
   NOT_USED(dst);
   NOT_USED(el);
@@ -355,10 +350,9 @@ typedef int effect_editor(effectswin_t    *ew,
 
 typedef result_t effect_initialiser(effectswin_t *ew, effects_element *el);
 
-typedef result_t effect_applier(osspriteop_area   *area,
-                                osspriteop_header *src,
-                                osspriteop_header *dst,
-                                effects_element   *el);
+typedef result_t effect_applier(const bitmap_t  *src,
+                                bitmap_t        *dst,
+                                effects_element *el);
 
 /* declare editors */
 static effect_editor clear_edit, blur_edit, tone_edit;
@@ -411,23 +405,43 @@ static memcpyfn *choose_memcpy(void)
 
 /* ---------------------------------------------------------------------- */
 
+/* Wrap sprite 'index' of 'area' as a bitmap. effects_available only admits
+ * 32bpp sprites. */
+static void sprite_bitmap(osspriteop_area *area, int index, bitmap_t *bm)
+{
+  osspriteop_header *header;
+  int                width;
+  int                height;
+  size2d_t           size;
+
+  header = sprite_select(area, index);
+  sprite_info(area, header, &width, &height, NULL, NULL, NULL);
+
+  size.w = width;
+  size.h = height;
+  bitmap_init(bm, size, pixelfmt_rgbx8888, width * 4, NULL,
+              sprite_data(header));
+}
+
 static void apply_blend(effectswin_t *ew, int val)
 {
   image_t         *image;
   osspriteop_area *area;
+  bitmap_t         src;
+  bitmap_t         deg;
+  bitmap_t         dst;
 
   xhourglass_on();
 
   image = ew->image;
   area  = (osspriteop_area *) image->image;
 
-  /* point the blender at the image data */
-  ew->blender.src = sprite_data(sprite_select(area, 0));
-  ew->blender.deg = sprite_data(sprite_select(area, 1));
-  ew->blender.dst = sprite_data(sprite_select(area, 2));
+  sprite_bitmap(area, 0, &src);
+  sprite_bitmap(area, 1, &deg);
+  sprite_bitmap(area, 2, &dst);
 
-  ew->blender.make_lut(val, 0 /* offset */, &ew->blender);
-  ew->blender.blend(&ew->blender);
+  /* val is 16.16; the blend wants 256ths */
+  effects_blend_extrapolate(&src, &deg, &dst, val / 256);
 
   image_preview(image);
 
@@ -475,28 +489,30 @@ static result_t apply_effects(effectswin_t *ew)
 
   if (ea->nentries)
   {
-    osspriteop_header *src;
-    osspriteop_header *dst;
-    int                i;
+    bitmap_t        src;
+    bitmap_t        dst;
+    const bitmap_t *psrc;
+    int             i;
 
     /* apply each effect in turn */
 
     /* The initial pass processes the source image into the destination then
      * after that the degenerate is repeatedly reprocessed. */
 
-    src = sprite_select(area, 0);
-    dst = sprite_select(area, 1);
+    sprite_bitmap(area, 0, &src);
+    sprite_bitmap(area, 1, &dst);
+    psrc = &src;
 
     for (i = 0; i < ea->nentries; i++)
     {
       effects_element *e;
 
       e = ea->entries + i;
-      err = editors[e->effect].apply(area, src, dst, e);
+      err = editors[e->effect].apply(psrc, &dst, e);
       if (err)
         goto Exit;
 
-      src = dst; /* use degenerate from now on */
+      psrc = &dst; /* use degenerate from now on */
 
       xhourglass_percentage((i + 1) * 100 / ea->nentries);
     }
@@ -1453,7 +1469,11 @@ static void tone_set_values_and_redraw(void)
 {
   tonemap_set(LOCALS.tone.map, LOCALS.tone.channels, &LOCALS.tone.spec);
 
-  tonemapgadget_update(LOCALS.tone.map, LOCALS.effects_crv_w, EFFECTS_CRV_D_CURVE);
+  tonemapgadget_update(LOCALS.tone.map,
+                       LOCALS.tone.channels,
+                       LOCALS.current->config.tonemap_stroke_width,
+                       LOCALS.effects_crv_w,
+                       EFFECTS_CRV_D_CURVE);
 }
 
 static const slider_rec tone_sliders[] =
@@ -1496,8 +1516,8 @@ static void tone_reset_dialogue(effectswin_t *ew)
 {
   static const struct
   {
-    tonemap_channels channels;
-    wimp_i           i;
+    tonemap_channels_t channels;
+    wimp_i             i;
   }
   map[] =
   {
@@ -1593,6 +1613,8 @@ static int tone_event_redraw_window_request(wimp_event_no event_no,
   NOT_USED(handle);
 
   tonemapgadget_redraw(LOCALS.tone.map,
+                       LOCALS.tone.channels,
+                       LOCALS.current->config.tonemap_stroke_width,
                        LOCALS.effects_crv_w,
                        EFFECTS_CRV_D_CURVE,
                        redraw);
@@ -1657,7 +1679,7 @@ static int tone_event_mouse_click(wimp_event_no event_no,
     case EFFECTS_CRV_R_BLUE:
     case EFFECTS_CRV_R_ALPHA:
     {
-      tonemap_channels new_channels;
+      tonemap_channels_t new_channels;
 
       new_channels = LOCALS.tone.channels;
 
@@ -1778,8 +1800,8 @@ static void blur_reset_dialogue(void)
 {
   static const struct
   {
-    effects_blur_method method;
-    wimp_i              i;
+    effects_blur_method_t method;
+    wimp_i                i;
   }
   map[] =
   {
@@ -1902,7 +1924,7 @@ static int blur_event_mouse_click(wimp_event_no event_no,
 
 /* ----------------------------------------------------------------------- */
 
-/* Allocates and clones images for editing, then sets up the blender. */
+/* Allocates and clones images for editing. */
 static result_t create_images(effectswin_t *ew)
 {
   image_t           *image;
@@ -1938,8 +1960,6 @@ static result_t create_images(effectswin_t *ew)
                          area,
          (osspriteop_id) header,
                          "result");
-
-  blender_create(&ew->blender, area);
 
   xhourglass_off();
 

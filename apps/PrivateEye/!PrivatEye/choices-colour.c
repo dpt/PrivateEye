@@ -7,9 +7,10 @@
 
 #include "appengine/app/choices.h"
 #include "appengine/base/messages.h"
-#include "appengine/graphics/tonemap.h"
 #include "appengine/gadgets/tonemap-gadget.h"
 #include "appengine/vdu/screen.h"
+
+#include "framebuf/tonemap.h"
 
 #include "oslib/types.h"
 #include "oslib/os.h"
@@ -25,15 +26,16 @@
 
 enum
 {
-  Border = 8  /* size of an icon border */
+  Border      = 8, /* size of an icon border */
+  StrokeWidth = 8  /* width of the tone curves */
 };
 
 /* ----------------------------------------------------------------------- */
 
 static struct
 {
-  tonemap *map;
-  int      on;
+  tonemap_t *map;
+  int        on;
 }
 LOCALS;
 
@@ -60,9 +62,9 @@ void colour_choicepane_finalise(const choices_pane *p)
 
 result_t colour_choicepane_changed(const choices_pane *p)
 {
-  tonemap      *temp_map;
-  tonemap      *screen_map;
-  tonemap_spec  spec;
+  tonemap_t      *temp_map;
+  tonemap_t      *screen_map;
+  tonemap_spec_t  spec;
 
   spec.flags      = 0;
   spec.gamma      = GLOBALS.proposed_choices.colour.gamma;
@@ -74,7 +76,11 @@ result_t colour_choicepane_changed(const choices_pane *p)
 
   tonemap_set(LOCALS.map, tonemap_CHANNEL_RGB, &spec);
 
-  tonemapgadget_update(LOCALS.map, *p->window, CHOICES_COL_D_CURVE);
+  tonemapgadget_update(LOCALS.map,
+                       tonemap_CHANNEL_RGB,
+                       StrokeWidth,
+                      *p->window,
+                       CHOICES_COL_D_CURVE);
 
   temp_map = NULL;
 
@@ -86,7 +92,7 @@ result_t colour_choicepane_changed(const choices_pane *p)
   {
     if (LOCALS.on)
     {
-      static const tonemap_spec spec = { 0, 100, 100, 100, 50, 50, 50 };
+      static const tonemap_spec_t spec = { 0, 100, 100, 100, 50, 50, 50 };
 
       /* currently off + previously turned on */
 
@@ -110,10 +116,13 @@ result_t colour_choicepane_changed(const choices_pane *p)
 
   if (screen_map)
   {
-    const os_correction_table *red, *green, *blue;
+    const tonemap_table_t *red, *green, *blue;
 
-    tonemap_get_corrections(screen_map, &red, &green, &blue, NULL);
-    palettev_set_gamma_corrections(red, green, blue);
+    /* tonemap_table_t has the same layout as os_correction_table */
+    tonemap_get_tables(screen_map, &red, &green, &blue, NULL);
+    palettev_set_gamma_corrections((const os_correction_table *) red,
+                                   (const os_correction_table *) green,
+                                   (const os_correction_table *) blue);
   }
 
   tonemap_destroy(temp_map);
@@ -125,7 +134,12 @@ result_t colour_choicepane_changed(const choices_pane *p)
 
 result_t colour_choicepane_redraw(const choices_pane *p, wimp_draw *redraw)
 {
-  tonemapgadget_redraw(LOCALS.map, *p->window, CHOICES_COL_D_CURVE, redraw);
+  tonemapgadget_redraw(LOCALS.map,
+                       tonemap_CHANNEL_RGB,
+                       StrokeWidth,
+                      *p->window,
+                       CHOICES_COL_D_CURVE,
+                       redraw);
 
   return result_OK;
 }

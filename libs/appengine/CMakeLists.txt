@@ -126,9 +126,7 @@ set(PUBLIC_HEADERS
     graphics/image.h
     graphics/imagecache.h
     graphics/jpegtran.h
-    graphics/sprite-effects.h
     graphics/thumbnail.h
-    graphics/tonemap.h
     io/basic.h
     io/filing.h
     io/md5.h
@@ -168,7 +166,6 @@ set(PRIVATE_HEADERS
     graphics/image/jpeg.h
     graphics/image/png.h
     graphics/image/sprite.h
-    graphics/sprite-effects/convolve.h
     wimp/event/event-message.h
     wimp/event/event-wimp.h
     wimp/window/open.h)
@@ -281,18 +278,7 @@ set(GENERIC_SOURCES
     graphics/image/sprite.c
     graphics/imagecache/imagecache.c
     graphics/jpegtran/jpegtran.c
-    graphics/sprite-effects/blender.c
-    graphics/sprite-effects/blur.c
-    graphics/sprite-effects/clear.c
-    graphics/sprite-effects/convolve.c
-    graphics/sprite-effects/equalise.c
-    graphics/sprite-effects/expand.c
-    graphics/sprite-effects/grey.c
-    graphics/sprite-effects/sharpen.c
-    graphics/sprite-effects/tonemap.c
-    graphics/stage/stage.c
     graphics/thumbnail/thumbnail.c
-    graphics/tonemap/tonemap.c
     io/basic/file.c
     io/filing/buffer.c
     io/filing/filetype.c

@@ -35,7 +35,7 @@
 #include "appengine/graphics/image-observer.h"
 #include "appengine/graphics/image.h"
 #include "appengine/graphics/imagecache.h"
-#include "appengine/graphics/stage.h"
+#include "geom/stage.h"
 #include "appengine/vdu/screen.h"
 #include "appengine/wimp/window.h"
 
@@ -582,6 +582,10 @@ void viewer_set_extent_from_box(viewer_t *viewer, const os_box *dimensions)
   if (GLOBALS.choices.viewer.size == viewersize_FIT_TO_SCREEN)
   {
     viewer->background.draw    = stage_draw;
+
+    read_current_mode_vars(&viewer->background.stage.config.log2_pixel_x,
+                           &viewer->background.stage.config.log2_pixel_y,
+                           NULL);
 
     stage_generate(&viewer->background.stage.config,
                     sw, sh,
