@@ -50,6 +50,12 @@ FetchContent_Declare(DPTLib
     GIT_TAG 0.6.0)
 FetchContent_MakeAvailable(DPTLib)
 
+# Import flex
+FetchContent_Declare(flex
+    GIT_REPOSITORY https://github.com/dpt/flex
+    GIT_TAG 0.1.0)
+FetchContent_MakeAvailable(flex)
+
 # Import Fortify
 # If this is enabled then the final binary will need to be linked against
 # Fortify too.
@@ -60,7 +66,7 @@ endif()
 
 add_library(AppEngine)
 
-target_link_libraries(AppEngine PUBLIC DPTLib)
+target_link_libraries(AppEngine PUBLIC DPTLib flex)
 
 set_target_properties(AppEngine PROPERTIES
     VERSION 0.6.8
@@ -73,13 +79,12 @@ set_target_properties(AppEngine PROPERTIES
     ARCHIVE_OUTPUT_NAME_MINSIZEREL AppEngine-minsizerel)
 
 # Look for includes in the 'libs' dir so that #include "fortify/fortify.h"
-# works. Also look in the 'flex' and 'zlib' dirs directly since includers of
-# those headers omit the parent directory.
+# works. Also look in the 'zlib' dir directly since includers of its
+# headers omit the parent directory.
 target_include_directories(AppEngine
     PUBLIC
     .. # AppEngine headers are found relative to our parent dir
     PRIVATE
-    ../flex
     ../zlib)
 
 set(PUBLIC_HEADERS

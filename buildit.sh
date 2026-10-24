@@ -39,12 +39,6 @@ mkdir bin && \
 
 source /home/riscos/gccsdk-params
 
-if [[ ! -d libs/flex ]] ; then
-    cd libs
-    ./grabflex.sh
-    cd ..
-fi
-
 if $BUILD_OSLIB ; then
     if [[ ! -d libs/oslib || ! -d "$GCCSDK_INSTALL_ENV/include/oslib/" ]] ; then
         cd libs

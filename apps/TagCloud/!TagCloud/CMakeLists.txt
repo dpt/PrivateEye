@@ -89,11 +89,6 @@ set(APPENGINE_DIR ${LIBS_DIR}/appengine)
 set(APPENGINE_INCLUDE ${APPENGINE_DIR}/../)
 add_subdirectory(${APPENGINE_DIR} appengine-build EXCLUDE_FROM_ALL)
 
-# Import flex
-set(FLEX_DIR ${LIBS_DIR}/flex)
-set(FLEX_INCLUDE ${FLEX_DIR})
-add_subdirectory(${FLEX_DIR} flex-build EXCLUDE_FROM_ALL)
-
 
 # Avoid a warning from CMake
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -104,7 +99,6 @@ target_include_directories(TagCloud
     PRIVATE
     ${APPENGINE_INCLUDE}
     ${DPTLIB_INCLUDE}
-    ${FLEX_INCLUDE}
     ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(TagCloud PRIVATE AppEngine DPTLib flex)

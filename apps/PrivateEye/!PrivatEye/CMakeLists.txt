@@ -110,11 +110,6 @@ set(EXIFTAGS_DIR ${LIBS_DIR}/exiftags)
 set(EXIFTAGS_INCLUDE ${EXIFTAGS_DIR})
 add_subdirectory(${EXIFTAGS_DIR} exiftags-build EXCLUDE_FROM_ALL)
 
-# Import flex
-set(FLEX_DIR ${LIBS_DIR}/flex)
-set(FLEX_INCLUDE ${FLEX_DIR})
-add_subdirectory(${FLEX_DIR} flex-build EXCLUDE_FROM_ALL)
-
 # Import MD5
 set(MD5_DIR ${LIBS_DIR}/md5)
 set(MD5_INCLUDE ${MD5_DIR})
@@ -131,7 +126,6 @@ target_include_directories(PrivateEye
     ${APPENGINE_INCLUDE}
     ${DPTLIB_INCLUDE}
     ${EXIFTAGS_INCLUDE}
-    ${FLEX_INCLUDE}
     ${JPEG_INCLUDE}
     ${MD5_INCLUDE}
     ${CMAKE_SOURCE_DIR})

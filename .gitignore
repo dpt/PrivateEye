@@ -23,7 +23,6 @@ utils/templheader/templheadr
 # Ignore generated libraries
 *.a
 libs/exoquant/exoquant,ffd
-libs/flex
 libs/png/libpng,ffd
 libs/zlib/zlib,ffd
 
