@@ -345,7 +345,7 @@ static void delete_wimp_handler_element(wimp_handler_array   *v,
   array_delete_element(v->entries,
                        sizeof(*v->entries),
                        v->nentries,
-                       v->entries - e);
+                       e - v->entries);
   v->nentries--;
 }
 
