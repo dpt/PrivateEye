@@ -77,7 +77,6 @@ result_t colour_choicepane_changed(const choices_pane *p)
   tonemap_set(LOCALS.map, tonemap_CHANNEL_RGB, &spec);
 
   tonemapgadget_update(LOCALS.map,
-                       tonemap_CHANNEL_RGB,
                        StrokeWidth,
                       *p->window,
                        CHOICES_COL_D_CURVE);
@@ -135,7 +134,6 @@ result_t colour_choicepane_changed(const choices_pane *p)
 result_t colour_choicepane_redraw(const choices_pane *p, wimp_draw *redraw)
 {
   tonemapgadget_redraw(LOCALS.map,
-                       tonemap_CHANNEL_RGB,
                        StrokeWidth,
                       *p->window,
                        CHOICES_COL_D_CURVE,

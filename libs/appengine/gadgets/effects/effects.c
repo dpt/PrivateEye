@@ -1470,7 +1470,6 @@ static void tone_set_values_and_redraw(void)
   tonemap_set(LOCALS.tone.map, LOCALS.tone.channels, &LOCALS.tone.spec);
 
   tonemapgadget_update(LOCALS.tone.map,
-                       LOCALS.tone.channels,
                        LOCALS.current->config.tonemap_stroke_width,
                        LOCALS.effects_crv_w,
                        EFFECTS_CRV_D_CURVE);
@@ -1613,7 +1612,6 @@ static int tone_event_redraw_window_request(wimp_event_no event_no,
   NOT_USED(handle);
 
   tonemapgadget_redraw(LOCALS.tone.map,
-                       LOCALS.tone.channels,
                        LOCALS.current->config.tonemap_stroke_width,
                        LOCALS.effects_crv_w,
                        EFFECTS_CRV_D_CURVE,

@@ -47,7 +47,7 @@ endif()
 # Import DPTLib
 FetchContent_Declare(DPTLib
     GIT_REPOSITORY https://github.com/dpt/DPTLib
-    GIT_TAG 0.6.0)
+    GIT_TAG 0.6.1)
 FetchContent_MakeAvailable(DPTLib)
 
 # Import flex

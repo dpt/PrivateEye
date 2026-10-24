@@ -10,19 +10,17 @@
 
 #include "framebuf/tonemap.h"
 
-/* channels is the channel selection being edited: R, G or B alone draws
- * separate curves, all of RGB draws one combined curve, and alpha adds the
- * alpha curve. stroke_width is the width of the curves in OS units. */
-int tonemapgadget_update(tonemap_t         *map,
-                         tonemap_channels_t channels,
-                         int                stroke_width,
-                         wimp_w             w,
-                         wimp_i             i);
-int tonemapgadget_redraw(tonemap_t         *map,
-                         tonemap_channels_t channels,
-                         int                stroke_width,
-                         wimp_w             w,
-                         wimp_i             i,
-                         wimp_draw         *redraw);
+/* Draws one combined curve when R, G and B are in sync, otherwise separate
+ * curves, plus an alpha curve when the map has alpha. stroke_width is the
+ * width of the curves in OS units. */
+int tonemapgadget_update(tonemap_t *map,
+                         int        stroke_width,
+                         wimp_w     w,
+                         wimp_i     i);
+int tonemapgadget_redraw(tonemap_t *map,
+                         int        stroke_width,
+                         wimp_w     w,
+                         wimp_i     i,
+                         wimp_draw *redraw);
 
 #endif /* APPENGINE_TONEMAP_GADGET_H */

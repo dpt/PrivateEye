@@ -3,8 +3,6 @@
  * Purpose: ToneMap gadget
  * ----------------------------------------------------------------------- */
 
-#include <string.h>
-
 #include "oslib/types.h"
 #include "oslib/os.h"
 #include "oslib/draw.h"
@@ -142,35 +140,19 @@ static void draw_curve(const tonemap_table_t *table,
                 stroke_width << 8, &line_style, NULL);
 }
 
-static void draw_tonemap(tonemap_t         *map,
-                         tonemap_channels_t channels,
-                         int                x,
-                         int                y,
-                         int                stroke_width)
+static void draw_tonemap(tonemap_t *map,
+                         int        x,
+                         int        y,
+                         int        stroke_width)
 {
   const tonemap_table_t *tables[4];
-  int                    sync;
-  int                    i;
-  int                    alpha;
   const style_map_ent   *ent;
   os_trfm                t;
+  int                    i;
 
   tonemap_get_tables(map, &tables[0], &tables[1], &tables[2], &tables[3]);
 
-  /* With no RGB channel selected (editing alpha) fall back to comparing the
-   * tables. */
-  if ((channels & tonemap_CHANNEL_RGB) == 0)
-    sync = memcmp(tables[0], tables[1], sizeof(*tables[0])) == 0 &&
-           memcmp(tables[1], tables[2], sizeof(*tables[0])) == 0;
-  else
-    sync = (channels & tonemap_CHANNEL_RGB) == tonemap_CHANNEL_RGB;
-
-  /* Draw alpha when it's selected or isn't linear. */
-  for (i = 0; i < 256 && tables[3]->level[i] == i; i++)
-    ;
-  alpha = (channels & tonemap_CHANNEL_ALPHA) != 0 || i < 256;
-
-  ent = &style_map[alpha][sync];
+  ent = &style_map[tonemap_has_alpha(map)][tonemap_rgb_in_sync(map)];
 
   t.entries[0][0] = 1 << 16;
   t.entries[0][1] = 0;
@@ -193,13 +175,12 @@ static void draw_tonemap(tonemap_t         *map,
 
 /* ----------------------------------------------------------------------- */
 
-static int redraw(tonemap_t         *map,
-                  tonemap_channels_t channels,
-                  int                stroke_width,
-                  wimp_w             w,
-                  wimp_i             i,
-                  wimp_draw         *draw,
-                  osbool           (*draw_fn)(wimp_draw *))
+static int redraw(tonemap_t *map,
+                  int        stroke_width,
+                  wimp_w     w,
+                  wimp_i     i,
+                  wimp_draw *draw,
+                  osbool   (*draw_fn)(wimp_draw *))
 {
   os_box screenbox;
   int    more;
@@ -219,7 +200,7 @@ static int redraw(tonemap_t         *map,
     /* set our clip rectangle */
     screen_clip(&clippedbox);
 
-    draw_tonemap(map, channels, screenbox.x0 + Fudge, screenbox.y0 + Fudge,
+    draw_tonemap(map, screenbox.x0 + Fudge, screenbox.y0 + Fudge,
                  stroke_width);
 
     /* restore the previous clip rectangle */
@@ -229,11 +210,10 @@ static int redraw(tonemap_t         *map,
   return 0;
 }
 
-int tonemapgadget_update(tonemap_t         *map,
-                         tonemap_channels_t channels,
-                         int                stroke_width,
-                         wimp_w             w,
-                         wimp_i             i)
+int tonemapgadget_update(tonemap_t *map,
+                         int        stroke_width,
+                         wimp_w     w,
+                         wimp_i     i)
 {
   union
   {
@@ -255,17 +235,16 @@ int tonemapgadget_update(tonemap_t         *map,
 
   u.update.clip = u.update.box;
 
-  return redraw(map, channels, stroke_width, w, i, &u.update,
+  return redraw(map, stroke_width, w, i, &u.update,
                 wimp_update_window);
 }
 
-int tonemapgadget_redraw(tonemap_t         *map,
-                         tonemap_channels_t channels,
-                         int                stroke_width,
-                         wimp_w             w,
-                         wimp_i             i,
-                         wimp_draw         *draw)
+int tonemapgadget_redraw(tonemap_t *map,
+                         int        stroke_width,
+                         wimp_w     w,
+                         wimp_i     i,
+                         wimp_draw *draw)
 {
-  return redraw(map, channels, stroke_width, w, i, draw, wimp_redraw_window);
+  return redraw(map, stroke_width, w, i, draw, wimp_redraw_window);
 }
 
